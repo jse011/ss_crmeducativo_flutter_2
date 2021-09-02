@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
@@ -12,6 +13,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_valor_tipo_nota_presicion.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/validar_nota_teclado.dart';
 
 class PresicionView extends StatefulWidget {
   ValorTipoNotaUi? valorTipoNotaUi;
@@ -29,13 +31,16 @@ class PresicionView extends StatefulWidget {
 class _PresicionView extends State<PresicionView> {
   TextEditingController _controller = TextEditingController();
   bool _readOnly = true;
-
+  String? _msg_error_nota = null;
   void _SaveInputHandler(double nota) => widget.onSaveInput?.call(nota);
   void _onCloseButtonHandler() => widget.onCloseButton?.call();
 
   GetValorTipoNotaPresicion _getValorTipoNotaPresicion;
+  ValidarNotaTeclado _validarNotaTeclado;
+
   _PresicionView():
-  this._getValorTipoNotaPresicion = GetValorTipoNotaPresicion();
+  this._getValorTipoNotaPresicion = GetValorTipoNotaPresicion(),
+  this._validarNotaTeclado = ValidarNotaTeclado();
 
   @override
   Widget build(BuildContext context) {
@@ -184,27 +189,42 @@ class _PresicionView extends State<PresicionView> {
                                 Container(
                                   child: Column(
                                     children: [
-                                      Container(
-                                        margin: EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                                          color: AppTheme.white,
-                                        ),
-                                        child: TextField(
-                                          controller: _controller,
-                                          decoration: InputDecoration(
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(3),
+                                      Stack(
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(8)),
+                                              color: AppTheme.white,
                                             ),
-                                            hintText: "Digite una nota entre ${presicionList.length>1?presicionList[presicionList.length-1]:0} y ${presicionList.length>0?presicionList[0]:0}.",
+                                            child: TextField(
+                                              controller: _controller,
+                                              decoration: InputDecoration(
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(3),
+                                                ),
+                                                hintText: "Digite una nota entre ${presicionList.length>1?presicionList[presicionList.length-1]:0} y ${presicionList.length>0?presicionList[0]:0}.",
+                                              ),
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                              ),
+                                              autofocus: true,
+                                              showCursor: true,
+                                              readOnly: _readOnly,
+                                            ),
                                           ),
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                          ),
-                                          autofocus: true,
-                                          showCursor: true,
-                                          readOnly: _readOnly,
-                                        ),
+                                          if(_msg_error_nota!=null)
+                                          Positioned(
+                                              right: 16,
+                                              bottom: 12,
+                                              child: Text(_msg_error_nota??"",
+                                                style: TextStyle(
+                                                    color: AppTheme.red,
+                                                    fontStyle: FontStyle.italic,
+                                                  fontSize: 12,
+                                                ),)
+                                          )
+                                        ],
                                       ),
                                       /*IconButton(
                                         icon: Icon(Icons.keyboard),
@@ -218,12 +238,40 @@ class _PresicionView extends State<PresicionView> {
                                         child: CustomKeyboard(
                                           onTextInput: (myText) {
                                             _insertText(myText);
+                                            setState(() {
+                                              _msg_error_nota = null;
+                                            });
                                           },
                                           onBackspace: () {
                                             _backspace();
+                                            setState(() {
+                                              _msg_error_nota = null;
+                                            });
                                           },
                                           onAceptar: (){
-                                            _SaveInputHandler(double.parse(_controller.text));
+                                            try{
+                                              double nota = double.parse(_controller.text);
+                                              if(_validarNotaTeclado.execute(widget.valorTipoNotaUi, nota).success??false){
+                                                _SaveInputHandler(nota);
+                                              }else{
+                                                _msg_error_nota = "Digite una nota entre ${presicionList.length>1?presicionList[presicionList.length-1]:0} y ${presicionList.length>0?presicionList[0]:0}.";
+                                                setState(() {
+
+                                                });
+                                              }
+                                            }catch(e){
+                                              _msg_error_nota = "Digite una nota valida.";
+                                              setState(() {
+
+                                              });
+                                              Fluttertoast.showToast(
+                                                msg: _msg_error_nota??"",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.BOTTOM,
+                                                timeInSecForIosWeb: 1,
+                                              );
+
+                                            }
                                           },
                                         ),
                                       )

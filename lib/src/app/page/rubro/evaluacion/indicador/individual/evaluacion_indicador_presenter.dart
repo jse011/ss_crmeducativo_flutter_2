@@ -10,19 +10,19 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart'
 import 'package:ss_crmeducativo_2/src/domain/usecase/delete_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_rubro_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_valor_tipo_nota_presicion.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/update_evaluacion_individual.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_server_evaluacion_rubro.dart';
 
 class EvaluacionIndicadorPresenter extends Presenter{
   GetRubroEvaluacion _getRubroEvaluacion;
   late Function getRubroEvaluacionOnError, getRubroEvaluacionOnNext;
-  UpdateEvaluacionIndividual _updateEvalaucionIndividual;
+  UpdateEvaluacion _updateEvalaucionIndividual;
   UpdateServerEvaluacionRubro _updateServerEvaluacionRubro;
   DeleteEvaluacion _deleteEvaluacion;
 
   EvaluacionIndicadorPresenter(RubroRepository rubroRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo):
         _getRubroEvaluacion = GetRubroEvaluacion(rubroRepo, configuracionRepo),
-        _updateEvalaucionIndividual = UpdateEvaluacionIndividual(rubroRepo, configuracionRepo),
+        _updateEvalaucionIndividual = UpdateEvaluacion(rubroRepo, configuracionRepo),
         _updateServerEvaluacionRubro = UpdateServerEvaluacionRubro(configuracionRepo, httpDatosRepo, rubroRepo),
         _deleteEvaluacion = DeleteEvaluacion(rubroRepo, configuracionRepo);
 

@@ -258,9 +258,6 @@ class EvaluacionIndicadorController extends Controller{
       showTodosPublicados();
       refreshUI();
       _modificado = true;
-      List<String> rubroPrincipalIdList = [];
-      rubroPrincipalIdList.add(rubricaEvaluacionUiCebecera?.rubricaId??"");
-      if(rubricaEvaluacionUiDetalle!=null)rubroPrincipalIdList.add(rubricaEvaluacionUiDetalle?.rubricaId??"");
       presenter.updateEvaluacion(rubricaEvaluacionUiCebecera, evaluacionPublicadoUi.evaluacionUi?.alumnoId);
   }
 
@@ -294,9 +291,6 @@ class EvaluacionIndicadorController extends Controller{
     }
     refreshUI();
     _modificado = true;
-    List<String> rubroPrincipalIdList = [];
-    rubroPrincipalIdList.add(rubricaEvaluacionUiCebecera?.rubricaId??"");
-    if(rubricaEvaluacionUiDetalle!=null)rubroPrincipalIdList.add(rubricaEvaluacionUiDetalle?.rubricaId??"");
     presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera);
   }
 

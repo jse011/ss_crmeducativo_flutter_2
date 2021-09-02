@@ -776,7 +776,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
 
                         if((o.evaluacionUi?.personaUi?.contratoVigente == true)){
                           if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false))
-                            showDialogPresion(context, o, i);
+                            showDialogPresicion(context, o, i);
                           else
                             controller.onClicEvaluar(o);
                         }else{
@@ -1135,7 +1135,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
     return true;
   }
 
-  void showDialogPresion(BuildContext context, EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position) {
+  void showDialogPresicion(BuildContext context, EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position) {
     EvaluacionIndicadorController controller =
     FlutterCleanArchitecture.getController<EvaluacionIndicadorController>(context, listen: false);
 
@@ -1152,6 +1152,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
             color: getPosition(position),
             personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
             onSaveInput: (nota) {
+
               Navigator.pop(context, nota);
             },
             onCloseButton: () {

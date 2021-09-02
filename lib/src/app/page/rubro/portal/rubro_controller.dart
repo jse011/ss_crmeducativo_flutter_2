@@ -81,13 +81,15 @@ class RubroController extends Controller{
       _progress = true;
       _msgToast = (errorServidor??false)? "!Oops! Al parecer ocurrió un error involuntario.":null;
       _msgToast = (errorConexion??false)? "No hay Conexión a Internet...":null;
-      refreshUI();
+
       print("updateDatosCrearRubroOnNext");
       if(!(errorConexion??false)){
         print("updateDatosCrearRubroOnNext 1");
         onListarTabsRubroEvaluacion();
+      }else{
+        _progress = false;
       }
-
+      refreshUI();
     };
 
     presenter.updateDatosCrearRubroOnError = (e){

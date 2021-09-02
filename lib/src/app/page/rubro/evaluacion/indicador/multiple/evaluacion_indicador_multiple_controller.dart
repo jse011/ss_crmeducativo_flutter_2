@@ -14,6 +14,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
@@ -26,9 +27,8 @@ class EvaluacionIndicadorMultipleController extends Controller {
   EvaluacionIndicadorMultiplePresenter presenter;
   RubricaEvaluacionUi? rubroEvaluacionUi;
   List<dynamic> _columnList2 = [];
-
+  bool _modificado = true;
   UsuarioUi? _usuarioUi = null;
-
   UsuarioUi? get usuarioUi  => _usuarioUi;
   List<dynamic> get columnList2 => _columnList2;
   List<dynamic> _rowList2 = [];
@@ -55,11 +55,13 @@ class EvaluacionIndicadorMultipleController extends Controller {
   bool _showDialogEliminar = false;
   bool get showDialogEliminar => _showDialogEliminar;
 
+  bool _showDialog = false;
+  bool get showDialog => _showDialog;
 
   EvaluacionIndicadorMultipleController(this.rubroEvaluacionId, this.cursosUi, this.calendarioPeriodoUI,
-      RubroRepository rubroRepo, ConfiguracionRepository configuracionRepo) :
+      RubroRepository rubroRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo) :
         presenter = EvaluacionIndicadorMultiplePresenter(
-            rubroRepo, configuracionRepo);
+            rubroRepo, configuracionRepo, httpDatosRepo);
 
   @override
   void initListeners() {
@@ -79,6 +81,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
         (RubricaEvaluacionUi? rubroEvaluacionUi,
         List<PersonaUi> alumnoCursoList,) {
       this.rubroEvaluacionUi = rubroEvaluacionUi;
+      //print("rubroEvaluacionUi: ${this.rubroEvaluacionUi?.evaluacionUiList?.length}");
       initTable(alumnoCursoList, rubroEvaluacionUi);
       initLista(alumnoCursoList, rubroEvaluacionUi);
       refreshUI();
@@ -105,25 +108,28 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
     _columnList2.add(ContactoUi()); //Titulo alumno
     _columnList2.add(EvaluacionUi()); //Titulo Nota Final
-    _columnList2.add(EvaluacionPublicadoUi(EvaluacionUi()));
-    _columnList2.addAll(rubricaEvaluacionUi?.rubrosDetalleList??[]);
 
+    _columnList2.addAll(rubricaEvaluacionUi?.rubrosDetalleList??[]);
+    _columnList2.add(EvaluacionPublicadoUi(EvaluacionUi()));
     _columnList2.add(""); // espacio
 
     for (dynamic row in _rowList2) {
       List<dynamic> cellList = [];
 
       cellList.add(row);
-
+      EvaluacionPublicadoUi? evaluacionPublicadoUi = null;
       //#obtner Nota Tatal
       if (row is PersonaUi) {
         EvaluacionUi? evaluacionUi = rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
-        if (evaluacionUi == null) evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
+        if (evaluacionUi == null){
+          evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
+          evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
+          row.soloApareceEnElCurso = true;
+        }
         evaluacionUi.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
         cellList.add(evaluacionUi);
-        cellList.add(EvaluacionPublicadoUi(evaluacionUi));
+        evaluacionPublicadoUi = EvaluacionPublicadoUi(evaluacionUi);
       } else {
-        cellList.add(""); //Espacio
         cellList.add(""); //Espacio
       }
 
@@ -131,7 +137,12 @@ class EvaluacionIndicadorMultipleController extends Controller {
       for (RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvaluacionUi?.rubrosDetalleList ?? []) {
         if (row is PersonaUi) {
           EvaluacionUi? evaluacionUi = rubricaEvaluacionUi.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
-          if (evaluacionUi == null) evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
+          if (evaluacionUi == null){
+            evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
+            evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
+            evaluacionUi.rubroEvaluacionId = rubricaEvaluacionUi.rubricaId;
+            row.soloApareceEnElCurso = true;
+          }
           evaluacionUi.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
           cellList.add(evaluacionUi);
         } else {
@@ -140,12 +151,17 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }
 
       //#obtner Validar si todos los rubros detalles esta publicados
-
+      if(evaluacionPublicadoUi!=null){
+        cellList.add(evaluacionPublicadoUi);
+      }else{
+        cellList.add(""); //Espacio
+      }
       cellList.add("");
 
       print("length: f "+cellList.length.toString());
       _cellListList.add(cellList);
     }
+    showTodosPublicados();
   }
 
   void onClicPublicadoAll(EvaluacionPublicadoUi evaluacionPublicadoUi) {
@@ -153,20 +169,34 @@ class EvaluacionIndicadorMultipleController extends Controller {
     for(List cellList in cellListList){
       for(var cell in cellList){
         if(cell is EvaluacionPublicadoUi){
-          cell.publicado = evaluacionPublicadoUi.publicado;
+          if(cell is EvaluacionPublicadoUi && (cell.evaluacionUi?.personaUi?.contratoVigente??false)){
+            cell.publicado = evaluacionPublicadoUi.publicado;
+          }
+
         }
       }
     }
     refreshUI();
+    _modificado = true;
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
   void onClicPublicado(EvaluacionPublicadoUi evaluacionPublicadoUi) {
     evaluacionPublicadoUi.publicado = !evaluacionPublicadoUi.publicado;
+    showTodosPublicados();
+    refreshUI();
+    _modificado = true;
+    presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionPublicadoUi.evaluacionUi?.alumnoId);
+  }
+
+  void showTodosPublicados(){
     bool todosPublicados = true;
     for(List cellList in cellListList){
       for(var cell in cellList){
         if(cell is EvaluacionPublicadoUi){
-          if(!cell.publicado)todosPublicados = false;
+          if(cell.evaluacionUi?.personaUi?.contratoVigente??false){
+            if(!cell.publicado)todosPublicados = false;
+          }
         }
       }
     }
@@ -176,7 +206,6 @@ class EvaluacionIndicadorMultipleController extends Controller {
         column.publicado = todosPublicados;
       }
     }
-    refreshUI();
   }
 
   void initLista(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubroEvaluacionUi) {
@@ -210,7 +239,12 @@ class EvaluacionIndicadorMultipleController extends Controller {
         List<dynamic> cellList = [];
         cellList.add(row);
         EvaluacionUi? evaluacionUi = row.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == personaUi.personaId);
-        if(evaluacionUi==null)evaluacionUi = EvaluacionUi();//Una evaluacion vasia significa que el alumno no tiene evaluacion
+        if(evaluacionUi==null){
+          evaluacionUi = EvaluacionUi();//Una evaluacion vasia significa que el alumno no tiene evaluacion
+          evaluacionUi.rubroEvaluacionUi = row;
+          evaluacionUi.rubroEvaluacionId = row.rubricaId;
+          personaUi.soloApareceEnElCurso = true;
+        }
         evaluacionUi.personaUi = personaUi;//se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
 
         if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
@@ -292,8 +326,35 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }
 
       _actualizarCabecera(personaUi);
-
       refreshUI();
+      _modificado = true;
+      presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+    }
+  }
+
+  void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi personaUi, nota) {
+    if(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.evaluacionId!=null) {
+      for (List cellList in mapCellListList[personaUi] ?? []) {
+        for (var cell in cellList) {
+          if (cell is EvaluacionRubricaValorTipoNotaUi) {
+            if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
+                && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+                && cell != evaluacionRubricaValorTipoNotaUi) {
+              cell.toggle = false;
+            }
+          }
+        }
+      }
+
+      evaluacionRubricaValorTipoNotaUi.toggle = true;
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = nota;
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
+
+      _actualizarCabecera(personaUi);
+      refreshUI();
+      _modificado = true;
+      presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
     }
   }
 
@@ -337,11 +398,13 @@ class EvaluacionIndicadorMultipleController extends Controller {
     }
     _actualizarCabecera(personaUi);
     refreshUI();
+    _modificado = true;
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
   void _actualizarCabecera(PersonaUi personaUi) {
     EvaluacionUi? evaluacionUi = getEvaluacionGeneralPersona(personaUi);
-
+    print("evaluacionUi: ${evaluacionUi?.nota}");
     List<EvaluacionUi> evaluacionUiList = [];
     for(RubricaEvaluacionUi rubroEvaluacionUi in rubroEvaluacionUi?.rubrosDetalleList??[]){
       for(EvaluacionUi item in rubroEvaluacionUi.evaluacionUiList??[]){
@@ -377,6 +440,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
   EvaluacionUi? getEvaluacionGeneralPersona(PersonaUi personaUi) {
     EvaluacionUi? evaluacionUi = null;
+
     for(EvaluacionUi item in rubroEvaluacionUi?.evaluacionUiList??[]){
       if(item.personaUi?.personaId == personaUi.personaId){
         evaluacionUi = item;
@@ -399,7 +463,29 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }
     }
     refreshUI();
+    _modificado = true;
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
+
+  Future<bool> onSave() async{
+    if(_modificado){
+      _showDialog = true;
+      refreshUI();
+      await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubroEvaluacionUi);
+    }
+
+    return true;
+  }
+
+  onClickAceptarEliminar() async{
+    _showDialogEliminar = false;
+    _showDialog = true;
+    refreshUI();
+    await presenter.deleteRubroEvaluacion(rubroEvaluacionUi);
+    await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubroEvaluacionUi);
+  }
+
+
 
 
 

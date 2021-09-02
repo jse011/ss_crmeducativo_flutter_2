@@ -30,5 +30,4 @@ class GetValorTipoNotaPresicion {
     return notaCircularUis.reversed.toList();
   }
 
-
 }

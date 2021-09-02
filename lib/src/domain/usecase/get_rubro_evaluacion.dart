@@ -21,6 +21,7 @@ class GetRubroEvaluacion extends UseCase<GetRubroEvaluacionResponse, GetRubroEva
     try{
 
       RubricaEvaluacionUi rubricaEvaluacionUi =  await repository.getRubroEvaluacion(params?.rubroEvaluacionId);
+      print("rubroEvaluacionUi2: ${rubricaEvaluacionUi.evaluacionUiList?.length}");
       /*Obtner alumnos*/
       List<PersonaUi> alumnoCursoList = await configuracionRepository.getListAlumnoCurso(params?.cargaCursoId??0);
 /*
