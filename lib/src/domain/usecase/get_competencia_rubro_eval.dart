@@ -73,6 +73,7 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
             evaluacionCapacidadUi.personaUi = personaUi;
             evaluacionCapacidadUi.nota = 0.0;
             double notaCapacidad = 0;
+            int cantidadRubros = capacidadUi.rubricaEvalUiList?.length??0;
             for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
               int notaMaxRubro = rubricaEvaluacionUi.tipoNotaUi?.escalavalorMaximo??0;
               int notaMinRubro = rubricaEvaluacionUi.tipoNotaUi?.escalavalorMinimo??0;
@@ -80,12 +81,18 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
               double notaRubro = AppTools.transformacionInvariante(notaMinRubro.toDouble(), notaMaxRubro.toDouble(), evaluacionUi?.nota??0.0, notaMinResultado.toDouble(), notaMaxResultado.toDouble());;
               notaCapacidad += notaRubro;
             }
-            notaCapacidad = (capacidadUi.rubricaEvalUiList?.length??0) > 0? notaCapacidad/capacidadUi.rubricaEvalUiList!.length :0.0;
-            evaluacionCapacidadUi.nota = notaCapacidad;
-            if (tipoNotaUi.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUi.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
-              ValorTipoNotaUi? valorTipoNotaUi = _getValorTipoNotaCalculado(tipoNotaUi, notaCapacidad);
-              evaluacionCapacidadUi.valorTipoNotaUi = valorTipoNotaUi;
+            if(cantidadRubros > 0){
+              notaCapacidad = notaCapacidad/cantidadRubros;
+              evaluacionCapacidadUi.nota = notaCapacidad;
+              if (tipoNotaUi.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUi.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
+                ValorTipoNotaUi? valorTipoNotaUi = _getValorTipoNotaCalculado(tipoNotaUi, notaCapacidad);
+                evaluacionCapacidadUi.valorTipoNotaUi = valorTipoNotaUi;
+              }
+            }else{
+              evaluacionCapacidadUi.nota = null;
+              evaluacionCapacidadUi.valorTipoNotaUi = null;
             }
+
             notaCompetencia += notaCapacidad;
             evaluacionCompetenciaUi.evaluacionCapacidadUiList?.add(evaluacionCapacidadUi);
           }
@@ -126,7 +133,7 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
       }
 
 
-      controller.add(GetCompetenciaRubroResponse(competenciaUiList,alumnoCursoList,evaluacionCompetenciaUiList, evaluacionCalendarioPeriodoUiList));
+      controller.add(GetCompetenciaRubroResponse(competenciaUiList,alumnoCursoList,evaluacionCompetenciaUiList, evaluacionCalendarioPeriodoUiList, tipoNotaUi));
       controller.close();
     } catch (e) {
       logger.severe('GetUnidadRubroEval unsuccessful: '+e.toString());
@@ -234,8 +241,9 @@ class GetCompetenciaRubroResponse {
   List<PersonaUi> personaUiList;
   List<EvaluacionCompetenciaUi> evaluacionCompetenciaUiList;
   List<EvaluacionCalendarioPeriodoUi> evaluacionCalendarioPeriodoUiList;
+  TipoNotaUi tipoNotaUi;
 
-  GetCompetenciaRubroResponse(this.competenciaUiList, this.personaUiList, this.evaluacionCompetenciaUiList, this.evaluacionCalendarioPeriodoUiList);
+  GetCompetenciaRubroResponse(this.competenciaUiList, this.personaUiList, this.evaluacionCompetenciaUiList, this.evaluacionCalendarioPeriodoUiList, this.tipoNotaUi);
 }
 
 class GetCompetenciaRubroParams {

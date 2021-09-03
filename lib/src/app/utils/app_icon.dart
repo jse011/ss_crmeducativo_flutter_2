@@ -42,5 +42,9 @@ class AppIcon {
 
   static const String ic_tipo_actividad_conecta = "assets/icons/tipo_actividad/tipoact_ico_1.svg";
 
+  static const String ic_procesear_nota = "assets/icons/ic_procesar.svg";
+  static const String ic_cerrar_curso = "assets/icons/ic_cerrar_curso.svg";
+  static const String ic_ayuda_procesar_nota = "assets/icons/ic_ayuda_procesar_nota.svg";
+  static const String ic_presicion_procesamiento = "assets/icons/ic_precision_process_2.svg";
 
 }

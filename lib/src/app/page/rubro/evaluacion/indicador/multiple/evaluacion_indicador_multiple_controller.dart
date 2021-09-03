@@ -27,7 +27,8 @@ class EvaluacionIndicadorMultipleController extends Controller {
   EvaluacionIndicadorMultiplePresenter presenter;
   RubricaEvaluacionUi? rubroEvaluacionUi;
   List<dynamic> _columnList2 = [];
-  bool _modificado = true;
+  bool get modificado => _modificado;
+  bool _modificado = false;
   UsuarioUi? _usuarioUi = null;
   UsuarioUi? get usuarioUi  => _usuarioUi;
   List<dynamic> get columnList2 => _columnList2;
@@ -38,7 +39,8 @@ class EvaluacionIndicadorMultipleController extends Controller {
   List<PersonaUi> _alumnoCursoList = [];
   List<PersonaUi> _alumnoCursoListDesordenado = [];
   List<PersonaUi> get alumnoCursoList => _alumnoCursoListDesordenado;
-
+  List<double> get tablecolumnWidths => _tablecolumnWidths;
+  List<double> _tablecolumnWidths = [];
   Map<PersonaUi, List<dynamic>> _mapColumnList = Map();
   Map<PersonaUi, List<RubricaEvaluacionUi>> _mapRowList = Map();
   Map<PersonaUi, List<List<dynamic>>> _mapCellListList = Map();
@@ -176,16 +178,17 @@ class EvaluacionIndicadorMultipleController extends Controller {
         }
       }
     }
-    refreshUI();
     _modificado = true;
+    refreshUI();
     presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
   void onClicPublicado(EvaluacionPublicadoUi evaluacionPublicadoUi) {
     evaluacionPublicadoUi.publicado = !evaluacionPublicadoUi.publicado;
     showTodosPublicados();
-    refreshUI();
     _modificado = true;
+    refreshUI();
+
     presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionPublicadoUi.evaluacionUi?.alumnoId);
   }
 
@@ -215,6 +218,10 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _mapColumnList.clear();
     _mapRowList.clear();
     _mapCellListList.clear();
+
+
+
+
     for(PersonaUi personaUi in alumnoCursoList){
 
       _mapColumnList[personaUi] = [];
@@ -264,6 +271,26 @@ class EvaluacionIndicadorMultipleController extends Controller {
         _mapCellListList[personaUi]?.add(cellList);
       }
     }
+
+    /*Calular el tamaño*/
+    _tablecolumnWidths.clear();
+      if(alumnoCursoList.isNotEmpty){
+        for(dynamic s in _mapColumnList[alumnoCursoList[0]]??[]){
+          if(s is ValorTipoNotaUi){
+            _tablecolumnWidths.add(45.0);
+          } else if(s is RubricaEvaluacionUi){
+            _tablecolumnWidths.add(85);
+          } else if(s is EvaluacionUi){
+            _tablecolumnWidths.add(45);
+          }else if(s is RubricaEvaluacionPesoUi){
+            _tablecolumnWidths.add(45);
+          }else{
+            _tablecolumnWidths.add(50.0);
+          }
+        }
+      }
+
+
 
     refreshUI();
 
@@ -326,8 +353,9 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }
 
       _actualizarCabecera(personaUi);
-      refreshUI();
       _modificado = true;
+      refreshUI();
+
       presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
     }
   }
@@ -352,8 +380,8 @@ class EvaluacionIndicadorMultipleController extends Controller {
       evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
 
       _actualizarCabecera(personaUi);
-      refreshUI();
       _modificado = true;
+      refreshUI();
       presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
     }
   }
@@ -397,8 +425,9 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }
     }
     _actualizarCabecera(personaUi);
-    refreshUI();
     _modificado = true;
+    refreshUI();
+
     presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
@@ -462,8 +491,9 @@ class EvaluacionIndicadorMultipleController extends Controller {
         }
       }
     }
-    refreshUI();
     _modificado = true;
+    refreshUI();
+
     presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
@@ -483,6 +513,10 @@ class EvaluacionIndicadorMultipleController extends Controller {
     refreshUI();
     await presenter.deleteRubroEvaluacion(rubroEvaluacionUi);
     await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubroEvaluacionUi);
+  }
+
+  onClicGuardar() async{
+
   }
 
 

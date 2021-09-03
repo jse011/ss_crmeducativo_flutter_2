@@ -57,12 +57,13 @@ class EvaluacionIndicadorController extends Controller{
   @override
   void onInitState() {
     super.onInitState();
-    print("rubroEvaluacionId: ${rubroEvaluacionId}");
+
     presenter.getRubroEvaluacion(rubroEvaluacionId, cursosUi);
   }
 
   void initTable(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubricaEvaluacionUiCebecera){
     this.rubricaEvaluacionUiCebecera = rubricaEvaluacionUiCebecera;
+
     RubricaEvaluacionUi? rubroEvaluacionUi = rubricaEvaluacionUiCebecera;
      if((rubricaEvaluacionUiCebecera?.rubrosDetalleList?.isNotEmpty??false)){
        rubricaEvaluacionUiDetalle = rubricaEvaluacionUiCebecera?.rubrosDetalleList?[0];//Agregar el detalle
@@ -97,21 +98,13 @@ class EvaluacionIndicadorController extends Controller{
 
       //#obtner Nota Tatal
       if(row is PersonaUi){
-        EvaluacionUi? evaluacionUi = rubricaEvaluacionUiDetalle?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
+        EvaluacionUi? evaluacionUi = rubroEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
         //Una evaluacion vasia significa que el alumno no tiene evaluacion
         if(evaluacionUi==null){
           evaluacionUi = EvaluacionUi();
           row.soloApareceEnElCurso = true;
           rubroEvaluacionUi?.evaluacionUiList?.add(evaluacionUi);
           evaluacionUi.rubroEvaluacionUi = rubroEvaluacionUi;
-          if(rubricaEvaluacionUiDetalle!=null){
-              EvaluacionUi evaluacionUi = EvaluacionUi();//Agregar la evalucion en la cabecera cuando se este evaluando el detalle
-              row.soloApareceEnElCurso = true;
-              evaluacionUi.rubroEvaluacionUi = this.rubricaEvaluacionUiCebecera;
-              this.rubricaEvaluacionUiCebecera?.evaluacionUiList?.add(evaluacionUi);
-              evaluacionUi.personaUi = row;//se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
-          }
-
         }
         evaluacionUi.personaUi = row;//se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
 

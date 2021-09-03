@@ -66,7 +66,6 @@ dependencies:
   #sized_context: ^0.2.1+1
   #table_sticky_headers: ^2.0.0 // se modifo esta version para funcione con un solo scroling quitando la etiqueta Expande
   #fdottedline: ^1.0.1
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

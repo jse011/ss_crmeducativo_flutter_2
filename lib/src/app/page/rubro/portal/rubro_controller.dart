@@ -45,10 +45,16 @@ class RubroController extends Controller{
   TipoNotaUi? get tipoNotaUi => _tipoNotaUi;
   bool _showDialogModoOffline = false;
   bool get showDialogModoOffline => _showDialogModoOffline;
+  int _seletedItem = 0;
+  int get seletedItem => _seletedItem;
+  bool _precision = false;
+  bool get precision => _precision;
 
   RubroController(this.cursosUi, calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo)
       :this.presenter = RubroPresenter(calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo)
   , super();
+
+
 
   @override
   void initListeners() {
@@ -103,13 +109,13 @@ class RubroController extends Controller{
       }
       _rubricaEvaluacionUiList?.addAll(rubricaEvalUiList);
 
-      _progress = false;
+      if(_seletedItem==0)_progress = false;//ocultar el progress cuando se esta en el tab rubro
       refreshUI();
     };
 
     presenter.getRubroEvaluacionOnError = (e){
       _rubricaEvaluacionUiList = [];
-      _progress = false;
+      if(_seletedItem==0)_progress = false;//ocultar el progress cuando se esta en el tab rubro
       refreshUI();
     };
 
@@ -144,8 +150,8 @@ class RubroController extends Controller{
     };
 
     //presenter.getCompetenciaRubroEvalOnNext(response?.competenciaUiList, response?.personaUiList, response?.evaluacionCompetenciaUiList);
-    presenter.getCompetenciaRubroEvalOnNext = (List<CompetenciaUi> competenciaUiList, List<PersonaUi> personaUiList, List<EvaluacionCompetenciaUi> evaluacionCompetenciaUiList,  List<EvaluacionCalendarioPeriodoUi> evaluacionCalendarioPeriodoUiList){
-
+    presenter.getCompetenciaRubroEvalOnNext = (List<CompetenciaUi> competenciaUiList, List<PersonaUi> personaUiList, List<EvaluacionCompetenciaUi> evaluacionCompetenciaUiList,  List<EvaluacionCalendarioPeriodoUi> evaluacionCalendarioPeriodoUiList, TipoNotaUi tipoNotaUi){
+     _tipoNotaUi = tipoNotaUi;
 
       _rowList2.clear();
       _rowList2.addAll(personaUiList);
@@ -240,14 +246,16 @@ class RubroController extends Controller{
         _cellListList.add(cellList);
       }
 
-
+      if(_seletedItem==1)_progress = false;//ocultar el progress cuando se esta en el tab competencia
       refreshUI();
     };
 
     presenter.getCompetenciaRubroEvalOnError = (e){
+      _tipoNotaUi = null;
       _rowList2 = [];
       _columnList2.clear();
       _cellListList.clear();
+      if(_seletedItem==1)_progress = false;//ocultar el progress cuando se esta en el tab competencia
       refreshUI();
     };
   }
@@ -270,10 +278,7 @@ class RubroController extends Controller{
     _progress = true;
     //presenter.getEvaluacion(calendarioPeriodoUi);
     refreshUI();
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
-    });
-
+    presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
 
     //presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
     //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
@@ -294,9 +299,9 @@ class RubroController extends Controller{
   }
 
   void respuestaEvaluacionCapacidad() {
-    _progress = true;
-    refreshUI();
-    onListarTabsRubroEvaluacion();
+    //_progress = true;
+    //refreshUI();
+    // onListarTabsRubroEvaluacion();
   }
 
   void respuestaEvaluacion() {
@@ -310,9 +315,7 @@ class RubroController extends Controller{
     _origenRubroUi = origenRubroUi;
     _progress = true;
     refreshUI();
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
-    });
+    presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
 
   }
 
@@ -336,9 +339,27 @@ class RubroController extends Controller{
   }
 
   void onListarTabsRubroEvaluacion(){
+    /*Se limpia la tabla competencia debio que en las prubas en modo debug se demora en mostarar la tabla siembar en relase no existe el problema de espera*/
+    _rowList2 = [];
+    _columnList2.clear();
+    _cellListList.clear();
+    refreshUI();
+    /*Se limpia la tabla competencia*/
+
+
     presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
-    presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
+    //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
     presenter.onGetCompetenciaRubroEval(cursosUi, calendarioPeriodoUI);
+  }
+
+  void onChangeTab(int index) {
+    _seletedItem = index;
+    refreshUI();
+  }
+
+  onClicPrecision() {
+    this._precision = !_precision;
+    refreshUI();
   }
 
 }

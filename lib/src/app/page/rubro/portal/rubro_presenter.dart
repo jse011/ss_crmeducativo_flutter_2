@@ -55,18 +55,22 @@ class RubroPresenter extends Presenter{
   }
 
   void onActualizarCurso(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi cursosUi) {
+    _getRubroEvaluacion.dispose();
     _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0));
   }
 
   void onGetRubricaList(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, OrigenRubroUi? origenRubroUi){
+    _getRubroEvaluacion.dispose();
     _getRubroEvaluacion.execute(_GetRubroEvaluacionCase(this), GetRubroEvaluacionListParms(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId, origenRubroUi));
   }
 
   void onGetUnidadRubroEval(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
+    _getUnidadRubroEval.dispose();
     _getUnidadRubroEval.execute(_GetUnidadRubroEvalCase(this), GetUnidadRubroEvalParams(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
   }
 
   void onGetCompetenciaRubroEval(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
+    _getCompetenciaRubroEval.dispose();
     _getCompetenciaRubroEval.execute(GetCompetenciaRubroEvalCase(this), GetCompetenciaRubroParams(calendarioPeriodoUI, cursosUi?.silaboEventoId, cursosUi?.cargaCursoId));
   }
 
@@ -192,7 +196,7 @@ class GetCompetenciaRubroEvalCase extends Observer<GetCompetenciaRubroResponse>{
   @override
   void onNext(GetCompetenciaRubroResponse? response) {
     assert(presenter.getCompetenciaRubroEvalOnNext!=null);
-    presenter.getCompetenciaRubroEvalOnNext(response?.competenciaUiList, response?.personaUiList, response?.evaluacionCompetenciaUiList, response?.evaluacionCalendarioPeriodoUiList);
+    presenter.getCompetenciaRubroEvalOnNext(response?.competenciaUiList, response?.personaUiList, response?.evaluacionCompetenciaUiList, response?.evaluacionCalendarioPeriodoUiList, response?.tipoNotaUi);
   }
 
 }

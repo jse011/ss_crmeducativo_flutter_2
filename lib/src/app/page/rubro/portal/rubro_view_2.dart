@@ -116,168 +116,161 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
     super.dispose();
   }
 
-  int _seletedItem = 0;
   bool result = true;
   PageController _pageController = PageController();
 
-  Widget get view => Stack(
-    children: [
-      Scaffold(
-        extendBody: true,
-        backgroundColor: getBackground(),
-        body: Stack(
+  Widget get view => ControlledWidgetBuilder<RubroController>(
+      builder: (context, controller) {
+        return Stack(
           children: [
-            getMainTab(),
-            getAppBarUI(),
-          ],
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(100),
-                    topLeft: Radius.circular(100),
-                    bottomLeft: Radius.circular(100),
-                    bottomRight: Radius.circular(100)),
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black12, spreadRadius: 0, blurRadius: 10),
+            Scaffold(
+              extendBody: true,
+              body: Stack(
+                children: [
+                  getMainTab(),
+                  getAppBarUI(),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(100.0),
-                    topRight: Radius.circular(100.0),
-                    bottomLeft: Radius.circular(100),
-                    bottomRight: Radius.circular(100)),
-                child: BottomNavigationBar(
-                  selectedItemColor: Theme.of(context).primaryColor,
-                  unselectedItemColor: Colors.grey[500],
-                  items: [
-                    // ignore: deprecated_member_use
-                    BottomNavigationBarItem(
+              bottomNavigationBar: Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(100),
+                          topLeft: Radius.circular(100),
+                          bottomLeft: Radius.circular(100),
+                          bottomRight: Radius.circular(100)),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black12, spreadRadius: 0, blurRadius: 10),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(100.0),
+                          topRight: Radius.circular(100.0),
+                          bottomLeft: Radius.circular(100),
+                          bottomRight: Radius.circular(100)),
+                      child: BottomNavigationBar(
+                        selectedItemColor: Theme.of(context).primaryColor,
+                        unselectedItemColor: Colors.grey[500],
+                        items: [
+                          // ignore: deprecated_member_use
+                          BottomNavigationBarItem(
+                            // ignore: deprecated_member_use
+                              icon: Container(),
+                              // ignore: deprecated_member_use
+                              title: Text('General')),
+                          /* BottomNavigationBarItem(
                       // ignore: deprecated_member_use
                         icon: Container(),
                         // ignore: deprecated_member_use
-                        title: Text('General')),
-                    BottomNavigationBarItem(
-                      // ignore: deprecated_member_use
-                        icon: Container(),
-                        // ignore: deprecated_member_use
-                        title: Text('Sesión')),
-                    BottomNavigationBarItem(
-                      // ignore: deprecated_member_use
-                        icon: Container(),
-                        // ignore: deprecated_member_use
-                        title: Text('Competencia'))
-                  ],
-                  currentIndex: _seletedItem,
-                  onTap: (index) {
-                    setState(() {
-                      _seletedItem = index;
-                      _pageController.jumpToPage(_seletedItem);
-                    });
-                  },
-                ),
-              )),
-        ),
-      ),
-      ControlledWidgetBuilder<RubroController>(
-          builder: (context, controller) {
-            return Stack(
-              children: [
-                if(controller.progress)ArsProgressWidget(
-                  blur: 2,
-                  backgroundColor: Color(0x33000000),
-                  animationDuration: Duration(milliseconds: 500),
-                ),
-                if(controller.showDialogModoOffline)
-                  ArsProgressWidget(
-                    blur: 2,
-                    backgroundColor: Color(0x33000000),
-                    animationDuration: Duration(milliseconds: 500),
-                    loadingWidget:  Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16), // if you need this
-                        side: BorderSide(
-                          color: Colors.grey.withOpacity(0.2),
-                          width: 1,
-                        ),
+                        title: Text('Sesión')),*/
+                          BottomNavigationBarItem(
+                            // ignore: deprecated_member_use
+                              icon: Container(),
+                              // ignore: deprecated_member_use
+                              title: Text('Competencia'))
+                        ],
+                        currentIndex: controller.seletedItem,
+                        onTap: (index) {
+                          controller.onChangeTab(index);
+                          _pageController.jumpToPage(controller.seletedItem);
+                        },
                       ),
-                      child: Container(
-                        padding: EdgeInsets.all(16),
-                        constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                    )),
+              ),
+            ),
+            if(controller.progress)ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+            ),
+            if(controller.showDialogModoOffline)
+              ArsProgressWidget(
+                blur: 2,
+                backgroundColor: Color(0x33000000),
+                animationDuration: Duration(milliseconds: 500),
+                loadingWidget:  Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16), // if you need this
+                    side: BorderSide(
+                      color: Colors.grey.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  child: Icon(Ionicons.cellular_outline, size: 35, color: AppTheme.white,),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppTheme.yellowDarken3),
-                                ),
-                                Padding(padding: EdgeInsets.all(8)),
-                                Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(padding: EdgeInsets.all(4),),
-                                        Text("Señal Lenta", style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                            fontFamily: AppTheme.fontTTNormsMedium
-                                        ),),
-                                        Padding(padding: EdgeInsets.all(8),),
-                                        Text("Trabajar sin conexión a internet",
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              height: 1.5
-                                          ),),
-                                        Padding(padding: EdgeInsets.all(16),),
-                                      ],
-                                    )
-                                )
-                              ],
+                            Container(
+                              width: 50,
+                              height: 50,
+                              child: Icon(Ionicons.cellular_outline, size: 35, color: AppTheme.white,),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppTheme.yellowDarken3),
                             ),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Container()
-                                ),
-                                Padding(padding: EdgeInsets.all(8)),
-                                Expanded(child: ElevatedButton(
-                                  onPressed: () {
-                                    controller.onClicContinuarOffline();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    primary: AppTheme.orangeAccent3,
-                                    onPrimary: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
-                                  child: Text('Trabajar'),
-                                )),
-                              ],
+                            Padding(padding: EdgeInsets.all(8)),
+                            Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(padding: EdgeInsets.all(4),),
+                                    Text("Señal Lenta", style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppTheme.fontTTNormsMedium
+                                    ),),
+                                    Padding(padding: EdgeInsets.all(8),),
+                                    Text("Trabajar sin conexión a internet",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          height: 1.5
+                                      ),),
+                                    Padding(padding: EdgeInsets.all(16),),
+                                  ],
+                                )
                             )
                           ],
                         ),
-                      ),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: Container()
+                            ),
+                            Padding(padding: EdgeInsets.all(8)),
+                            Expanded(child: ElevatedButton(
+                              onPressed: () {
+                                controller.onClicContinuarOffline();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: AppTheme.orangeAccent3,
+                                onPrimary: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              child: Text('Trabajar'),
+                            )),
+                          ],
+                        )
+                      ],
                     ),
                   ),
-              ],
-            );
-          }
-      )
-    ],
+                ),
+              ),
+
+          ],
+        );
+      }
   );
 
   Widget getAppBarUI() {
@@ -336,7 +329,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                 Container(
                                   margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
                                   child:
-                                  topBarOpacity >= 1  && _seletedItem == 0 ?
+                                  topBarOpacity >= 1  && controller.seletedItem == 0 ?
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -365,30 +358,112 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                         size: 24 + 4 - 1 * topBarOpacity,)
                                     ],
                                   ):
+                                  controller.seletedItem==0?
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
                                       Padding(
-                                          padding: EdgeInsets.only(left: 12, top: 8),
-                                          child: Text(
-                                            'Evaluación',
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontFamily: AppTheme.fontTTNorms,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 16 + 6 - 6 * topBarOpacity,
-                                              letterSpacing: 0.8,
-                                              color: AppTheme.darkerText,
-                                            ),
+                                        padding: EdgeInsets.only(left: 12, top: 8),
+                                        child: Text(
+                                          'Evaluación',
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontFamily: AppTheme.fontTTNorms,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16 + 6 - 6 * topBarOpacity,
+                                            letterSpacing: 0.8,
+                                            color: AppTheme.darkerText,
                                           ),
+                                        ),
+                                      )
+                                    ],
+                                  ):Stack(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          //SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 , width: 35 +  6,),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 12, top: 8),
+                                            child: Text(
+                                              'Evaluación',
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16 + 6,
+                                                letterSpacing: 0.8,
+                                                color: AppTheme.white.withOpacity(0),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(left: 48, top: 0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            InkWell(
+                                            onTap: ()=> controller.onClicPrecision(),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 2,
+                                                        color: HexColor(controller.cursosUi.color1).withOpacity(controller.precision?1:0)
+                                                    ),
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(8.0) //         <--- border radius here
+                                                    ),
+                                                    color: HexColor(controller.cursosUi.color1).withOpacity(controller.precision?1:0)
+                                                ),
+                                                padding: EdgeInsets.only(top: 4, bottom: 4, left: 6, right: 6),
+                                                child:  Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    Icon(Ionicons.apps, color: controller.precision?AppTheme.white:HexColor(controller.cursosUi.color1), size: 20, ),
+                                                    Padding(padding: EdgeInsets.all(2),),
+                                                    FittedBox(
+                                                      fit: BoxFit.scaleDown,
+                                                      child: Text("Precisión",
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              fontFamily: AppTheme.fontTTNorms,
+                                                              letterSpacing: 0.5,
+                                                              color: controller.precision?AppTheme.white:HexColor(controller.cursosUi.color1),
+                                                              fontSize: 14
+                                                          )),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            //SvgPicture.asset(AppIcon.ic_presicion_procesamiento, width: 35, height: 35,),
+                                            Expanded(
+                                              child: Container(),
+                                            ),
+
+                                            Padding(padding: EdgeInsets.all(8)),
+                                            SvgPicture.asset(AppIcon.ic_procesear_nota, width: 35, height: 35,),
+                                            Padding(padding: EdgeInsets.all(8)),
+                                            SvgPicture.asset(AppIcon.ic_cerrar_curso, width: 35, height: 35,),
+                                            Padding(padding: EdgeInsets.all(16)),
+                                            SvgPicture.asset(AppIcon.ic_ayuda_procesar_nota, width: 35, height: 35,),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                Positioned(
+                                /*Positioned(
                                   right: 10,
                                   child: ClipOval(
                                     child: Material(
@@ -404,7 +479,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                       ),
                                     ),
                                   ),
-                                )
+                                )*/
                               ],
                             );
                           },
@@ -451,14 +526,12 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                   //scrollDirection: Axis.vertical,
                   children: [
                     tabRubroGeneral(controller, count),
-                    progress(tabRubroSesiones3(controller, count)),
-                    progress(_seletedItem==2?tabRubCompetencia(controller):Container())
+                    //progress(tabRubroSesiones3(controller, count)),
+                    controller.seletedItem==1?progress(tabRubCompetencia(controller)):Container(child: Center(child: CircularProgressIndicator(),),)
                   ],
                   onPageChanged: (index) {
-                    setState(() {
-                      topBarOpacity = 0;
-                      _seletedItem = index;
-                    });
+                    topBarOpacity = 0;
+                    controller.onChangeTab(index);
                   },
                   controller: _pageController,
                 ),
@@ -468,7 +541,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 bottom: 0,
                 top: 0,
                 child: Container(
-                  width: 32,
+                  width: 24,
                   padding: EdgeInsets.only(
                     top: AppBar().preferredSize.height +
                         MediaQuery.of(context).padding.top +
@@ -479,37 +552,36 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         shrinkWrap: true,
                         itemCount: controller.calendarioPeriodoList.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Center(
-                              child:Container(
-                                margin: const EdgeInsets.only(top: 0, left: 8, right: 0, bottom: 0),
-                                decoration: BoxDecoration(
-                                  color: controller.cursosUi.color3!=null?HexColor(controller.cursosUi.color3):AppTheme.colorAccent,
-                                  borderRadius: new BorderRadius.only(
-                                    topLeft: const Radius.circular(10.0),
-                                    bottomLeft:const Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Container(
-                                  height: 110,
-                                  margin: const EdgeInsets.only(top: 1, left: 1, right: 1, bottom: 1),
+                          return InkWell(
+                            focusColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            borderRadius: const BorderRadius.all(Radius.circular(9.0)),
+                            splashColor: HexColor(controller.cursosUi.color2).withOpacity(0.8),
+                            onTap: () {
+                              controller.onSelectedCalendarioPeriodo(controller.calendarioPeriodoList[index]);
+                            },
+                            child: Center(
+                                child:Container(
                                   decoration: BoxDecoration(
-                                    color:controller.calendarioPeriodoList[index].selected??false ? AppTheme.white: controller.cursosUi.color3!=null?HexColor(controller.cursosUi.color3):AppTheme.colorAccent,
+                                    color: controller.cursosUi.color3!=null?HexColor(controller.cursosUi.color3):AppTheme.colorAccent,
                                     borderRadius: new BorderRadius.only(
                                       topLeft: const Radius.circular(10.0),
                                       bottomLeft:const Radius.circular(10.0),
                                     ),
                                   ),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      focusColor: Colors.transparent,
-                                      highlightColor: Colors.transparent,
-                                      hoverColor: Colors.transparent,
-                                      borderRadius: const BorderRadius.all(Radius.circular(9.0)),
-                                      splashColor: HexColor(controller.cursosUi.color2).withOpacity(0.8),
-                                      onTap: () {
-                                        controller.onSelectedCalendarioPeriodo(controller.calendarioPeriodoList[index]);
-                                      },
+                                  child: Container(
+                                    height: 110,
+                                    margin: const EdgeInsets.only(top: 1, left: 1, right: 1, bottom: 1),
+                                    decoration: BoxDecoration(
+                                      color:controller.calendarioPeriodoList[index].selected??false ? AppTheme.white: controller.cursosUi.color3!=null?HexColor(controller.cursosUi.color3):AppTheme.colorAccent,
+                                      borderRadius: new BorderRadius.only(
+                                        topLeft: const Radius.circular(10.0),
+                                        bottomLeft:const Radius.circular(10.0),
+                                      ),
+                                    ),
+                                    child: Material(
+                                      color: Colors.transparent,
                                       child: Center(
                                         child: RotatedBox(quarterTurns: 1,
                                             child: Text(controller.calendarioPeriodoList[index].nombre??"".toUpperCase(), style: TextStyle(color: controller.calendarioPeriodoList[index].selected??false ? (controller.cursosUi.color3!=null?HexColor(controller.cursosUi.color3):AppTheme.colorAccent): AppTheme.white, fontFamily: AppTheme.fontName, fontWeight: FontWeight.w700, fontSize: 10), )
@@ -517,8 +589,8 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                       ),
                                     ),
                                   ),
-                                ),
-                              )
+                                )
+                            ),
                           );
                         }
                     ),
@@ -634,231 +706,245 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
     return nombre;
   }
 
-  Color getBackground() {
-    switch(_seletedItem){
-      case 15:
-        return HexColor("#E3F8FA");
-      default:
-        return AppTheme.background;
-    }
-  }
   //#region Tab
 
 
   ScrollControllers _scrollControllers = ScrollControllers();
   Widget tabRubCompetencia(RubroController controller) {
-
-    List<double> tablecolumnWidths = [];
-    for(dynamic s in controller.columnList2){
-      if(s is ContactoUi){
-        tablecolumnWidths.add(95.0);
-      } else if(s is CalendarioPeriodoUI){
-        tablecolumnWidths.add(70.0*3);
-      }else{
-        tablecolumnWidths.add(70.0);
+    if(controller.columnList2!=null){
+      List<double> tablecolumnWidths = [];
+      for(dynamic s in controller.columnList2){
+        if(s is ContactoUi){
+          tablecolumnWidths.add(95.0);
+        } else if(s is CalendarioPeriodoUI){
+          tablecolumnWidths.add(70.0*3);
+        }else{
+          tablecolumnWidths.add(70.0);
+        }
       }
-    }
 
-    if(controller.columnList2.length <= 3){
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+      if((controller.columnList2.length)<= 3){
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+            ),
+            Padding(padding: EdgeInsets.all(4)),
+            Center(
+              child: Text("Sin compentencias", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+            )
+          ],
+        );
+      }
+
+      return Padding(
+        padding: const EdgeInsets.only(left: 8, right: 0, top: 24),
+        child:  StickyHeadersTableV2(
+          scrollControllers: _scrollControllers,
+          cellDimensions: CellDimensions.variableColumnWidth(
+              stickyLegendHeight:125,
+              stickyLegendWidth: 65,
+              contentCellHeight: 45,
+              columnWidths: tablecolumnWidths
           ),
-          Padding(padding: EdgeInsets.all(4)),
-          Center(
-            child: Text("Sin compentencias", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
-          )
-        ],
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 0, top: 24),
-      child:  StickyHeadersTableV2(
-        scrollControllers: _scrollControllers,
-        cellDimensions: CellDimensions.variableColumnWidth(
-            stickyLegendHeight:125,
-            stickyLegendWidth: 65,
-            contentCellHeight: 45,
-            columnWidths: tablecolumnWidths
-        ),
-        columnsLength: controller.columnList2.length,
-        rowsLength: controller.rowList2.length,
-        columnsTitleBuilder: (i) {
-          dynamic o = controller.columnList2[i];
-          if(o is ContactoUi){
-            return Container(
-                constraints: BoxConstraints.expand(),
-                child: Center(
-                  child:  Text("Apellidos y\n Nombres", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500 ),),
-                ),
-                decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                    ),
-                    color: HexColor("#EFEDEE")
-                )
-            );
-          }else if(o is CompetenciaUi){
-            return Container(
-                constraints: BoxConstraints.expand(),
-                padding: EdgeInsets.all(8),
-                child: Center(
-                  child:  RotatedBox(
-                    quarterTurns: -1,
-                    child: Text(o.nombre??"", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
+          columnsLength: controller.columnList2.length,
+          rowsLength: controller.rowList2.length,
+          columnsTitleBuilder: (i) {
+            dynamic o = controller.columnList2[i];
+            if(o is ContactoUi){
+              return Container(
+                  constraints: BoxConstraints.expand(),
+                  child: Center(
+                    child:  Text("Apellidos y\n Nombres", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500 ),),
                   ),
-                ),
-                decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                  decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                      ),
+                      color: HexColor("#EFEDEE")
+                  )
+              );
+            }else if(o is CompetenciaUi){
+              return Container(
+                  constraints: BoxConstraints.expand(),
+                  padding: EdgeInsets.all(8),
+                  child: Center(
+                    child:  RotatedBox(
+                      quarterTurns: -1,
+                      child: Text(o.nombre??"", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
                     ),
-                    color: HexColor("#EFEDEE")
-                )
-            );
-          }else if(o is CapacidadUi){
-            return Container(
-                constraints: BoxConstraints.expand(),
-                padding: EdgeInsets.all(8),
-                child: Center(
-                  child:  RotatedBox(
-                    quarterTurns: -1,
-                    child: Text(o.nombre??"", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.greyDarken3 ),),
                   ),
-                ),
-                decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                  decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                      ),
+                      color: HexColor("#EFEDEE")
+                  )
+              );
+            }else if(o is CapacidadUi){
+              return Container(
+                  constraints: BoxConstraints.expand(),
+                  padding: EdgeInsets.all(8),
+                  child: Center(
+                    child:  RotatedBox(
+                      quarterTurns: -1,
+                      child: Text(o.nombre??"", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.greyDarken3 ),),
                     ),
-                    color: AppTheme.white
-                )
-            );
-          }else if(o is CalendarioPeriodoUI){
-            return Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                    child: Container(
-                        constraints: BoxConstraints.expand(),
-                        padding: EdgeInsets.all(8),
-                        child: Center(
-                          child:  RotatedBox(
-                            quarterTurns: -1,
-                            child: Text("Final ${o.nombre??""}", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.greyDarken3, fontWeight: FontWeight.w700 ),),
+                  ),
+                  decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                      ),
+                      color: AppTheme.white
+                  )
+              );
+            }else if(o is CalendarioPeriodoUI){
+              return Row(
+                children: [
+                  Expanded(
+                      flex: 1,
+                      child: Container(
+                          constraints: BoxConstraints.expand(),
+                          padding: EdgeInsets.all(8),
+                          child: Center(
+                            child:  RotatedBox(
+                              quarterTurns: -1,
+                              child: Text("Final ${o.nombre??""}", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.greyDarken3, fontWeight: FontWeight.w700 ),),
+                            ),
                           ),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                              ),
+                              color: AppTheme.greyLighten1
+                          )
+                      )
+                  ),
+                  Expanded(
+                      flex: 2,
+                      child: Container(
+                          constraints: BoxConstraints.expand(),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                              ),
+                              color: HexColor("#EFEDEE")
+                          )
+                      )
+                  )
+                ],
+              );
+            }else{
+              return Container();
+            }
+
+          },
+          rowsTitleBuilder: (i) {
+            dynamic o = controller.rowList2[i];
+            if(o is PersonaUi){
+              return  Container(
+                  constraints: BoxConstraints.expand(),
+                  child: Row(
+                    children: [
+                      Padding(padding: EdgeInsets.all(4)),
+                      Expanded(
+                          child: Text((i+1).toString() + ".", style: TextStyle(color: AppTheme.white, fontSize: 12),)
+                      ),
+                      Container(
+                        height: 30,
+                        width: 30,
+                        margin: EdgeInsets.only(right: 3),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: HexColor(controller.cursosUi.color3),
                         ),
-                        decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                              right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            ),
-                            color: AppTheme.greyLighten1
-                        )
-                    )
-                ),
-                Expanded(
-                    flex: 2,
-                    child: Container(
-                        constraints: BoxConstraints.expand(),
-                        decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                              right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                            ),
-                            color: HexColor("#EFEDEE")
-                        )
-                    )
-                )
-              ],
-            );
-          }else{
-            return Container();
-          }
+                        child: true?
+                        CachedNetworkImage(
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          imageUrl: o.foto??"",
+                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                          imageBuilder: (context, imageProvider) =>
+                              Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                              ),
+                        ):
+                        Container(),
+                      ),
+                      Padding(padding: EdgeInsets.all(1)),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                      ),
+                      color: HexColor(controller.cursosUi.color2)
+                  )
+              );
+            }else{
+              return  Container();
+            }
 
-        },
-        rowsTitleBuilder: (i) {
-           dynamic o = controller.rowList2[i];
-           if(o is PersonaUi){
-             return  Container(
-                 constraints: BoxConstraints.expand(),
-                 child: Row(
-                   children: [
-                     Padding(padding: EdgeInsets.all(4)),
-                     Expanded(
-                         child: Text((i+1).toString() + ".", style: TextStyle(color: AppTheme.white, fontSize: 12),)
-                     ),
-                     Container(
-                       height: 30,
-                       width: 30,
-                       margin: EdgeInsets.only(right: 3),
-                       decoration: BoxDecoration(
-                         shape: BoxShape.circle,
-                         color: HexColor(controller.cursosUi.color3),
-                       ),
-                       child: true?
-                       CachedNetworkImage(
-                         placeholder: (context, url) => CircularProgressIndicator(),
-                         imageUrl: o.foto??"",
-                         errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                         imageBuilder: (context, imageProvider) =>
-                             Container(
-                                 decoration: BoxDecoration(
-                                   borderRadius: BorderRadius.all(Radius.circular(15)),
-                                   image: DecorationImage(
-                                     image: imageProvider,
-                                     fit: BoxFit.cover,
-                                   ),
-                                 )
-                             ),
-                       ):
-                       Container(),
-                     ),
-                     Padding(padding: EdgeInsets.all(1)),
-                   ],
-                 ),
-                 decoration: BoxDecoration(
-                     border: Border(
-                       top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                       right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                     ),
-                     color: HexColor(controller.cursosUi.color2)
-                 )
-             );
-           }else{
-             return  Container();
-           }
-
-        },
-        contentCellBuilder: (i, j) {
-          dynamic o = controller.cellListList[j][i];
-          if(o is PersonaUi){
-             return Container(
-                constraints: BoxConstraints.expand(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
+          },
+          contentCellBuilder: (i, j) {
+            dynamic o = controller.cellListList[j][i];
+            if(o is PersonaUi){
+              return Container(
+                  constraints: BoxConstraints.expand(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(o.nombreCompleto??"", maxLines: 1, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppTheme.black),),
+                      Text(o.apellidos??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10),),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                        right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                      ),
+                      color: _getColorAlumnoBloqueados(o, 0)
+                  )
+              );
+            }else if(o is EvaluacionCapacidadUi){
+              return InkWell(
+                onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
+                child: Stack(
                   children: [
-                    Text(o.nombreCompleto??"", maxLines: 1, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppTheme.black),),
-                    Text(o.apellidos??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10),),
+                    Container(
+                      constraints: BoxConstraints.expand(),
+                      decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                            right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                          ),
+                          color: _getColorAlumnoBloqueados(o.personaUi, 0)
+                      ),
+                      child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
+                    ),
+                    Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
+                    ),
                   ],
                 ),
-                decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                    ),
-                    color: _getColorAlumnoBloqueados(o, 0)
-                )
-            );
-          }else if(o is EvaluacionCapacidadUi){
-            return InkWell(
-              onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
-              child: Stack(
+              );
+            }else if(o is EvaluacionCompetenciaUi){
+              return Stack(
                 children: [
                   Container(
                     constraints: BoxConstraints.expand(),
@@ -867,9 +953,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                           top: BorderSide(color: HexColor(controller.cursosUi.color3)),
                           right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
                         ),
-                        color: _getColorAlumnoBloqueados(o.personaUi, 0)
+                        color: _getColorAlumnoBloqueados(o.personaUi, 1, c_default: HexColor("#EFEDEE"))
                     ),
-                    child: _getTipoNota(o.valorTipoNotaUi, o.nota),
+                    child: _getTipoNota(controller.tipoNotaUi,o.valorTipoNotaUi, o.nota, controller.precision),
                   ),
                   Positioned(
                       bottom: 4,
@@ -877,98 +963,79 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                       child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
                   ),
                 ],
-              ),
-            );
-          }else if(o is EvaluacionCompetenciaUi){
-            return Stack(
-              children: [
-                Container(
-                  constraints: BoxConstraints.expand(),
-                  decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                      ),
-                      color: _getColorAlumnoBloqueados(o.personaUi, 1, c_default: HexColor("#EFEDEE"))
+              );
+            }else if(o is EvaluacionCalendarioPeriodoUi){
+              return Row(
+                children: [
+                  Expanded(
+                      flex: 1,
+                      child: Stack(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints.expand(),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                  right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                ),
+                                color: _getColorAlumnoBloqueados(o.personaUi, 2, c_default: AppTheme.greyLighten1)
+                            ),
+                            child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
+                          ),
+                          Positioned(
+                              bottom: 4,
+                              right: 4,
+                              child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
+                          ),
+                        ],
+                      )
                   ),
-                  child: _getTipoNota(o.valorTipoNotaUi, o.nota),
-                ),
-                Positioned(
-                    bottom: 4,
-                    right: 4,
-                    child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
-                ),
-              ],
-            );
-          }else if(o is EvaluacionCalendarioPeriodoUi){
-            return Row(
-              children: [
-                Expanded(
-                    flex: 1,
-                    child: Stack(
-                      children: [
-                        Container(
+                  Expanded(
+                      flex: 2,
+                      child: Container(
                           constraints: BoxConstraints.expand(),
                           decoration: BoxDecoration(
                               border: Border(
-                                top: BorderSide(color: HexColor(controller.cursosUi.color3)),
                                 right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
                               ),
-                              color: _getColorAlumnoBloqueados(o.personaUi, 2, c_default: AppTheme.greyLighten1)
-                          ),
-                          child: _getTipoNota(o.valorTipoNotaUi, o.nota),
-                        ),
-                        Positioned(
-                            bottom: 4,
-                            right: 4,
-                            child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
-                        ),
-                      ],
-                    )
-                ),
-                Expanded(
-                    flex: 2,
-                    child: Container(
-                        constraints: BoxConstraints.expand(),
-                        decoration: BoxDecoration(
-                            border: Border(
-                              right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                            ),
-                            color: HexColor("#EFEDEE")
-                        )
-                    )
-                ),
-              ],
-            );
-          }else{
-            return Container();
-          }
-
-        },
-        legendCell: Stack(
-          children: [
-            Container(
-                decoration: BoxDecoration(
-                    color: HexColor(controller.cursosUi.color1),
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
-                )
-            ),
-            Container(
-                child: Center(
-                  child: Text('N°', style: TextStyle(color: AppTheme.white, fontWeight: FontWeight.w700),),
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                              color: HexColor("#EFEDEE")
+                          )
+                      )
                   ),
-                )
-            ),
+                ],
+              );
+            }else{
+              return Container();
+            }
 
-          ],
+          },
+          legendCell: Stack(
+            children: [
+              Container(
+                  decoration: BoxDecoration(
+                      color: HexColor(controller.cursosUi.color1),
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
+                  )
+              ),
+              Container(
+                  child: Center(
+                    child: Text('N°', style: TextStyle(color: AppTheme.white, fontWeight: FontWeight.w700),),
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                    ),
+                  )
+              ),
+
+            ],
+          ),
         ),
-      ),
 
-    );
+      );
+    }else{
+      return Container();
+    }
   }
 
   Widget tabRubroGeneral(RubroController controller, int countRow) {
@@ -1678,9 +1745,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
     return true;
   }
 
-  Widget? _getTipoNota(ValorTipoNotaUi? valorTipoNotaUi, double? nota) {
+  Widget? _getTipoNota(TipoNotaUi? tipoNotaUi, ValorTipoNotaUi? valorTipoNotaUi, double? nota, bool precision) {
 
-    switch(valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO){
+    var tipo =TipoNotaTiposUi.VALOR_NUMERICO;
+    if(!precision) tipo = tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
+    switch(tipo){
       case TipoNotaTiposUi.SELECTOR_VALORES:
         Color color;
         if (("B" == (valorTipoNotaUi?.titulo??"") || "C" == (valorTipoNotaUi?.titulo??""))) {
@@ -1691,7 +1760,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
           color = AppTheme.black;
         }
         return Center(
-          child: Text(valorTipoNotaUi?.titulo??"",
+          child: Text(valorTipoNotaUi?.titulo??"-",
               style: TextStyle(
                 fontFamily: AppTheme.fontTTNormsMedium,
                 fontSize: 12,
@@ -1700,64 +1769,52 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
               )),
         );
       case TipoNotaTiposUi.SELECTOR_ICONOS:
-        return Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                      height: 3.5,
-                      width: 3.5,
-                      decoration: new BoxDecoration(
-                        color: Colors.black,
-                        shape: BoxShape.circle,
-                      )
-                  ),
-                  Padding(padding: EdgeInsets.only(left: 8)),
-                  Text(valorTipoNotaUi?.titulo??"",
-                      style: TextStyle(
-                        fontFamily: AppTheme.fontTTNormsMedium,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      )),
-                  CachedNetworkImage(
-                    height: 20,
-                    width: 20,
-                    imageUrl: valorTipoNotaUi?.icono??"",
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                  Padding(padding: EdgeInsets.only(left: 8)),
-                  Expanded(child: Text(valorTipoNotaUi?.alias??"",))
-                ],
-              ),
-              Padding(padding: EdgeInsets.only(left: 12),
-                child:  Text("Valor numérico: " + (valorTipoNotaUi?.valorNumerico??0.0).toStringAsFixed(1),
-                    style: TextStyle(
-                      fontFamily: AppTheme.fontName,
-                      fontSize: 8,
-                    )
-                ),
-              ),
-            ],
-          ),
-        );
+        if(valorTipoNotaUi!=null){
+          return Container(
+            padding: EdgeInsets.all(4),
+            child:  CachedNetworkImage(
+              imageUrl: valorTipoNotaUi.icono??"",
+              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          );
+        }else{
+          return Center(
+            child: Text("-",
+                style: TextStyle(
+                  fontFamily: AppTheme.fontTTNormsMedium,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.black,
+                )),
+          );
+        }
       case TipoNotaTiposUi.VALOR_ASISTENCIA:
       case TipoNotaTiposUi.VALOR_NUMERICO:
       case TipoNotaTiposUi.SELECTOR_NUMERICO:
         Color color;
-      if ((nota??0) < 10.5) {
-        color = AppTheme.redDarken4;
-      }else if ( (nota??0) >= 10.5) {
-        color = AppTheme.blueDarken4;
-      }else {
-        color = AppTheme.black;
-      }
+        if(tipoNotaUi?.escalavalorMaximo == 20){
+          if ((nota??0) < 10.5) {
+            color = AppTheme.redDarken4;
+          }else if ( (nota??0) >= 10.5) {
+            color = AppTheme.blueDarken4;
+          }else {
+            color = AppTheme.black;
+          }
+        }else if(tipoNotaUi?.escalavalorMaximo == 4){
+          if ((nota??0) < 3) {
+            color = AppTheme.redDarken4;
+          }else if ( (nota??0) >= 3) {
+            color = AppTheme.blueDarken4;
+          }else {
+            color = AppTheme.black;
+          }
+        }else{
+          color = AppTheme.black;
+        }
 
         return Center(
-          child: Text("${(nota??0).toStringAsFixed(1)}", style: TextStyle(
+          child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
             fontFamily: AppTheme.fontTTNormsMedium,
             fontSize: 12,
             fontWeight: FontWeight.w700,

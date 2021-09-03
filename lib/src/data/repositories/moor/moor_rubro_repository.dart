@@ -540,7 +540,6 @@ class MoorRubroRepository extends RubroRepository{
     var queryEval = SQL.select(SQL.evaluacionProceso).join([
         innerJoin(SQL.rubroEvaluacionProceso, SQL.evaluacionProceso.rubroEvalProcesoId.equalsExp(SQL.rubroEvaluacionProceso.rubroEvalProcesoId))
     ]);
-    
     queryEval.where(SQL.rubroEvaluacionProceso.silaboEventoId.equals(silaboEventoId));
     queryEval.where(SQL.rubroEvaluacionProceso.calendarioPeriodoId.equals(calendarioPeriodoId));
 
