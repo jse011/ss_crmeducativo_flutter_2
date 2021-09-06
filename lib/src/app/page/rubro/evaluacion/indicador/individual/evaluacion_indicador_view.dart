@@ -652,10 +652,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                         constraints: BoxConstraints.expand(),
                         padding: EdgeInsets.all(8),
                         child: Center(
-                          child:  RotatedBox(
-                            quarterTurns: -1,
-                            child: Text(" ", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
-                          ),
+                          child:  Text("Nota", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
                         ),
                         decoration: BoxDecoration(
                             border: Border(
@@ -808,17 +805,17 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                 ),
                                 color: _getColorAlumnoBloqueados(o.personaUi, 0)
                             ),
-                            //child: _getTipoNota(o.valorTipoNotaUi, o.nota, i),
-                          ),
-                          Positioned(
-                              bottom: 4,
-                              right: 4,
-                              child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
+                            child: Center(
+                              child: Text("${o.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
+                                  fontFamily: AppTheme.fontTTNormsMedium,
+                                  fontSize: 14,
+                              ),),
+                            ),
                           ),
                         ],
                       ),
                     );
-                  }else if(o == "comentario"){
+                  } else if(o == "comentario"){
                     return InkWell(
                       onTap: (){},
                       child: Container(
@@ -964,7 +961,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
             placeholder: (context, url) => Stack(
               children: [
                 CircularProgressIndicator(
-                  color: color_texto,
+                  backgroundColor: color_texto,
                 )
               ],
             ),
@@ -1087,7 +1084,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
               placeholder: (context, url) => Stack(
                 children: [
                   CircularProgressIndicator(
-                    color: color_texto,
+                    backgroundColor: color_texto,
                   )
                 ],
               ),
