@@ -874,7 +874,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
 
   Color _getColorAlumnoBloqueados(PersonaUi? personaUi, int intenciadad, {Color c_default = Colors.white}) {
     if(!(personaUi?.contratoVigente??false)){
-      print("contratoVigente true");
+
       if(intenciadad == 0){
         return AppTheme.redLighten4;
       }else  if(intenciadad == 1){
@@ -885,7 +885,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
         return AppTheme.redLighten4;
       }
     }else if((personaUi?.soloApareceEnElCurso??false)){
-      print("soloApareceEvaluacion true");
+
       if(intenciadad == 0){
         return AppTheme.deepOrangeLighten4;
       }else  if(intenciadad == 1){

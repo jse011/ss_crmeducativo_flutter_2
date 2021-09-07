@@ -1,3 +1,4 @@
+import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/origen_rubro_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
@@ -22,4 +23,7 @@ class RubricaEvaluacionUi{
   double? peso;
   bool? guardadoLocal;
   int? calendarioPeriodoId;
+  int? desempenioIcdId;
+  CriterioUi? criterioUi;
+  String? tituloRubroCabecera;
 }

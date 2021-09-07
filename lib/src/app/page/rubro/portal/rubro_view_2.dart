@@ -1759,14 +1759,35 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
         }else {
           color = AppTheme.black;
         }
-        return Center(
-          child: Text(valorTipoNotaUi?.titulo??"-",
-              style: TextStyle(
-                fontFamily: AppTheme.fontTTNormsMedium,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: color,
-              )),
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+              Container(
+                child: Text("AD",
+                    style: TextStyle(
+                      fontFamily: AppTheme.fontTTNormsMedium,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    )),
+              ),
+            Column(
+              children: [
+                //Padding(padding: Eg),
+                Container(
+                  padding: EdgeInsets.only(left: 4),
+                  child: Text("(${ valorTipoNotaUi?.titulo??"-"})",
+                      style: TextStyle(
+                        fontFamily: AppTheme.fontTTNormsMedium,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: color,
+                      )),
+                ),
+              ],
+            )
+          ],
         );
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         if(valorTipoNotaUi!=null){

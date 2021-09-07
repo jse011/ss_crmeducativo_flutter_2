@@ -576,6 +576,7 @@ class MoorRubroRepository extends RubroRepository{
     RubricaEvaluacionUi rubricaEvaluacionUi = RubricaEvaluacionUi();
     rubricaEvaluacionUi.rubricaId = rubroEvaluacionProcesoData?.rubroEvalProcesoId;
     rubricaEvaluacionUi.titulo = rubroEvaluacionProcesoData?.titulo;
+    rubricaEvaluacionUi.desempenioIcdId = rubroEvaluacionProcesoData?.desempenioIcdId;
     rubricaEvaluacionUi.efechaCreacion = AppTools.f_fecha_letras(rubroEvaluacionProcesoData?.fechaCreacion);
     rubricaEvaluacionUi.fechaCreacion = rubroEvaluacionProcesoData?.fechaCreacion;
     rubricaEvaluacionUi.mediaDesvicion = '${(rubroEvaluacionProcesoData?.promedio??0).toStringAsFixed(1)} (${(rubroEvaluacionProcesoData?.desviacionEstandar??0).toStringAsFixed(1)})';
@@ -684,21 +685,35 @@ class MoorRubroRepository extends RubroRepository{
   @override
   Future<List<CompetenciaUi>> getRubroCompetencia(int? silaboEventoId, int? calendarioPeriodoId, int? competenciaId) async{
     AppDataBase SQL = AppDataBase();
+    final rubroPadre = SQL.alias(SQL.rubroEvaluacionProceso, 'rubroPadre');
+    var queryRubro = SQL.select(SQL.rubroEvaluacionProceso).join([
+      leftOuterJoin(SQL.rubroEvalRNPFormula, SQL.rubroEvaluacionProceso.rubroEvalProcesoId.equalsExp(SQL.rubroEvalRNPFormula.rubroEvaluacionSecId)),
+      leftOuterJoin(rubroPadre, SQL.rubroEvalRNPFormula.rubroEvaluacionPrimId.equalsExp(rubroPadre.rubroEvalProcesoId))
+    ]);
 
-    var queryRubro = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
-    queryRubro.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
-    queryRubro.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
+    queryRubro.where(SQL.rubroEvaluacionProceso.calendarioPeriodoId.equals(calendarioPeriodoId));
+    queryRubro.where(SQL.rubroEvaluacionProceso.silaboEventoId.equals(silaboEventoId));
+    queryRubro.where(SQL.rubroEvaluacionProceso.tiporubroid.isIn([TIPO_RUBRO_BIDIMENCIONAL_DETALLE, TIPO_RUBRO_UNIDIMENCIONAL]));
     //query.where((tbl) => tbl.tipoFormulaId.isNull());
-    queryRubro.where((tbl) => tbl.tipoFormulaId.equals(0));
+    queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.equals(0));
     //queryRubro.where((tbl) => tbl.sesionAprendizajeId.isNotNull());
-    queryRubro.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
-
-    List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await queryRubro.get();
+    queryRubro.orderBy([OrderingTerm.desc(SQL.rubroEvaluacionProceso.fechaCreacion)]);
+    List<RubroEvaluacionProcesoData> rubroEvalProcesoList = [];
+    Map<String,RubroEvaluacionProcesoData?> rubroPadresMap = Map();
     List<String> rubroEvalProcesoIdList = [];
     List<String> rubroTipoNotaIdList = [];
-    for(RubroEvaluacionProcesoData rubroEvalProcesoData in rubroEvalProcesoList){
-      rubroEvalProcesoIdList.add(rubroEvalProcesoData.rubroEvalProcesoId);
-      rubroTipoNotaIdList.add(rubroEvalProcesoData.tipoNotaId??"");
+    for(var row in await queryRubro.get()){//Puede venir repetida
+      RubroEvaluacionProcesoData item = row.readTable(SQL.rubroEvaluacionProceso);
+      RubroEvaluacionProcesoData? rubroEvaluacionProcesoData = rubroEvalProcesoList.firstWhereOrNull((element) => element.rubroEvalProcesoId ==  item.rubroEvalProcesoId);
+      if(rubroEvaluacionProcesoData == null){
+        rubroEvalProcesoIdList.add(item.rubroEvalProcesoId);
+        rubroTipoNotaIdList.add(item.tipoNotaId??"");
+        rubroEvalProcesoList.add(item);
+      }
+      RubroEvaluacionProcesoData? itemPadre = row.readTableOrNull(rubroPadre);
+      if(itemPadre?.tiporubroid == TIPO_RUBRO_BIMENSIONAL){//evitar agregar rubro formulas
+        rubroPadresMap[item.rubroEvalProcesoId] = itemPadre;
+      }
     }
 
     List<TipoNotaUi> tipoNotaUiList = [];
@@ -734,6 +749,8 @@ class MoorRubroRepository extends RubroRepository{
         for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in  rubroEvalProcesoList){
           if(capacidadUi.capacidadId == rubroEvaluacionProcesoData.competenciaId){
             RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
+            rubricaEvaluacionUi.tituloRubroCabecera = rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.titulo;
+
             rubricaEvaluacionUi.evaluacionUiList = [];
             TipoNotaUi? tipoNotaUi = tipoNotaUiList.firstWhereOrNull((element)=> element.tipoNotaId == rubricaEvaluacionUi.tipoNotaId);
             rubricaEvaluacionUi.tipoNotaUi = tipoNotaUi;

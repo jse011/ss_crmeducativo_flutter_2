@@ -14,4 +14,6 @@ class EvaluacionCapacidadUi{
 
   ValorTipoNotaUi? valorTipoNotaUi;
 
+  double? totalPeso;
+
 }

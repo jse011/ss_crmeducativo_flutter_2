@@ -5,7 +5,7 @@ class RubricaEvaluacionPesoUi{
   RubricaEvaluacionUi? rubricaEvaluacionUi;
   double get peso => rubricaEvaluacionUi?.peso??0.0;
   set peso(double peso){
-    this.peso = peso;
+    rubricaEvaluacionUi?.peso = peso;
   }
   RubricaEvaluacionPesoUi(this.rubricaEvaluacionUi);
 }

@@ -328,62 +328,58 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   void onClicEvaluar(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi personaUi) {
-    if(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.evaluacionId!=null) {
-      for (List cellList in mapCellListList[personaUi] ?? []) {
-        for (var cell in cellList) {
-          if (cell is EvaluacionRubricaValorTipoNotaUi) {
-            if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-                && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
-                && cell != evaluacionRubricaValorTipoNotaUi) {
-              cell.toggle = false;
-            }
+    for (List cellList in mapCellListList[personaUi] ?? []) {
+      for (var cell in cellList) {
+        if (cell is EvaluacionRubricaValorTipoNotaUi) {
+          if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+              && cell != evaluacionRubricaValorTipoNotaUi) {
+            cell.toggle = false;
           }
         }
       }
-
-      evaluacionRubricaValorTipoNotaUi.toggle = !(evaluacionRubricaValorTipoNotaUi.toggle ?? false);
-      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
-        evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
-        evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
-      }else{
-        evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = 0.0;
-        evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = null;
-        evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = null;
-      }
-
-      _actualizarCabecera(personaUi);
-      _modificado = true;
-      refreshUI();
-
-      presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
     }
+
+    evaluacionRubricaValorTipoNotaUi.toggle = !(evaluacionRubricaValorTipoNotaUi.toggle ?? false);
+    if(evaluacionRubricaValorTipoNotaUi.toggle??false){
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
+    }else{
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = 0.0;
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = null;
+      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = null;
+    }
+
+    _actualizarCabecera(personaUi);
+    _modificado = true;
+    refreshUI();
+
+    presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
   }
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi personaUi, nota) {
-    if(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.evaluacionId!=null) {
-      for (List cellList in mapCellListList[personaUi] ?? []) {
-        for (var cell in cellList) {
-          if (cell is EvaluacionRubricaValorTipoNotaUi) {
-            if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-                && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
-                && cell != evaluacionRubricaValorTipoNotaUi) {
-              cell.toggle = false;
-            }
+    for (List cellList in mapCellListList[personaUi] ?? []) {
+      for (var cell in cellList) {
+        if (cell is EvaluacionRubricaValorTipoNotaUi) {
+          if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+              && cell != evaluacionRubricaValorTipoNotaUi) {
+            cell.toggle = false;
           }
         }
       }
-
-      evaluacionRubricaValorTipoNotaUi.toggle = true;
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = nota;
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
-
-      _actualizarCabecera(personaUi);
-      _modificado = true;
-      refreshUI();
-      presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
     }
+
+    evaluacionRubricaValorTipoNotaUi.toggle = true;
+    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = nota;
+    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
+    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
+
+    _actualizarCabecera(personaUi);
+    _modificado = true;
+    refreshUI();
+    presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
   }
 
   String getRangoNota(ValorTipoNotaUi? valorTipoNotaUi){
@@ -410,15 +406,13 @@ class EvaluacionIndicadorMultipleController extends Controller {
     for(List cellList in mapCellListList[personaUi]??[]){
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
-          if(cell.evaluacionUi?.evaluacionId!=null){
-            if(cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi.valorTipoNotaId){
-              cell.toggle = true;
-                cell.evaluacionUi?.nota = valorTipoNotaUi.valorNumerico;//actualizar la nota solo cuando no esta selecionado
-                cell.evaluacionUi?.valorTipoNotaId = valorTipoNotaUi.valorTipoNotaId;
-                cell.evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
-            }else{
-              cell.toggle = false;
-            }
+          if(cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi.valorTipoNotaId){
+            cell.toggle = true;
+            cell.evaluacionUi?.nota = valorTipoNotaUi.valorNumerico;//actualizar la nota solo cuando no esta selecionado
+            cell.evaluacionUi?.valorTipoNotaId = valorTipoNotaUi.valorTipoNotaId;
+            cell.evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
+          }else{
+            cell.toggle = false;
           }
 
         }
@@ -482,15 +476,14 @@ class EvaluacionIndicadorMultipleController extends Controller {
     for(List cellList in mapCellListList[personaUi]??[]){
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
-          if(cell.evaluacionUi?.evaluacionId!=null){
-              cell.toggle = false;
-              cell.evaluacionUi?.nota = 0.0;
-              cell.evaluacionUi?.valorTipoNotaId = null;
-              cell.evaluacionUi?.valorTipoNotaUi = null;
-          }
+          cell.toggle = false;
+          cell.evaluacionUi?.nota = 0.0;
+          cell.evaluacionUi?.valorTipoNotaId = null;
+          cell.evaluacionUi?.valorTipoNotaUi = null;
         }
       }
     }
+    _actualizarCabecera(personaUi);
     _modificado = true;
     refreshUI();
 

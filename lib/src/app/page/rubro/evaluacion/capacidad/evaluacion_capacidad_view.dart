@@ -13,19 +13,24 @@ import 'package:lottie/lottie.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_controller.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_peso_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_total_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
 
 class EvaluacionCapacidadView extends View{
   EvaluacionCapacidadUi? evaluacionCapacidadUi;
@@ -96,17 +101,198 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   }
 
   @override
-  Widget get view => Container(
-    color: AppTheme.white,
-    child: Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        children: <Widget>[
-          getMainTab(),
-          getAppBarUI(),
-        ],
-      ),
-    ),
+  Widget get view => ControlledWidgetBuilder<EvaluacionCapacidadController>(
+      builder: (context, controller) {
+          return ControlledWidgetBuilder<EvaluacionCapacidadController>(
+              builder: (context, controller) {
+                return Container(
+                  color: AppTheme.white,
+                  child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: Stack(
+                      children: <Widget>[
+                        getMainTab(),
+                        getAppBarUI(),
+                        if(controller.showMsgAlumnoNoVigente)
+                          ArsProgressWidget(
+                              blur: 2,
+                              backgroundColor: Color(0x33000000),
+                              animationDuration: Duration(milliseconds: 500),
+                              loadingWidget: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16), // if you need this
+                                  side: BorderSide(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all(16),
+                                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: Icon(Icons.supervised_user_circle, size: 35, color: AppTheme.white,),
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: AppTheme.colorAccent),
+                                          ),
+                                          Padding(padding: EdgeInsets.all(8)),
+                                          Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(padding: EdgeInsets.all(4),),
+                                                  Text("Contrato no vigente", style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: AppTheme.fontTTNormsMedium
+                                                  ),),
+                                                  Padding(padding: EdgeInsets.all(8),),
+                                                  Text("El Contrato de ${controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??""} no esta vigente.",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        height: 1.5
+                                                    ),),
+                                                  Padding(padding: EdgeInsets.all(16),),
+                                                ],
+                                              )
+                                          )
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                              child: Container()
+                                          ),
+                                          Padding(padding: EdgeInsets.all(8)),
+                                          Expanded(child: ElevatedButton(
+                                            onPressed: () {
+                                              //Navigator.of(context).pop(true);
+                                              controller.hideMsgAlumnoNoVigente();
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              primary: AppTheme.colorAccent,
+                                              onPrimary: Colors.white,
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            child: Text('Salir'),
+                                          )),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                          ),
+                        if(controller.showDialogClearEvaluacion)
+                          ArsProgressWidget(
+                              blur: 2,
+                              backgroundColor: Color(0x33000000),
+                              animationDuration: Duration(milliseconds: 500),
+                              loadingWidget: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16), // if you need this
+                                  side: BorderSide(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all(16),
+                                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: 50,
+                                            height: 50,
+                                            child: Icon(Icons.cleaning_services_rounded, size: 35, color: AppTheme.white,),
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: AppTheme.colorAccent),
+                                          ),
+                                          Padding(padding: EdgeInsets.all(8)),
+                                          Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(padding: EdgeInsets.all(4),),
+                                                  Text("Borrar todo y evaluar de nuevo", style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: AppTheme.fontTTNormsMedium
+                                                  ),),
+                                                  Padding(padding: EdgeInsets.all(4),),
+                                                  Text("¿Está seguro de volver a evaluar todo de nuevo?",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        height: 1.5
+                                                    ),),
+                                                  Padding(padding: EdgeInsets.all(4),),
+                                                ],
+                                              )
+                                          )
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                              child: OutlinedButton(
+                                                onPressed: () {
+                                                  controller.onClickCancelarClearEvaluacion();
+                                                },
+                                                child: Text('Cancelar'),
+                                                style: OutlinedButton.styleFrom(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(8),
+                                                  ),
+                                                ),
+                                              )
+                                          ),
+                                          Padding(padding: EdgeInsets.all(8)),
+                                          Expanded(child: ElevatedButton(
+                                            onPressed: () {
+                                              controller.onClicClearEvaluacionAll();
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              primary: Colors.red,
+                                              onPrimary: Colors.white,
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                              ),
+                                            ),
+                                            child: Text('Borrar todo'),
+                                          )),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                          )
+                      ],
+                    ),
+                  ),
+                );
+              }
+          );
+      }
   );
 
   Widget getAppBarUI() {
@@ -227,6 +413,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
 
     return ControlledWidgetBuilder<EvaluacionCapacidadController>(
         builder: (context, controller) {
+
           return Container(
             padding: EdgeInsets.only(
                 top: AppBar().preferredSize.height +
@@ -349,111 +536,179 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       )
                   ),
                 ),
-                if(controller.precision)
-                SliverPadding(
-                  padding: EdgeInsets.only(left: 24, right: 24, top: 16),
-                  sliver: SliverList(
-                      delegate: SliverChildListDelegate(
-                        [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              CachedNetworkImage(
-                                placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(),
-                                ),
-                                imageUrl: controller.evaluacionCapacidadUi.personaUi?.foto??"",
-                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                                imageBuilder: (context, imageProvider) =>
-                                    Container(
-                                        width: 35,
-                                        height: 35,
-                                        margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
-                                    ),
-                              ),
-                              Expanded(
-                                  child: Text((controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"").toUpperCase(),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontFamily: AppTheme.fontTTNorms,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 12,
-                                        letterSpacing: 0.8,
-                                        color: AppTheme.darkerText,
-                                      ))
-                              ),
-                            ],
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(top: 8)
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    width: 85,
-                                    height: 85,
-                                    margin: EdgeInsets.only(bottom: 4),
-                                    child: FDottedLine(
-                                      color: AppTheme.greyLighten1,
-                                      strokeWidth: 1.0,
-                                      dottedLength: 5.0,
-                                      space: 3.0,
-                                      corner: FDottedLineCorner.all(30.0),
-                                      child: Container(
-                                        color: AppTheme.greyLighten2,
-                                        child: _getTipoNota(controller.evaluacionCapacidadUi.valorTipoNotaUi, controller.evaluacionCapacidadUi.nota),
-                                      ),
+                SliverToBoxAdapter(
+                    child: Container(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: (){
+                            double width_pantalla = MediaQuery.of(context).size.width;
+                            double padding_left = 32;
+                            double padding_right = 32;
+                            double width_table = padding_left + padding_right + 125;
+                            for(double column_px in controller.tableTipoNotacolumnWidths){
+                              width_table += column_px;
+                            }
+                            double width = 0;
+                            if(width_pantalla>width_table){
+                              width = width_pantalla;
+                            }else{
+                              width = width_table;
+                            }
 
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if(controller.precision)
+                                  Container(
+                                    padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                                    width: width,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        CachedNetworkImage(
+                                          placeholder: (context, url) => Container(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                          imageUrl: controller.evaluacionCapacidadUi.personaUi?.foto??"",
+                                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                                          imageBuilder: (context, imageProvider) =>
+                                              Container(
+                                                  width: 35,
+                                                  height: 35,
+                                                  margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                                                    image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  )
+                                              ),
+                                        ),
+                                        Expanded(child: Text((controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"").toUpperCase(),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 12,
+                                              letterSpacing: 0.8,
+                                              color: AppTheme.darkerText,
+                                            ))),
+                                      ],
                                     ),
                                   ),
-                                  Text(controller.evaluacionCapacidadUi.valorTipoNotaUi?.alias??"",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 14,
-                                        color: AppTheme.darkerText,
-                                      )
+                                if(controller.precision)
+                                  Padding(
+                                      padding: EdgeInsets.only(top: 8)
                                   ),
-                                ],
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(left: 8, right: 0),
-                                height: 65,
-                                width: 2,
-                              ),
-                              Container(
-                                width: 75,
-                                height: 60,
-                                child: Center(
-                                  child: Text("${controller.evaluacionCapacidadUi.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-                                    fontFamily: AppTheme.fontTTNormsMedium,
-                                    fontSize: 24,
-                                    color: AppTheme.darkerText,
-                                  ),),
+                                if(controller.precision)
+                                Container(
+                                  width: width,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Container(
+                                            width: 85,
+                                            height: 85,
+                                            margin: EdgeInsets.only(bottom: 4),
+                                            child: FDottedLine(
+                                              color: AppTheme.greyLighten1,
+                                              strokeWidth: 1.0,
+                                              dottedLength: 5.0,
+                                              space: 3.0,
+                                              corner: FDottedLineCorner.all(30.0),
+                                              child: Container(
+                                                color: AppTheme.greyLighten2,
+                                                child: _getTipoNota(controller.evaluacionCapacidadUi.valorTipoNotaUi, controller.evaluacionCapacidadUi.nota),
+                                              ),
+
+                                            ),
+                                          ),
+                                          Text(controller.evaluacionCapacidadUi.valorTipoNotaUi?.alias??"",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 14,
+                                                color: AppTheme.darkerText,
+                                              )
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(left: 8, right: 0),
+                                        height: 65,
+                                        width: 2,
+                                      ),
+                                      Container(
+                                        width: 75,
+                                        height: 60,
+                                        child: Center(
+                                          child: Text("${controller.evaluacionCapacidadUi.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
+                                            fontFamily: AppTheme.fontTTNormsMedium,
+                                            fontSize: 24,
+                                            color: AppTheme.darkerText,
+                                          ),),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ) ,
+                                Container(
+                                  width: width,
+                                  padding: EdgeInsets.only(left: padding_left, top:16),
+                                  child: showTableTipoNota(controller),
                                 ),
-                              )
-                            ],
-                          ),
-                        ],
-                      )
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.only(left: 32, right: 0, top: 24),
-                  sliver:  SliverToBoxAdapter(
-                    child: showTableTipoNota(controller),
-                  ),
+                                Container(
+                                  width: width_table - padding_right,
+                                  child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Container(
+                                          height: 50,
+                                          width: 50,
+                                          padding: EdgeInsets.all(8),
+                                          child: Center(
+                                            child:  Text("Total", style: TextStyle(color: AppTheme.darkText, fontWeight: FontWeight.w700 ),),
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(color: AppTheme.greyLighten2),
+                                                left: BorderSide(color: AppTheme.greyLighten2),
+                                              ),
+                                              color: AppTheme.greyLighten4
+                                          )
+                                      ),
+                                      Container(
+                                          height: 50,
+                                          width: 51,
+                                          padding: EdgeInsets.all(8),
+                                          child: Center(
+                                            child:  Text("3.7", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),),
+                                          ),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(color: AppTheme.greyLighten2),
+                                                left: BorderSide(color: AppTheme.greyLighten2),
+                                                right: BorderSide(color: AppTheme.greyLighten2),
+                                                top: BorderSide(color: Colors.transparent),
+                                              ),
+
+                                              color: AppTheme.greyLighten4
+                                          )
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            );
+
+                          }(),
+                        )
+                    )
                 ),
                 SliverList(
                     delegate: SliverChildListDelegate([
@@ -724,8 +979,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
       child: StickyHeadersTableNotExpandedCustom(
           cellDimensions: CellDimensions.variableColumnWidth(
               stickyLegendHeight:45,
-              stickyLegendWidth: 20,
-              contentCellHeight: 55,
+              stickyLegendWidth: 125,
+              contentCellHeight: 75,
               columnWidths: controller.tableTipoNotacolumnWidths
           ),
           //cellAlignments: CellAlignments.,
@@ -735,39 +990,38 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           columnsTitleBuilder: (i) {
             //#region columnsTitleBuilder
             var obj = controller.tableTipoNotaColumns[i];
-            if(obj is String && obj == "Criterios"){
-              return Container(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Row(
-                    children: [
-                      Text(obj, style: TextStyle(color: AppTheme.white),),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: HexColor(controller.cursosUi.color1).withOpacity(0.5)),
-                    ),
-                    color: HexColor(controller.cursosUi.color1),
-                  )
-              );
-            }else if(obj is bool){
+              if(obj is String && obj == "peso"){
               return Stack(
                 children: [
                   Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(7)),
+                        color: HexColor(controller.cursosUi.color1),
+                      )
+                  ),
+                  Center(
+                    child:  Text("Peso", style: TextStyle(color:  AppTheme.white, fontSize: 14, ),),
+                  )
+                ],
+              );
+            } else if(obj is String && obj == "total"){
+              return Stack(
+                children: [
+                  /*Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(topRight: Radius.circular(7)),
                         color: AppTheme.greyLighten2,
                       )
                   ),
                   Center(
-                    child:  Text("Peso", style: TextStyle(color:  AppTheme.black,),),
-                  )
+                    child:  Text("Total", style: TextStyle(color:  AppTheme.black, fontSize: 14),),
+                  )*/
                 ],
               );
             }else if(obj is ValorTipoNotaUi){
               return InkWell(
-                //onDoubleTap: () =>  controller.onClikShowDialogClearEvaluacion(),
-                //onLongPress: () => controller.onClicEvaluacionAll(o),
+                onDoubleTap: () =>  controller.onClikShowDialogClearEvaluacion(),
+                onLongPress: () => controller.onClicEvaluacionAll(obj),
                 child: Stack(
                   children: [
                     _getTipoNotaCabecera(obj, controller,i)
@@ -795,68 +1049,99 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
             }
             //#endregion
           },
-          rowsTitleBuilder: (i) => Container(
-              child: Center(
-                child:  Text((i+1).toString() + "."),
+          rowsTitleBuilder: (i) {
+            RubricaEvaluacionUi rubricaEvaluacionUi = controller.rubricaEvaluacionList[i];
+
+            return InkWell(
+              onTap: (){
+
+              },
+              child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 8, right: 4, top: 6),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Text((rubricaEvaluacionUi.tituloRubroCabecera??rubricaEvaluacionUi.titulo?.trim()??""), maxLines: 2, overflow: TextOverflow.ellipsis ,style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(right: 6),
+                                  child:  (){
+                                    switch(controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
+                                      case TipoCompetenciaUi.BASE:
+                                        return CachedNetworkImage(
+                                          height: 12,
+                                          width: 12,
+                                          imageUrl: controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.url??"",
+                                          placeholder: (context, url) => CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 12, height: 12,),
+                                        );
+                                      case TipoCompetenciaUi.TRANSVERSAL:
+                                        return SvgPicture.asset(AppIcon.ic_transversal, width: 10, height: 10,);
+                                      case TipoCompetenciaUi.ENFOQUE:
+                                        return SvgPicture.asset(AppIcon.ic_enfoque, width: 10, height: 10,);
+                                    }
+                                  }(),
+                                ),
+                                Expanded(
+                                  child: Text((rubricaEvaluacionUi.criterioUi?.icdTitulo?.trim()??""), maxLines: 3, overflow: TextOverflow.ellipsis ,style: TextStyle(fontSize: 10, color: AppTheme.textGrey),),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: AppTheme.greyLighten2),
+                      left: BorderSide(color: AppTheme.greyLighten2),
+                      right: BorderSide(color: AppTheme.greyLighten2),
+                      bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.rubricaEvaluacionList.length-1) <= i ? 1:0)),
+                    ),
+                  )
               ),
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: AppTheme.greyLighten2),
-                  left: BorderSide(color: AppTheme.greyLighten2),
-                  right: BorderSide(color: AppTheme.greyLighten2),
-                  bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.rubricaEvaluacionList.length-1) <= i ? 1:0)),
-                ),
-              )
-          ),
+            );
+
+
+          },
           contentCellBuilder: (i, j){
             dynamic o = controller.tableTipoNotaCells[j][i];
-            if(o is RubricaEvaluacionUi){
-              return InkWell(
-                onTap: (){
-
-                },
-                child: Container(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 8, right: 8),
-                      child: Center(
-                        child: Text((o.titulo??""), maxLines: 3, overflow: TextOverflow.ellipsis ,style: TextStyle(fontSize: 12),),
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: AppTheme.greyLighten2),
-                        right: BorderSide(color: AppTheme.greyLighten2),
-                        bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
-                      ),
-                    )
-                ),
-              );
-            }else if(o is RubricaPeso){
+            if(o is RubricaEvaluacionPesoUi){
               return Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      child: (){
-                        switch(controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
-                          case TipoCompetenciaUi.BASE:
-                            return CachedNetworkImage(
-                              height: 18,
-                              width: 18,
-                              imageUrl: controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.url??"",
-                              placeholder: (context, url) => CircularProgressIndicator(),
-                              errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 25, height: 25,),
-                            );
-                          case TipoCompetenciaUi.TRANSVERSAL:
-                            return SvgPicture.asset(AppIcon.ic_transversal, width: 25, height: 25,);
-                          case TipoCompetenciaUi.ENFOQUE:
-                            return SvgPicture.asset(AppIcon.ic_enfoque, width: 25, height: 25,);
-                        }
-                      }(),
-                    ) ,
-                    Padding(padding: EdgeInsets.all(2)),
-                    Text((o.peso??0).toString()+"%", style: TextStyle(fontSize: 10),),
+                    Text("${AppTools.removeDecimalZeroFormat(o.peso)}", style: TextStyle(fontSize: 14),),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: AppTheme.greyLighten2),
+                    right: BorderSide(color: AppTheme.greyLighten2),
+                    bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
+                  ),
+                  color: HexColor(controller.cursosUi.color2).withOpacity(0.1),
+                ),
+              );
+            }else if(o is RubricaEvaluacionTotalUi){
+              return Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("${o.total?.toStringAsFixed(1)??"-"}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),),
                   ],
                 ),
                 decoration: BoxDecoration(
@@ -873,12 +1158,12 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                 onTap: () {
 
                   if((o.evaluacionUi?.personaUi?.contratoVigente == true)){
-                    //if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false))
-                    //showDialogPresicion(context, o, i);
-                    //else
-                    //controller.onClicEvaluar(o);
+                    if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false))
+                      showDialogPresicion(controller, o, i);
+                    else
+                    controller.onClicEvaluar(o);
                   }else{
-                    //_showControNoVigente(context, o.evaluacionUi?.personaUi);
+                    controller.showControNoVigente();
                   }
                 },
                 child: Stack(
@@ -904,6 +1189,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                           top: BorderSide(color: AppTheme.greyLighten2),
                           right: BorderSide(color:  AppTheme.greyLighten2),
                         ),
+                          color: _getColorAlumnoBloqueados(o.personaUi, 0)
                       ),
                       child: Center(
                         child: Text("${o.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
@@ -941,17 +1227,14 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   )
               ),
               Container(
-                  padding: EdgeInsets.only(left: 2),
-                  child: Center(
-                    child: Text('N°', style: TextStyle(color: AppTheme.white, fontSize: 12),),
+                  padding: EdgeInsets.only(left: 8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Criterios", style: TextStyle(color: AppTheme.white, fontSize: 14))
+                    ],
                   ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: HexColor(controller.cursosUi.color1)),
-                    ),
-                  )
-              ),
-
+              )
             ],
           )
       ),
@@ -964,13 +1247,13 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   }
 
   Color getColor(int position) {
-    if(position == 1){
+    if(position == 0){
       return HexColor("#1976d2");
-    }else if(position == 2){
+    }else if(position == 1){
       return HexColor("#388e3c");
-    }else if(position == 3){
+    }else if(position == 2){
       return HexColor("#FF6D00");
-    }else if(position == 4){
+    }else if(position == 3){
       return HexColor("#D32F2F");
     }else{
       return Colors.black;
@@ -980,13 +1263,13 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
 
   Color getColor2(int position){
     switch (position){
-      case 1:
+      case 0:
         return HexColor("#64B5F6");
-      case 4:
-        return HexColor("#E57373");
       case 3:
-        return HexColor("#FFB74D");
+        return HexColor("#E57373");
       case 2:
+        return HexColor("#FFB74D");
+      case 1:
         return HexColor("#81C784");
       default:
         return HexColor("#e0e0e0");
@@ -1000,7 +1283,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
     Color? color_texto;
     Color color_borde;
 
-    if(positionX == 1){
+    if(positionX == 0){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#1976d2");
         color_texto = AppTheme.white;
@@ -1010,7 +1293,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         color_texto = HexColor("#1976d2");
         color_borde = AppTheme.greyLighten2;
       }
-    }else if(positionX == 2){
+    }else if(positionX == 1){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#388e3c");
         color_texto = AppTheme.white;
@@ -1020,7 +1303,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         color_texto =  HexColor("#388e3c");
         color_borde = AppTheme.greyLighten2;
       }
-    }else if(positionX == 3){
+    }else if(positionX == 2){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#FF6D00");
         color_texto = AppTheme.white;
@@ -1030,7 +1313,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         color_texto =  HexColor("#FF6D00");
         color_borde = AppTheme.greyLighten2;
       }
-    }else if(positionX == 4){
+    }else if(positionX == 3){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#D32F2F");
         color_texto = AppTheme.white;
@@ -1060,7 +1343,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
     switch(tipo){
       case TipoNotaTiposUi.SELECTOR_VALORES:
         widget = Center(
-          child: Text(evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.titulo??"",
+          child: Text("${ evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.titulo??"-"}",
               style: TextStyle(
                   fontFamily: AppTheme.fontTTNormsMedium,
                   fontSize: 14,
@@ -1111,7 +1394,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           right: BorderSide(color:  color_borde),
           bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= positionY?1:0 )),
         ),
-          color: (evaluacionRubricaValorTipoNotaUi.toggle??false)?color_fondo:AppTheme.white
+          color: (evaluacionRubricaValorTipoNotaUi.toggle??false)?color_fondo:_getColorAlumnoBloqueados(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi, 0)
       ),
       child: widget,
     );
@@ -1174,16 +1457,16 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
     Widget? nota = null;
     Color color_fondo;
     Color? color_texto;
-    if(position == 1){
+    if(position == 0){
       color_fondo = HexColor("#1976d2");
       color_texto = AppTheme.white;
-    }else if(position == 2){
+    }else if(position == 1){
       color_fondo =  HexColor("#388e3c");
       color_texto = AppTheme.white;
-    }else if(position == 3){
+    }else if(position == 2){
       color_fondo =  HexColor("#FF6D00");
       color_texto = AppTheme.white;
-    }else if(position == 4){
+    }else if(position == 3){
       color_fondo =  HexColor("#D32F2F");
       color_texto = AppTheme.white;
     }else{
@@ -1254,6 +1537,78 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         ],
       ),
     );
+  }
+
+
+  void showDialogPresicion(EvaluacionCapacidadController controller, EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position) {
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return PresicionView(
+            valorTipoNotaUi: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi,
+            color: getPosition(position),
+            personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onClicEvaluarPresicion(evaluacionRubricaValorTipoNotaUi, nota);
+      }
+    });
+  }
+
+  Color getPosition(int position){
+    if(position == 0){
+      return HexColor("#1976d2");
+    }else if(position == 1){
+      return  HexColor("#388e3c");
+    }else if(position == 2){
+      return   HexColor("#FF6D00");
+    }else if(position == 3){
+      return  HexColor("#D32F2F");
+    }else{
+      return  AppTheme.greyLighten2;
+    }
+  }
+
+  Color _getColorAlumnoBloqueados(PersonaUi? personaUi, int intenciadad, {Color c_default = Colors.white}) {
+    if(!(personaUi?.contratoVigente??false)){
+
+      if(intenciadad == 0){
+        return AppTheme.redLighten4;
+      }else  if(intenciadad == 1){
+        return AppTheme.redLighten3;
+      }else  if(intenciadad == 2){
+        return AppTheme.redLighten2;
+      }else{
+        return AppTheme.redLighten4;
+      }
+    }else if((personaUi?.soloApareceEnElCurso??false)){
+
+      if(intenciadad == 0){
+        return AppTheme.deepOrangeLighten4;
+      }else  if(intenciadad == 1){
+        return AppTheme.deepOrangeLighten3;
+      }else  if(intenciadad == 2){
+        return AppTheme.deepOrangeLighten2;
+      }else{
+        return AppTheme.deepOrangeLighten4;
+      }
+    }else{
+      return c_default;
+    }
   }
 
 }
