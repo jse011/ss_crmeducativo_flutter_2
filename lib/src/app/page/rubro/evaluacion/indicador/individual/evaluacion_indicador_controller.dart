@@ -362,7 +362,7 @@ class EvaluacionIndicadorController extends Controller{
       int notaMinRubro = 0;
       int countSelecionado = 0;
       for(EvaluacionUi evaluacionUi in evaluacionUiList){
-        notaDetalle += AppTools.roundDouble((evaluacionUi.nota??0.0)*(evaluacionUi.rubroEvaluacionUi?.peso??1),2);//Para evitar calcular con muchos decimasles se redonde a dos
+        notaDetalle += AppTools.roundDouble((evaluacionUi.nota??0.0)*(evaluacionUi.rubroEvaluacionUi?.formula_peso??1),2);//Para evitar calcular con muchos decimasles se redonde a dos
         notaMaxRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo??0;
         notaMinRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo??0;
         if(evaluacionUi.valorTipoNotaId!=null)countSelecionado++;

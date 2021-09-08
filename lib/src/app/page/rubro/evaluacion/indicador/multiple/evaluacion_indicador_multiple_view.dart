@@ -25,7 +25,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_publicado_ui.da
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_peso_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
@@ -1236,7 +1236,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                   color: AppTheme.colorPrimary,
                 )
             );
-          }else if(o is RubricaEvaluacionPesoUi){
+          }else if(o is RubricaEvaluacionFormulaPesoUi){
             return Stack(
               children: [
                 Container(
@@ -1355,7 +1355,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                 ],
               ),
             );
-          }else if(o is RubricaEvaluacionPesoUi){
+          }else if(o is RubricaEvaluacionFormulaPesoUi){
             return InkWell(
               //onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
               child: Stack(
@@ -1371,7 +1371,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                         color: AppTheme.white
                     ),
                     child: Center(
-                      child: Text("${(o.peso * 100).toStringAsFixed(0)}%", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14,color:  AppTheme.greyDarken1 ),
+                      child: Text("${(o.formula_peso * 100).toStringAsFixed(0)}%", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14,color:  AppTheme.greyDarken1 ),
                       ),
                     ),
                   ),

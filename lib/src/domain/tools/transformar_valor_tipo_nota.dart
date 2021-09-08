@@ -10,12 +10,12 @@ class TransformarValoTipoNota{
     ValorTipoNotaUi? valorTipoNotaUi = null;
     double notaRubro = AppTools.transformacionInvariante(params.notaValorMinimo.toDouble(), params.notaValorMaximo.toDouble(), params.nota??0.0, params.tipoNotaUi?.escalavalorMinimo?.toDouble()??0.0, params.tipoNotaUi?.escalavalorMaximo?.toDouble()??0.0);
     if (params.tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || params.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
-      valorTipoNotaUi = _getValorTipoNotaCalculado(params.tipoNotaUi, notaRubro);
+      valorTipoNotaUi = getValorTipoNotaCalculado(params.tipoNotaUi, notaRubro);
     }
     return TransformarValoTipoNotaResponse(notaRubro, valorTipoNotaUi);
   }
 
-  static ValorTipoNotaUi? _getValorTipoNotaCalculado(TipoNotaUi? bETipoNota, double nota)
+  static ValorTipoNotaUi? getValorTipoNotaCalculado(TipoNotaUi? bETipoNota, double nota)
   {
     //log.Info(string.Format("getValorTipoNotaCalculado: bETipoNota: id{0}, nombre:{1}, intervalo{2}", bETipoNota.TipoNotaId, bETipoNota.Nombre, bETipoNota.Intervalo));
     ValorTipoNotaUi? result = null;
@@ -106,6 +106,7 @@ class TransformarValoTipoNota{
     }
     return result;
   }
+
 }
 
 class TransformarValoTipoNotaParams{

@@ -19059,8 +19059,9 @@ class RubroEvaluacionProcesoData extends DataClass
   final String? tareaId;
   final String? resultadoTipoNotaId;
   final String? instrumentoEvalId;
-  final String? preguntaEvalId;
   final int? error_guardar;
+  final int? peso;
+  final String? preguntaId;
   RubroEvaluacionProcesoData(
       {this.syncFlag,
       this.timestampFlag,
@@ -19103,8 +19104,9 @@ class RubroEvaluacionProcesoData extends DataClass
       this.tareaId,
       this.resultadoTipoNotaId,
       this.instrumentoEvalId,
-      this.preguntaEvalId,
-      this.error_guardar});
+      this.error_guardar,
+      this.peso,
+      this.preguntaId});
   factory RubroEvaluacionProcesoData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -19192,10 +19194,12 @@ class RubroEvaluacionProcesoData extends DataClass
           data['${effectivePrefix}resultado_tipo_nota_id']),
       instrumentoEvalId: const StringType().mapFromDatabaseResponse(
           data['${effectivePrefix}instrumento_eval_id']),
-      preguntaEvalId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}pregunta_eval_id']),
       error_guardar: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}error_guardar']),
+      peso: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}peso']),
+      preguntaId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}pregunta_id']),
     );
   }
   @override
@@ -19322,11 +19326,14 @@ class RubroEvaluacionProcesoData extends DataClass
     if (!nullToAbsent || instrumentoEvalId != null) {
       map['instrumento_eval_id'] = Variable<String?>(instrumentoEvalId);
     }
-    if (!nullToAbsent || preguntaEvalId != null) {
-      map['pregunta_eval_id'] = Variable<String?>(preguntaEvalId);
-    }
     if (!nullToAbsent || error_guardar != null) {
       map['error_guardar'] = Variable<int?>(error_guardar);
+    }
+    if (!nullToAbsent || peso != null) {
+      map['peso'] = Variable<int?>(peso);
+    }
+    if (!nullToAbsent || preguntaId != null) {
+      map['pregunta_id'] = Variable<String?>(preguntaId);
     }
     return map;
   }
@@ -19451,12 +19458,13 @@ class RubroEvaluacionProcesoData extends DataClass
       instrumentoEvalId: instrumentoEvalId == null && nullToAbsent
           ? const Value.absent()
           : Value(instrumentoEvalId),
-      preguntaEvalId: preguntaEvalId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(preguntaEvalId),
       error_guardar: error_guardar == null && nullToAbsent
           ? const Value.absent()
           : Value(error_guardar),
+      peso: peso == null && nullToAbsent ? const Value.absent() : Value(peso),
+      preguntaId: preguntaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(preguntaId),
     );
   }
 
@@ -19516,8 +19524,9 @@ class RubroEvaluacionProcesoData extends DataClass
           serializer.fromJson<String?>(json['resultadoTipoNotaId']),
       instrumentoEvalId:
           serializer.fromJson<String?>(json['instrumentoEvalId']),
-      preguntaEvalId: serializer.fromJson<String?>(json['preguntaEvalId']),
       error_guardar: serializer.fromJson<int?>(json['error_guardar']),
+      peso: serializer.fromJson<int?>(json['peso']),
+      preguntaId: serializer.fromJson<String?>(json['preguntaId']),
     );
   }
   @override
@@ -19565,8 +19574,9 @@ class RubroEvaluacionProcesoData extends DataClass
       'tareaId': serializer.toJson<String?>(tareaId),
       'resultadoTipoNotaId': serializer.toJson<String?>(resultadoTipoNotaId),
       'instrumentoEvalId': serializer.toJson<String?>(instrumentoEvalId),
-      'preguntaEvalId': serializer.toJson<String?>(preguntaEvalId),
       'error_guardar': serializer.toJson<int?>(error_guardar),
+      'peso': serializer.toJson<int?>(peso),
+      'preguntaId': serializer.toJson<String?>(preguntaId),
     };
   }
 
@@ -19612,8 +19622,9 @@ class RubroEvaluacionProcesoData extends DataClass
           String? tareaId,
           String? resultadoTipoNotaId,
           String? instrumentoEvalId,
-          String? preguntaEvalId,
-          int? error_guardar}) =>
+          int? error_guardar,
+          int? peso,
+          String? preguntaId}) =>
       RubroEvaluacionProcesoData(
         syncFlag: syncFlag ?? this.syncFlag,
         timestampFlag: timestampFlag ?? this.timestampFlag,
@@ -19659,8 +19670,9 @@ class RubroEvaluacionProcesoData extends DataClass
         tareaId: tareaId ?? this.tareaId,
         resultadoTipoNotaId: resultadoTipoNotaId ?? this.resultadoTipoNotaId,
         instrumentoEvalId: instrumentoEvalId ?? this.instrumentoEvalId,
-        preguntaEvalId: preguntaEvalId ?? this.preguntaEvalId,
         error_guardar: error_guardar ?? this.error_guardar,
+        peso: peso ?? this.peso,
+        preguntaId: preguntaId ?? this.preguntaId,
       );
   @override
   String toString() {
@@ -19706,8 +19718,9 @@ class RubroEvaluacionProcesoData extends DataClass
           ..write('tareaId: $tareaId, ')
           ..write('resultadoTipoNotaId: $resultadoTipoNotaId, ')
           ..write('instrumentoEvalId: $instrumentoEvalId, ')
-          ..write('preguntaEvalId: $preguntaEvalId, ')
-          ..write('error_guardar: $error_guardar')
+          ..write('error_guardar: $error_guardar, ')
+          ..write('peso: $peso, ')
+          ..write('preguntaId: $preguntaId')
           ..write(')'))
         .toString();
   }
@@ -19756,7 +19769,7 @@ class RubroEvaluacionProcesoData extends DataClass
                                                                               .hashCode,
                                                                           $mrjc(
                                                                               tipoRedondeoId.hashCode,
-                                                                              $mrjc(valorRedondeoId.hashCode, $mrjc(rubroEvalResultadoId.hashCode, $mrjc(tipoNotaId.hashCode, $mrjc(sesionAprendizajeId.hashCode, $mrjc(desempenioIcdId.hashCode, $mrjc(campoTematicoId.hashCode, $mrjc(tipoEvaluacionId.hashCode, $mrjc(estadoId.hashCode, $mrjc(tipoEscalaEvaluacionId.hashCode, $mrjc(tipoColorRubroProceso.hashCode, $mrjc(tiporubroid.hashCode, $mrjc(formaEvaluacionId.hashCode, $mrjc(countIndicador.hashCode, $mrjc(rubroFormal.hashCode, $mrjc(msje.hashCode, $mrjc(promedio.hashCode, $mrjc(desviacionEstandar.hashCode, $mrjc(unidadAprendizajeId.hashCode, $mrjc(estrategiaEvaluacionId.hashCode, $mrjc(tareaId.hashCode, $mrjc(resultadoTipoNotaId.hashCode, $mrjc(instrumentoEvalId.hashCode, $mrjc(preguntaEvalId.hashCode, error_guardar.hashCode)))))))))))))))))))))))))))))))))))))))))));
+                                                                              $mrjc(valorRedondeoId.hashCode, $mrjc(rubroEvalResultadoId.hashCode, $mrjc(tipoNotaId.hashCode, $mrjc(sesionAprendizajeId.hashCode, $mrjc(desempenioIcdId.hashCode, $mrjc(campoTematicoId.hashCode, $mrjc(tipoEvaluacionId.hashCode, $mrjc(estadoId.hashCode, $mrjc(tipoEscalaEvaluacionId.hashCode, $mrjc(tipoColorRubroProceso.hashCode, $mrjc(tiporubroid.hashCode, $mrjc(formaEvaluacionId.hashCode, $mrjc(countIndicador.hashCode, $mrjc(rubroFormal.hashCode, $mrjc(msje.hashCode, $mrjc(promedio.hashCode, $mrjc(desviacionEstandar.hashCode, $mrjc(unidadAprendizajeId.hashCode, $mrjc(estrategiaEvaluacionId.hashCode, $mrjc(tareaId.hashCode, $mrjc(resultadoTipoNotaId.hashCode, $mrjc(instrumentoEvalId.hashCode, $mrjc(error_guardar.hashCode, $mrjc(peso.hashCode, preguntaId.hashCode))))))))))))))))))))))))))))))))))))))))))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -19802,8 +19815,9 @@ class RubroEvaluacionProcesoData extends DataClass
           other.tareaId == this.tareaId &&
           other.resultadoTipoNotaId == this.resultadoTipoNotaId &&
           other.instrumentoEvalId == this.instrumentoEvalId &&
-          other.preguntaEvalId == this.preguntaEvalId &&
-          other.error_guardar == this.error_guardar);
+          other.error_guardar == this.error_guardar &&
+          other.peso == this.peso &&
+          other.preguntaId == this.preguntaId);
 }
 
 class RubroEvaluacionProcesoCompanion
@@ -19849,8 +19863,9 @@ class RubroEvaluacionProcesoCompanion
   final Value<String?> tareaId;
   final Value<String?> resultadoTipoNotaId;
   final Value<String?> instrumentoEvalId;
-  final Value<String?> preguntaEvalId;
   final Value<int?> error_guardar;
+  final Value<int?> peso;
+  final Value<String?> preguntaId;
   const RubroEvaluacionProcesoCompanion({
     this.syncFlag = const Value.absent(),
     this.timestampFlag = const Value.absent(),
@@ -19893,8 +19908,9 @@ class RubroEvaluacionProcesoCompanion
     this.tareaId = const Value.absent(),
     this.resultadoTipoNotaId = const Value.absent(),
     this.instrumentoEvalId = const Value.absent(),
-    this.preguntaEvalId = const Value.absent(),
     this.error_guardar = const Value.absent(),
+    this.peso = const Value.absent(),
+    this.preguntaId = const Value.absent(),
   });
   RubroEvaluacionProcesoCompanion.insert({
     this.syncFlag = const Value.absent(),
@@ -19938,8 +19954,9 @@ class RubroEvaluacionProcesoCompanion
     this.tareaId = const Value.absent(),
     this.resultadoTipoNotaId = const Value.absent(),
     this.instrumentoEvalId = const Value.absent(),
-    this.preguntaEvalId = const Value.absent(),
     this.error_guardar = const Value.absent(),
+    this.peso = const Value.absent(),
+    this.preguntaId = const Value.absent(),
   }) : rubroEvalProcesoId = Value(rubroEvalProcesoId);
   static Insertable<RubroEvaluacionProcesoData> custom({
     Expression<int?>? syncFlag,
@@ -19983,8 +20000,9 @@ class RubroEvaluacionProcesoCompanion
     Expression<String?>? tareaId,
     Expression<String?>? resultadoTipoNotaId,
     Expression<String?>? instrumentoEvalId,
-    Expression<String?>? preguntaEvalId,
     Expression<int?>? error_guardar,
+    Expression<int?>? peso,
+    Expression<String?>? preguntaId,
   }) {
     return RawValuesInsertable({
       if (syncFlag != null) 'sync_flag': syncFlag,
@@ -20037,8 +20055,9 @@ class RubroEvaluacionProcesoCompanion
       if (resultadoTipoNotaId != null)
         'resultado_tipo_nota_id': resultadoTipoNotaId,
       if (instrumentoEvalId != null) 'instrumento_eval_id': instrumentoEvalId,
-      if (preguntaEvalId != null) 'pregunta_eval_id': preguntaEvalId,
       if (error_guardar != null) 'error_guardar': error_guardar,
+      if (peso != null) 'peso': peso,
+      if (preguntaId != null) 'pregunta_id': preguntaId,
     });
   }
 
@@ -20084,8 +20103,9 @@ class RubroEvaluacionProcesoCompanion
       Value<String?>? tareaId,
       Value<String?>? resultadoTipoNotaId,
       Value<String?>? instrumentoEvalId,
-      Value<String?>? preguntaEvalId,
-      Value<int?>? error_guardar}) {
+      Value<int?>? error_guardar,
+      Value<int?>? peso,
+      Value<String?>? preguntaId}) {
     return RubroEvaluacionProcesoCompanion(
       syncFlag: syncFlag ?? this.syncFlag,
       timestampFlag: timestampFlag ?? this.timestampFlag,
@@ -20131,8 +20151,9 @@ class RubroEvaluacionProcesoCompanion
       tareaId: tareaId ?? this.tareaId,
       resultadoTipoNotaId: resultadoTipoNotaId ?? this.resultadoTipoNotaId,
       instrumentoEvalId: instrumentoEvalId ?? this.instrumentoEvalId,
-      preguntaEvalId: preguntaEvalId ?? this.preguntaEvalId,
       error_guardar: error_guardar ?? this.error_guardar,
+      peso: peso ?? this.peso,
+      preguntaId: preguntaId ?? this.preguntaId,
     );
   }
 
@@ -20267,11 +20288,14 @@ class RubroEvaluacionProcesoCompanion
     if (instrumentoEvalId.present) {
       map['instrumento_eval_id'] = Variable<String?>(instrumentoEvalId.value);
     }
-    if (preguntaEvalId.present) {
-      map['pregunta_eval_id'] = Variable<String?>(preguntaEvalId.value);
-    }
     if (error_guardar.present) {
       map['error_guardar'] = Variable<int?>(error_guardar.value);
+    }
+    if (peso.present) {
+      map['peso'] = Variable<int?>(peso.value);
+    }
+    if (preguntaId.present) {
+      map['pregunta_id'] = Variable<String?>(preguntaId.value);
     }
     return map;
   }
@@ -20320,8 +20344,9 @@ class RubroEvaluacionProcesoCompanion
           ..write('tareaId: $tareaId, ')
           ..write('resultadoTipoNotaId: $resultadoTipoNotaId, ')
           ..write('instrumentoEvalId: $instrumentoEvalId, ')
-          ..write('preguntaEvalId: $preguntaEvalId, ')
-          ..write('error_guardar: $error_guardar')
+          ..write('error_guardar: $error_guardar, ')
+          ..write('peso: $peso, ')
+          ..write('preguntaId: $preguntaId')
           ..write(')'))
         .toString();
   }
@@ -20532,16 +20557,19 @@ class $RubroEvaluacionProcesoTable extends RubroEvaluacionProceso
   late final GeneratedColumn<String?> instrumentoEvalId =
       GeneratedColumn<String?>('instrumento_eval_id', aliasedName, true,
           typeName: 'TEXT', requiredDuringInsert: false);
-  final VerificationMeta _preguntaEvalIdMeta =
-      const VerificationMeta('preguntaEvalId');
-  late final GeneratedColumn<String?> preguntaEvalId = GeneratedColumn<String?>(
-      'pregunta_eval_id', aliasedName, true,
-      typeName: 'TEXT', requiredDuringInsert: false);
   final VerificationMeta _error_guardarMeta =
       const VerificationMeta('error_guardar');
   late final GeneratedColumn<int?> error_guardar = GeneratedColumn<int?>(
       'error_guardar', aliasedName, true,
       typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _pesoMeta = const VerificationMeta('peso');
+  late final GeneratedColumn<int?> peso = GeneratedColumn<int?>(
+      'peso', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _preguntaIdMeta = const VerificationMeta('preguntaId');
+  late final GeneratedColumn<String?> preguntaId = GeneratedColumn<String?>(
+      'pregunta_id', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         syncFlag,
@@ -20585,8 +20613,9 @@ class $RubroEvaluacionProcesoTable extends RubroEvaluacionProceso
         tareaId,
         resultadoTipoNotaId,
         instrumentoEvalId,
-        preguntaEvalId,
-        error_guardar
+        error_guardar,
+        peso,
+        preguntaId
       ];
   @override
   String get aliasedName => _alias ?? 'rubro_evaluacion_proceso';
@@ -20832,17 +20861,21 @@ class $RubroEvaluacionProcesoTable extends RubroEvaluacionProceso
           instrumentoEvalId.isAcceptableOrUnknown(
               data['instrumento_eval_id']!, _instrumentoEvalIdMeta));
     }
-    if (data.containsKey('pregunta_eval_id')) {
-      context.handle(
-          _preguntaEvalIdMeta,
-          preguntaEvalId.isAcceptableOrUnknown(
-              data['pregunta_eval_id']!, _preguntaEvalIdMeta));
-    }
     if (data.containsKey('error_guardar')) {
       context.handle(
           _error_guardarMeta,
           error_guardar.isAcceptableOrUnknown(
               data['error_guardar']!, _error_guardarMeta));
+    }
+    if (data.containsKey('peso')) {
+      context.handle(
+          _pesoMeta, peso.isAcceptableOrUnknown(data['peso']!, _pesoMeta));
+    }
+    if (data.containsKey('pregunta_id')) {
+      context.handle(
+          _preguntaIdMeta,
+          preguntaId.isAcceptableOrUnknown(
+              data['pregunta_id']!, _preguntaIdMeta));
     }
     return context;
   }

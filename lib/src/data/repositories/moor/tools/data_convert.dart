@@ -45,7 +45,8 @@ class DataConvert{
         tareaId: data.tareaId,
         resultadoTipoNotaId: data.resultadoTipoNotaId,
         instrumentoEvalId: data.instrumentoEvalId,
-        preguntaEvalId: data.preguntaEvalId,
+        preguntaId: data.preguntaId,
+        peso: data.peso,
         error_guardar: data.error_guardar
     ).toJson());
 

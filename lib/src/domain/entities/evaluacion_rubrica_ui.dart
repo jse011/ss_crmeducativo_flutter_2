@@ -7,5 +7,4 @@ class EvaluacionRubricaValorTipoNotaUi {
   ValorTipoNotaUi? valorTipoNotaUi;
   bool? toggle;
   EvaluacionUi? evaluacionUi;
-
 }

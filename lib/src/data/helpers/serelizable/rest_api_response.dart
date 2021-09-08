@@ -1165,10 +1165,10 @@ class RubroEvaluacionProcesoSerial {
   String? key;
 
   String? instrumentoEvalId;
-  String? preguntaEvalId;
 
   int? error_guardar;
-
+  int? peso;
+  String? preguntaId;
   RubroEvaluacionProcesoSerial({
       this.rubroEvalProcesoId,
       this.titulo,
@@ -1210,8 +1210,9 @@ class RubroEvaluacionProcesoSerial {
       this.fechaAccion,
       this.key,
       this.instrumentoEvalId,
-      this.preguntaEvalId,
-      this.error_guardar});
+      this.error_guardar,
+      this.peso,
+      this.preguntaId});
 
   factory RubroEvaluacionProcesoSerial.fromJson(Map<String, dynamic> json) => _$RubroEvaluacionProcesoSerialFromJson(json);
 

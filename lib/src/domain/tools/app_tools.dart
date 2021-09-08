@@ -256,8 +256,8 @@ class AppTools {
     return sqrt(sum / n);
   }
 
-  static String removeDecimalZeroFormat(double n) {
-    return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : 4);
+  static String removeDecimalZeroFormat(double n, {int fractionDigits = 1}) {
+    return n.toStringAsFixed(n.truncateToDouble() == n ? 0 : fractionDigits);
   }
 
 }

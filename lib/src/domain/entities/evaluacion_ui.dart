@@ -14,6 +14,7 @@ class EvaluacionUi{
   double? nota;
   RubricaEvaluacionUi? rubroEvaluacionUi;
   String? escala;
-
-
+  //Calculo de resultado
+  double? nota_ponderada;
+  //double? nota_transformada;
 }

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -13,22 +14,27 @@ import 'package:lottie/lottie.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_controller.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/peso_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_view.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_peso_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_porcentaje_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_total_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
 
@@ -394,22 +400,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   }
 
   Widget getMainTab() {
-    double width = MediaQuery.of(context).size.width - 48;
-    double height = MediaQuery.of(context).size.height - 48;
-    //width = 280;
-    if(width < height){
-      if(width > 280){
-        //width = width
-      }else{
-        width = 280;
-      }
-    }else{
-      if(height > 280){
-        width = height;
-      }else{
-        width = 280;
-      }
-    }
+
 
     return ControlledWidgetBuilder<EvaluacionCapacidadController>(
         builder: (context, controller) {
@@ -504,8 +495,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                     ),*/
                                     Expanded(
                                         flex: 1,
-                                        child:  Container(
-                                          padding: EdgeInsets.all(8),
+                                        child: CupertinoButton (
+                                          onPressed: (){},
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -607,59 +598,40 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                 if(controller.precision)
                                 Container(
                                   width: width,
-                                  child: Row(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Column(
-                                        children: [
-                                          Container(
-                                            width: 85,
-                                            height: 85,
-                                            margin: EdgeInsets.only(bottom: 4),
-                                            child: FDottedLine(
-                                              color: AppTheme.greyLighten1,
-                                              strokeWidth: 1.0,
-                                              dottedLength: 5.0,
-                                              space: 3.0,
-                                              corner: FDottedLineCorner.all(30.0),
-                                              child: Container(
-                                                color: AppTheme.greyLighten2,
-                                                child: _getTipoNota(controller.evaluacionCapacidadUi.valorTipoNotaUi, controller.evaluacionCapacidadUi.nota),
-                                              ),
+                                      Container(
+                                        width: 85,
+                                        height: 85,
+                                        margin: EdgeInsets.only(bottom: 8),
+                                        child: FDottedLine(
+                                          color: AppTheme.greyLighten1,
+                                          strokeWidth: 1.0,
+                                          dottedLength: 5.0,
+                                          space: 3.0,
+                                          corner: FDottedLineCorner.all(30.0),
+                                          child: Container(
+                                            color: AppTheme.greyLighten2,
+                                            child: _getTipoNota(controller.evaluacionCapacidadUi.valorTipoNotaUi, controller.tipoNotaUi,controller.evaluacionCapacidadUi.nota),
+                                          ),
 
-                                            ),
-                                          ),
-                                          Text(controller.evaluacionCapacidadUi.valorTipoNotaUi?.alias??"",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 14,
-                                                color: AppTheme.darkerText,
-                                              )
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(left: 8, right: 0),
-                                        height: 65,
-                                        width: 2,
-                                      ),
-                                      Container(
-                                        width: 75,
-                                        height: 60,
-                                        child: Center(
-                                          child: Text("${controller.evaluacionCapacidadUi.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontSize: 24,
-                                            color: AppTheme.darkerText,
-                                          ),),
                                         ),
-                                      )
+                                      ),
+                                      Text(controller.evaluacionCapacidadUi.valorTipoNotaUi?.alias??"",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 14,
+                                            color: AppTheme.darkerText,
+                                          )
+                                      ),
                                     ],
                                   ),
                                 ) ,
                                 Container(
                                   width: width,
-                                  padding: EdgeInsets.only(left: padding_left, top:16),
+                                  padding: EdgeInsets.only(left: padding_left, top:24),
                                   child: showTableTipoNota(controller),
                                 ),
                                 Container(
@@ -669,25 +641,25 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                     children: [
                                       Container(
                                           height: 50,
-                                          width: 50,
+                                          width: 80,
                                           padding: EdgeInsets.all(8),
                                           child: Center(
-                                            child:  Text("Total", style: TextStyle(color: AppTheme.darkText, fontWeight: FontWeight.w700 ),),
+                                            child:  Text("Promedio ponderado", textAlign: TextAlign.center, style: TextStyle(color: AppTheme.darkText, fontWeight: FontWeight.w700, fontSize: 12 ),),
                                           ),
                                           decoration: BoxDecoration(
                                               border: Border(
                                                 bottom: BorderSide(color: AppTheme.greyLighten2),
                                                 left: BorderSide(color: AppTheme.greyLighten2),
                                               ),
-                                              color: AppTheme.greyLighten4
+                                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1)
                                           )
                                       ),
                                       Container(
                                           height: 50,
-                                          width: 51,
+                                          width: 71,
                                           padding: EdgeInsets.all(8),
                                           child: Center(
-                                            child:  Text("3.7", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),),
+                                            child:  Text("${controller.evaluacionCapacidadUi.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),),
                                           ),
                                           decoration: BoxDecoration(
                                               border: Border(
@@ -697,7 +669,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                                 top: BorderSide(color: Colors.transparent),
                                               ),
 
-                                              color: AppTheme.greyLighten4
+                                              color:HexColor(controller.cursosUi.color1).withOpacity(0.1)
                                           )
                                       ),
                                     ],
@@ -712,9 +684,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                 ),
                 SliverList(
                     delegate: SliverChildListDelegate([
-                      Padding(padding: EdgeInsets.only(bottom: 64))
+                      Padding(padding: EdgeInsets.only(bottom: 80))
                     ])
-                ),
+                ),/*
                 SliverPadding(
                   padding: EdgeInsets.only(left: 24, right: 24),
                   sliver: SliverList(
@@ -967,7 +939,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                         ],
                       )
                   ),
-                ),
+                ),*/
               ],
             ),
           );
@@ -995,27 +967,29 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                 children: [
                   Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(topRight: Radius.circular(7)),
+                        border: Border(
+                          right: BorderSide(color:  AppTheme.greyLighten2),
+                        ),
                         color: HexColor(controller.cursosUi.color1),
                       )
                   ),
                   Center(
-                    child:  Text("Peso", style: TextStyle(color:  AppTheme.white, fontSize: 14, ),),
+                    child:  Text("Peso en la calificación", textAlign: TextAlign.center, style: TextStyle(color:  AppTheme.white, fontSize: 12, fontWeight: FontWeight.w700),),
                   )
                 ],
               );
             } else if(obj is String && obj == "total"){
               return Stack(
                 children: [
-                  /*Container(
+                  Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(topRight: Radius.circular(7)),
                         color: AppTheme.greyLighten2,
                       )
                   ),
                   Center(
-                    child:  Text("Total", style: TextStyle(color:  AppTheme.black, fontSize: 14),),
-                  )*/
+                    child:  Text("Valor", textAlign: TextAlign.center, style: TextStyle(color:  AppTheme.textGrey, fontSize: 12, fontWeight: FontWeight.w700),),
+                  )
                 ],
               );
             }else if(obj is ValorTipoNotaUi){
@@ -1117,22 +1091,31 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           },
           contentCellBuilder: (i, j){
             dynamic o = controller.tableTipoNotaCells[j][i];
-            if(o is RubricaEvaluacionPesoUi){
-              return Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("${AppTools.removeDecimalZeroFormat(o.peso)}", style: TextStyle(fontSize: 14),),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: AppTheme.greyLighten2),
-                    right: BorderSide(color: AppTheme.greyLighten2),
-                    bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
+            if(o is EvaluacionPorcentajeUi){
+              return InkWell(
+                onTap: (){
+                  showDialogPeso(controller, o.rubricaEvaluacionUi, o.capacidadUi);
+                },
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(padding: EdgeInsets.all(8)),
+                      Text("${AppTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 2)}%", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
+                      Padding(padding: EdgeInsets.all(2)),
+                      Text("(P. Normal)",  textAlign: TextAlign.center,style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),),
+
+                    ],
                   ),
-                  color: HexColor(controller.cursosUi.color2).withOpacity(0.1),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: AppTheme.greyLighten2),
+                      right: BorderSide(color: AppTheme.greyLighten2),
+                      bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
+                    ),
+                    color: HexColor(controller.cursosUi.color2).withOpacity(0.1),
+                  ),
                 ),
               );
             }else if(o is RubricaEvaluacionTotalUi){
@@ -1141,7 +1124,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("${o.total?.toStringAsFixed(1)??"-"}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),),
+                    Text("${o.total?.toStringAsFixed(3)??"-"}", style: TextStyle(fontSize: 14, color: AppTheme.textGrey, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
                   ],
                 ),
                 decoration: BoxDecoration(
@@ -1158,12 +1141,23 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                 onTap: () {
 
                   if((o.evaluacionUi?.personaUi?.contratoVigente == true)){
-                    if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false))
+                    if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false)){
                       showDialogPresicion(controller, o, i);
-                    else
-                    controller.onClicEvaluar(o);
+                    } else{
+                      controller.onClicEvaluar(o); 
+                    }
                   }else{
                     controller.showControNoVigente();
+                  }
+                },
+                onLongPress: (){
+                  if((o.evaluacionUi?.personaUi?.contratoVigente == true)){
+                    if(o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false){
+
+                    }
+                    else{
+                      showDialogTecladoPrecicion(controller, controller.tipoNotaUi, o.evaluacionUi);
+                    }
                   }
                 },
                 child: Stack(
@@ -1231,7 +1225,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Criterios", style: TextStyle(color: AppTheme.white, fontSize: 14))
+                      Text("Criterios evaluados", style: TextStyle(color: AppTheme.white, fontSize: 12, fontWeight: FontWeight.w700))
                     ],
                   ),
               )
@@ -1401,7 +1395,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
 
   }
 
-  Widget? _getTipoNota(ValorTipoNotaUi? valorTipoNotaUi, double? nota) {
+  Widget? _getTipoNota(ValorTipoNotaUi? valorTipoNotaUi, TipoNotaUi? tipoNotaUi ,double? nota) {
 
     switch(valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO){
       case TipoNotaTiposUi.SELECTOR_VALORES:
@@ -1413,14 +1407,30 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         }else {
           color = AppTheme.black;
         }
-        return Center(
-          child: Text(valorTipoNotaUi?.titulo??"",
-              style: TextStyle(
-                fontFamily: AppTheme.fontTTNormsMedium,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: color,
-              )),
+        return Container(
+          height: double.maxFinite,
+          width: double.maxFinite,
+          child:  Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(valorTipoNotaUi?.titulo??"",
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontTTNormsMedium,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                  )),
+              Padding(padding: EdgeInsets.all(2),),
+              Text("${(nota??0).toStringAsFixed(1)}",
+                  style: TextStyle(
+                    fontFamily: AppTheme.fontTTNormsMedium,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                  ))
+            ],
+          ),
         );
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         return Container(
@@ -1433,7 +1443,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
       case TipoNotaTiposUi.VALOR_ASISTENCIA:
       case TipoNotaTiposUi.VALOR_NUMERICO:
       case TipoNotaTiposUi.SELECTOR_NUMERICO:
-        Color color;
+      Color color;
+      if(tipoNotaUi?.escalavalorMaximo == 20){
         if ((nota??0) < 10.5) {
           color = AppTheme.redDarken4;
         }else if ( (nota??0) >= 10.5) {
@@ -1441,11 +1452,30 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         }else {
           color = AppTheme.black;
         }
+      }else if(tipoNotaUi?.escalavalorMaximo == 4){
+        if ((nota??0) < 3) {
+          color = AppTheme.redDarken4;
+        }else if ( (nota??0) >= 3) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+      }else if(tipoNotaUi?.escalavalorMaximo == 3){
+        if ((nota??0) < 3) {
+          color = AppTheme.redDarken4;
+        }else if ( (nota??0) >= 3) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+      }else{
+        color = AppTheme.black;
+      }
 
         return Center(
           child: Text("${(nota??0).toStringAsFixed(1)}", style: TextStyle(
             fontFamily: AppTheme.fontTTNormsMedium,
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
             color: color,
           ),),
@@ -1565,6 +1595,62 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         .then((nota){
       if(nota != null){
         controller.onClicEvaluarPresicion(evaluacionRubricaValorTipoNotaUi, nota);
+      }
+    });
+  }
+
+  void showDialogTecladoPrecicion(EvaluacionCapacidadController controller, TipoNotaUi? tipoNotaUi, EvaluacionUi? evaluacionUi) {
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return TecladoPresicionView(
+            valorMaximo: tipoNotaUi?.escalavalorMaximo,
+            valorMinimo: tipoNotaUi?.escalavalorMinimo,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onSaveTecladoPresicion(nota, evaluacionUi);
+      }
+    });
+  }
+
+  void showDialogPeso(EvaluacionCapacidadController controller, RubricaEvaluacionUi? rubricaEvaluacionUi, CapacidadUi? capacidadUi) {
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return PesoView(
+            color: HexColor(controller.cursosUi.color2),
+            rubricaEvaluacionUi: rubricaEvaluacionUi,
+            capacidadUi: capacidadUi,
+            onSaveInput: (peso) {
+
+              Navigator.pop(context, peso);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((peso){
+      if(peso != null){
+        controller.onSavePeso(peso, rubricaEvaluacionUi);
       }
     });
   }

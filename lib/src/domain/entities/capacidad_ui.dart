@@ -11,4 +11,6 @@ class CapacidadUi{
   int? tipoId;
   int? competenciaId;
   List<RubricaEvaluacionUi>? rubricaEvalUiList;
+  int? total_peso;//Calculo del resultado
+
 }

@@ -1200,8 +1200,9 @@ RubroEvaluacionProcesoSerial _$RubroEvaluacionProcesoSerialFromJson(
     fechaAccion: json['fechaAccion'] as int?,
     key: json['key'] as String?,
     instrumentoEvalId: json['instrumentoEvalId'] as String?,
-    preguntaEvalId: json['preguntaEvalId'] as String?,
     error_guardar: json['error_guardar'] as int?,
+    peso: json['peso'] as int?,
+    preguntaId: json['preguntaId'] as String?,
   );
 }
 
@@ -1248,8 +1249,9 @@ Map<String, dynamic> _$RubroEvaluacionProcesoSerialToJson(
       'fechaAccion': instance.fechaAccion,
       'key': instance.key,
       'instrumentoEvalId': instance.instrumentoEvalId,
-      'preguntaEvalId': instance.preguntaEvalId,
       'error_guardar': instance.error_guardar,
+      'peso': instance.peso,
+      'preguntaId': instance.preguntaId,
     };
 
 EvaluacionProcesoSerial _$EvaluacionProcesoSerialFromJson(

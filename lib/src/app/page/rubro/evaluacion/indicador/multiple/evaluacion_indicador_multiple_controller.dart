@@ -7,7 +7,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_publicado_ui.da
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_peso_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
@@ -240,7 +240,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }else{
         _mapColumnList[personaUi]?.add(EvaluacionUi());//Teclado numerico
       }
-      _mapColumnList[personaUi]?.add(RubricaEvaluacionPesoUi(RubricaEvaluacionUi()));//peso
+      _mapColumnList[personaUi]?.add(RubricaEvaluacionFormulaPesoUi(RubricaEvaluacionUi()));//peso
 
       for(RubricaEvaluacionUi row in _mapRowList[personaUi]??[]){
         List<dynamic> cellList = [];
@@ -266,7 +266,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
         }else{
           cellList.add(evaluacionUi);
         }
-        RubricaEvaluacionPesoUi pesoUi = RubricaEvaluacionPesoUi(row);
+        RubricaEvaluacionFormulaPesoUi pesoUi = RubricaEvaluacionFormulaPesoUi(row);
         cellList.add(pesoUi);
         _mapCellListList[personaUi]?.add(cellList);
       }
@@ -282,7 +282,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
             _tablecolumnWidths.add(85);
           } else if(s is EvaluacionUi){
             _tablecolumnWidths.add(45);
-          }else if(s is RubricaEvaluacionPesoUi){
+          }else if(s is RubricaEvaluacionFormulaPesoUi){
             _tablecolumnWidths.add(45);
           }else{
             _tablecolumnWidths.add(50.0);
@@ -442,7 +442,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
     int notaMinRubro = 0;
     int countSelecionado = 0;
     for(EvaluacionUi evaluacionUi in evaluacionUiList){
-      notaDetalle += AppTools.roundDouble((evaluacionUi.nota??0.0)*(evaluacionUi.rubroEvaluacionUi?.peso??1),2);//Para evitar calcular con muchos decimasles se redonde a dos
+      notaDetalle += AppTools.roundDouble((evaluacionUi.nota??0.0)*(evaluacionUi.rubroEvaluacionUi?.formula_peso??1),2);//Para evitar calcular con muchos decimasles se redonde a dos
       notaMaxRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo??0;
       notaMinRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo??0;
       if(evaluacionUi.valorTipoNotaId!=null)countSelecionado++;

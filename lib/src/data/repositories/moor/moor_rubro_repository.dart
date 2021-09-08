@@ -584,12 +584,13 @@ class MoorRubroRepository extends RubroRepository{
     rubricaEvaluacionUi.sesionAprendizajeId = rubroEvaluacionProcesoData?.sesionAprendizajeId;
     if((rubroEvaluacionProcesoData?.tareaId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_TAREA;
     else if((rubroEvaluacionProcesoData?.instrumentoEvalId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_INSTRUMENTO;
-    else if((rubroEvaluacionProcesoData?.preguntaEvalId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_PREGUNTA;
+    else if((rubroEvaluacionProcesoData?.preguntaId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_PREGUNTA;
     else rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.CREADO_DOCENTE;
     rubricaEvaluacionUi.tipoNotaId = rubroEvaluacionProcesoData?.tipoNotaId;
-    rubricaEvaluacionUi.peso = peso;
+    rubricaEvaluacionUi.formula_peso = peso;
     rubricaEvaluacionUi.guardadoLocal = (rubroEvaluacionProcesoData?.syncFlag == EstadoSync.FLAG_ADDED ||  rubroEvaluacionProcesoData?.syncFlag == EstadoSync.FLAG_UPDATED);
     rubricaEvaluacionUi.calendarioPeriodoId = rubroEvaluacionProcesoData?.calendarioPeriodoId;
+    rubricaEvaluacionUi.peso = rubroEvaluacionProcesoData?.peso;
     return rubricaEvaluacionUi;
   }
 

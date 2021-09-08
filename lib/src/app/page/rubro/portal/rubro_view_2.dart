@@ -327,59 +327,65 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                     )
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
+                                  margin: EdgeInsets.only(top: 0, bottom: 8, left: 8, right: 32),
                                   child:
                                   topBarOpacity >= 1  && controller.seletedItem == 0 ?
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      InkWell(
-                                        onTap: (){
-                                          showDialogButtom(controller);
-                                        },
-                                        child: Text(_getnombreFiltro(controller.origenRubroUi),
-                                            textAlign: TextAlign.left,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontFamily: AppTheme.fontTTNorms,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 16 + 6 - 1 * topBarOpacity,
-                                              color: HexColor("#35377A"),
-                                            )
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 8),
-                                      ),
-                                      Icon(Icons.keyboard_arrow_down_rounded,
-                                        color: HexColor("#35377A"),
-                                        size: 24 + 4 - 1 * topBarOpacity,)
-                                    ],
-                                  ):
-                                  controller.seletedItem==0?
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 12, top: 8),
-                                        child: Text(
-                                          'Evaluación',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16 + 6 - 6 * topBarOpacity,
-                                            letterSpacing: 0.8,
-                                            color: AppTheme.darkerText,
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8),
+                                    child:  Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        InkWell(
+                                          onTap: (){
+                                            showDialogButtom(controller);
+                                          },
+                                          child: Text(_getnombreFiltro(controller.origenRubroUi),
+                                              textAlign: TextAlign.left,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16 + 6 - 1 * topBarOpacity,
+                                                color: HexColor("#35377A"),
+                                              )
                                           ),
                                         ),
-                                      )
-                                    ],
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 8),
+                                        ),
+                                        Icon(Icons.keyboard_arrow_down_rounded,
+                                          color: HexColor("#35377A"),
+                                          size: 24 + 4 - 1 * topBarOpacity,)
+                                      ],
+                                    ),
+                                  ):
+                                  controller.seletedItem==0?
+                                  Padding(
+                                      padding: EdgeInsets.only(top: 8),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 12, top: 8),
+                                            child: Text(
+                                              'Evaluación',
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16 + 6 - 6 * topBarOpacity,
+                                                letterSpacing: 0.8,
+                                                color: AppTheme.darkerText,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                   ):Stack(
                                     children: [
                                       Row(
@@ -410,53 +416,89 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            InkWell(
-                                            onTap: ()=> controller.onClicPrecision(),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        width: 2,
-                                                        color: HexColor(controller.cursosUi.color1).withOpacity(controller.precision?1:0)
-                                                    ),
-                                                    borderRadius: BorderRadius.all(
-                                                        Radius.circular(8.0) //         <--- border radius here
-                                                    ),
-                                                    color: HexColor(controller.cursosUi.color1).withOpacity(controller.precision?1:0)
+                                            Expanded(
+                                                flex: 5,
+                                                child: CupertinoButton (
+                                                  onPressed: () {
+                                                    // Todo
+                                                  },
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Icon(Ionicons.send, color: HexColor(controller.cursosUi.color1), size: 15, ),
+                                                      Padding(padding: EdgeInsets.all(2),),
+                                                      Flexible(
+                                                        child: FittedBox(
+                                                          fit: BoxFit.contain,
+                                                          child: Text("Informar",
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                letterSpacing: 0.5,
+                                                                color:  HexColor(controller.cursosUi.color1),
+                                                              )),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                            ),
+                                            Expanded(
+                                                flex: 6,
+                                                child: CupertinoButton (
+                                                  onPressed: (){},
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: [
+                                                      Icon(Ionicons.lock_closed, color:  HexColor(controller.cursosUi.color1), size: 15, ),
+                                                      Padding(padding: EdgeInsets.all(2),),
+                                                      Flexible(
+                                                        child: FittedBox(
+                                                          fit: BoxFit.contain,
+                                                          child: Text("Cerrar Curso",
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                letterSpacing: 0.5,
+                                                                color:  HexColor(controller.cursosUi.color1),
+                                                              )),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
-                                                padding: EdgeInsets.only(top: 4, bottom: 4, left: 6, right: 6),
-                                                child:  Row(
+                                            ),
+                                            Expanded(
+                                              flex: 4,
+                                              child: CupertinoButton (
+                                                onPressed: (){},
+                                                child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                   children: [
-                                                    Icon(Ionicons.apps, color: controller.precision?AppTheme.white:HexColor(controller.cursosUi.color1), size: 20, ),
+                                                    Icon(Ionicons.help_circle, color: HexColor(controller.cursosUi.color1), size: 15, ),
                                                     Padding(padding: EdgeInsets.all(2),),
-                                                    FittedBox(
-                                                      fit: BoxFit.scaleDown,
-                                                      child: Text("Precisión",
-                                                          overflow: TextOverflow.ellipsis,
-                                                          style: TextStyle(
+                                                    Flexible(
+                                                      child: FittedBox(
+                                                        fit: BoxFit.contain,
+                                                        child: Text("Ayuda",
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
                                                               fontWeight: FontWeight.bold,
                                                               fontFamily: AppTheme.fontTTNorms,
                                                               letterSpacing: 0.5,
-                                                              color: controller.precision?AppTheme.white:HexColor(controller.cursosUi.color1),
-                                                              fontSize: 14
-                                                          )),
-                                                    ),
+                                                              color:  HexColor(controller.cursosUi.color1),
+                                                            )),
+                                                      ),
+                                                    )
                                                   ],
                                                 ),
                                               ),
-                                            ),
-                                            //SvgPicture.asset(AppIcon.ic_presicion_procesamiento, width: 35, height: 35,),
-                                            Expanded(
-                                              child: Container(),
-                                            ),
-
-                                            Padding(padding: EdgeInsets.all(8)),
-                                            SvgPicture.asset(AppIcon.ic_procesear_nota, width: 35, height: 35,),
-                                            Padding(padding: EdgeInsets.all(8)),
-                                            SvgPicture.asset(AppIcon.ic_cerrar_curso, width: 35, height: 35,),
-                                            Padding(padding: EdgeInsets.all(16)),
-                                            SvgPicture.asset(AppIcon.ic_ayuda_procesar_nota, width: 35, height: 35,),
+                                            )
                                           ],
                                         ),
                                       ),
@@ -1759,35 +1801,17 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
         }else {
           color = AppTheme.black;
         }
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-              Container(
-                child: Text("AD",
-                    style: TextStyle(
-                      fontFamily: AppTheme.fontTTNormsMedium,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: color,
-                    )),
-              ),
-            Column(
-              children: [
-                //Padding(padding: Eg),
-                Container(
-                  padding: EdgeInsets.only(left: 4),
-                  child: Text("(${ valorTipoNotaUi?.titulo??"-"})",
-                      style: TextStyle(
-                        fontFamily: AppTheme.fontTTNormsMedium,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: color,
-                      )),
-                ),
-              ],
-            )
-          ],
+        return Center(
+          child: Container(
+            padding: EdgeInsets.only(left: 4),
+            child: Text("${ valorTipoNotaUi?.titulo??"-"}",
+                style: TextStyle(
+                  fontFamily: AppTheme.fontTTNormsMedium,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                )),
+          ),
         );
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         if(valorTipoNotaUi!=null){
@@ -1823,6 +1847,14 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
             color = AppTheme.black;
           }
         }else if(tipoNotaUi?.escalavalorMaximo == 4){
+          if ((nota??0) < 3) {
+            color = AppTheme.redDarken4;
+          }else if ( (nota??0) >= 3) {
+            color = AppTheme.blueDarken4;
+          }else {
+            color = AppTheme.black;
+          }
+        }else if(tipoNotaUi?.escalavalorMaximo == 3){
           if ((nota??0) < 3) {
             color = AppTheme.redDarken4;
           }else if ( (nota??0) >= 3) {
@@ -2232,6 +2264,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
     );
   }
 }
+
 
 /*
 * if(controller.contenedorSyncronizar) ArsProgressWidget(
