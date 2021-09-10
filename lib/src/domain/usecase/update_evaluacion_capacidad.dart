@@ -1,3 +1,4 @@
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_trasnformada_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
@@ -16,10 +17,10 @@ class UpdateEvaluacionCapacidad {
   Future<void> execute(RubricaEvaluacionUi? rubricaEvaluacionUiDetalle, PersonaUi? personaUi) async {
     int usuarioId = await configuracionRepository.getSessionUsuarioId();
     RubricaEvaluacionUi? rubricaEvaluacionUiCabeceraUi =  await repository.getRubroEvaluacion(rubricaEvaluacionUiDetalle?.rubricaIdRubroCabecera??"");
-    //CalcularEvaluacionProceso.actualizarCabecera(rubricaEvaluacionUiCabecera, personaUi);
 
-    EvaluacionUi? evaluacionUiDetalle = null;
-    for(EvaluacionUi evaluacionUi in rubricaEvaluacionUiDetalle?.evaluacionUiList??[]){
+
+    EvaluacionTransformadaUi? evaluacionUiDetalle = null;
+    for(EvaluacionTransformadaUi evaluacionUi in rubricaEvaluacionUiDetalle?.evaluacionTransformadaUiList??[]){
       if(evaluacionUi.alumnoId == personaUi?.personaId){
         evaluacionUiDetalle = evaluacionUi;
       }
@@ -29,11 +30,10 @@ class UpdateEvaluacionCapacidad {
       if(item.rubricaId == rubricaEvaluacionUiDetalle?.rubricaId){
         for(EvaluacionUi evaluacionUi in item.evaluacionUiList??[]){
           if(evaluacionUi.alumnoId == personaUi?.personaId){
-            print("modificado12: ${evaluacionUi.evaluacionId}");
-            evaluacionUi.evaluacionId = evaluacionUiDetalle?.evaluacionId;
-            evaluacionUi.valorTipoNotaUi = evaluacionUiDetalle?.valorTipoNotaUi;
-            evaluacionUi.nota = evaluacionUiDetalle?.nota;
-
+            print("modificado12: ${evaluacionUiDetalle?.evaluacionUiOriginal?.evaluacionId}");
+            evaluacionUi.valorTipoNotaId = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaId;
+            evaluacionUi.valorTipoNotaUi = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaUi;
+            evaluacionUi.nota = evaluacionUiDetalle?.evaluacionUiOriginal?.nota;
           }
         }
       }

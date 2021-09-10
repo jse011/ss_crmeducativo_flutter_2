@@ -1202,16 +1202,21 @@ class MoorRubroRepository extends RubroRepository{
   @override
   Future<void> updatePesoRubro(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId) async {
     AppDataBase SQL = AppDataBase();
-    List<String> rubroEvaluacionIdList = [];
-    rubroEvaluacionIdList.add(rubricaEvaluacionUi?.rubricaId??"");
-    if((rubricaEvaluacionUi?.rubricaIdRubroCabecera??"").isNotEmpty)
-      rubroEvaluacionIdList.add(rubricaEvaluacionUi?.rubricaIdRubroCabecera??"");
 
     await (SQL.update(SQL.rubroEvaluacionProceso)
-      ..where((tbl) => tbl.rubroEvalProcesoId.isIn(rubroEvaluacionIdList)))
+      ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaIdRubroCabecera)))
         .write(
         RubroEvaluacionProcesoCompanion(
-          estadoId: Value(ESTADO_ELIMINADO),
+          usuarioAccionId: Value(usuarioId),
+          fechaAccion: Value(DateTime.now()),
+          syncFlag: Value(EstadoSync.FLAG_UPDATED),
+        ));
+
+    await (SQL.update(SQL.rubroEvaluacionProceso)
+      ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaId)))
+        .write(
+        RubroEvaluacionProcesoCompanion(
+          peso: Value(rubricaEvaluacionUi?.peso??0),
           usuarioAccionId: Value(usuarioId),
           fechaAccion: Value(DateTime.now()),
           syncFlag: Value(EstadoSync.FLAG_UPDATED),

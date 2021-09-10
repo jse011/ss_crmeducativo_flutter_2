@@ -298,9 +298,10 @@ class RubroController extends Controller{
   }
 
   void respuestaEvaluacionCapacidad() {
-    //_progress = true;
-    //refreshUI();
-    // onListarTabsRubroEvaluacion();
+    print("respuestaEvaluacionCapacidad");
+    _progress = true;
+    refreshUI();
+    onListarTabsRubroEvaluacion2();
   }
 
   void respuestaEvaluacion() {
@@ -345,6 +346,13 @@ class RubroController extends Controller{
     refreshUI();
     /*Se limpia la tabla competencia*/
 
+
+    presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
+    //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
+    presenter.onGetCompetenciaRubroEval(cursosUi, calendarioPeriodoUI);
+  }
+
+  void onListarTabsRubroEvaluacion2(){
 
     presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
     //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);

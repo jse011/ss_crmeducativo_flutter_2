@@ -59,6 +59,7 @@ class EvaluacionCapacidadController extends Controller{
     presenter.getTipoNotaResultadoOnNext = (TipoNotaUi tipoNotaUi){
       _tipoNotaUi = tipoNotaUi;
       iniciarTablaTipoNota();
+      refreshUI();
     };
   }
 
@@ -349,28 +350,32 @@ class EvaluacionCapacidadController extends Controller{
 
   Future<bool> onSave() async {
     bool modificado = rubroModificadosMap.isNotEmpty;
-    print("modificado: ${modificado}");
+
     List<String> rubroEvaluacionIdList = [];
     if(modificado){
       _showDialog = true;
+      refreshUI();
       for(MapEntry<String?, int> row in rubroModificadosMap.entries) {
         RubricaEvaluacionUi? rubricaEvaluacionUi = evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList?.firstWhereOrNull((element) => element.rubricaId == row.key);
         if(rubricaEvaluacionUi != null){
-          print("modificado1: ${modificado}");
-          rubroEvaluacionIdList.add(rubricaEvaluacionUi.rubricaId??"");
+
+          String? rubroEvaluacionIdCabecera = rubroEvaluacionIdList.firstWhereOrNull((id) => id == rubricaEvaluacionUi.rubricaIdRubroCabecera);
+          if(rubroEvaluacionIdCabecera==null){
+            rubroEvaluacionIdList.add(rubricaEvaluacionUi.rubricaIdRubroCabecera??"");
+          }
           if(row.value == Modifico_Peso_Rubro){
-            print("modificado1:Modifico_Peso_Rubro");
+
             await presenter.updatePesoRubroEvaluacion(rubricaEvaluacionUi);
           }else{
-            print("modificado1:Modifico_Evaluacion");
+
             await presenter.updateEvaluacion(rubricaEvaluacionUi, evaluacionCapacidadUi.personaUi);
           }
         }
      }
-      print("modificado2: ${modificado}");
+
       await presenter.updateServer(rubroEvaluacionIdList);
     }
-    print("modificado3: ${modificado}");
+
     return modificado;
   }
 
