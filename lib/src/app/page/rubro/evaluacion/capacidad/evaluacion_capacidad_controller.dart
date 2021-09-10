@@ -45,6 +45,7 @@ class EvaluacionCapacidadController extends Controller{
   bool get showDialogClearEvaluacion => _showDialogClearEvaluacion;
   bool _showDialog = false;
   bool get showDialog => _showDialog;
+  List<RubricaEvaluacionUi?> _rubroEvalIdSinEvaluacionList = [];
   Map<String?, int> rubroModificadosMap = Map();//Se guarda que rubro se modifico ademas si el contenido es 0 se modifico el peso y si es 1 se modifoco la evaluacion
 
   EvaluacionCapacidadController(this.evaluacionCapacidadUi, this.cursosUi, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
@@ -78,6 +79,7 @@ class EvaluacionCapacidadController extends Controller{
     _tableTipoNotacolumnWidths.clear();
     _tableTipoNotaCells.clear();
     _rubricaEvaluacionList.clear();
+    _rubroEvalIdSinEvaluacionList.clear();
 
     _rubricaEvaluacionList = evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[];
 
@@ -104,7 +106,7 @@ class EvaluacionCapacidadController extends Controller{
         RubricaEvaluacionUi rubricaEvaluacionUi = _rubricaEvaluacionList[i];
         final List<dynamic> row = [];
         //row.add(rubricaEvaluacionUi);
-
+        if(rubricaEvaluacionUi.ningunaEvalCalificada??false)_rubroEvalIdSinEvaluacionList.add(rubricaEvaluacionUi);
         EvaluacionTransformadaUi? evaluacionTransformadaUi = rubricaEvaluacionUi.evaluacionTransformadaUiList?.firstWhereOrNull((element) => element.alumnoId == evaluacionCapacidadUi.personaUi?.personaId);
 
         if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
@@ -185,6 +187,7 @@ class EvaluacionCapacidadController extends Controller{
     }
 
     CalcularEvaluacionResultados.actualizarEvaluacionOriginal( evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi, tipoNotaUi);
+    _revisarSinRubroConEvaluacionSeModifico();
     CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
 
@@ -212,6 +215,7 @@ class EvaluacionCapacidadController extends Controller{
     evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
 
     CalcularEvaluacionResultados.actualizarEvaluacionOriginal( evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi, tipoNotaUi);
+    _revisarSinRubroConEvaluacionSeModifico();
     CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
     validacionModificacion(evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi, Modifico_Evaluacion);
@@ -246,6 +250,7 @@ class EvaluacionCapacidadController extends Controller{
     evaluacionUi?.nota = nota;
 
     CalcularEvaluacionResultados.actualizarEvaluacionOriginal(evaluacionUi, tipoNotaUi);
+    _revisarSinRubroConEvaluacionSeModifico();
     CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
 
@@ -272,15 +277,15 @@ class EvaluacionCapacidadController extends Controller{
             cell.evaluacionTransformadaUi?.nota = valorTipoNotaUi.valorNumerico;//actualizar la nota solo cuando no esta selecionado
             cell.evaluacionTransformadaUi?.valorTipoNotaId = valorTipoNotaUi.valorTipoNotaId;
             cell.evaluacionTransformadaUi?.valorTipoNotaUi = valorTipoNotaUi;
+
             CalcularEvaluacionResultados.actualizarEvaluacionOriginal(cell.evaluacionTransformadaUi, tipoNotaUi);
           }else{
             cell.toggle = false;
           }
-
         }
       }
     }
-
+    _revisarSinRubroConEvaluacionSeModifico();
     CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
     for(RubricaEvaluacionUi rubroEvaluacion in evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[]){
@@ -321,6 +326,7 @@ class EvaluacionCapacidadController extends Controller{
       }
     }
     _showDialogClearEvaluacion = false;
+    _revisarSinRubroConEvaluacionSeModifico();
     CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
 
     refreshUI();
@@ -333,19 +339,22 @@ class EvaluacionCapacidadController extends Controller{
   //_trasformarEvaluacion();
 
   void onSavePeso(int peso, RubricaEvaluacionUi? rubricaEvaluacionUi) {
+      rubricaEvaluacionUi?.ningunaEvalCalificada = false;
       rubricaEvaluacionUi?.peso = peso;
-      int pesoTotal = 0;
-      for(RubricaEvaluacionUi item in evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[]){
-        int peso = item.peso??0;
-        pesoTotal = pesoTotal + (peso < 0 ? 0 : peso);//los pesos en negativo se cuentan como 0;
-      }
-      evaluacionCapacidadUi.capacidadUi?.total_peso = pesoTotal;
-
+      evaluacionCapacidadUi.capacidadUi?.total_peso = _actualizarPeso();
       CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
-
       refreshUI();
       validacionModificacion(rubricaEvaluacionUi, Modifico_Peso_Rubro);
 
+  }
+
+  int _actualizarPeso(){
+    int pesoTotal = 0;
+    for(RubricaEvaluacionUi item in evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[]){
+      int peso = CalcularEvaluacionResultados.getPesoRubro(item);
+      pesoTotal = pesoTotal + (peso < 0 ? 0 : peso);//los pesos en negativo se cuentan como 0;
+    }
+    return pesoTotal;
   }
 
   Future<bool> onSave() async {
@@ -379,6 +388,14 @@ class EvaluacionCapacidadController extends Controller{
     return modificado;
   }
 
+  _revisarSinRubroConEvaluacionSeModifico(){
+    for(RubricaEvaluacionUi? rubroEvaluacionUi in evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[]){
+      rubroEvaluacionUi?.ningunaEvalCalificada = CalcularEvaluacionResultados.ningunaEvalCalificada(rubroEvaluacionUi);
+      evaluacionCapacidadUi.capacidadUi?.total_peso = _actualizarPeso();
+    }
+  }
 
 
 }
+
+

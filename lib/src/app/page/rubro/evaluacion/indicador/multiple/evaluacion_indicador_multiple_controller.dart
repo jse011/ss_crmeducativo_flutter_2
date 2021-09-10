@@ -431,6 +431,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
         }
       }
     }
+    
     _actualizarCabecera(personaUi);
     _modificado = true;
     refreshUI();

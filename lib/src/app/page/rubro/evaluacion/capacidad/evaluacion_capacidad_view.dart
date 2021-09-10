@@ -1066,7 +1066,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       right: BorderSide(color: AppTheme.greyLighten2),
                       bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.rubricaEvaluacionList.length-1) <= i ? 1:0)),
                     ),
-                    color: ((rubricaEvaluacionUi.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)?null:AppTheme.red.withOpacity(0.1),
+                    color: ((rubricaEvaluacionUi.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(rubricaEvaluacionUi.ningunaEvalCalificada??false))?null:AppTheme.red.withOpacity(0.1),
                   )
               ),
             );
@@ -1078,7 +1078,11 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
             if(o is EvaluacionPorcentajeUi){
               return InkWell(
                 onTap: (){
-                  showDialogPeso(controller, o.rubricaEvaluacionUi, o.capacidadUi);
+                  if(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false){
+                    _showEvaluacionSinNotas(context, o.rubricaEvaluacionUi);
+                  }else{
+                    showDialogPeso(controller, o.rubricaEvaluacionUi, o.capacidadUi);
+                  }
                 },
                 child: Container(
                   child: Column(
@@ -1087,10 +1091,12 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                     children: [
                       if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)
                       Padding(padding: EdgeInsets.all(8)),
-                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)
+                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false))
                       Text("${AppTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 2)}%", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
                       Padding(padding: EdgeInsets.all(2)),
                       Text((){
+                        if(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false)
+                          return "Criterio sin\nevaluaciones";
                         if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_ALTO){
                           return "P. Desconocido";
                         }if(o.rubricaEvaluacionUi?.peso == RubricaEvaluacionUi.PESO_ALTO){
@@ -1112,7 +1118,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       right: BorderSide(color: AppTheme.greyLighten2),
                       bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
                     ),
-                    color:  ((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)?HexColor(controller.cursosUi.color2).withOpacity(0.1):AppTheme.red.withOpacity(0.1),
+                    color:  ((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false))
+                        ?HexColor(controller.cursosUi.color2).withOpacity(0.1):AppTheme.red.withOpacity(0.1),
                   ),
                 ),
               );
@@ -1131,7 +1138,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                     right: BorderSide(color: AppTheme.greyLighten2),
                     bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
                   ),
-                  color: ((o.evaluacionUi?.rubroEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)?AppTheme.greyLighten4:AppTheme.red.withOpacity(0.1),
+                  color: ((o.evaluacionUi?.rubroEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.evaluacionUi?.rubroEvaluacionUi?.ningunaEvalCalificada??false))?
+                  AppTheme.greyLighten4:AppTheme.red.withOpacity(0.1),
                 ),
               );
             }else if(o is EvaluacionRubricaValorTipoNotaUi){
@@ -1379,7 +1387,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
     }
 
     if(!(evaluacionRubricaValorTipoNotaUi.toggle??false)){
-      if((evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.rubroEvaluacionUi?.peso ??0) <= RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO){
+      if((evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.rubroEvaluacionUi?.peso ??0) <= RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO || (evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.rubroEvaluacionUi?.ningunaEvalCalificada??false)){
         color_fondo = AppTheme.red.withOpacity(0.1);
       }else{
         color_fondo = _getColorAlumnoBloqueados(evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.personaUi, 0);
@@ -1643,7 +1651,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         builder: (ctx) {
           return PesoView(
             color: HexColor(controller.cursosUi.color2),
-            selectedValue: rubricaEvaluacionUi?.peso??RubricaEvaluacionUi.PESO_NORMAL,
+            selectedValue: (rubricaEvaluacionUi?.peso??0) == 0? RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO: (rubricaEvaluacionUi?.peso??0),
             onSaveInput: (peso) {
               Navigator.pop(context, peso);
             },
@@ -1699,6 +1707,101 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
     }else{
       return c_default;
     }
+  }
+
+  Future<bool?> _showEvaluacionSinNotas(BuildContext context, RubricaEvaluacionUi? rubricaEvaluacionUi) async {
+    return await showGeneralDialog(
+        context: context,
+        pageBuilder: (BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+              loadingWidget: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // if you need this
+                  side: BorderSide(
+                    color: Colors.grey.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            child: Icon(Icons.block, size: 35, color: AppTheme.white,),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppTheme.red),
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Criterio sin evaluaciones", style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: AppTheme.fontTTNormsMedium
+                                  ),),
+                                  Padding(padding: EdgeInsets.all(8),),
+                                  Text('Por favor evalúe el criterio.',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        height: 1.5
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(16),),
+                                ],
+                              )
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: Container()
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: AppTheme.colorAccent,
+                              onPrimary: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Text('Salir'),
+                          )),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+          );
+        },
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context)
+            .modalBarrierDismissLabel,
+        barrierColor: Colors.transparent,
+        transitionDuration:
+        const Duration(milliseconds: 150));
   }
 
 }

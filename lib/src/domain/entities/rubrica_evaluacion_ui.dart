@@ -6,7 +6,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'evaluacion_trasnformada_ui.dart';
 
 class RubricaEvaluacionUi{
-  static const int  PESO_BAJO = 1,  PESO_NORMAL = 2, PESO_ALTO= 3, PESO_RUBRO_EXCLUIDO = -1;//  PESO_SIN_ASIGNAR = 0|null;
+  static const int  PESO_BAJO = 1,  PESO_NORMAL = 2, PESO_ALTO= 3, PESO_RUBRO_EXCLUIDO = -1, PESO_SIN_ASIGNAR = 0;
   String? rubricaId;
   String? titulo;
   String? mediaDesvicion;
@@ -26,10 +26,13 @@ class RubricaEvaluacionUi{
   List<RubricaEvaluacionUi>? rubrosDetalleList;
   double? formula_peso;
   int? peso;//Calculo del resultado
+  bool? ningunaEvalCalificada;//Calculo del resultado
   bool? guardadoLocal;
   int? calendarioPeriodoId;
   int? desempenioIcdId;
   CriterioUi? criterioUi;
   String? tituloRubroCabecera;//POr ahora solo trae cunado se listan los rubros por competencia
   String? rubricaIdRubroCabecera;//POr ahora solo trae cunado se listan los rubros por competencia
+
+
 }

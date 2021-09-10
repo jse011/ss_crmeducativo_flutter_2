@@ -45,27 +45,11 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
       for(CompetenciaUi competenciaUi in competenciaUiList){
         for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
           int totalpeso = 0;
-          for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
 
-            if((rubricaEvaluacionUi.peso??0) < 0 ){
-              rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO;
-            }else if((rubricaEvaluacionUi.peso??0) == 0){
-              switch(rubricaEvaluacionUi.origenRubroUi){
-                case OrigenRubroUi.GENERADO_INSTRUMENTO:
-                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal 2
-                  break;
-                case OrigenRubroUi.GENERADO_TAREA:
-                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal 2
-                  break;
-                case OrigenRubroUi.GENERADO_PREGUNTA:
-                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_BAJO;//Peso BAJO 1
-                  break;
-                default:
-                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal  2
-                  break;
-              }
-            }
-            int peso = rubricaEvaluacionUi.peso??0;
+          for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
+            rubricaEvaluacionUi.ningunaEvalCalificada = CalcularEvaluacionResultados.ningunaEvalCalificada(rubricaEvaluacionUi);
+
+            int peso = CalcularEvaluacionResultados.getPesoRubro(rubricaEvaluacionUi);
             totalpeso = totalpeso + (peso < 0 ? 0 : peso);//los pesos en negativo se cuentan como 0;
 
             List<EvaluacionTransformadaUi> evaluacionTransformadaUiList = [];
