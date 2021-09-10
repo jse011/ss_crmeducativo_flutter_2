@@ -248,7 +248,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                         print("guardar");
                                         int success = await controller.onSave();
                                         if(success != 0){
-                                          Navigator.of(context).pop(true);
+                                          Navigator.of(context).pop(1);
                                         }
 
 

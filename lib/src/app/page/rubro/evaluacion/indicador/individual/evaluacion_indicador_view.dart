@@ -106,8 +106,13 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
       builder: (context, controller) {
         return WillPopScope(
           onWillPop: () async {
-            bool?  respuesta = await controller.onSave();
-            return true;
+            bool?  se_a_modicado = await controller.onSave();
+            if(se_a_modicado??false){
+              Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+              return false;
+            }else{
+              return true;
+            }
           },
           child: Container(
             color: AppTheme.white,
@@ -196,7 +201,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                     Expanded(child: ElevatedButton(
                                       onPressed: () async {
                                         await controller.onClickAceptarEliminar();
-                                        Navigator.of(context).pop(true);
+                                        Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
                                       },
                                       style: ElevatedButton.styleFrom(
                                         primary: Colors.red,
@@ -358,9 +363,8 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                   icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
                                   onPressed: () async {
                                     bool? respuesta = await controller.onSave();
-                                    if(respuesta??false){
-                                      Navigator.of(context).pop(true);
-                                    }
+                                    Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+
                                   },
                                 )
                             ),
@@ -1048,11 +1052,11 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
       }
     }else{
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = AppTheme.white;
+        color_fondo = AppTheme.greyLighten2;
         color_texto =  null;
         color_borde = AppTheme.greyLighten2;
       }else{
-        color_fondo = AppTheme.greyLighten2;
+        color_fondo = AppTheme.white;
         color_texto = null;
         color_borde = AppTheme.greyLighten2;
       }

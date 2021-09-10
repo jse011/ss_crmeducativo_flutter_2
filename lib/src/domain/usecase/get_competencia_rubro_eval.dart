@@ -9,6 +9,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_calendario_periodo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_competencia_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_trasnformada_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/origen_rubro_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
@@ -22,6 +23,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_reposito
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:collection/collection.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/calcular_evaluacion_resultado.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
 
 class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCompetenciaRubroParams>{
@@ -35,64 +37,78 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
   Future<Stream<GetCompetenciaRubroResponse?>> buildUseCaseStream(GetCompetenciaRubroParams? params) async{
     final controller = StreamController<GetCompetenciaRubroResponse>();
     try{
+      TipoNotaUi? tipoNotaUi = await rubroRepository.getGetTipoNotaResultado(params?.silaboEventoId);
 
       List<PersonaUi> alumnoCursoList = await repository.getListAlumnoCurso(params?.cargaCursoId??0);
 
-      List<PersonaUi> personaUiList = [];
       List<CompetenciaUi> competenciaUiList = await rubroRepository.getRubroCompetencia(params?.silaboEventoId, params?.calendarioPeriodoUI?.id, params?.cargaCursoId);
       for(CompetenciaUi competenciaUi in competenciaUiList){
         for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
           int totalpeso = 0;
           for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
 
-            for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
-                PersonaUi? personaUi = personaUiList.firstWhereOrNull((element) => element.personaId == evaluacionUi.alumnoId);
-                if(personaUi==null)personaUiList.add(evaluacionUi.personaUi!);
+            if((rubricaEvaluacionUi.peso??0) < 0 ){
+              rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO;
+            }else if((rubricaEvaluacionUi.peso??0) == 0){
+              switch(rubricaEvaluacionUi.origenRubroUi){
+                case OrigenRubroUi.GENERADO_INSTRUMENTO:
+                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal 2
+                  break;
+                case OrigenRubroUi.GENERADO_TAREA:
+                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal 2
+                  break;
+                case OrigenRubroUi.GENERADO_PREGUNTA:
+                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_BAJO;//Peso BAJO 1
+                  break;
+                default:
+                  rubricaEvaluacionUi.peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal  2
+                  break;
               }
+            }
+            int peso = rubricaEvaluacionUi.peso??0;
+            totalpeso = totalpeso + (peso < 0 ? 0 : peso);//los pesos en negativo se cuentan como 0;
 
-              CriterioUi? criterioUi = capacidadUi.criterioUiList?.firstWhereOrNull((element) => rubricaEvaluacionUi.desempenioIcdId == element.desempenioIcdId);
-              rubricaEvaluacionUi.criterioUi = criterioUi;
+            List<EvaluacionTransformadaUi> evaluacionTransformadaUiList = [];
 
-              int peso = rubricaEvaluacionUi.peso??0;//Si es nullo es 0
-              if(peso != RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO){//Si el peso es igual -1 este rubro no es contando
-                if(peso==0){
-                  switch(rubricaEvaluacionUi.origenRubroUi){
-                    case OrigenRubroUi.GENERADO_INSTRUMENTO:
-                      peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal 2
-                      break;
-                    case OrigenRubroUi.GENERADO_TAREA:
-                      peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal 2
-                      break;
-                    case OrigenRubroUi.GENERADO_PREGUNTA:
-                      peso = RubricaEvaluacionUi.PESO_BAJO;//Peso BAJO 1
-                      break;
-                    default:
-                      peso = RubricaEvaluacionUi.PESO_NORMAL;//Peso Normal  2
-                      break;
-                  }
-                  rubricaEvaluacionUi.peso = peso;
-                }
-                totalpeso = totalpeso + peso;
+            for(PersonaUi alumnoCurso in alumnoCursoList){
+
+              EvaluacionUi? evaluacionUi = rubricaEvaluacionUi.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == alumnoCurso.personaId);
+              //Una evaluacion vasia significa que el alumno no tiene evaluacion
+              if(evaluacionUi==null){
+                evaluacionUi = EvaluacionUi();
+                alumnoCurso.soloApareceEnElCurso = true;
+                rubricaEvaluacionUi.evaluacionUiList?.add(evaluacionUi);
+                evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
+                evaluacionUi.alumnoId = alumnoCurso.personaId;
               }
+              evaluacionUi.personaUi = alumnoCurso;
+
+              //Crear y calcular la nueva evaluacion transformada a la nota del resultado
+              EvaluacionTransformadaUi evaluacionTransformadaUi = EvaluacionTransformadaUi();
+              evaluacionTransformadaUi.alumnoId = evaluacionUi.alumnoId;
+              evaluacionTransformadaUi.personaUi = alumnoCurso;  // Buscar el alumno que pertenece al curso para saver si esta con el contrato vigente
+              evaluacionTransformadaUi.publicado = evaluacionUi.publicado;
+              evaluacionTransformadaUi.evaluacionId = evaluacionUi.evaluacionId;
+              evaluacionTransformadaUi.rubroEvaluacionId = evaluacionUi.rubroEvaluacionId;
+              evaluacionTransformadaUi.rubroEvaluacionUi = evaluacionUi.rubroEvaluacionUi;
+              evaluacionTransformadaUi.evaluacionUiOriginal = evaluacionUi;
+              CalcularEvaluacionResultados.actualizarEvaluacionTransformada(evaluacionTransformadaUi, tipoNotaUi);
+              evaluacionTransformadaUiList.add(evaluacionTransformadaUi);
+            }
+
+            rubricaEvaluacionUi.evaluacionTransformadaUiList = evaluacionTransformadaUiList;
+
+            CriterioUi? criterioUi = capacidadUi.criterioUiList?.firstWhereOrNull((element) => rubricaEvaluacionUi.desempenioIcdId == element.desempenioIcdId);
+            rubricaEvaluacionUi.criterioUi = criterioUi;
           }
           capacidadUi.total_peso = totalpeso;
         }
       }
 
-      for(PersonaUi alumnoCurso in alumnoCursoList){
-        PersonaUi? personaUi = personaUiList.firstWhereOrNull((element) => element.personaId == alumnoCurso.personaId);
-        if(personaUi==null){
-          alumnoCurso.soloApareceEnElCurso = true;
-          alumnoCursoList.add(alumnoCurso);
-        }
-      }
-
-
       List<EvaluacionCompetenciaUi> evaluacionCompetenciaUiList = [];
-      TipoNotaUi? tipoNotaUi = await rubroRepository.getGetTipoNotaResultado(params?.silaboEventoId);
-      int notaMaxResultado = tipoNotaUi.escalavalorMaximo??0;
-      int notaMinResultado = tipoNotaUi.escalavalorMinimo??0;
+
       for(PersonaUi personaUi in alumnoCursoList){
+        //#region cacular competencia
         for(CompetenciaUi competenciaUi in competenciaUiList){
           double notaCompetencia = 0;
           EvaluacionCompetenciaUi evaluacionCompetenciaUi = EvaluacionCompetenciaUi();
@@ -106,39 +122,8 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
             evaluacionCapacidadUi.personaUi = personaUi;
             evaluacionCapacidadUi.nota = 0.0;
 
-            double notaCapacidad = 0;
-
-            bool existenRubros = capacidadUi.rubricaEvalUiList?.isNotEmpty??false;
-
-            for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
-
-              if(rubricaEvaluacionUi.peso == RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)continue;//Si el peso es igual -1 este rubro no es contando
-
-              int notaMaxRubro = rubricaEvaluacionUi.tipoNotaUi?.escalavalorMaximo??0;
-              int notaMinRubro = rubricaEvaluacionUi.tipoNotaUi?.escalavalorMinimo??0;
-              EvaluacionUi? evaluacionUi = rubricaEvaluacionUi.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == personaUi.personaId);
-              double notaRubro = AppTools.transformacionInvariante(notaMinRubro.toDouble(), notaMaxRubro.toDouble(), evaluacionUi?.nota??0.0, notaMinResultado.toDouble(), notaMaxResultado.toDouble());;
-              //notaCapacidad += notaRubro; //se calcula ahora apartir de pesos
-              int totalPeso = (capacidadUi.total_peso??0);
-              evaluacionUi?.nota_ponderada = notaRubro * (rubricaEvaluacionUi.peso??0)/(totalPeso!=0?totalPeso:1);
-              notaCapacidad += evaluacionUi?.nota_ponderada??0;
-
-
-
-            }
-
-            if(existenRubros){
-
-              evaluacionCapacidadUi.nota = notaCapacidad;
-              if (tipoNotaUi.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUi.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
-                ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(tipoNotaUi, notaCapacidad);
-                evaluacionCapacidadUi.valorTipoNotaUi = valorTipoNotaUi;
-              }
-
-            }else{
-              evaluacionCapacidadUi.nota = null;
-              evaluacionCapacidadUi.valorTipoNotaUi = null;
-            }
+            CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: personaUi.personaId);
+            double notaCapacidad = evaluacionCapacidadUi.nota??0;
 
             notaCompetencia += notaCapacidad;
             evaluacionCompetenciaUi.evaluacionCapacidadUiList?.add(evaluacionCapacidadUi);
@@ -153,17 +138,20 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
           evaluacionCompetenciaUiList.add(evaluacionCompetenciaUi);
 
         }
+        //#endregion cacular competencia
       }
+
 
       List<EvaluacionCalendarioPeriodoUi> evaluacionCalendarioPeriodoUiList = [];
       for(PersonaUi personaUi in alumnoCursoList){
+
         double notaCalendario = 0;
         int cantidadCompetencias = 0;
         EvaluacionCalendarioPeriodoUi evaluacionCalendarioPeriodoUi = EvaluacionCalendarioPeriodoUi();
         evaluacionCalendarioPeriodoUi.calendarioPeriodoUI = params?.calendarioPeriodoUI;
         evaluacionCalendarioPeriodoUi.personaUi = personaUi;
         evaluacionCalendarioPeriodoUi.nota = 0.0;
-
+        //#region calacular Totales
         for(EvaluacionCompetenciaUi evaluacionCompetenciaUi in evaluacionCompetenciaUiList){
           if(personaUi.personaId == evaluacionCompetenciaUi.personaUi?.personaId && evaluacionCompetenciaUi.competenciaUi?.tipoCompetenciaUi == TipoCompetenciaUi.BASE){
             notaCalendario += evaluacionCompetenciaUi.nota??0.0;
@@ -176,7 +164,9 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
           ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(tipoNotaUi, notaCalendario);
           evaluacionCalendarioPeriodoUi.valorTipoNotaUi = valorTipoNotaUi;
         }
+        //#endregion
         evaluacionCalendarioPeriodoUiList.add(evaluacionCalendarioPeriodoUi);
+
       }
 
 

@@ -19058,7 +19058,7 @@ class RubroEvaluacionProcesoData extends DataClass
   final int? estrategiaEvaluacionId;
   final String? tareaId;
   final String? resultadoTipoNotaId;
-  final String? instrumentoEvalId;
+  final int? instrumentoEvalId;
   final int? error_guardar;
   final int? peso;
   final String? preguntaId;
@@ -19192,7 +19192,7 @@ class RubroEvaluacionProcesoData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}tarea_id']),
       resultadoTipoNotaId: const StringType().mapFromDatabaseResponse(
           data['${effectivePrefix}resultado_tipo_nota_id']),
-      instrumentoEvalId: const StringType().mapFromDatabaseResponse(
+      instrumentoEvalId: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}instrumento_eval_id']),
       error_guardar: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}error_guardar']),
@@ -19324,7 +19324,7 @@ class RubroEvaluacionProcesoData extends DataClass
       map['resultado_tipo_nota_id'] = Variable<String?>(resultadoTipoNotaId);
     }
     if (!nullToAbsent || instrumentoEvalId != null) {
-      map['instrumento_eval_id'] = Variable<String?>(instrumentoEvalId);
+      map['instrumento_eval_id'] = Variable<int?>(instrumentoEvalId);
     }
     if (!nullToAbsent || error_guardar != null) {
       map['error_guardar'] = Variable<int?>(error_guardar);
@@ -19522,8 +19522,7 @@ class RubroEvaluacionProcesoData extends DataClass
       tareaId: serializer.fromJson<String?>(json['tareaId']),
       resultadoTipoNotaId:
           serializer.fromJson<String?>(json['resultadoTipoNotaId']),
-      instrumentoEvalId:
-          serializer.fromJson<String?>(json['instrumentoEvalId']),
+      instrumentoEvalId: serializer.fromJson<int?>(json['instrumentoEvalId']),
       error_guardar: serializer.fromJson<int?>(json['error_guardar']),
       peso: serializer.fromJson<int?>(json['peso']),
       preguntaId: serializer.fromJson<String?>(json['preguntaId']),
@@ -19573,7 +19572,7 @@ class RubroEvaluacionProcesoData extends DataClass
       'estrategiaEvaluacionId': serializer.toJson<int?>(estrategiaEvaluacionId),
       'tareaId': serializer.toJson<String?>(tareaId),
       'resultadoTipoNotaId': serializer.toJson<String?>(resultadoTipoNotaId),
-      'instrumentoEvalId': serializer.toJson<String?>(instrumentoEvalId),
+      'instrumentoEvalId': serializer.toJson<int?>(instrumentoEvalId),
       'error_guardar': serializer.toJson<int?>(error_guardar),
       'peso': serializer.toJson<int?>(peso),
       'preguntaId': serializer.toJson<String?>(preguntaId),
@@ -19621,7 +19620,7 @@ class RubroEvaluacionProcesoData extends DataClass
           int? estrategiaEvaluacionId,
           String? tareaId,
           String? resultadoTipoNotaId,
-          String? instrumentoEvalId,
+          int? instrumentoEvalId,
           int? error_guardar,
           int? peso,
           String? preguntaId}) =>
@@ -19862,7 +19861,7 @@ class RubroEvaluacionProcesoCompanion
   final Value<int?> estrategiaEvaluacionId;
   final Value<String?> tareaId;
   final Value<String?> resultadoTipoNotaId;
-  final Value<String?> instrumentoEvalId;
+  final Value<int?> instrumentoEvalId;
   final Value<int?> error_guardar;
   final Value<int?> peso;
   final Value<String?> preguntaId;
@@ -19999,7 +19998,7 @@ class RubroEvaluacionProcesoCompanion
     Expression<int?>? estrategiaEvaluacionId,
     Expression<String?>? tareaId,
     Expression<String?>? resultadoTipoNotaId,
-    Expression<String?>? instrumentoEvalId,
+    Expression<int?>? instrumentoEvalId,
     Expression<int?>? error_guardar,
     Expression<int?>? peso,
     Expression<String?>? preguntaId,
@@ -20102,7 +20101,7 @@ class RubroEvaluacionProcesoCompanion
       Value<int?>? estrategiaEvaluacionId,
       Value<String?>? tareaId,
       Value<String?>? resultadoTipoNotaId,
-      Value<String?>? instrumentoEvalId,
+      Value<int?>? instrumentoEvalId,
       Value<int?>? error_guardar,
       Value<int?>? peso,
       Value<String?>? preguntaId}) {
@@ -20286,7 +20285,7 @@ class RubroEvaluacionProcesoCompanion
           Variable<String?>(resultadoTipoNotaId.value);
     }
     if (instrumentoEvalId.present) {
-      map['instrumento_eval_id'] = Variable<String?>(instrumentoEvalId.value);
+      map['instrumento_eval_id'] = Variable<int?>(instrumentoEvalId.value);
     }
     if (error_guardar.present) {
       map['error_guardar'] = Variable<int?>(error_guardar.value);
@@ -20554,9 +20553,9 @@ class $RubroEvaluacionProcesoTable extends RubroEvaluacionProceso
           typeName: 'TEXT', requiredDuringInsert: false);
   final VerificationMeta _instrumentoEvalIdMeta =
       const VerificationMeta('instrumentoEvalId');
-  late final GeneratedColumn<String?> instrumentoEvalId =
-      GeneratedColumn<String?>('instrumento_eval_id', aliasedName, true,
-          typeName: 'TEXT', requiredDuringInsert: false);
+  late final GeneratedColumn<int?> instrumentoEvalId = GeneratedColumn<int?>(
+      'instrumento_eval_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
   final VerificationMeta _error_guardarMeta =
       const VerificationMeta('error_guardar');
   late final GeneratedColumn<int?> error_guardar = GeneratedColumn<int?>(

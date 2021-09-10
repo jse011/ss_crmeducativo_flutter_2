@@ -17,6 +17,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_reposito
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/calcular_evaluacion_proceso.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
 import 'package:collection/collection.dart';
 
@@ -122,15 +123,34 @@ class EvaluacionIndicadorMultipleController extends Controller {
       EvaluacionPublicadoUi? evaluacionPublicadoUi = null;
       //#obtner Nota Tatal
       if (row is PersonaUi) {
-        EvaluacionUi? evaluacionUi = rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
-        if (evaluacionUi == null){
-          evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
-          evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
+
+        EvaluacionUi? evaluacionUiCabecera = rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
+        if (evaluacionUiCabecera == null){
+          evaluacionUiCabecera = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
+          evaluacionUiCabecera.rubroEvaluacionUi = rubricaEvaluacionUi;
           row.soloApareceEnElCurso = true;
+          evaluacionUiCabecera.alumnoId = row.personaId;
+          rubricaEvaluacionUi?.evaluacionUiList?.add(evaluacionUiCabecera);
         }
-        evaluacionUi.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
-        cellList.add(evaluacionUi);
-        evaluacionPublicadoUi = EvaluacionPublicadoUi(evaluacionUi);
+        evaluacionUiCabecera.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
+
+        cellList.add(evaluacionUiCabecera);
+        evaluacionPublicadoUi = EvaluacionPublicadoUi(evaluacionUiCabecera);
+
+        //Comprobar si el detalle tiene tiene evaluacion
+        for (RubricaEvaluacionUi rubricaEvaluacionUiDetalle in rubricaEvaluacionUi?.rubrosDetalleList ?? []) {
+          EvaluacionUi? evaluacionUiDetalle = rubricaEvaluacionUiDetalle.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
+          if(evaluacionUiDetalle==null){
+            evaluacionUiDetalle = EvaluacionUi();
+            evaluacionUiDetalle.rubroEvaluacionUi = rubricaEvaluacionUiDetalle;
+            evaluacionUiDetalle.alumnoId = row.personaId;
+            row.soloApareceEnElCurso = true;
+            rubricaEvaluacionUiDetalle.evaluacionUiList?.add(evaluacionUiDetalle);
+          }
+        }
+
+
+
       } else {
         cellList.add(""); //Espacio
       }
@@ -246,20 +266,13 @@ class EvaluacionIndicadorMultipleController extends Controller {
         List<dynamic> cellList = [];
         cellList.add(row);
         EvaluacionUi? evaluacionUi = row.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == personaUi.personaId);
-        if(evaluacionUi==null){
-          evaluacionUi = EvaluacionUi();//Una evaluacion vasia significa que el alumno no tiene evaluacion
-          evaluacionUi.rubroEvaluacionUi = row;
-          evaluacionUi.rubroEvaluacionId = row.rubricaId;
-          personaUi.soloApareceEnElCurso = true;
-        }
-        evaluacionUi.personaUi = personaUi;//se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
 
         if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
           for(ValorTipoNotaUi valorTipoNotaUi in tipoNotaUi?.valorTipoNotaList??[]){
             EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi = EvaluacionRubricaValorTipoNotaUi();
             evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi = valorTipoNotaUi;
             evaluacionRubricaValorTipoNotaUi.evaluacionUi = evaluacionUi;
-            evaluacionRubricaValorTipoNotaUi.toggle = (evaluacionUi.evaluacionId??"").isNotEmpty && valorTipoNotaUi.valorTipoNotaId == evaluacionUi.valorTipoNotaId;
+            evaluacionRubricaValorTipoNotaUi.toggle = valorTipoNotaUi.valorTipoNotaId == evaluacionUi?.valorTipoNotaId;
             evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi = row;
             cellList.add(evaluacionRubricaValorTipoNotaUi);
           }
@@ -426,38 +439,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   void _actualizarCabecera(PersonaUi personaUi) {
-    EvaluacionUi? evaluacionUi = getEvaluacionGeneralPersona(personaUi);
-    print("evaluacionUi: ${evaluacionUi?.nota}");
-    List<EvaluacionUi> evaluacionUiList = [];
-    for(RubricaEvaluacionUi rubroEvaluacionUi in rubroEvaluacionUi?.rubrosDetalleList??[]){
-      for(EvaluacionUi item in rubroEvaluacionUi.evaluacionUiList??[]){
-        if(item.personaUi?.personaId == personaUi.personaId){
-          evaluacionUiList.add(item);
-        }
-      }
-    }
-
-    double notaDetalle = 0.0;
-    int notaMaxRubro = 0;
-    int notaMinRubro = 0;
-    int countSelecionado = 0;
-    for(EvaluacionUi evaluacionUi in evaluacionUiList){
-      notaDetalle += AppTools.roundDouble((evaluacionUi.nota??0.0)*(evaluacionUi.rubroEvaluacionUi?.formula_peso??1),2);//Para evitar calcular con muchos decimasles se redonde a dos
-      notaMaxRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo??0;
-      notaMinRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo??0;
-      if(evaluacionUi.valorTipoNotaId!=null)countSelecionado++;
-    }
-
-    if(countSelecionado>0){
-      TransformarValoTipoNotaResponse response = TransformarValoTipoNota.execute(TransformarValoTipoNotaParams(notaDetalle, notaMinRubro, notaMaxRubro, rubroEvaluacionUi?.tipoNotaUi));
-      evaluacionUi?.valorTipoNotaId = response.valorTipoNotaUi?.valorTipoNotaId;
-      evaluacionUi?.valorTipoNotaUi = response.valorTipoNotaUi;
-      evaluacionUi?.nota = AppTools.roundDouble(response.nota??0.0, 2);// Se redondea a dos diguitos pero se muesta solo un digito para mostar al usuario
-    }else{
-      evaluacionUi?.valorTipoNotaId = null;
-      evaluacionUi?.valorTipoNotaUi = null;
-      evaluacionUi?.nota = 0.0;// Se redondea a dos diguitos pero se muesta solo un digito para mostar al usuario
-    }
+    CalcularEvaluacionProceso.actualizarCabecera(rubroEvaluacionUi, personaUi);
     refreshUI();
   }
 
@@ -497,7 +479,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
       await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubroEvaluacionUi);
     }
 
-    return true;
+    return _modificado;
   }
 
   onClickAceptarEliminar() async{

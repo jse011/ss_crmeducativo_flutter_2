@@ -647,27 +647,27 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
   void _guardarRubroyRetornar(BuildContext context, RubroController controller) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null);
-    controller.respuestaFormularioCrearRubro();
+    dynamic response = await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null);
+    if(response is int) controller.respuestaFormularioCrearRubro();
   }
 
   void _evaluacionCapacidadRetornar(BuildContext context, RubroController controller, EvaluacionCapacidadUi evaluacionCapacidadUi) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    await AppRouter.createRouteEvaluacionCapacidad(context, controller.cursosUi, evaluacionCapacidadUi);
-    controller.respuestaEvaluacionCapacidad();
+    dynamic response = await AppRouter.createRouteEvaluacionCapacidad(context, controller.cursosUi, evaluacionCapacidadUi);
+    if(response is int) controller.respuestaEvaluacionCapacidad();
   }
 
   void _evaluacionMultipleRetornar(BuildContext context, RubroController controller, RubricaEvaluacionUi rubricaEvaluacionUi) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    await AppRouter.createRouteEvaluacionMultiple(context, controller.calendarioPeriodoUI,controller.cursosUi, rubricaEvaluacionUi.rubricaId);
-    controller.respuestaEvaluacion();
+    dynamic response = await AppRouter.createRouteEvaluacionMultiple(context, controller.calendarioPeriodoUI,controller.cursosUi, rubricaEvaluacionUi.rubricaId);
+    if(response is int) controller.respuestaEvaluacion();
   }
 
   void _evaluacionSimpleRetornar(BuildContext context, RubroController controller, RubricaEvaluacionUi rubricaEvaluacionUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
-    await AppRouter.createRouteEvaluacionSimple(context, controller.cursosUi, rubricaEvaluacionUi.rubricaId, calendarioPeriodoUI);
-    controller.respuestaEvaluacion();
+    dynamic response = await AppRouter.createRouteEvaluacionSimple(context, controller.cursosUi, rubricaEvaluacionUi.rubricaId, calendarioPeriodoUI);
+    if(response is int) controller.respuestaEvaluacion();
   }
 
   void showDialogButtom(RubroController controller) {

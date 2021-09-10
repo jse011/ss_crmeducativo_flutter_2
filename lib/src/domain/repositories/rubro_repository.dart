@@ -44,4 +44,6 @@ abstract class RubroRepository{
 
   Future<void> eliminarEvaluacion(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId);
 
+  Future<void> updatePesoRubro(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId);
+
 }

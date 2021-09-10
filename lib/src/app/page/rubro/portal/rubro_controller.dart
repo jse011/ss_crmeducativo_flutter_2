@@ -292,7 +292,6 @@ class RubroController extends Controller{
   }
 
   void respuestaFormularioCrearRubro() {
-    print("respuestaFormularioCrearRubro");
     _progress = true;
     refreshUI();
     onListarTabsRubroEvaluacion();

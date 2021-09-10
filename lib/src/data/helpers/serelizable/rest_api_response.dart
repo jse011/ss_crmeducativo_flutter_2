@@ -1164,7 +1164,7 @@ class RubroEvaluacionProcesoSerial {
   int?fechaAccion;
   String? key;
 
-  String? instrumentoEvalId;
+  int? instrumentoEvalId;
 
   int? error_guardar;
   int? peso;

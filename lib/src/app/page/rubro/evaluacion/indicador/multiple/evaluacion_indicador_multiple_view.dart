@@ -114,10 +114,14 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                 scrollController.jumpTo(offset??0.0);
                 return false;
               }else{
-                bool?  respuesta = await controller.onSave();
-                return true;
+                bool  se_a_modicado = await controller.onSave();
+                if(se_a_modicado){
+                  Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                  return false;
+                }else{
+                  return true;
+                }
               }
-
             },
             child: Container(
               color: AppTheme.white,
@@ -206,7 +210,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                       Expanded(child: ElevatedButton(
                                         onPressed: () async {
                                           await controller.onClickAceptarEliminar();
-                                          Navigator.of(context).pop(true);
+                                          Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
                                         },
                                         style: ElevatedButton.styleFrom(
                                           primary: Colors.red,
@@ -282,7 +286,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                           scrollController.jumpTo(offset??0.0);
                                         }else{
                                           bool?  respuesta = await controller.onSave();
-                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
                                         }
                                       },
                                     )
@@ -360,38 +364,6 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                       flex: 2,
                                       child: Container(),
                                     ),
-                                    /*Expanded(
-                                        flex: 1,
-                                        child:  InkWell(
-                                          onTap: ()=> controller.onClicGuardar(),
-                                          child: Container(
-                                            padding: EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: !controller.modificado?AppTheme.colorAccent:null
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(Ionicons.save, color:!controller.modificado?AppTheme.white:AppTheme.colorAccent, size: 20,),
-                                                Padding(padding: EdgeInsets.all(2),),
-                                                FittedBox(
-                                                  fit: BoxFit.scaleDown,
-                                                  child: Text(!controller.modificado?"Guardado":"Modificado",
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          letterSpacing: 0.5,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: !controller.modificado?AppTheme.white:AppTheme.colorPrimary,
-                                                          fontSize: 12
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                    ),*/
                                     Expanded(
                                         flex: 1,
                                         child:  Container(
@@ -598,7 +570,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                       Padding(
                                           padding: EdgeInsets.only(top: 8)
                                       ),
-                                      if(controller.precision)
+
                                       Container(
                                         width: width,
                                         padding: EdgeInsets.only(left: padding_left, right: padding_right),
@@ -707,7 +679,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                           ],
                                         ),
                                       ),
-                                      if(controller.precision)
+
                                         Padding(
                                             padding: EdgeInsets.only(top: 16)
                                         ),
@@ -1371,7 +1343,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                         color: AppTheme.white
                     ),
                     child: Center(
-                      child: Text("${(o.formula_peso * 100).toStringAsFixed(0)}%", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14,color:  AppTheme.greyDarken1 ),
+                      child: Text("${(o.formula_peso).toStringAsFixed(0)}%", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14,color:  AppTheme.greyDarken1 ),
                       ),
                     ),
                   ),
@@ -1440,56 +1412,54 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
   }
 
   Widget? _getTipoNota(EvaluacionUi? evaluacionUi, double? nota, EvaluacionIndicadorMultipleController controller) {
-    if(evaluacionUi?.evaluacionId!=null){
+    var tipo =TipoNotaTiposUi.VALOR_NUMERICO;
+    if(!controller.precision) tipo = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
 
-      var tipo =TipoNotaTiposUi.VALOR_NUMERICO;
-      if(!controller.precision) tipo = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
-
-      switch(tipo){
-        case TipoNotaTiposUi.SELECTOR_VALORES:
-          Color color;
-          if (("B" == (evaluacionUi?.valorTipoNotaUi?.titulo??"") || "C" == (evaluacionUi?.valorTipoNotaUi?.titulo??""))) {
-            color = AppTheme.redDarken4;
-          }else if (("AD" == (evaluacionUi?.valorTipoNotaUi?.titulo??"")) || "A" == (evaluacionUi?.valorTipoNotaUi?.titulo??"")) {
-            color = AppTheme.blueDarken4;
-          }else {
-            color = AppTheme.black;
-          }
+    switch(tipo){
+      case TipoNotaTiposUi.SELECTOR_VALORES:
+        Color color;
+        if (("B" == (evaluacionUi?.valorTipoNotaUi?.titulo??"") || "C" == (evaluacionUi?.valorTipoNotaUi?.titulo??""))) {
+          color = AppTheme.redDarken4;
+        }else if (("AD" == (evaluacionUi?.valorTipoNotaUi?.titulo??"")) || "A" == (evaluacionUi?.valorTipoNotaUi?.titulo??"")) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+        return Center(
+          child: Text(evaluacionUi?.valorTipoNotaUi?.titulo??"-",
+              style: TextStyle(
+                  fontFamily: AppTheme.fontTTNormsMedium,
+                  fontSize: 14,
+                  color: color
+              )),
+        );
+      case TipoNotaTiposUi.SELECTOR_ICONOS:
+        if(evaluacionUi?.valorTipoNotaUi!=null){
+          return Container(
+            child:  CachedNetworkImage(
+              imageUrl: evaluacionUi?.valorTipoNotaUi?.icono??"",
+              placeholder: (context, url) => Stack(
+                children: [
+                  CircularProgressIndicator()
+                ],
+              ),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          );
+        }else{
           return Center(
-            child: Text(evaluacionUi?.valorTipoNotaUi?.titulo??"-",
+            child: Text("-",
                 style: TextStyle(
                     fontFamily: AppTheme.fontTTNormsMedium,
                     fontSize: 14,
-                    color: color
+                    color: AppTheme.black
                 )),
           );
-        case TipoNotaTiposUi.SELECTOR_ICONOS:
-          if(evaluacionUi?.valorTipoNotaUi!=null){
-            return Container(
-              child:  CachedNetworkImage(
-                imageUrl: evaluacionUi?.valorTipoNotaUi?.icono??"",
-                placeholder: (context, url) => Stack(
-                  children: [
-                    CircularProgressIndicator()
-                  ],
-                ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              ),
-            );
-          }else{
-            return Center(
-              child: Text("-",
-                  style: TextStyle(
-                      fontFamily: AppTheme.fontTTNormsMedium,
-                      fontSize: 14,
-                      color: AppTheme.black
-                  )),
-            );
-          }
+        }
 
-        case TipoNotaTiposUi.VALOR_ASISTENCIA:
-        case TipoNotaTiposUi.VALOR_NUMERICO:
-        case TipoNotaTiposUi.SELECTOR_NUMERICO:
+      case TipoNotaTiposUi.VALOR_ASISTENCIA:
+      case TipoNotaTiposUi.VALOR_NUMERICO:
+      case TipoNotaTiposUi.SELECTOR_NUMERICO:
         if(nota == 0){
           if(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES ||
               evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
@@ -1498,22 +1468,12 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
             }
           }
         }
-          return Center(
-            child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-                fontFamily: AppTheme.fontTTNormsMedium,
-                fontSize: 14
-            ),),
-          );
-      }
-    }else{
-      //print("soloApareceEvaluacion: ${evaluacionUi?.personaUi?.nombres} ${evaluacionUi?.personaUi?.soloApareceEvaluacion?.toString()}");
-      //print("contratoVigente: ${evaluacionUi?.personaUi?.nombres} ${evaluacionUi?.personaUi?.contratoVigente?.toString()}");
-      return Center(
-        child: Text("", style: TextStyle(
-            fontFamily: AppTheme.fontTTNormsMedium,
-            fontSize: 14
-        ),),
-      );
+        return Center(
+          child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
+              fontFamily: AppTheme.fontTTNormsMedium,
+              fontSize: 14
+          ),),
+        );
     }
 
   }
@@ -1572,11 +1532,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
       }
     }else{
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = AppTheme.white;
+        color_fondo = AppTheme.greyLighten2;
         color_texto =  null;
         color_borde = AppTheme.greyLighten2;
       }else{
-        color_fondo = AppTheme.greyLighten2;
+        color_fondo = AppTheme.white;
         color_texto = null;
         color_borde = AppTheme.greyLighten2;
       }
@@ -1787,35 +1747,6 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
     }else{
       return  AppTheme.greyLighten2;
     }
-  }
-
-  Future<bool> _showMaterialDialog() async {
-    return await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Are you sure you want to quit?'),
-            content: Text('Hey! I am Coflutter!'),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  child: Text('sign out')),
-              TextButton(
-                onPressed: () {
-                  print('HelloWorld!');
-                  Navigator.of(context).pop(false);
-                },
-                child: Text('cancel'),
-              )
-            ],
-          );
-        });
-  }
-
-  _dismissDialog() {
-    Navigator.pop(context, true);
   }
 
   Future<bool?> _showControNoVigente(BuildContext context, PersonaUi? personaUi) async {

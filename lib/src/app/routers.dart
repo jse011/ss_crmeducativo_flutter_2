@@ -182,8 +182,8 @@ class AppRouter {
         arguments:  {'cursoUi': cursosUi, 'sesionUi':sesionUi}
     );
   }
-  static Future<void> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, RubricaEvaluacionUi? rubroUi) async{
-   await Navigator.pushNamed(context,
+  static Future<dynamic> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, RubricaEvaluacionUi? rubroUi) async{
+   return await Navigator.pushNamed(context,
         RUBROCREAR,
         arguments: {'cursoUi': cursosUi, 'calendarioPeriodoUI':calendarioPeriodoUI ,'rubroUi': rubroUi}
     );
@@ -196,22 +196,22 @@ class AppRouter {
     );
   }
 
-  static createRouteEvaluacionCapacidad(BuildContext context, CursosUi? cursosUi, EvaluacionCapacidadUi? evaluacionCapacidadUi) async{
-    dynamic? object = await Navigator.pushNamed(context,
+  static Future<dynamic> createRouteEvaluacionCapacidad(BuildContext context, CursosUi? cursosUi, EvaluacionCapacidadUi? evaluacionCapacidadUi) async{
+    return await Navigator.pushNamed(context,
         EVALUACION_CAPACIDAD,
         arguments: {'cursoUi': cursosUi, 'evaluacionCapacidadUi': evaluacionCapacidadUi, }
     );
   }
 
-  static createRouteEvaluacionMultiple(BuildContext context, CalendarioPeriodoUI? calendarioPeriodoUI ,CursosUi? cursosUi, String? rubroEvaluacionId) async{
-    dynamic? object = await Navigator.pushNamed(context,
+  static Future<dynamic> createRouteEvaluacionMultiple(BuildContext context, CalendarioPeriodoUI? calendarioPeriodoUI ,CursosUi? cursosUi, String? rubroEvaluacionId) async{
+   return await Navigator.pushNamed(context,
         EVALUACION_MULTIPLE,
         arguments: {'cursoUi': cursosUi, 'rubroEvaluacionId': rubroEvaluacionId, 'calendarioPeriodoUI': calendarioPeriodoUI}
     );
   }
 
-  static createRouteEvaluacionSimple(BuildContext context, CursosUi? cursosUi, String? rubroEvaluacionId, CalendarioPeriodoUI? calendarioPeriodoUI) async{
-    dynamic? object = await Navigator.pushNamed(context,
+  static Future<dynamic> createRouteEvaluacionSimple(BuildContext context, CursosUi? cursosUi, String? rubroEvaluacionId, CalendarioPeriodoUI? calendarioPeriodoUI) async{
+    return await Navigator.pushNamed(context,
         EVALUACION_SIMPLE,
         arguments: {'cursoUi': cursosUi, 'rubroEvaluacionId': rubroEvaluacionId, 'calendarioPeriodoUI':  calendarioPeriodoUI}
     );

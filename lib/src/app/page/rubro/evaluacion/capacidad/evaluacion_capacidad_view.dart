@@ -21,11 +21,14 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
+import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_trasnformada_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
@@ -52,7 +55,7 @@ class EvaluacionCapacidadView extends View{
 class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, EvaluacionCapacidadController> with TickerProviderStateMixin{
   ScrollControllers crollControllers = ScrollControllers();
 
-  _EvaluacionCapacidadViewState(evaluacionCapacidadUi, cursosUi) : super(EvaluacionCapacidadController(evaluacionCapacidadUi, cursosUi, MoorRubroRepository()));
+  _EvaluacionCapacidadViewState(evaluacionCapacidadUi, cursosUi) : super(EvaluacionCapacidadController(evaluacionCapacidadUi, cursosUi, MoorConfiguracionRepository(), MoorRubroRepository(), DeviceHttpDatosRepositorio()));
   late Animation<double> topBarAnimation;
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
@@ -109,195 +112,207 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   @override
   Widget get view => ControlledWidgetBuilder<EvaluacionCapacidadController>(
       builder: (context, controller) {
-          return ControlledWidgetBuilder<EvaluacionCapacidadController>(
-              builder: (context, controller) {
-                return Container(
-                  color: AppTheme.white,
-                  child: Scaffold(
-                    backgroundColor: Colors.transparent,
-                    body: Stack(
-                      children: <Widget>[
-                        getMainTab(),
-                        getAppBarUI(),
-                        if(controller.showMsgAlumnoNoVigente)
-                          ArsProgressWidget(
-                              blur: 2,
-                              backgroundColor: Color(0x33000000),
-                              animationDuration: Duration(milliseconds: 500),
-                              loadingWidget: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16), // if you need this
-                                  side: BorderSide(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(16),
-                                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 50,
-                                            height: 50,
-                                            child: Icon(Icons.supervised_user_circle, size: 35, color: AppTheme.white,),
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: AppTheme.colorAccent),
-                                          ),
-                                          Padding(padding: EdgeInsets.all(8)),
-                                          Expanded(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(padding: EdgeInsets.all(4),),
-                                                  Text("Contrato no vigente", style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.w700,
-                                                      fontFamily: AppTheme.fontTTNormsMedium
-                                                  ),),
-                                                  Padding(padding: EdgeInsets.all(8),),
-                                                  Text("El Contrato de ${controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??""} no esta vigente.",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        height: 1.5
-                                                    ),),
-                                                  Padding(padding: EdgeInsets.all(16),),
-                                                ],
-                                              )
-                                          )
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                              child: Container()
-                                          ),
-                                          Padding(padding: EdgeInsets.all(8)),
-                                          Expanded(child: ElevatedButton(
-                                            onPressed: () {
-                                              //Navigator.of(context).pop(true);
-                                              controller.hideMsgAlumnoNoVigente();
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              primary: AppTheme.colorAccent,
-                                              onPrimary: Colors.white,
-                                              elevation: 0,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                              ),
-                                            ),
-                                            child: Text('Salir'),
-                                          )),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                          ),
-                        if(controller.showDialogClearEvaluacion)
-                          ArsProgressWidget(
-                              blur: 2,
-                              backgroundColor: Color(0x33000000),
-                              animationDuration: Duration(milliseconds: 500),
-                              loadingWidget: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16), // if you need this
-                                  side: BorderSide(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all(16),
-                                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 50,
-                                            height: 50,
-                                            child: Icon(Icons.cleaning_services_rounded, size: 35, color: AppTheme.white,),
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: AppTheme.colorAccent),
-                                          ),
-                                          Padding(padding: EdgeInsets.all(8)),
-                                          Expanded(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(padding: EdgeInsets.all(4),),
-                                                  Text("Borrar todo y evaluar de nuevo", style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.w700,
-                                                      fontFamily: AppTheme.fontTTNormsMedium
-                                                  ),),
-                                                  Padding(padding: EdgeInsets.all(4),),
-                                                  Text("¿Está seguro de volver a evaluar todo de nuevo?",
-                                                    style: TextStyle(
-                                                        fontSize: 14,
-                                                        height: 1.5
-                                                    ),),
-                                                  Padding(padding: EdgeInsets.all(4),),
-                                                ],
-                                              )
-                                          )
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                              child: OutlinedButton(
-                                                onPressed: () {
-                                                  controller.onClickCancelarClearEvaluacion();
-                                                },
-                                                child: Text('Cancelar'),
-                                                style: OutlinedButton.styleFrom(
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(8),
-                                                  ),
-                                                ),
-                                              )
-                                          ),
-                                          Padding(padding: EdgeInsets.all(8)),
-                                          Expanded(child: ElevatedButton(
-                                            onPressed: () {
-                                              controller.onClicClearEvaluacionAll();
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              primary: Colors.red,
-                                              onPrimary: Colors.white,
-                                              elevation: 0,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                              ),
-                                            ),
-                                            child: Text('Borrar todo'),
-                                          )),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                          )
-                      ],
-                    ),
-                  ),
-                );
+        return WillPopScope(
+            onWillPop: () async {
+              bool?  se_a_modicado = await controller.onSave();
+              if(se_a_modicado){
+                Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                return false;
+              }else{
+                return true;
               }
-          );
+            },
+            child: Container(
+              color: AppTheme.white,
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Stack(
+                  children: <Widget>[
+                    getMainTab(),
+                    getAppBarUI(),
+                    if(controller.showDialog)
+                      ArsProgressWidget(
+                          blur: 2,
+                          backgroundColor: Color(0x33000000),
+                          animationDuration: Duration(milliseconds: 500)),
+                    if(controller.showMsgAlumnoNoVigente)
+                      ArsProgressWidget(
+                          blur: 2,
+                          backgroundColor: Color(0x33000000),
+                          animationDuration: Duration(milliseconds: 500),
+                          loadingWidget: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16), // if you need this
+                              side: BorderSide(
+                                color: Colors.grey.withOpacity(0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(16),
+                              constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        child: Icon(Icons.supervised_user_circle, size: 35, color: AppTheme.white,),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppTheme.colorAccent),
+                                      ),
+                                      Padding(padding: EdgeInsets.all(8)),
+                                      Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(padding: EdgeInsets.all(4),),
+                                              Text("Contrato no vigente", style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: AppTheme.fontTTNormsMedium
+                                              ),),
+                                              Padding(padding: EdgeInsets.all(8),),
+                                              Text("El Contrato de ${controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??""} no esta vigente.",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    height: 1.5
+                                                ),),
+                                              Padding(padding: EdgeInsets.all(16),),
+                                            ],
+                                          )
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: Container()
+                                      ),
+                                      Padding(padding: EdgeInsets.all(8)),
+                                      Expanded(child: ElevatedButton(
+                                        onPressed: () {
+                                          //Navigator.of(context).pop(true);
+                                          controller.hideMsgAlumnoNoVigente();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          primary: AppTheme.colorAccent,
+                                          onPrimary: Colors.white,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                        child: Text('Salir'),
+                                      )),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                      ),
+                    if(controller.showDialogClearEvaluacion)
+                      ArsProgressWidget(
+                          blur: 2,
+                          backgroundColor: Color(0x33000000),
+                          animationDuration: Duration(milliseconds: 500),
+                          loadingWidget: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16), // if you need this
+                              side: BorderSide(
+                                color: Colors.grey.withOpacity(0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(16),
+                              constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        child: Icon(Icons.cleaning_services_rounded, size: 35, color: AppTheme.white,),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppTheme.colorAccent),
+                                      ),
+                                      Padding(padding: EdgeInsets.all(8)),
+                                      Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(padding: EdgeInsets.all(4),),
+                                              Text("Borrar todo y evaluar de nuevo", style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: AppTheme.fontTTNormsMedium
+                                              ),),
+                                              Padding(padding: EdgeInsets.all(4),),
+                                              Text("¿Está seguro de volver a evaluar todo de nuevo?",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    height: 1.5
+                                                ),),
+                                              Padding(padding: EdgeInsets.all(4),),
+                                            ],
+                                          )
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              controller.onClickCancelarClearEvaluacion();
+                                            },
+                                            child: Text('Cancelar'),
+                                            style: OutlinedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          )
+                                      ),
+                                      Padding(padding: EdgeInsets.all(8)),
+                                      Expanded(child: ElevatedButton(
+                                        onPressed: () {
+                                          controller.onClicClearEvaluacionAll();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.red,
+                                          onPrimary: Colors.white,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                        child: Text('Borrar todo'),
+                                      )),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                      )
+                  ],
+                ),
+              ),
+            )
+        );
       }
   );
 
@@ -344,13 +359,13 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                 Positioned(
                                     child:  IconButton(
                                       icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                      onPressed: () {
-                                        animationController.reverse().then<dynamic>((data) {
-                                          if (!mounted) {
-                                            return;
-                                          }
-                                          Navigator.of(context).pop();
-                                        });
+                                      onPressed: () async{
+                                        bool?  se_a_modicado = await controller.onSave();
+                                        if(se_a_modicado){
+                                          Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                                        }else{
+                                          Navigator.of(context).pop(true);
+                                        }
                                       },
                                     )
                                 ),
@@ -458,41 +473,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                       ),
                                     ),
                                     Expanded(
-                                      flex: 1,
-                                      child: Container(),
-                                    ),
-                                    /*Expanded(
                                         flex: 1,
-                                        child:  InkWell(
-                                          onTap: ()=> controller.onClicGuardar(),
-                                          child: Container(
-                                            padding: EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                color: !controller.modificado?AppTheme.colorAccent:null
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(Ionicons.save, color:!controller.modificado?AppTheme.white:AppTheme.colorAccent, size: 20,),
-                                                Padding(padding: EdgeInsets.all(2),),
-                                                FittedBox(
-                                                  fit: BoxFit.scaleDown,
-                                                  child: Text(!controller.modificado?"Guardado":"Modificado",
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          letterSpacing: 0.5,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: !controller.modificado?AppTheme.white:AppTheme.colorPrimary,
-                                                          fontSize: 12
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                    ),*/
+                                        child: Container()
+                                    ),
                                     Expanded(
                                         flex: 1,
                                         child: CupertinoButton (
@@ -550,7 +533,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if(controller.precision)
+
                                   Container(
                                     padding: EdgeInsets.only(left: padding_left, right: padding_right),
                                     width: width,
@@ -591,7 +574,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                       ],
                                     ),
                                   ),
-                                if(controller.precision)
+
                                   Padding(
                                       padding: EdgeInsets.only(top: 8)
                                   ),
@@ -1083,6 +1066,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       right: BorderSide(color: AppTheme.greyLighten2),
                       bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.rubricaEvaluacionList.length-1) <= i ? 1:0)),
                     ),
+                    color: ((rubricaEvaluacionUi.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)?null:AppTheme.red.withOpacity(0.1),
                   )
               ),
             );
@@ -1101,10 +1085,24 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)
                       Padding(padding: EdgeInsets.all(8)),
+                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)
                       Text("${AppTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 2)}%", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
                       Padding(padding: EdgeInsets.all(2)),
-                      Text("(P. Normal)",  textAlign: TextAlign.center,style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),),
+                      Text((){
+                        if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_ALTO){
+                          return "P. Desconocido";
+                        }if(o.rubricaEvaluacionUi?.peso == RubricaEvaluacionUi.PESO_ALTO){
+                          return "P. Alto";
+                        }else if(o.rubricaEvaluacionUi?.peso == RubricaEvaluacionUi.PESO_NORMAL){
+                          return "P. Normal";
+                        }else if(o.rubricaEvaluacionUi?.peso == RubricaEvaluacionUi.PESO_BAJO){
+                          return "P. Bajo";
+                        }else{
+                          return "No usar\ncriterio";
+                        }
+                      }(),  textAlign: TextAlign.center,style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700),),
 
                     ],
                   ),
@@ -1114,7 +1112,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       right: BorderSide(color: AppTheme.greyLighten2),
                       bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
                     ),
-                    color: HexColor(controller.cursosUi.color2).withOpacity(0.1),
+                    color:  ((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)?HexColor(controller.cursosUi.color2).withOpacity(0.1):AppTheme.red.withOpacity(0.1),
                   ),
                 ),
               );
@@ -1124,7 +1122,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("${o.total?.toStringAsFixed(3)??"-"}", style: TextStyle(fontSize: 14, color: AppTheme.textGrey, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
+                    Text("${AppTools.removeDecimalZeroFormat(o.total,fractionDigits: 3)??"-"}", style: TextStyle(fontSize: 14, color: AppTheme.textGrey, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
                   ],
                 ),
                 decoration: BoxDecoration(
@@ -1133,14 +1131,14 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                     right: BorderSide(color: AppTheme.greyLighten2),
                     bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= j ? 1:0)),
                   ),
-                  color: AppTheme.greyLighten4,
+                  color: ((o.evaluacionUi?.rubroEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)?AppTheme.greyLighten4:AppTheme.red.withOpacity(0.1),
                 ),
               );
             }else if(o is EvaluacionRubricaValorTipoNotaUi){
               return InkWell(
                 onTap: () {
 
-                  if((o.evaluacionUi?.personaUi?.contratoVigente == true)){
+                  if((o.evaluacionTransformadaUi?.personaUi?.contratoVigente == true)){
                     if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false)){
                       showDialogPresicion(controller, o, i);
                     } else{
@@ -1151,12 +1149,12 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   }
                 },
                 onLongPress: (){
-                  if((o.evaluacionUi?.personaUi?.contratoVigente == true)){
+                  if((o.evaluacionTransformadaUi?.personaUi?.contratoVigente == true)){
                     if(o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false){
 
                     }
                     else{
-                      showDialogTecladoPrecicion(controller, controller.tipoNotaUi, o.evaluacionUi);
+                      showDialogTecladoPrecicion(controller, controller.tipoNotaUi, o.evaluacionTransformadaUi);
                     }
                   }
                 },
@@ -1171,7 +1169,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   ],
                 ),
               );
-            } else if(o is EvaluacionUi){
+            } else if(o is EvaluacionTransformadaUi){
               return InkWell(
                 //onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
                 child: Stack(
@@ -1319,13 +1317,13 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
       }
     }else{
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = AppTheme.white;
-        color_texto =  null;
-        color_borde = AppTheme.greyLighten2;
-      }else{
         color_fondo = AppTheme.greyLighten2;
+        color_texto =  null;
+        color_borde = AppTheme.greyLighten1;
+      }else{
+        color_fondo = AppTheme.white;
         color_texto = null;
-        color_borde = AppTheme.greyLighten2;
+        color_borde = AppTheme.greyLighten1;
       }
     }
 
@@ -1368,7 +1366,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
       case TipoNotaTiposUi.VALOR_NUMERICO:
       case TipoNotaTiposUi.SELECTOR_NUMERICO:
         double? nota = null;
-        if(evaluacionRubricaValorTipoNotaUi.toggle??false)nota = evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota;
+        if(evaluacionRubricaValorTipoNotaUi.toggle??false)nota = evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.nota;
         else nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico??0;
         widget = Center(
           child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
@@ -1380,6 +1378,14 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         break;
     }
 
+    if(!(evaluacionRubricaValorTipoNotaUi.toggle??false)){
+      if((evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.rubroEvaluacionUi?.peso ??0) <= RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO){
+        color_fondo = AppTheme.red.withOpacity(0.1);
+      }else{
+        color_fondo = _getColorAlumnoBloqueados(evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.personaUi, 0);
+      }
+    }
+
     return Container(
       constraints: BoxConstraints.expand(),
       decoration: BoxDecoration(
@@ -1388,7 +1394,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           right: BorderSide(color:  color_borde),
           bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity((controller.tableTipoNotaCells.length-1) <= positionY?1:0 )),
         ),
-          color: (evaluacionRubricaValorTipoNotaUi.toggle??false)?color_fondo:_getColorAlumnoBloqueados(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi, 0)
+          color: color_fondo
       ),
       child: widget,
     );
@@ -1582,7 +1588,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           return PresicionView(
             valorTipoNotaUi: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi,
             color: getPosition(position),
-            personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
+            personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.personaUi,
             onSaveInput: (nota) {
 
               Navigator.pop(context, nota);
@@ -1599,7 +1605,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
     });
   }
 
-  void showDialogTecladoPrecicion(EvaluacionCapacidadController controller, TipoNotaUi? tipoNotaUi, EvaluacionUi? evaluacionUi) {
+  void showDialogTecladoPrecicion(EvaluacionCapacidadController controller, TipoNotaUi? tipoNotaUi, EvaluacionTransformadaUi? evaluacionUi) {
 
     showModalBottomSheet(
         shape:  RoundedRectangleBorder(
@@ -1637,10 +1643,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         builder: (ctx) {
           return PesoView(
             color: HexColor(controller.cursosUi.color2),
-            rubricaEvaluacionUi: rubricaEvaluacionUi,
-            capacidadUi: capacidadUi,
+            selectedValue: rubricaEvaluacionUi?.peso??RubricaEvaluacionUi.PESO_NORMAL,
             onSaveInput: (peso) {
-
               Navigator.pop(context, peso);
             },
             onCloseButton: () {

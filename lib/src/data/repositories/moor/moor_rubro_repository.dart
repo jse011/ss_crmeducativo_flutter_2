@@ -1,5 +1,6 @@
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_comentario.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_eval_rnpformula.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_update_servidor.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/data_convert.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/estado_sync.dart';
@@ -117,7 +118,6 @@ class MoorRubroRepository extends RubroRepository{
         batch.insertAll(SQL.rubroEvaluacionProceso, SerializableConvert.converListSerializeRubroEvaluacionProceso(rubro["rubroEvaluaciones"]), mode: InsertMode.insertOrReplace );
         batch.insertAll(SQL.evaluacionProceso, SerializableConvert.converListSerializeEvaluacionProceso(rubro["evaluaciones"]), mode: InsertMode.insertOrReplace );
         batch.insertAll(SQL.rubroEvalRNPFormula, SerializableConvert.converListSerializeRubroEvalRNPFormula(rubro["rubroFormulas"]), mode: InsertMode.insertOrReplace );
-
 
       }
 
@@ -412,7 +412,7 @@ class MoorRubroRepository extends RubroRepository{
       for(CriterioPesoUi criterioPesoUi in criterioPesoUiList??[]){
 
         CapacidadUi? capacidadUi = criterioPesoUi.criterioUi?.capacidadUi;
-        int? peso = criterioPesoUi.peso;
+
         String rubroEvaluacionDetalleId = IdGenerator.generateId();
         RubroEvaluacionProcesoData procesoDetalle = RubroEvaluacionProcesoData(
           rubroEvalProcesoId: rubroEvaluacionDetalleId,
@@ -434,6 +434,7 @@ class MoorRubroRepository extends RubroRepository{
           fechaAccion: DateTime.now(),
           usuarioAccionId: usuarioId,
           usuarioCreacionId: usuarioId,
+          tipoFormulaId: 0,
         );
 
         batch.insert(SQL.rubroEvaluacionProceso, procesoDetalle, mode: InsertMode.insertOrReplace);
@@ -459,6 +460,7 @@ class MoorRubroRepository extends RubroRepository{
           }
 
         }
+        int? peso = criterioPesoUi.peso;
 
         RubroEvalRNPFormulaData rubroEvalRNPFormula = RubroEvalRNPFormulaData(
           rubroFormulaId: IdGenerator.generateId(),
@@ -583,7 +585,7 @@ class MoorRubroRepository extends RubroRepository{
     rubricaEvaluacionUi.rubroGrupal = rubroEvaluacionProcesoData?.formaEvaluacionId == FORMA_EVAL_GRUPAL;
     rubricaEvaluacionUi.sesionAprendizajeId = rubroEvaluacionProcesoData?.sesionAprendizajeId;
     if((rubroEvaluacionProcesoData?.tareaId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_TAREA;
-    else if((rubroEvaluacionProcesoData?.instrumentoEvalId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_INSTRUMENTO;
+    else if( (rubroEvaluacionProcesoData?.instrumentoEvalId??0) > 0)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_INSTRUMENTO;
     else if((rubroEvaluacionProcesoData?.preguntaId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_PREGUNTA;
     else rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.CREADO_DOCENTE;
     rubricaEvaluacionUi.tipoNotaId = rubroEvaluacionProcesoData?.tipoNotaId;
@@ -698,6 +700,7 @@ class MoorRubroRepository extends RubroRepository{
     //query.where((tbl) => tbl.tipoFormulaId.isNull());
     queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.equals(0));
     //queryRubro.where((tbl) => tbl.sesionAprendizajeId.isNotNull());
+    queryRubro.where(SQL.rubroEvaluacionProceso.estadoId.isNotIn([ESTADO_ELIMINADO]));
     queryRubro.orderBy([OrderingTerm.desc(SQL.rubroEvaluacionProceso.fechaCreacion)]);
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = [];
     Map<String,RubroEvaluacionProcesoData?> rubroPadresMap = Map();
@@ -743,7 +746,7 @@ class MoorRubroRepository extends RubroRepository{
     }
 
     print("evaluacionProcesoDataList: ${evaluacionProcesoDataList.length}");
-   List<CompetenciaUi> competenciaUiList = await getTemasCriterios(calendarioPeriodoId??0, silaboEventoId??0);
+    List<CompetenciaUi> competenciaUiList = await getTemasCriterios(calendarioPeriodoId??0, silaboEventoId??0);
     for(CompetenciaUi competenciaUi in competenciaUiList){
       for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
         capacidadUi.rubricaEvalUiList = [];
@@ -751,7 +754,9 @@ class MoorRubroRepository extends RubroRepository{
           if(capacidadUi.capacidadId == rubroEvaluacionProcesoData.competenciaId){
             RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
             rubricaEvaluacionUi.tituloRubroCabecera = rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.titulo;
-
+            rubricaEvaluacionUi.rubricaIdRubroCabecera = rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.rubroEvalProcesoId;
+            print("tituloRubroCabecera: ${rubricaEvaluacionUi.tituloRubroCabecera}");
+            print("rubricaIdRubroCabecera: ${rubricaEvaluacionUi.rubricaIdRubroCabecera}");
             rubricaEvaluacionUi.evaluacionUiList = [];
             TipoNotaUi? tipoNotaUi = tipoNotaUiList.firstWhereOrNull((element)=> element.tipoNotaId == rubricaEvaluacionUi.tipoNotaId);
             rubricaEvaluacionUi.tipoNotaUi = tipoNotaUi;
@@ -912,13 +917,13 @@ class MoorRubroRepository extends RubroRepository{
       ]);
       queryRubroDetalle.where(SQL.rubroEvaluacionProceso.estadoId.isNotIn([ESTADO_ELIMINADO]));
       queryRubroDetalle.where(SQL.rubroEvalRNPFormula.rubroEvaluacionPrimId.equals(rubroEvaluacionId));
-      print("getRubroEvaluacion " + (rubroEvaluacionId??"null"));
+
       for(var row in await queryRubroDetalle.get()){
         RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
         RubroEvalRNPFormulaData rubroEvalRNPFormulaData = row.readTable(SQL.rubroEvalRNPFormula);
         rubricaEvaluacionUiDetalleList.add(convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, rubroEvalRNPFormulaData.peso??0.0));
       }
-      print("rubrosDetalleList " + rubricaEvaluacionUiDetalleList.length.toString());
+
     }
 
     /*Obtener Tipo Nota*/
@@ -966,6 +971,7 @@ class MoorRubroRepository extends RubroRepository{
   @override
   Future<Map<String, dynamic>?> getRubroEvaluacionSerial(String rubroEvaluacionId) async {
     AppDataBase SQL = AppDataBase();
+    print("getRubroEvaluacionSerial: ");
     RubroEvaluacionProcesoData? rubroEvaluacionProcesoData = await (SQL.selectSingle(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.equals(rubroEvaluacionId)))
         .getSingleOrNull();
     if(rubroEvaluacionProcesoData != null){
@@ -976,6 +982,7 @@ class MoorRubroRepository extends RubroRepository{
   }
 
   Future<Map<String, dynamic>> transformarEvaluaciones(AppDataBase SQL, RubroEvaluacionProcesoData rubroEvaluacionProcesoData) async{
+
     Map<String, dynamic> bERubroEvalEnvioSimple = new Map<String, dynamic>();
     List<RubroEvaluacionProcesoData> rubroEvaluacionDataList = [];
     List<RubroEvalRNPFormulaData> rubroFormulaDataList = [];
@@ -986,20 +993,19 @@ class MoorRubroRepository extends RubroRepository{
       var queryRubroDetalle = SQL.select(SQL.rubroEvaluacionProceso).join([
         innerJoin(SQL.rubroEvalRNPFormula, SQL.rubroEvalRNPFormula.rubroEvaluacionSecId.equalsExp(SQL.rubroEvaluacionProceso.rubroEvalProcesoId))
       ]);
-      queryRubroDetalle.where(SQL.rubroEvaluacionProceso.estadoId.isNotIn([ESTADO_ELIMINADO]));
       queryRubroDetalle.where(SQL.rubroEvalRNPFormula.rubroEvaluacionPrimId.equals(rubroEvaluacionProcesoData.rubroEvalProcesoId));
 
       for(var row in await queryRubroDetalle.get()){
-    RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
-    rubroEvaluacionDataList.add(rubroEvaluacionProcesoData);
-    rubroEvaluacionIdEvaluacionList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
-    rubroFormulaDataList.add(row.readTable(SQL.rubroEvalRNPFormula));
-    }
+        RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
+        rubroEvaluacionDataList.add(rubroEvaluacionProcesoData);
+        rubroEvaluacionIdEvaluacionList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
+        rubroFormulaDataList.add(row.readTable(SQL.rubroEvalRNPFormula));
+      }
     }
     List<String> evaluacionIdList = [];
     List<EvaluacionProcesoData> evaluacionProcesoDataList = await (SQL.select(SQL.evaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.isIn(rubroEvaluacionIdEvaluacionList))).get();
     for(var evalaucionUi in evaluacionProcesoDataList){
-    if(evalaucionUi.evaluacionProcesoId!=null)evaluacionIdList.add(evalaucionUi.evaluacionProcesoId);
+      if(evalaucionUi.evaluacionProcesoId!=null)evaluacionIdList.add(evalaucionUi.evaluacionProcesoId);
     }
     List<RubroCampotematicoData> rubroCampotematicoDataList = await (SQL.select(SQL.rubroCampotematico)..where((tbl) => tbl.rubroEvalProcesoId.isIn(rubroEvaluacionIdEvaluacionList))).get();
     List<RubroComentarioData> rubroComentarioList = await (SQL.select(SQL.rubroComentario)..where((tbl) => tbl.evaluacionProcesoId.isIn(evaluacionIdList))).get();
@@ -1081,10 +1087,29 @@ class MoorRubroRepository extends RubroRepository{
   Future<void> updateEvaluacion(RubricaEvaluacionUi? rubricaEvaluacionUi, int? alumnoId, int? usuarioId) async{
     AppDataBase SQL = AppDataBase();
 
-    await SQL.transaction(() async {
-      List<EvaluacionUi> evaluacionesList = [];
+    List<EvaluacionUi> evaluacionesList = [];
+    List<double> notas = [];
+    for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi?.evaluacionUiList??[]){
+      notas.add(evaluacionUi.nota??0);
+      if(evaluacionUi.alumnoId == alumnoId || alumnoId == null){
+        evaluacionesList.add(evaluacionUi);
+      }
+    }
+
+    await (SQL.update(SQL.rubroEvaluacionProceso)
+      ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaId)))
+        .write(
+        RubroEvaluacionProcesoCompanion(
+          promedio:  Value(AppTools.promedio(notas)),
+          desviacionEstandar: Value(AppTools.desviacionEstandar(notas)),
+          usuarioAccionId: Value(usuarioId??0,),
+          fechaAccion: Value(DateTime.now()),
+          syncFlag: Value(EstadoSync.FLAG_UPDATED),
+        ));
+
+    for(RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvaluacionUi?.rubrosDetalleList??[]){
       List<double> notas = [];
-      for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi?.evaluacionUiList??[]){
+      for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
         notas.add(evaluacionUi.nota??0);
         if(evaluacionUi.alumnoId == alumnoId || alumnoId == null){
           evaluacionesList.add(evaluacionUi);
@@ -1092,7 +1117,7 @@ class MoorRubroRepository extends RubroRepository{
       }
 
       await (SQL.update(SQL.rubroEvaluacionProceso)
-        ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaId)))
+        ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi.rubricaId)))
           .write(
           RubroEvaluacionProcesoCompanion(
             promedio:  Value(AppTools.promedio(notas)),
@@ -1101,76 +1126,54 @@ class MoorRubroRepository extends RubroRepository{
             fechaAccion: Value(DateTime.now()),
             syncFlag: Value(EstadoSync.FLAG_UPDATED),
           ));
+    }
 
-      for(RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvaluacionUi?.rubrosDetalleList??[]){
-        List<double> notas = [];
-        for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
-          notas.add(evaluacionUi.nota??0);
-          if(evaluacionUi.alumnoId == alumnoId || alumnoId == null){
-            evaluacionesList.add(evaluacionUi);
-          }
-        }
+    for(EvaluacionUi evaluacionUi in evaluacionesList){
+      if(evaluacionUi.evaluacionId == null){
+        SQL.batch((batch) async {
+          EvaluacionProcesoData evaluacionProcesoData = new EvaluacionProcesoData(
+            evaluacionProcesoId: IdGenerator.generateId(),
+            usuarioCreacionId: usuarioId,
+            fechaCreacion: DateTime.now(),
+            usuarioAccionId: usuarioId,
+            fechaAccion: DateTime.now(),
+            rubroEvalProcesoId: evaluacionUi.rubroEvaluacionId,
+            nombres: evaluacionUi.personaUi?.nombres,
+            apellidoPaterno: evaluacionUi.personaUi?.apellidoPaterno,
+            apellidoMaterno: evaluacionUi.personaUi?.apellidoMaterno,
+            foto: evaluacionUi.personaUi?.foto,
+            alumnoId: evaluacionUi.personaUi?.personaId,
+            calendarioPeriodoId: rubricaEvaluacionUi?.calendarioPeriodoId,
+            equipoId: evaluacionUi.equipoId,
+            escala: evaluacionUi.escala,
+            evaluacionResultadoId: null,
+            visto: null,
+            valorTipoNotaId: evaluacionUi.valorTipoNotaId,
+            msje: null,//Cuando se crea los comentario
+            nota: evaluacionUi.nota??0.0,
+            sesionAprendizajeId: rubricaEvaluacionUi?.sesionAprendizajeId,
+            publicado: evaluacionUi.publicado,
+            syncFlag: EstadoSync.FLAG_UPDATED,
+          );
 
-        await (SQL.update(SQL.rubroEvaluacionProceso)
-          ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi.rubricaId)))
+          batch.insert(SQL.evaluacionProceso, evaluacionProcesoData, mode: InsertMode.insertOrReplace);
+        });
+      }else{
+
+        await (SQL.update(SQL.evaluacionProceso)
+          ..where((tbl) => tbl.evaluacionProcesoId.equals(evaluacionUi.evaluacionId)))
             .write(
-            RubroEvaluacionProcesoCompanion(
-              promedio:  Value(AppTools.promedio(notas)),
-              desviacionEstandar: Value(AppTools.desviacionEstandar(notas)),
+            EvaluacionProcesoCompanion(
+              valorTipoNotaId: Value(evaluacionUi.valorTipoNotaId),
+              nota: Value(evaluacionUi.nota),
+              publicado: Value(evaluacionUi.publicado),
               usuarioAccionId: Value(usuarioId??0,),
               fechaAccion: Value(DateTime.now()),
               syncFlag: Value(EstadoSync.FLAG_UPDATED),
             ));
+
       }
-
-      for(EvaluacionUi evaluacionUi in evaluacionesList){
-        if(evaluacionUi.evaluacionId == null){
-          SQL.batch((batch) async {
-            EvaluacionProcesoData evaluacionProcesoData = new EvaluacionProcesoData(
-                evaluacionProcesoId: IdGenerator.generateId(),
-                usuarioCreacionId: usuarioId,
-                fechaCreacion: DateTime.now(),
-                usuarioAccionId: usuarioId,
-                fechaAccion: DateTime.now(),
-                rubroEvalProcesoId: evaluacionUi.rubroEvaluacionId,
-                nombres: evaluacionUi.personaUi?.nombres,
-                apellidoPaterno: evaluacionUi.personaUi?.apellidoPaterno,
-                apellidoMaterno: evaluacionUi.personaUi?.apellidoMaterno,
-                foto: evaluacionUi.personaUi?.foto,
-                alumnoId: evaluacionUi.personaUi?.personaId,
-                calendarioPeriodoId: rubricaEvaluacionUi?.calendarioPeriodoId,
-                equipoId: evaluacionUi.equipoId,
-                escala: evaluacionUi.escala,
-                evaluacionResultadoId: null,
-                visto: null,
-                valorTipoNotaId: evaluacionUi.valorTipoNotaId,
-                msje: null,//Cuando se crea los comentario
-                nota: evaluacionUi.nota??0.0,
-                sesionAprendizajeId: rubricaEvaluacionUi?.sesionAprendizajeId,
-                publicado: evaluacionUi.publicado,
-                syncFlag: EstadoSync.FLAG_UPDATED,
-            );
-
-            batch.insert(SQL.evaluacionProceso, evaluacionProcesoData, mode: InsertMode.insertOrReplace);
-          });
-        }else{
-
-          await (SQL.update(SQL.evaluacionProceso)
-            ..where((tbl) => tbl.evaluacionProcesoId.equals(evaluacionUi.evaluacionId)))
-              .write(
-              EvaluacionProcesoCompanion(
-                valorTipoNotaId: Value(evaluacionUi.valorTipoNotaId),
-                nota: Value(evaluacionUi.nota),
-                publicado: Value(evaluacionUi.publicado),
-                usuarioAccionId: Value(usuarioId??0,),
-                fechaAccion: Value(DateTime.now()),
-                syncFlag: Value(EstadoSync.FLAG_UPDATED),
-              ));
-
-        }
-      }
-
-    });
+    }
 
   }
 
@@ -1194,6 +1197,25 @@ class MoorRubroRepository extends RubroRepository{
           syncFlag: Value(EstadoSync.FLAG_UPDATED),
         ));
 
+  }
+
+  @override
+  Future<void> updatePesoRubro(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId) async {
+    AppDataBase SQL = AppDataBase();
+    List<String> rubroEvaluacionIdList = [];
+    rubroEvaluacionIdList.add(rubricaEvaluacionUi?.rubricaId??"");
+    if((rubricaEvaluacionUi?.rubricaIdRubroCabecera??"").isNotEmpty)
+      rubroEvaluacionIdList.add(rubricaEvaluacionUi?.rubricaIdRubroCabecera??"");
+
+    await (SQL.update(SQL.rubroEvaluacionProceso)
+      ..where((tbl) => tbl.rubroEvalProcesoId.isIn(rubroEvaluacionIdList)))
+        .write(
+        RubroEvaluacionProcesoCompanion(
+          estadoId: Value(ESTADO_ELIMINADO),
+          usuarioAccionId: Value(usuarioId),
+          fechaAccion: Value(DateTime.now()),
+          syncFlag: Value(EstadoSync.FLAG_UPDATED),
+        ));
   }
 
 }

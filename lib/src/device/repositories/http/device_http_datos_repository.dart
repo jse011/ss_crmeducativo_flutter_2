@@ -319,8 +319,35 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_GeoreferenciaId"] = georeferenciaId;
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["bERubroEvalEnvio"] = data;
-    final response = await http.post(Uri.parse(urlServidorLocal), body: getBody("crearRubroEvaluacion", parameters))
+    final response = await http.post(Uri.parse(urlServidorLocal), body: getBody("updateEvaluacionRubroFlutter", parameters))
         .timeout(Duration(seconds: 15), onTimeout: (){throw Exception('Failed to load rubro eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      print(body.toString());
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return false;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load rubro eval');
+    }
+  }
+
+  @override
+  Future<bool?> updateCompetenciaRubroFlutter(String urlServidorLocal, int georeferenciaId, int usuarioId, List<Map<String, dynamic>?> rubrosEnviados) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_GeoreferenciaId"] = georeferenciaId;
+    parameters["vint_UsuarioId"] = usuarioId;
+    parameters["bERubroEvalEnvioSimplesList"] = rubrosEnviados;
+    final response = await http.post(Uri.parse(urlServidorLocal), body: getBody("updateCompetenciaRubroFlutter", parameters))
+        .timeout(Duration(seconds: 45), onTimeout: (){throw Exception('Failed to load rubro eval');});
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,

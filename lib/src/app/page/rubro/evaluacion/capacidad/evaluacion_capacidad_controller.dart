@@ -5,6 +5,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_u
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_trasnformada_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_porcentaje_ui.dart';
@@ -13,12 +14,16 @@ import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/calcular_evaluacion_resultado.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_tipo_nota_resultado.dart';
 import 'package:collection/collection.dart';
 
 class EvaluacionCapacidadController extends Controller{
+  static int Modifico_Peso_Rubro = 0, Modifico_Evaluacion = 1;
   EvaluacionCapacidadUi evaluacionCapacidadUi;
   CursosUi cursosUi;
   EvaluacionCapacidadPresenter presenter;
@@ -38,9 +43,12 @@ class EvaluacionCapacidadController extends Controller{
   bool get showMsgAlumnoNoVigente => _showMsgAlumnoNoVigente;
   bool _showDialogClearEvaluacion = false;
   bool get showDialogClearEvaluacion => _showDialogClearEvaluacion;
+  bool _showDialog = false;
+  bool get showDialog => _showDialog;
+  Map<String?, int> rubroModificadosMap = Map();//Se guarda que rubro se modifico ademas si el contenido es 0 se modifico el peso y si es 1 se modifoco la evaluacion
 
-  EvaluacionCapacidadController(this.evaluacionCapacidadUi, this.cursosUi, RubroRepository rubroRepo):
-      presenter = EvaluacionCapacidadPresenter(GetTipoNotaResultado(rubroRepo));
+  EvaluacionCapacidadController(this.evaluacionCapacidadUi, this.cursosUi, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
+      presenter = EvaluacionCapacidadPresenter(configuracionRepo, rubroRepo, httpDatosRepo);
 
   @override
   void initListeners() {
@@ -95,22 +103,8 @@ class EvaluacionCapacidadController extends Controller{
         RubricaEvaluacionUi rubricaEvaluacionUi = _rubricaEvaluacionList[i];
         final List<dynamic> row = [];
         //row.add(rubricaEvaluacionUi);
-        int notaMaxRubro = rubricaEvaluacionUi.tipoNotaUi?.escalavalorMaximo??0;
-        int notaMinRubro = rubricaEvaluacionUi.tipoNotaUi?.escalavalorMinimo??0;
-        EvaluacionUi? evaluacionUi = rubricaEvaluacionUi.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == evaluacionCapacidadUi.personaUi?.personaId);
 
-        TransformarValoTipoNotaResponse response = TransformarValoTipoNota.execute(TransformarValoTipoNotaParams(evaluacionUi?.nota, notaMinRubro, notaMaxRubro, _tipoNotaUi));
-        EvaluacionUi evaluacionUi_Transformada = EvaluacionUi();
-        evaluacionUi_Transformada.alumnoId = evaluacionUi?.alumnoId;
-        evaluacionUi_Transformada.personaUi = evaluacionCapacidadUi.personaUi;//agregar la persona de la capacidad para saver si el alumno esta con el contrato vigente
-        evaluacionUi_Transformada.publicado = evaluacionUi?.publicado;
-        evaluacionUi_Transformada.evaluacionId = evaluacionUi?.evaluacionId;
-        evaluacionUi_Transformada.nota = response.nota;
-        evaluacionUi_Transformada.rubroEvaluacionId = evaluacionUi?.rubroEvaluacionId;
-        evaluacionUi_Transformada.rubroEvaluacionUi = evaluacionUi?.rubroEvaluacionUi;
-        evaluacionUi_Transformada.valorTipoNotaId = response.valorTipoNotaUi?.valorTipoNotaId;
-        evaluacionUi_Transformada.valorTipoNotaUi = response.valorTipoNotaUi;
-        
+        EvaluacionTransformadaUi? evaluacionTransformadaUi = rubricaEvaluacionUi.evaluacionTransformadaUiList?.firstWhereOrNull((element) => element.alumnoId == evaluacionCapacidadUi.personaUi?.personaId);
 
         if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
 
@@ -118,20 +112,20 @@ class EvaluacionCapacidadController extends Controller{
             EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi = EvaluacionRubricaValorTipoNotaUi();
             evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi = rubricaEvaluacionUi;
             evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi =  _tipoNotaUi?.valorTipoNotaList?[i];
-            evaluacionRubricaValorTipoNotaUi.evaluacionUi = evaluacionUi_Transformada;
-            if(evaluacionUi_Transformada.valorTipoNotaUi?.valorTipoNotaId == evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId){
+            evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi = evaluacionTransformadaUi;
+            if(evaluacionTransformadaUi?.valorTipoNotaUi?.valorTipoNotaId == evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId){
               evaluacionRubricaValorTipoNotaUi.toggle = true;
             }
             row.add(evaluacionRubricaValorTipoNotaUi);
           }
 
         }else {
-          row.add(evaluacionUi);//Notas de tipo Numerico
+          row.add(evaluacionTransformadaUi);//Notas de tipo Numerico
         }
 
         EvaluacionPorcentajeUi rubricaPeso = EvaluacionPorcentajeUi(rubricaEvaluacionUi, evaluacionCapacidadUi.capacidadUi);
         row.add(rubricaPeso);
-        RubricaEvaluacionTotalUi rubricaEvaluacionTotalUi = RubricaEvaluacionTotalUi(evaluacionUi);
+        RubricaEvaluacionTotalUi rubricaEvaluacionTotalUi = RubricaEvaluacionTotalUi(evaluacionTransformadaUi);
         row.add(rubricaEvaluacionTotalUi);
         output.add(row);
       }
@@ -169,8 +163,8 @@ class EvaluacionCapacidadController extends Controller{
     for (List cellList in _tableTipoNotaCells) {
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
-          if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-              && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+          if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.alumnoId
+              && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -180,20 +174,21 @@ class EvaluacionCapacidadController extends Controller{
 
     evaluacionRubricaValorTipoNotaUi.toggle = !(evaluacionRubricaValorTipoNotaUi.toggle ?? false);
     if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
+      evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
+      evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
+      evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
     }else{
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = 0.0;
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = null;
-      evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = null;
+      evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.nota = 0.0;
+      evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.valorTipoNotaId = null;
+      evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.valorTipoNotaUi = null;
     }
 
-    //_actualizarCabecera(personaUi);
-    //_modificado = true;
+    CalcularEvaluacionResultados.actualizarEvaluacionOriginal( evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi, tipoNotaUi);
+    CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
 
-    //presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+    validacionModificacion(evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi, Modifico_Evaluacion);
+
   }
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, nota) {
@@ -201,8 +196,8 @@ class EvaluacionCapacidadController extends Controller{
     for (List cellList in _tableTipoNotaCells) {
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
-          if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-              && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+          if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.alumnoId
+              && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -211,31 +206,31 @@ class EvaluacionCapacidadController extends Controller{
     }
 
     evaluacionRubricaValorTipoNotaUi.toggle = true;
-    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = nota;
-    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
-    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
+    evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.nota = nota;
+    evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
+    evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
 
-    //_actualizarCabecera(personaUi);
-    //_modificado = true;
+    CalcularEvaluacionResultados.actualizarEvaluacionOriginal( evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi, tipoNotaUi);
+    CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
-    //presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+    validacionModificacion(evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi, Modifico_Evaluacion);
   }
 
-  void onSaveTecladoPresicion(double? nota, EvaluacionUi? evaluacionUi) {
+  void onSaveTecladoPresicion(double? nota, EvaluacionTransformadaUi? evaluacionUi) {
     if (tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
       ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(tipoNotaUi, nota??0);
 
       for (List cellList in _tableTipoNotaCells) {
         for (var cell in cellList) {
           if (cell is EvaluacionRubricaValorTipoNotaUi) {
-            if (cell.evaluacionUi?.alumnoId == evaluacionUi?.alumnoId
-                && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionUi?.rubroEvaluacionId
+            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionUi?.rubroEvaluacionId
                 && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
               cell.toggle = true;
             }
 
-            if (cell.evaluacionUi?.alumnoId == evaluacionUi?.alumnoId
-                && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionUi?.rubroEvaluacionId
+            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionUi?.rubroEvaluacionId
                 && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
               cell.toggle = false;
             }
@@ -249,13 +244,11 @@ class EvaluacionCapacidadController extends Controller{
     }
     evaluacionUi?.nota = nota;
 
-
-
-    //_actualizarCabecera(personaUi);
-    //_modificado = true;
+    CalcularEvaluacionResultados.actualizarEvaluacionOriginal(evaluacionUi, tipoNotaUi);
+    CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
-    //presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
 
+    validacionModificacion(evaluacionUi?.rubroEvaluacionUi, Modifico_Evaluacion);
   }
 
   void hideMsgAlumnoNoVigente() {
@@ -275,9 +268,10 @@ class EvaluacionCapacidadController extends Controller{
         if(cell is EvaluacionRubricaValorTipoNotaUi){
           if(cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi.valorTipoNotaId){
             cell.toggle = true;
-            cell.evaluacionUi?.nota = valorTipoNotaUi.valorNumerico;//actualizar la nota solo cuando no esta selecionado
-            cell.evaluacionUi?.valorTipoNotaId = valorTipoNotaUi.valorTipoNotaId;
-            cell.evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
+            cell.evaluacionTransformadaUi?.nota = valorTipoNotaUi.valorNumerico;//actualizar la nota solo cuando no esta selecionado
+            cell.evaluacionTransformadaUi?.valorTipoNotaId = valorTipoNotaUi.valorTipoNotaId;
+            cell.evaluacionTransformadaUi?.valorTipoNotaUi = valorTipoNotaUi;
+            CalcularEvaluacionResultados.actualizarEvaluacionOriginal(cell.evaluacionTransformadaUi, tipoNotaUi);
           }else{
             cell.toggle = false;
           }
@@ -286,11 +280,21 @@ class EvaluacionCapacidadController extends Controller{
       }
     }
 
-    //_actualizarCabecera(personaUi);
-    //_modificado = true;
+    CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
     refreshUI();
+    for(RubricaEvaluacionUi rubroEvaluacion in evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[]){
+      validacionModificacion(rubroEvaluacion, Modifico_Evaluacion);
+    }
 
-    //presenter.updateEvaluacionAll(rubroEvaluacionUi);
+  }
+
+  validacionModificacion(RubricaEvaluacionUi? rubricaEvaluacionUi, int tipoModificacion){
+    if(rubroModificadosMap.containsKey(rubricaEvaluacionUi?.rubricaId) == Modifico_Evaluacion && tipoModificacion == Modifico_Peso_Rubro){
+      // Si ya se modifico el peso a evaluacion no es nesario pasar al estado Modifico_Peso_Rubro devido a que con el estado modificacion se actaualizar tambien el peso
+      rubroModificadosMap[rubricaEvaluacionUi?.rubricaId] = Modifico_Evaluacion;
+    }else{
+      rubroModificadosMap[rubricaEvaluacionUi?.rubricaId] = tipoModificacion;
+    }
   }
 
   onClickCancelarClearEvaluacion() {
@@ -308,22 +312,66 @@ class EvaluacionCapacidadController extends Controller{
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
           cell.toggle = false;
-          cell.evaluacionUi?.nota = 0.0;
-          cell.evaluacionUi?.valorTipoNotaId = null;
-          cell.evaluacionUi?.valorTipoNotaUi = null;
+          cell.evaluacionTransformadaUi?.nota = 0.0;
+          cell.evaluacionTransformadaUi?.valorTipoNotaId = null;
+          cell.evaluacionTransformadaUi?.valorTipoNotaUi = null;
+          CalcularEvaluacionResultados.actualizarEvaluacionOriginal(cell.evaluacionTransformadaUi, tipoNotaUi);
         }
       }
     }
     _showDialogClearEvaluacion = false;
-    //_actualizarCabecera();
-    refreshUI();
-    //_modificado = true;
+    CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
 
-    //presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera);
+    refreshUI();
+
+    for(RubricaEvaluacionUi rubroEvaluacion in evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[]){
+      validacionModificacion(rubroEvaluacion, Modifico_Evaluacion);
+    }
   }
 
-  void onSavePeso(peso, RubricaEvaluacionUi? rubricaEvaluacionUi) {
+  //_trasformarEvaluacion();
 
+  void onSavePeso(int peso, RubricaEvaluacionUi? rubricaEvaluacionUi) {
+      rubricaEvaluacionUi?.peso = peso;
+      int pesoTotal = 0;
+      for(RubricaEvaluacionUi item in evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[]){
+        int peso = item.peso??0;
+        pesoTotal = pesoTotal + (peso < 0 ? 0 : peso);//los pesos en negativo se cuentan como 0;
+      }
+      evaluacionCapacidadUi.capacidadUi?.total_peso = pesoTotal;
+
+      CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
+
+      refreshUI();
+      validacionModificacion(rubricaEvaluacionUi, Modifico_Peso_Rubro);
+
+  }
+
+  Future<bool> onSave() async {
+    bool modificado = rubroModificadosMap.isNotEmpty;
+    print("modificado: ${modificado}");
+    List<String> rubroEvaluacionIdList = [];
+    if(modificado){
+      _showDialog = true;
+      for(MapEntry<String?, int> row in rubroModificadosMap.entries) {
+        RubricaEvaluacionUi? rubricaEvaluacionUi = evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList?.firstWhereOrNull((element) => element.rubricaId == row.key);
+        if(rubricaEvaluacionUi != null){
+          print("modificado1: ${modificado}");
+          rubroEvaluacionIdList.add(rubricaEvaluacionUi.rubricaId??"");
+          if(row.value == Modifico_Peso_Rubro){
+            print("modificado1:Modifico_Peso_Rubro");
+            await presenter.updatePesoRubroEvaluacion(rubricaEvaluacionUi);
+          }else{
+            print("modificado1:Modifico_Evaluacion");
+            await presenter.updateEvaluacion(rubricaEvaluacionUi, evaluacionCapacidadUi.personaUi);
+          }
+        }
+     }
+      print("modificado2: ${modificado}");
+      await presenter.updateServer(rubroEvaluacionIdList);
+    }
+    print("modificado3: ${modificado}");
+    return modificado;
   }
 
 

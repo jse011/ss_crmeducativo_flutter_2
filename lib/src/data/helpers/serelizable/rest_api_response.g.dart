@@ -1199,7 +1199,7 @@ RubroEvaluacionProcesoSerial _$RubroEvaluacionProcesoSerialFromJson(
     usuarioAccionId: json['usuarioAccionId'] as int?,
     fechaAccion: json['fechaAccion'] as int?,
     key: json['key'] as String?,
-    instrumentoEvalId: json['instrumentoEvalId'] as String?,
+    instrumentoEvalId: json['instrumentoEvalId'] as int?,
     error_guardar: json['error_guardar'] as int?,
     peso: json['peso'] as int?,
     preguntaId: json['preguntaId'] as String?,
