@@ -16,6 +16,7 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_r
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 
 class TareaView2 extends View{
@@ -275,7 +276,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                         padding: EdgeInsets.only( top: index==0?8:32, bottom: 24),
                                         child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
                                           style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w800,
                                               fontFamily: AppTheme.fontTTNorms
                                           ),
@@ -332,6 +333,8 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                                 ),
                                               );
                                             }else{
+
+                                              TareaUi tareaUi = unidadUi.tareaUiList![index-1];
                                               return Container(
                                                 decoration: BoxDecoration(
                                                     color: AppTheme.white,
@@ -353,7 +356,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-                                                      child: Text("APRENDEMOS ADIVINANZAS", style: TextStyle(color: AppTheme.black, fontSize: 12),),
+                                                      child: Text("${tareaUi.titulo}", style: TextStyle(color: AppTheme.black, fontSize: 12),),
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
@@ -402,6 +405,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                       )
                                     ]),
                               ),
+                              if(false)
                               Container(
                                 margin: EdgeInsets.only(left: 24, right: 48, top: 18),
                                 padding: EdgeInsets.all(10),
