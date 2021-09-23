@@ -379,7 +379,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                                   Padding(
                                       padding: EdgeInsets.only(top: 4)
                                   ),
-                                  Text((cursoUi.gradoSeccion??"") + " - " + (programaEducativoUi!=null?programaEducativoUi.nivelAcademico??"":""),
+                                  Text((cursoUi.gradoSeccion??"") + "  " + (programaEducativoUi!=null?programaEducativoUi.nivelAcademico??"":""),
                                     style: TextStyle(fontSize: 16, color: AppTheme.white,  fontFamily: AppTheme.fontTTNorms), ),
                                 ],
                               ),

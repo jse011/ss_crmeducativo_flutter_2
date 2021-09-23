@@ -45,7 +45,6 @@ class EvaluacionCapacidadController extends Controller{
   bool get showDialogClearEvaluacion => _showDialogClearEvaluacion;
   bool _showDialog = false;
   bool get showDialog => _showDialog;
-  List<RubricaEvaluacionUi?> _rubroEvalIdSinEvaluacionList = [];
   Map<String?, int> rubroModificadosMap = Map();//Se guarda que rubro se modifico ademas si el contenido es 0 se modifico el peso y si es 1 se modifoco la evaluacion
 
   EvaluacionCapacidadController(this.evaluacionCapacidadUi, this.cursosUi, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
@@ -79,7 +78,6 @@ class EvaluacionCapacidadController extends Controller{
     _tableTipoNotacolumnWidths.clear();
     _tableTipoNotaCells.clear();
     _rubricaEvaluacionList.clear();
-    _rubroEvalIdSinEvaluacionList.clear();
 
     _rubricaEvaluacionList = evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList??[];
 
@@ -106,7 +104,6 @@ class EvaluacionCapacidadController extends Controller{
         RubricaEvaluacionUi rubricaEvaluacionUi = _rubricaEvaluacionList[i];
         final List<dynamic> row = [];
         //row.add(rubricaEvaluacionUi);
-        if(rubricaEvaluacionUi.ningunaEvalCalificada??false)_rubroEvalIdSinEvaluacionList.add(rubricaEvaluacionUi);
         EvaluacionTransformadaUi? evaluacionTransformadaUi = rubricaEvaluacionUi.evaluacionTransformadaUiList?.firstWhereOrNull((element) => element.alumnoId == evaluacionCapacidadUi.personaUi?.personaId);
 
         if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){

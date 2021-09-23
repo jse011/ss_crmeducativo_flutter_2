@@ -2078,3 +2078,67 @@ Map<String, dynamic> _$RelUnidadEventoSerialToJson(
       'unidadaprendizajeId': instance.unidadaprendizajeId,
       'tipoid': instance.tipoid,
     };
+
+TareaSerial _$TareaSerialFromJson(Map<String, dynamic> json) {
+  return TareaSerial(
+    tareaId: json['tareaId'] as String?,
+    titulo: json['titulo'] as String?,
+    instrucciones: json['instrucciones'] as String?,
+    numero: json['numero'] as int?,
+    fechaCreacion: json['fechaCreacion'] as int?,
+    fechaEntrega_: json['fechaEntrega_'] as String?,
+    horaEntrega: json['horaEntrega'] as String?,
+    sesionNombre: json['sesionNombre'] as String?,
+    sesionAprendizajeId: json['sesionAprendizajeId'] as int?,
+    datosUsuarioCreador: json['datosUsuarioCreador'] as String?,
+    rubroEvalProcesoId: json['rubroEvalProcesoId'] as String?,
+    desempenioIcdId: json['desempenioIcdId'] as int?,
+    competenciaId: json['competenciaId'] as int?,
+    tipoNotaId: json['tipoNotaId'] as String?,
+    unidadAprendizajeId: json['unidadAprendizajeId'] as int?,
+    calendarioPeriodoId: json['calendarioPeriodoId'] as int?,
+    silaboEventoId: json['silaboEventoId'] as int?,
+    estadoId: json['estadoId'] as int?,
+  );
+}
+
+Map<String, dynamic> _$TareaSerialToJson(TareaSerial instance) =>
+    <String, dynamic>{
+      'tareaId': instance.tareaId,
+      'titulo': instance.titulo,
+      'instrucciones': instance.instrucciones,
+      'numero': instance.numero,
+      'fechaCreacion': instance.fechaCreacion,
+      'fechaEntrega_': instance.fechaEntrega_,
+      'horaEntrega': instance.horaEntrega,
+      'sesionNombre': instance.sesionNombre,
+      'sesionAprendizajeId': instance.sesionAprendizajeId,
+      'datosUsuarioCreador': instance.datosUsuarioCreador,
+      'rubroEvalProcesoId': instance.rubroEvalProcesoId,
+      'desempenioIcdId': instance.desempenioIcdId,
+      'competenciaId': instance.competenciaId,
+      'tipoNotaId': instance.tipoNotaId,
+      'unidadAprendizajeId': instance.unidadAprendizajeId,
+      'calendarioPeriodoId': instance.calendarioPeriodoId,
+      'silaboEventoId': instance.silaboEventoId,
+      'estadoId': instance.estadoId,
+    };
+
+TareaUnidadSerial _$TareaUnidadSerialFromJson(Map<String, dynamic> json) {
+  return TareaUnidadSerial(
+    unidadAprendizajeId: json['unidadAprendizajeId'] as int?,
+    titulo: json['titulo'] as String?,
+    nroUnidad: json['nroUnidad'] as int?,
+    calendarioPeriodoId: json['calendarioPeriodoId'] as int?,
+    silaboEventoId: json['silaboEventoId'] as int?,
+  );
+}
+
+Map<String, dynamic> _$TareaUnidadSerialToJson(TareaUnidadSerial instance) =>
+    <String, dynamic>{
+      'unidadAprendizajeId': instance.unidadAprendizajeId,
+      'titulo': instance.titulo,
+      'nroUnidad': instance.nroUnidad,
+      'calendarioPeriodoId': instance.calendarioPeriodoId,
+      'silaboEventoId': instance.silaboEventoId,
+    };

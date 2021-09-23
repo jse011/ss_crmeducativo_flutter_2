@@ -7,6 +7,7 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/usuario_evento.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/calendario_periodo_carga_curso.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/archivo_rubro.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_unidad.dart';
 
 class SerializableConvert{
   static EntidadData converSerializeEntidad(Map<String,dynamic> model){
@@ -1604,6 +1605,60 @@ class SerializableConvert{
     }
     return items;
   }
+
+  static TareaUnidadData converSerializeTareaUnidad(Map<String,dynamic> model){
+    TareaUnidadSerial serial = TareaUnidadSerial.fromJson(model);
+    return TareaUnidadData(
+      unidadAprendizajeId: serial.unidadAprendizajeId??0,
+      titulo: serial.titulo,
+      nroUnidad: serial.nroUnidad,
+      calendarioPeriodoId: serial.calendarioPeriodoId,
+      silaboEventoId: serial.silaboEventoId
+    );
+  }
+
+  static List<TareaUnidadData> converListSerializeTareaUnidad(dynamic model){
+    List<TareaUnidadData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeTareaUnidad(item));
+    }
+    return items;
+  }
+
+  static TareaData converSerializeTarea(Map<String,dynamic> model){
+    TareaSerial serial = TareaSerial.fromJson(model);
+    return TareaData(
+        tareaId: serial.tareaId??"",
+        titulo: serial.titulo,
+      desempenioIcdId: serial.desempenioIcdId,
+      silaboEventoId: serial.silaboEventoId,
+      calendarioPeriodoId: serial.calendarioPeriodoId,
+      competenciaId: serial.competenciaId,
+      datosUsuarioCreador: serial.datosUsuarioCreador,
+      fechaCreacion: serial.fechaCreacion,
+      fechaEntrega: serial.fechaEntrega_,
+      horaEntrega: serial.horaEntrega,
+      instrucciones: serial.instrucciones,
+      numero: serial.numero,
+      rubroEvalProcesoId: serial.rubroEvalProcesoId,
+      sesionAprendizajeId: serial.sesionAprendizajeId,
+      sesionNombre: serial.sesionNombre,
+      tipoNotaId: serial.tipoNotaId,
+      unidadAprendizajeId: serial.unidadAprendizajeId,
+        estadoId: serial.estadoId
+    );
+  }
+
+  static List<TareaData> converListSerializeTarea(dynamic model){
+    List<TareaData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeTarea(item));
+    }
+    return items;
+  }
+
 
 }
 

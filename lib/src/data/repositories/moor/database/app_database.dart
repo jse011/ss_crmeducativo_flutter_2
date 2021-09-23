@@ -57,6 +57,8 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/valor_t
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/seccion.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/session_user.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/silabo_evento.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_unidad.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipo_evaluacion_rubro.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipos.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipos_rubro.dart';
@@ -75,7 +77,7 @@ part 'app_database.g.dart';
   CalendarioAcademico, Usuario, WebConfigs, Criterio, TipoEvaluacionRubro, TiposRubro, TipoNotaRubro, ValorTipoNotaRubro, RubroEvaluacionProceso, ArchivoRubro, EquipoEvaluacion,
   EvaluacionProceso, RubroCampotematico, RubroComentario, RubroEvalRNPFormula, ContactoDocente, CriterioRubroEvaluacion, Calendario, CalendarioListaUsuario, Evento, EventoPersona,
   ListaUsuarioDetalle, ListaUsuarios, PersonaEvento, RelacionesEvento, TipoEvento, UsuarioEvento, UnidadEvento, SesionEvento, RelUnidadEvento, RubroUpdateServidor, CalendarioPeriodoCargaCurso,
-  TipoNotaResultado, ValorTipoNotaResultado])
+  TipoNotaResultado, ValorTipoNotaResultado, Tarea, TareaUnidad])
 class AppDataBase extends _$AppDataBase {
   @override
   int get schemaVersion => 1;

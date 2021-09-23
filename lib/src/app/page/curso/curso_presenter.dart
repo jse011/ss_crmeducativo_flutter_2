@@ -1,19 +1,32 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_anio_academico.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_curso.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_cursos.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_calendario_periodo.dart';
 
 class CursoPresenter extends Presenter {
   late GetCurso _getCurso;
   late Function getCursoOnComplete, getCursoOnError;
 
-  CursoPresenter(ConfiguracionRepository configuracionRepository)
-      : _getCurso = new GetCurso(configuracionRepository);
+  UpdateCalendarioPerido _updateCalendarioPerido;
+  late Function getCalendarioPeridoOnComplete, getCalendarioPeridoOnError;
+
+  CursoPresenter(ConfiguracionRepository configuracionRepo, CalendarioPeriodoRepository calendarioPeriodoRepo, HttpDatosRepository httpDatosRepo)
+      : _getCurso = GetCurso(configuracionRepo),
+        _updateCalendarioPerido = UpdateCalendarioPerido(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo);
+
+  void getCalendarioPerido(CursosUi? cursosUi){
+    _updateCalendarioPerido.execute(_GetCalendarioPeriodoCase(this), GetCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
+  }
 
   @override
   void dispose() {
     _getCurso.dispose();
+    _updateCalendarioPerido.dispose();
   }
 
   void getCursoParams(int cargaCursoId){
@@ -43,6 +56,31 @@ class _GetCursoCase extends Observer<GetCursoResponse>{
   void onNext(GetCursoResponse? response) {
     assert(presenter.getCursoOnComplete != null);
     presenter.getCursoOnComplete(response?.cursoUi);
+  }
+
+}
+
+class _GetCalendarioPeriodoCase extends Observer<GetCalendarioPeridoResponse>{
+  CursoPresenter presenter;
+
+  _GetCalendarioPeriodoCase(this.presenter);
+
+  @override
+  void onComplete() {
+
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.getCalendarioPeridoOnError!=null);
+    presenter.getCalendarioPeridoOnError(e);
+  }
+
+  @override
+  void onNext(GetCalendarioPeridoResponse? response) {
+    print("getCalendarioPeridoOnComplete");
+    assert(presenter.getCalendarioPeridoOnComplete!=null);
+    presenter.getCalendarioPeridoOnComplete();
   }
 
 }

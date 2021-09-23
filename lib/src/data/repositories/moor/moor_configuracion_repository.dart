@@ -688,7 +688,8 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
       cursosUi.cargaCursoId = cargaCursoData.cargaCursoId;
       cursosUi.cargaAcademicaId = cargaAcademicaData.cargaAcademicaId;
       cursosUi.nombreCurso = curso.nombre;
-      cursosUi.gradoSeccion = (periodo.aliasPeriodo??"") + " " + (seccionData.nombre??"");
+      cursosUi.gradoSeccion = (periodo.nombre??"") + " - " + (seccionData.nombre??"");
+      cursosUi.gradoSeccion2 = (periodo.aliasPeriodo??"") + " " + (seccionData.nombre??"");
       cursosUi.nroSalon = aula.numero;
       cursosUi.silaboEventoId = silaboEventoData!=null?silaboEventoData.silaboEventoId:0;
       cursosUi.color1 = parametrosDisenioData!=null?parametrosDisenioData.color1 :

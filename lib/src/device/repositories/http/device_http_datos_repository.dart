@@ -266,7 +266,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String,dynamic> body = json.decode(response.body);
-      print(body.toString());
+
       if(body.containsKey("Successful")&&body.containsKey("Value")){
 
         return body["Value"];
@@ -297,7 +297,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String,dynamic> body = json.decode(response.body);
-      print(body.toString());
+
       if(body.containsKey("Successful")&&body.containsKey("Value")){
         return body["Value"];
       }else{
@@ -326,7 +326,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String,dynamic> body = json.decode(response.body);
-      print(body.toString());
+
       if(body.containsKey("Successful")&&body.containsKey("Value")){
         return body["Value"];
       }else{
@@ -353,7 +353,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       // If the server did return a 200 OK response,
       // then parse the JSON.
       Map<String,dynamic> body = json.decode(response.body);
-      print(body.toString());
+
       if(body.containsKey("Successful")&&body.containsKey("Value")){
         return body["Value"];
       }else{
@@ -364,6 +364,32 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       // If the server did not return a 200 OK response,
       // then throw an exception.
       throw Exception('Failed to load rubro eval');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getUnidadTarea(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+    final response = await http.post(Uri.parse(urlServidorLocal), body: getBody("getUnidadTareaDocenteFlutter", parameters))
+        .timeout(Duration(seconds: 45), onTimeout: (){throw Exception('Failed to load rubro eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load unidad tarea');
     }
   }
 

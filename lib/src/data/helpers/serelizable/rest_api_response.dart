@@ -2028,4 +2028,71 @@ class RelUnidadEventoSerial {
 
 //#endregion
 
+//#region Tarea
+@JsonSerializable()
+class TareaSerial {
+  String? tareaId;
+  String? titulo;
+  String? instrucciones;
+  int? numero;
+  int? fechaCreacion;
+  String? fechaEntrega_;
+  String? horaEntrega;
+  String? sesionNombre;
+  int? sesionAprendizajeId;
+  String? datosUsuarioCreador;
+  String? rubroEvalProcesoId;
+  int? desempenioIcdId;
+  int? competenciaId;
+  String? tipoNotaId;
+  int? unidadAprendizajeId;
+  int? calendarioPeriodoId;
+  int? silaboEventoId;
+  int? estadoId;
+
+  TareaSerial(
+  {this.tareaId,
+    this.titulo,
+    this.instrucciones,
+    this.numero,
+    this.fechaCreacion,
+    this.fechaEntrega_,
+    this.horaEntrega,
+    this.sesionNombre,
+    this.sesionAprendizajeId,
+    this.datosUsuarioCreador,
+    this.rubroEvalProcesoId,
+    this.desempenioIcdId,
+    this.competenciaId,
+    this.tipoNotaId,
+    this.unidadAprendizajeId,
+    this.calendarioPeriodoId,
+    this.silaboEventoId,
+    this.estadoId});
+
+  factory TareaSerial.fromJson(Map<String, dynamic> json) => _$TareaSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TareaSerialToJson(this);
+
+}
+
+@JsonSerializable()
+class TareaUnidadSerial {
+
+  int? unidadAprendizajeId;
+  String? titulo;
+  int? nroUnidad;
+  int? calendarioPeriodoId;
+  int? silaboEventoId;
+
+  TareaUnidadSerial({this.unidadAprendizajeId, this.titulo, this.nroUnidad,
+    this.calendarioPeriodoId, this.silaboEventoId});
+
+  factory TareaUnidadSerial.fromJson(Map<String, dynamic> json) => _$TareaUnidadSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TareaUnidadSerialToJson(this);
+
+}
+//#endregion
+
 

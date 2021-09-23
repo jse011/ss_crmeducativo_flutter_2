@@ -1,7 +1,6 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/curso/curso_presenter.dart';
-import 'package:ss_crmeducativo_2/src/app/utils/app_utils.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/anio_acemico_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
 
@@ -11,8 +10,11 @@ class CursoController extends Controller{
   CursosUi? get cursos => _cursosUi;
   String? _fechaHoy = null;
   String? get fechaHoy => _fechaHoy;
-
-  CursoController(cursosUi,configuracionRepo):this._cursosUi = cursosUi, this.cursoPresenter = CursoPresenter(configuracionRepo);
+  bool _progress = true;
+  bool get progress => _progress;
+  CursoController(cursosUi,configuracionRepo, calendarioPeriodoRepo, httpDatosRepo):
+        this._cursosUi = cursosUi,
+        this.cursoPresenter = CursoPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo);
 
   @override
   void initListeners() {
@@ -25,11 +27,21 @@ class CursoController extends Controller{
       _cursosUi = null;
       refreshUI();
     };
+
+    cursoPresenter.getCalendarioPeridoOnComplete = ( ){
+      _progress = false;
+      refreshUI();
+    };
+
+    cursoPresenter.getCalendarioPeridoOnError = (e){
+      _progress = false;
+      refreshUI();
+    };
   }
 
   @override
   void onInitState() {
-    getFecha();
+    cursoPresenter.getCalendarioPerido(_cursosUi);
     super.onInitState();
   }
 

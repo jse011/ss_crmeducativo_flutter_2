@@ -14,7 +14,10 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/animation_view.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_periodo_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 
 class CursoView extends View{
@@ -33,7 +36,7 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
   late AnimationController animationController;
 
   _CursoViewState(cursosUi)
-      : super(CursoController(cursosUi,MoorConfiguracionRepository()));
+      : super(CursoController(cursosUi,MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio()));
 
   @override
   void initState() {
@@ -79,15 +82,23 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
   }
 
   @override
-  Widget get view =>  Scaffold(
-    backgroundColor:AppTheme.white,
-    body: Stack(
-      children: <Widget>[
-        getMainTab(),
-        getAppBarUI(),
-      ],
-    ),
-  );
+  Widget get view =>  ControlledWidgetBuilder<CursoController>(
+      builder: (context, controller) {
+        return Scaffold(
+          backgroundColor:AppTheme.white,
+          body: Stack(
+            children: <Widget>[
+              getMainTab(),
+              getAppBarUI(),
+              if(controller.progress)ArsProgressWidget(
+                blur: 2,
+                backgroundColor: Color(0x33000000),
+                animationDuration: Duration(milliseconds: 500),
+              ),
+            ],
+          ),
+        );
+      });
 
 
   Widget getAppBarUI() {
@@ -149,29 +160,30 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        controller.fechaHoy??"",
+                                        "${controller.cursos?.nombreCurso??""}",
                                         textAlign: TextAlign.left,
                                         overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
                                         style: TextStyle(
                                           fontFamily: AppTheme.fontTTNorms,
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 12 + 6 - 6 * topBarOpacity,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14 + 6 - 6 * topBarOpacity,
                                           letterSpacing: 1.2,
                                           color: AppTheme.darkerText,
                                         ),
                                       ),
                                       Text(
-                                        controller.cursos?.nombreCurso??"",
+                                        "${controller.cursos?.gradoSeccion??""}",
                                         textAlign: TextAlign.left,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           fontFamily: AppTheme.fontTTNorms,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 12 + 6 - 6 * topBarOpacity,
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 10 + 6 - 6 * topBarOpacity,
                                           letterSpacing: 1.2,
                                           color: AppTheme.darkerText,
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),

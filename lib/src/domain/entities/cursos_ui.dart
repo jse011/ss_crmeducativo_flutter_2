@@ -3,6 +3,7 @@ class CursosUi{
   int? cargaAcademicaId;
   String? nombreCurso;
   String? gradoSeccion;
+  String? gradoSeccion2;
   String? nroSalon;
   int? silaboEventoId;
   String? color1;

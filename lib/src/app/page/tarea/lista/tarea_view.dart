@@ -9,6 +9,10 @@ import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_controller.dart
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_periodo_repository.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_repositoy.dart';
+import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
 
@@ -28,7 +32,7 @@ class _TareaViewState extends ViewState<TareaView, TareaController> with TickerP
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
 
-  _TareaViewState(cursoUi) : super(TareaController(cursoUi));
+  _TareaViewState(cursoUi) : super(TareaController(cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository()));
 
   @override
   void initState() {
@@ -339,7 +343,7 @@ class _TareaViewState extends ViewState<TareaView, TareaController> with TickerP
                                       borderRadius: const BorderRadius.all(Radius.circular(9.0)),
                                       splashColor: AppTheme.nearlyDarkBlue.withOpacity(0.8),
                                       onTap: () {
-                                        //controller.onSelectedCalendarioPeriodo(controller.calendarioPeriodoList[index]);
+                                        controller.onSelectedCalendarioPeriodo(controller.calendarioPeriodoList[index]);
                                       },
                                       child: Center(
                                         child: RotatedBox(quarterTurns: 1,

@@ -37168,6 +37168,1162 @@ class $ValorTipoNotaResultadoTable extends ValorTipoNotaResultado
   }
 }
 
+class TareaData extends DataClass implements Insertable<TareaData> {
+  final String tareaId;
+  final String? titulo;
+  final String? instrucciones;
+  final int? numero;
+  final int? fechaCreacion;
+  final String? fechaEntrega;
+  final String? horaEntrega;
+  final String? sesionNombre;
+  final int? sesionAprendizajeId;
+  final String? datosUsuarioCreador;
+  final String? rubroEvalProcesoId;
+  final int? desempenioIcdId;
+  final int? competenciaId;
+  final String? tipoNotaId;
+  final int? unidadAprendizajeId;
+  final int? calendarioPeriodoId;
+  final int? silaboEventoId;
+  final int? estadoId;
+  TareaData(
+      {required this.tareaId,
+      this.titulo,
+      this.instrucciones,
+      this.numero,
+      this.fechaCreacion,
+      this.fechaEntrega,
+      this.horaEntrega,
+      this.sesionNombre,
+      this.sesionAprendizajeId,
+      this.datosUsuarioCreador,
+      this.rubroEvalProcesoId,
+      this.desempenioIcdId,
+      this.competenciaId,
+      this.tipoNotaId,
+      this.unidadAprendizajeId,
+      this.calendarioPeriodoId,
+      this.silaboEventoId,
+      this.estadoId});
+  factory TareaData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return TareaData(
+      tareaId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}tarea_id'])!,
+      titulo: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}titulo']),
+      instrucciones: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}instrucciones']),
+      numero: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}numero']),
+      fechaCreacion: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_creacion']),
+      fechaEntrega: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_entrega']),
+      horaEntrega: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}hora_entrega']),
+      sesionNombre: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sesion_nombre']),
+      sesionAprendizajeId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}sesion_aprendizaje_id']),
+      datosUsuarioCreador: const StringType().mapFromDatabaseResponse(
+          data['${effectivePrefix}datos_usuario_creador']),
+      rubroEvalProcesoId: const StringType().mapFromDatabaseResponse(
+          data['${effectivePrefix}rubro_eval_proceso_id']),
+      desempenioIcdId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}desempenio_icd_id']),
+      competenciaId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}competencia_id']),
+      tipoNotaId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}tipo_nota_id']),
+      unidadAprendizajeId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}unidad_aprendizaje_id']),
+      calendarioPeriodoId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}calendario_periodo_id']),
+      silaboEventoId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}silabo_evento_id']),
+      estadoId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}estado_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['tarea_id'] = Variable<String>(tareaId);
+    if (!nullToAbsent || titulo != null) {
+      map['titulo'] = Variable<String?>(titulo);
+    }
+    if (!nullToAbsent || instrucciones != null) {
+      map['instrucciones'] = Variable<String?>(instrucciones);
+    }
+    if (!nullToAbsent || numero != null) {
+      map['numero'] = Variable<int?>(numero);
+    }
+    if (!nullToAbsent || fechaCreacion != null) {
+      map['fecha_creacion'] = Variable<int?>(fechaCreacion);
+    }
+    if (!nullToAbsent || fechaEntrega != null) {
+      map['fecha_entrega'] = Variable<String?>(fechaEntrega);
+    }
+    if (!nullToAbsent || horaEntrega != null) {
+      map['hora_entrega'] = Variable<String?>(horaEntrega);
+    }
+    if (!nullToAbsent || sesionNombre != null) {
+      map['sesion_nombre'] = Variable<String?>(sesionNombre);
+    }
+    if (!nullToAbsent || sesionAprendizajeId != null) {
+      map['sesion_aprendizaje_id'] = Variable<int?>(sesionAprendizajeId);
+    }
+    if (!nullToAbsent || datosUsuarioCreador != null) {
+      map['datos_usuario_creador'] = Variable<String?>(datosUsuarioCreador);
+    }
+    if (!nullToAbsent || rubroEvalProcesoId != null) {
+      map['rubro_eval_proceso_id'] = Variable<String?>(rubroEvalProcesoId);
+    }
+    if (!nullToAbsent || desempenioIcdId != null) {
+      map['desempenio_icd_id'] = Variable<int?>(desempenioIcdId);
+    }
+    if (!nullToAbsent || competenciaId != null) {
+      map['competencia_id'] = Variable<int?>(competenciaId);
+    }
+    if (!nullToAbsent || tipoNotaId != null) {
+      map['tipo_nota_id'] = Variable<String?>(tipoNotaId);
+    }
+    if (!nullToAbsent || unidadAprendizajeId != null) {
+      map['unidad_aprendizaje_id'] = Variable<int?>(unidadAprendizajeId);
+    }
+    if (!nullToAbsent || calendarioPeriodoId != null) {
+      map['calendario_periodo_id'] = Variable<int?>(calendarioPeriodoId);
+    }
+    if (!nullToAbsent || silaboEventoId != null) {
+      map['silabo_evento_id'] = Variable<int?>(silaboEventoId);
+    }
+    if (!nullToAbsent || estadoId != null) {
+      map['estado_id'] = Variable<int?>(estadoId);
+    }
+    return map;
+  }
+
+  TareaCompanion toCompanion(bool nullToAbsent) {
+    return TareaCompanion(
+      tareaId: Value(tareaId),
+      titulo:
+          titulo == null && nullToAbsent ? const Value.absent() : Value(titulo),
+      instrucciones: instrucciones == null && nullToAbsent
+          ? const Value.absent()
+          : Value(instrucciones),
+      numero:
+          numero == null && nullToAbsent ? const Value.absent() : Value(numero),
+      fechaCreacion: fechaCreacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCreacion),
+      fechaEntrega: fechaEntrega == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaEntrega),
+      horaEntrega: horaEntrega == null && nullToAbsent
+          ? const Value.absent()
+          : Value(horaEntrega),
+      sesionNombre: sesionNombre == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sesionNombre),
+      sesionAprendizajeId: sesionAprendizajeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sesionAprendizajeId),
+      datosUsuarioCreador: datosUsuarioCreador == null && nullToAbsent
+          ? const Value.absent()
+          : Value(datosUsuarioCreador),
+      rubroEvalProcesoId: rubroEvalProcesoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rubroEvalProcesoId),
+      desempenioIcdId: desempenioIcdId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(desempenioIcdId),
+      competenciaId: competenciaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(competenciaId),
+      tipoNotaId: tipoNotaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(tipoNotaId),
+      unidadAprendizajeId: unidadAprendizajeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(unidadAprendizajeId),
+      calendarioPeriodoId: calendarioPeriodoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(calendarioPeriodoId),
+      silaboEventoId: silaboEventoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(silaboEventoId),
+      estadoId: estadoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(estadoId),
+    );
+  }
+
+  factory TareaData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return TareaData(
+      tareaId: serializer.fromJson<String>(json['tareaId']),
+      titulo: serializer.fromJson<String?>(json['titulo']),
+      instrucciones: serializer.fromJson<String?>(json['instrucciones']),
+      numero: serializer.fromJson<int?>(json['numero']),
+      fechaCreacion: serializer.fromJson<int?>(json['fechaCreacion']),
+      fechaEntrega: serializer.fromJson<String?>(json['fechaEntrega']),
+      horaEntrega: serializer.fromJson<String?>(json['horaEntrega']),
+      sesionNombre: serializer.fromJson<String?>(json['sesionNombre']),
+      sesionAprendizajeId:
+          serializer.fromJson<int?>(json['sesionAprendizajeId']),
+      datosUsuarioCreador:
+          serializer.fromJson<String?>(json['datosUsuarioCreador']),
+      rubroEvalProcesoId:
+          serializer.fromJson<String?>(json['rubroEvalProcesoId']),
+      desempenioIcdId: serializer.fromJson<int?>(json['desempenioIcdId']),
+      competenciaId: serializer.fromJson<int?>(json['competenciaId']),
+      tipoNotaId: serializer.fromJson<String?>(json['tipoNotaId']),
+      unidadAprendizajeId:
+          serializer.fromJson<int?>(json['unidadAprendizajeId']),
+      calendarioPeriodoId:
+          serializer.fromJson<int?>(json['calendarioPeriodoId']),
+      silaboEventoId: serializer.fromJson<int?>(json['silaboEventoId']),
+      estadoId: serializer.fromJson<int?>(json['estadoId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'tareaId': serializer.toJson<String>(tareaId),
+      'titulo': serializer.toJson<String?>(titulo),
+      'instrucciones': serializer.toJson<String?>(instrucciones),
+      'numero': serializer.toJson<int?>(numero),
+      'fechaCreacion': serializer.toJson<int?>(fechaCreacion),
+      'fechaEntrega': serializer.toJson<String?>(fechaEntrega),
+      'horaEntrega': serializer.toJson<String?>(horaEntrega),
+      'sesionNombre': serializer.toJson<String?>(sesionNombre),
+      'sesionAprendizajeId': serializer.toJson<int?>(sesionAprendizajeId),
+      'datosUsuarioCreador': serializer.toJson<String?>(datosUsuarioCreador),
+      'rubroEvalProcesoId': serializer.toJson<String?>(rubroEvalProcesoId),
+      'desempenioIcdId': serializer.toJson<int?>(desempenioIcdId),
+      'competenciaId': serializer.toJson<int?>(competenciaId),
+      'tipoNotaId': serializer.toJson<String?>(tipoNotaId),
+      'unidadAprendizajeId': serializer.toJson<int?>(unidadAprendizajeId),
+      'calendarioPeriodoId': serializer.toJson<int?>(calendarioPeriodoId),
+      'silaboEventoId': serializer.toJson<int?>(silaboEventoId),
+      'estadoId': serializer.toJson<int?>(estadoId),
+    };
+  }
+
+  TareaData copyWith(
+          {String? tareaId,
+          String? titulo,
+          String? instrucciones,
+          int? numero,
+          int? fechaCreacion,
+          String? fechaEntrega,
+          String? horaEntrega,
+          String? sesionNombre,
+          int? sesionAprendizajeId,
+          String? datosUsuarioCreador,
+          String? rubroEvalProcesoId,
+          int? desempenioIcdId,
+          int? competenciaId,
+          String? tipoNotaId,
+          int? unidadAprendizajeId,
+          int? calendarioPeriodoId,
+          int? silaboEventoId,
+          int? estadoId}) =>
+      TareaData(
+        tareaId: tareaId ?? this.tareaId,
+        titulo: titulo ?? this.titulo,
+        instrucciones: instrucciones ?? this.instrucciones,
+        numero: numero ?? this.numero,
+        fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+        fechaEntrega: fechaEntrega ?? this.fechaEntrega,
+        horaEntrega: horaEntrega ?? this.horaEntrega,
+        sesionNombre: sesionNombre ?? this.sesionNombre,
+        sesionAprendizajeId: sesionAprendizajeId ?? this.sesionAprendizajeId,
+        datosUsuarioCreador: datosUsuarioCreador ?? this.datosUsuarioCreador,
+        rubroEvalProcesoId: rubroEvalProcesoId ?? this.rubroEvalProcesoId,
+        desempenioIcdId: desempenioIcdId ?? this.desempenioIcdId,
+        competenciaId: competenciaId ?? this.competenciaId,
+        tipoNotaId: tipoNotaId ?? this.tipoNotaId,
+        unidadAprendizajeId: unidadAprendizajeId ?? this.unidadAprendizajeId,
+        calendarioPeriodoId: calendarioPeriodoId ?? this.calendarioPeriodoId,
+        silaboEventoId: silaboEventoId ?? this.silaboEventoId,
+        estadoId: estadoId ?? this.estadoId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TareaData(')
+          ..write('tareaId: $tareaId, ')
+          ..write('titulo: $titulo, ')
+          ..write('instrucciones: $instrucciones, ')
+          ..write('numero: $numero, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('fechaEntrega: $fechaEntrega, ')
+          ..write('horaEntrega: $horaEntrega, ')
+          ..write('sesionNombre: $sesionNombre, ')
+          ..write('sesionAprendizajeId: $sesionAprendizajeId, ')
+          ..write('datosUsuarioCreador: $datosUsuarioCreador, ')
+          ..write('rubroEvalProcesoId: $rubroEvalProcesoId, ')
+          ..write('desempenioIcdId: $desempenioIcdId, ')
+          ..write('competenciaId: $competenciaId, ')
+          ..write('tipoNotaId: $tipoNotaId, ')
+          ..write('unidadAprendizajeId: $unidadAprendizajeId, ')
+          ..write('calendarioPeriodoId: $calendarioPeriodoId, ')
+          ..write('silaboEventoId: $silaboEventoId, ')
+          ..write('estadoId: $estadoId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      tareaId.hashCode,
+      $mrjc(
+          titulo.hashCode,
+          $mrjc(
+              instrucciones.hashCode,
+              $mrjc(
+                  numero.hashCode,
+                  $mrjc(
+                      fechaCreacion.hashCode,
+                      $mrjc(
+                          fechaEntrega.hashCode,
+                          $mrjc(
+                              horaEntrega.hashCode,
+                              $mrjc(
+                                  sesionNombre.hashCode,
+                                  $mrjc(
+                                      sesionAprendizajeId.hashCode,
+                                      $mrjc(
+                                          datosUsuarioCreador.hashCode,
+                                          $mrjc(
+                                              rubroEvalProcesoId.hashCode,
+                                              $mrjc(
+                                                  desempenioIcdId.hashCode,
+                                                  $mrjc(
+                                                      competenciaId.hashCode,
+                                                      $mrjc(
+                                                          tipoNotaId.hashCode,
+                                                          $mrjc(
+                                                              unidadAprendizajeId
+                                                                  .hashCode,
+                                                              $mrjc(
+                                                                  calendarioPeriodoId
+                                                                      .hashCode,
+                                                                  $mrjc(
+                                                                      silaboEventoId
+                                                                          .hashCode,
+                                                                      estadoId
+                                                                          .hashCode))))))))))))))))));
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TareaData &&
+          other.tareaId == this.tareaId &&
+          other.titulo == this.titulo &&
+          other.instrucciones == this.instrucciones &&
+          other.numero == this.numero &&
+          other.fechaCreacion == this.fechaCreacion &&
+          other.fechaEntrega == this.fechaEntrega &&
+          other.horaEntrega == this.horaEntrega &&
+          other.sesionNombre == this.sesionNombre &&
+          other.sesionAprendizajeId == this.sesionAprendizajeId &&
+          other.datosUsuarioCreador == this.datosUsuarioCreador &&
+          other.rubroEvalProcesoId == this.rubroEvalProcesoId &&
+          other.desempenioIcdId == this.desempenioIcdId &&
+          other.competenciaId == this.competenciaId &&
+          other.tipoNotaId == this.tipoNotaId &&
+          other.unidadAprendizajeId == this.unidadAprendizajeId &&
+          other.calendarioPeriodoId == this.calendarioPeriodoId &&
+          other.silaboEventoId == this.silaboEventoId &&
+          other.estadoId == this.estadoId);
+}
+
+class TareaCompanion extends UpdateCompanion<TareaData> {
+  final Value<String> tareaId;
+  final Value<String?> titulo;
+  final Value<String?> instrucciones;
+  final Value<int?> numero;
+  final Value<int?> fechaCreacion;
+  final Value<String?> fechaEntrega;
+  final Value<String?> horaEntrega;
+  final Value<String?> sesionNombre;
+  final Value<int?> sesionAprendizajeId;
+  final Value<String?> datosUsuarioCreador;
+  final Value<String?> rubroEvalProcesoId;
+  final Value<int?> desempenioIcdId;
+  final Value<int?> competenciaId;
+  final Value<String?> tipoNotaId;
+  final Value<int?> unidadAprendizajeId;
+  final Value<int?> calendarioPeriodoId;
+  final Value<int?> silaboEventoId;
+  final Value<int?> estadoId;
+  const TareaCompanion({
+    this.tareaId = const Value.absent(),
+    this.titulo = const Value.absent(),
+    this.instrucciones = const Value.absent(),
+    this.numero = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.fechaEntrega = const Value.absent(),
+    this.horaEntrega = const Value.absent(),
+    this.sesionNombre = const Value.absent(),
+    this.sesionAprendizajeId = const Value.absent(),
+    this.datosUsuarioCreador = const Value.absent(),
+    this.rubroEvalProcesoId = const Value.absent(),
+    this.desempenioIcdId = const Value.absent(),
+    this.competenciaId = const Value.absent(),
+    this.tipoNotaId = const Value.absent(),
+    this.unidadAprendizajeId = const Value.absent(),
+    this.calendarioPeriodoId = const Value.absent(),
+    this.silaboEventoId = const Value.absent(),
+    this.estadoId = const Value.absent(),
+  });
+  TareaCompanion.insert({
+    required String tareaId,
+    this.titulo = const Value.absent(),
+    this.instrucciones = const Value.absent(),
+    this.numero = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.fechaEntrega = const Value.absent(),
+    this.horaEntrega = const Value.absent(),
+    this.sesionNombre = const Value.absent(),
+    this.sesionAprendizajeId = const Value.absent(),
+    this.datosUsuarioCreador = const Value.absent(),
+    this.rubroEvalProcesoId = const Value.absent(),
+    this.desempenioIcdId = const Value.absent(),
+    this.competenciaId = const Value.absent(),
+    this.tipoNotaId = const Value.absent(),
+    this.unidadAprendizajeId = const Value.absent(),
+    this.calendarioPeriodoId = const Value.absent(),
+    this.silaboEventoId = const Value.absent(),
+    this.estadoId = const Value.absent(),
+  }) : tareaId = Value(tareaId);
+  static Insertable<TareaData> custom({
+    Expression<String>? tareaId,
+    Expression<String?>? titulo,
+    Expression<String?>? instrucciones,
+    Expression<int?>? numero,
+    Expression<int?>? fechaCreacion,
+    Expression<String?>? fechaEntrega,
+    Expression<String?>? horaEntrega,
+    Expression<String?>? sesionNombre,
+    Expression<int?>? sesionAprendizajeId,
+    Expression<String?>? datosUsuarioCreador,
+    Expression<String?>? rubroEvalProcesoId,
+    Expression<int?>? desempenioIcdId,
+    Expression<int?>? competenciaId,
+    Expression<String?>? tipoNotaId,
+    Expression<int?>? unidadAprendizajeId,
+    Expression<int?>? calendarioPeriodoId,
+    Expression<int?>? silaboEventoId,
+    Expression<int?>? estadoId,
+  }) {
+    return RawValuesInsertable({
+      if (tareaId != null) 'tarea_id': tareaId,
+      if (titulo != null) 'titulo': titulo,
+      if (instrucciones != null) 'instrucciones': instrucciones,
+      if (numero != null) 'numero': numero,
+      if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
+      if (fechaEntrega != null) 'fecha_entrega': fechaEntrega,
+      if (horaEntrega != null) 'hora_entrega': horaEntrega,
+      if (sesionNombre != null) 'sesion_nombre': sesionNombre,
+      if (sesionAprendizajeId != null)
+        'sesion_aprendizaje_id': sesionAprendizajeId,
+      if (datosUsuarioCreador != null)
+        'datos_usuario_creador': datosUsuarioCreador,
+      if (rubroEvalProcesoId != null)
+        'rubro_eval_proceso_id': rubroEvalProcesoId,
+      if (desempenioIcdId != null) 'desempenio_icd_id': desempenioIcdId,
+      if (competenciaId != null) 'competencia_id': competenciaId,
+      if (tipoNotaId != null) 'tipo_nota_id': tipoNotaId,
+      if (unidadAprendizajeId != null)
+        'unidad_aprendizaje_id': unidadAprendizajeId,
+      if (calendarioPeriodoId != null)
+        'calendario_periodo_id': calendarioPeriodoId,
+      if (silaboEventoId != null) 'silabo_evento_id': silaboEventoId,
+      if (estadoId != null) 'estado_id': estadoId,
+    });
+  }
+
+  TareaCompanion copyWith(
+      {Value<String>? tareaId,
+      Value<String?>? titulo,
+      Value<String?>? instrucciones,
+      Value<int?>? numero,
+      Value<int?>? fechaCreacion,
+      Value<String?>? fechaEntrega,
+      Value<String?>? horaEntrega,
+      Value<String?>? sesionNombre,
+      Value<int?>? sesionAprendizajeId,
+      Value<String?>? datosUsuarioCreador,
+      Value<String?>? rubroEvalProcesoId,
+      Value<int?>? desempenioIcdId,
+      Value<int?>? competenciaId,
+      Value<String?>? tipoNotaId,
+      Value<int?>? unidadAprendizajeId,
+      Value<int?>? calendarioPeriodoId,
+      Value<int?>? silaboEventoId,
+      Value<int?>? estadoId}) {
+    return TareaCompanion(
+      tareaId: tareaId ?? this.tareaId,
+      titulo: titulo ?? this.titulo,
+      instrucciones: instrucciones ?? this.instrucciones,
+      numero: numero ?? this.numero,
+      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      fechaEntrega: fechaEntrega ?? this.fechaEntrega,
+      horaEntrega: horaEntrega ?? this.horaEntrega,
+      sesionNombre: sesionNombre ?? this.sesionNombre,
+      sesionAprendizajeId: sesionAprendizajeId ?? this.sesionAprendizajeId,
+      datosUsuarioCreador: datosUsuarioCreador ?? this.datosUsuarioCreador,
+      rubroEvalProcesoId: rubroEvalProcesoId ?? this.rubroEvalProcesoId,
+      desempenioIcdId: desempenioIcdId ?? this.desempenioIcdId,
+      competenciaId: competenciaId ?? this.competenciaId,
+      tipoNotaId: tipoNotaId ?? this.tipoNotaId,
+      unidadAprendizajeId: unidadAprendizajeId ?? this.unidadAprendizajeId,
+      calendarioPeriodoId: calendarioPeriodoId ?? this.calendarioPeriodoId,
+      silaboEventoId: silaboEventoId ?? this.silaboEventoId,
+      estadoId: estadoId ?? this.estadoId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (tareaId.present) {
+      map['tarea_id'] = Variable<String>(tareaId.value);
+    }
+    if (titulo.present) {
+      map['titulo'] = Variable<String?>(titulo.value);
+    }
+    if (instrucciones.present) {
+      map['instrucciones'] = Variable<String?>(instrucciones.value);
+    }
+    if (numero.present) {
+      map['numero'] = Variable<int?>(numero.value);
+    }
+    if (fechaCreacion.present) {
+      map['fecha_creacion'] = Variable<int?>(fechaCreacion.value);
+    }
+    if (fechaEntrega.present) {
+      map['fecha_entrega'] = Variable<String?>(fechaEntrega.value);
+    }
+    if (horaEntrega.present) {
+      map['hora_entrega'] = Variable<String?>(horaEntrega.value);
+    }
+    if (sesionNombre.present) {
+      map['sesion_nombre'] = Variable<String?>(sesionNombre.value);
+    }
+    if (sesionAprendizajeId.present) {
+      map['sesion_aprendizaje_id'] = Variable<int?>(sesionAprendizajeId.value);
+    }
+    if (datosUsuarioCreador.present) {
+      map['datos_usuario_creador'] =
+          Variable<String?>(datosUsuarioCreador.value);
+    }
+    if (rubroEvalProcesoId.present) {
+      map['rubro_eval_proceso_id'] =
+          Variable<String?>(rubroEvalProcesoId.value);
+    }
+    if (desempenioIcdId.present) {
+      map['desempenio_icd_id'] = Variable<int?>(desempenioIcdId.value);
+    }
+    if (competenciaId.present) {
+      map['competencia_id'] = Variable<int?>(competenciaId.value);
+    }
+    if (tipoNotaId.present) {
+      map['tipo_nota_id'] = Variable<String?>(tipoNotaId.value);
+    }
+    if (unidadAprendizajeId.present) {
+      map['unidad_aprendizaje_id'] = Variable<int?>(unidadAprendizajeId.value);
+    }
+    if (calendarioPeriodoId.present) {
+      map['calendario_periodo_id'] = Variable<int?>(calendarioPeriodoId.value);
+    }
+    if (silaboEventoId.present) {
+      map['silabo_evento_id'] = Variable<int?>(silaboEventoId.value);
+    }
+    if (estadoId.present) {
+      map['estado_id'] = Variable<int?>(estadoId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TareaCompanion(')
+          ..write('tareaId: $tareaId, ')
+          ..write('titulo: $titulo, ')
+          ..write('instrucciones: $instrucciones, ')
+          ..write('numero: $numero, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('fechaEntrega: $fechaEntrega, ')
+          ..write('horaEntrega: $horaEntrega, ')
+          ..write('sesionNombre: $sesionNombre, ')
+          ..write('sesionAprendizajeId: $sesionAprendizajeId, ')
+          ..write('datosUsuarioCreador: $datosUsuarioCreador, ')
+          ..write('rubroEvalProcesoId: $rubroEvalProcesoId, ')
+          ..write('desempenioIcdId: $desempenioIcdId, ')
+          ..write('competenciaId: $competenciaId, ')
+          ..write('tipoNotaId: $tipoNotaId, ')
+          ..write('unidadAprendizajeId: $unidadAprendizajeId, ')
+          ..write('calendarioPeriodoId: $calendarioPeriodoId, ')
+          ..write('silaboEventoId: $silaboEventoId, ')
+          ..write('estadoId: $estadoId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TareaTable extends Tarea with TableInfo<$TareaTable, TareaData> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $TareaTable(this._db, [this._alias]);
+  final VerificationMeta _tareaIdMeta = const VerificationMeta('tareaId');
+  late final GeneratedColumn<String?> tareaId = GeneratedColumn<String?>(
+      'tarea_id', aliasedName, false,
+      typeName: 'TEXT', requiredDuringInsert: true);
+  final VerificationMeta _tituloMeta = const VerificationMeta('titulo');
+  late final GeneratedColumn<String?> titulo = GeneratedColumn<String?>(
+      'titulo', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _instruccionesMeta =
+      const VerificationMeta('instrucciones');
+  late final GeneratedColumn<String?> instrucciones = GeneratedColumn<String?>(
+      'instrucciones', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _numeroMeta = const VerificationMeta('numero');
+  late final GeneratedColumn<int?> numero = GeneratedColumn<int?>(
+      'numero', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _fechaCreacionMeta =
+      const VerificationMeta('fechaCreacion');
+  late final GeneratedColumn<int?> fechaCreacion = GeneratedColumn<int?>(
+      'fecha_creacion', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _fechaEntregaMeta =
+      const VerificationMeta('fechaEntrega');
+  late final GeneratedColumn<String?> fechaEntrega = GeneratedColumn<String?>(
+      'fecha_entrega', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _horaEntregaMeta =
+      const VerificationMeta('horaEntrega');
+  late final GeneratedColumn<String?> horaEntrega = GeneratedColumn<String?>(
+      'hora_entrega', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _sesionNombreMeta =
+      const VerificationMeta('sesionNombre');
+  late final GeneratedColumn<String?> sesionNombre = GeneratedColumn<String?>(
+      'sesion_nombre', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _sesionAprendizajeIdMeta =
+      const VerificationMeta('sesionAprendizajeId');
+  late final GeneratedColumn<int?> sesionAprendizajeId = GeneratedColumn<int?>(
+      'sesion_aprendizaje_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _datosUsuarioCreadorMeta =
+      const VerificationMeta('datosUsuarioCreador');
+  late final GeneratedColumn<String?> datosUsuarioCreador =
+      GeneratedColumn<String?>('datos_usuario_creador', aliasedName, true,
+          typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _rubroEvalProcesoIdMeta =
+      const VerificationMeta('rubroEvalProcesoId');
+  late final GeneratedColumn<String?> rubroEvalProcesoId =
+      GeneratedColumn<String?>('rubro_eval_proceso_id', aliasedName, true,
+          typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _desempenioIcdIdMeta =
+      const VerificationMeta('desempenioIcdId');
+  late final GeneratedColumn<int?> desempenioIcdId = GeneratedColumn<int?>(
+      'desempenio_icd_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _competenciaIdMeta =
+      const VerificationMeta('competenciaId');
+  late final GeneratedColumn<int?> competenciaId = GeneratedColumn<int?>(
+      'competencia_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _tipoNotaIdMeta = const VerificationMeta('tipoNotaId');
+  late final GeneratedColumn<String?> tipoNotaId = GeneratedColumn<String?>(
+      'tipo_nota_id', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _unidadAprendizajeIdMeta =
+      const VerificationMeta('unidadAprendizajeId');
+  late final GeneratedColumn<int?> unidadAprendizajeId = GeneratedColumn<int?>(
+      'unidad_aprendizaje_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _calendarioPeriodoIdMeta =
+      const VerificationMeta('calendarioPeriodoId');
+  late final GeneratedColumn<int?> calendarioPeriodoId = GeneratedColumn<int?>(
+      'calendario_periodo_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _silaboEventoIdMeta =
+      const VerificationMeta('silaboEventoId');
+  late final GeneratedColumn<int?> silaboEventoId = GeneratedColumn<int?>(
+      'silabo_evento_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _estadoIdMeta = const VerificationMeta('estadoId');
+  late final GeneratedColumn<int?> estadoId = GeneratedColumn<int?>(
+      'estado_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        tareaId,
+        titulo,
+        instrucciones,
+        numero,
+        fechaCreacion,
+        fechaEntrega,
+        horaEntrega,
+        sesionNombre,
+        sesionAprendizajeId,
+        datosUsuarioCreador,
+        rubroEvalProcesoId,
+        desempenioIcdId,
+        competenciaId,
+        tipoNotaId,
+        unidadAprendizajeId,
+        calendarioPeriodoId,
+        silaboEventoId,
+        estadoId
+      ];
+  @override
+  String get aliasedName => _alias ?? 'tarea';
+  @override
+  String get actualTableName => 'tarea';
+  @override
+  VerificationContext validateIntegrity(Insertable<TareaData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('tarea_id')) {
+      context.handle(_tareaIdMeta,
+          tareaId.isAcceptableOrUnknown(data['tarea_id']!, _tareaIdMeta));
+    } else if (isInserting) {
+      context.missing(_tareaIdMeta);
+    }
+    if (data.containsKey('titulo')) {
+      context.handle(_tituloMeta,
+          titulo.isAcceptableOrUnknown(data['titulo']!, _tituloMeta));
+    }
+    if (data.containsKey('instrucciones')) {
+      context.handle(
+          _instruccionesMeta,
+          instrucciones.isAcceptableOrUnknown(
+              data['instrucciones']!, _instruccionesMeta));
+    }
+    if (data.containsKey('numero')) {
+      context.handle(_numeroMeta,
+          numero.isAcceptableOrUnknown(data['numero']!, _numeroMeta));
+    }
+    if (data.containsKey('fecha_creacion')) {
+      context.handle(
+          _fechaCreacionMeta,
+          fechaCreacion.isAcceptableOrUnknown(
+              data['fecha_creacion']!, _fechaCreacionMeta));
+    }
+    if (data.containsKey('fecha_entrega')) {
+      context.handle(
+          _fechaEntregaMeta,
+          fechaEntrega.isAcceptableOrUnknown(
+              data['fecha_entrega']!, _fechaEntregaMeta));
+    }
+    if (data.containsKey('hora_entrega')) {
+      context.handle(
+          _horaEntregaMeta,
+          horaEntrega.isAcceptableOrUnknown(
+              data['hora_entrega']!, _horaEntregaMeta));
+    }
+    if (data.containsKey('sesion_nombre')) {
+      context.handle(
+          _sesionNombreMeta,
+          sesionNombre.isAcceptableOrUnknown(
+              data['sesion_nombre']!, _sesionNombreMeta));
+    }
+    if (data.containsKey('sesion_aprendizaje_id')) {
+      context.handle(
+          _sesionAprendizajeIdMeta,
+          sesionAprendizajeId.isAcceptableOrUnknown(
+              data['sesion_aprendizaje_id']!, _sesionAprendizajeIdMeta));
+    }
+    if (data.containsKey('datos_usuario_creador')) {
+      context.handle(
+          _datosUsuarioCreadorMeta,
+          datosUsuarioCreador.isAcceptableOrUnknown(
+              data['datos_usuario_creador']!, _datosUsuarioCreadorMeta));
+    }
+    if (data.containsKey('rubro_eval_proceso_id')) {
+      context.handle(
+          _rubroEvalProcesoIdMeta,
+          rubroEvalProcesoId.isAcceptableOrUnknown(
+              data['rubro_eval_proceso_id']!, _rubroEvalProcesoIdMeta));
+    }
+    if (data.containsKey('desempenio_icd_id')) {
+      context.handle(
+          _desempenioIcdIdMeta,
+          desempenioIcdId.isAcceptableOrUnknown(
+              data['desempenio_icd_id']!, _desempenioIcdIdMeta));
+    }
+    if (data.containsKey('competencia_id')) {
+      context.handle(
+          _competenciaIdMeta,
+          competenciaId.isAcceptableOrUnknown(
+              data['competencia_id']!, _competenciaIdMeta));
+    }
+    if (data.containsKey('tipo_nota_id')) {
+      context.handle(
+          _tipoNotaIdMeta,
+          tipoNotaId.isAcceptableOrUnknown(
+              data['tipo_nota_id']!, _tipoNotaIdMeta));
+    }
+    if (data.containsKey('unidad_aprendizaje_id')) {
+      context.handle(
+          _unidadAprendizajeIdMeta,
+          unidadAprendizajeId.isAcceptableOrUnknown(
+              data['unidad_aprendizaje_id']!, _unidadAprendizajeIdMeta));
+    }
+    if (data.containsKey('calendario_periodo_id')) {
+      context.handle(
+          _calendarioPeriodoIdMeta,
+          calendarioPeriodoId.isAcceptableOrUnknown(
+              data['calendario_periodo_id']!, _calendarioPeriodoIdMeta));
+    }
+    if (data.containsKey('silabo_evento_id')) {
+      context.handle(
+          _silaboEventoIdMeta,
+          silaboEventoId.isAcceptableOrUnknown(
+              data['silabo_evento_id']!, _silaboEventoIdMeta));
+    }
+    if (data.containsKey('estado_id')) {
+      context.handle(_estadoIdMeta,
+          estadoId.isAcceptableOrUnknown(data['estado_id']!, _estadoIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {tareaId};
+  @override
+  TareaData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return TareaData.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $TareaTable createAlias(String alias) {
+    return $TareaTable(_db, alias);
+  }
+}
+
+class TareaUnidadData extends DataClass implements Insertable<TareaUnidadData> {
+  final int unidadAprendizajeId;
+  final String? titulo;
+  final int? nroUnidad;
+  final int? calendarioPeriodoId;
+  final int? silaboEventoId;
+  TareaUnidadData(
+      {required this.unidadAprendizajeId,
+      this.titulo,
+      this.nroUnidad,
+      this.calendarioPeriodoId,
+      this.silaboEventoId});
+  factory TareaUnidadData.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return TareaUnidadData(
+      unidadAprendizajeId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}unidad_aprendizaje_id'])!,
+      titulo: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}titulo']),
+      nroUnidad: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}nro_unidad']),
+      calendarioPeriodoId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}calendario_periodo_id']),
+      silaboEventoId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}silabo_evento_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['unidad_aprendizaje_id'] = Variable<int>(unidadAprendizajeId);
+    if (!nullToAbsent || titulo != null) {
+      map['titulo'] = Variable<String?>(titulo);
+    }
+    if (!nullToAbsent || nroUnidad != null) {
+      map['nro_unidad'] = Variable<int?>(nroUnidad);
+    }
+    if (!nullToAbsent || calendarioPeriodoId != null) {
+      map['calendario_periodo_id'] = Variable<int?>(calendarioPeriodoId);
+    }
+    if (!nullToAbsent || silaboEventoId != null) {
+      map['silabo_evento_id'] = Variable<int?>(silaboEventoId);
+    }
+    return map;
+  }
+
+  TareaUnidadCompanion toCompanion(bool nullToAbsent) {
+    return TareaUnidadCompanion(
+      unidadAprendizajeId: Value(unidadAprendizajeId),
+      titulo:
+          titulo == null && nullToAbsent ? const Value.absent() : Value(titulo),
+      nroUnidad: nroUnidad == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nroUnidad),
+      calendarioPeriodoId: calendarioPeriodoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(calendarioPeriodoId),
+      silaboEventoId: silaboEventoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(silaboEventoId),
+    );
+  }
+
+  factory TareaUnidadData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return TareaUnidadData(
+      unidadAprendizajeId:
+          serializer.fromJson<int>(json['unidadAprendizajeId']),
+      titulo: serializer.fromJson<String?>(json['titulo']),
+      nroUnidad: serializer.fromJson<int?>(json['nroUnidad']),
+      calendarioPeriodoId:
+          serializer.fromJson<int?>(json['calendarioPeriodoId']),
+      silaboEventoId: serializer.fromJson<int?>(json['silaboEventoId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'unidadAprendizajeId': serializer.toJson<int>(unidadAprendizajeId),
+      'titulo': serializer.toJson<String?>(titulo),
+      'nroUnidad': serializer.toJson<int?>(nroUnidad),
+      'calendarioPeriodoId': serializer.toJson<int?>(calendarioPeriodoId),
+      'silaboEventoId': serializer.toJson<int?>(silaboEventoId),
+    };
+  }
+
+  TareaUnidadData copyWith(
+          {int? unidadAprendizajeId,
+          String? titulo,
+          int? nroUnidad,
+          int? calendarioPeriodoId,
+          int? silaboEventoId}) =>
+      TareaUnidadData(
+        unidadAprendizajeId: unidadAprendizajeId ?? this.unidadAprendizajeId,
+        titulo: titulo ?? this.titulo,
+        nroUnidad: nroUnidad ?? this.nroUnidad,
+        calendarioPeriodoId: calendarioPeriodoId ?? this.calendarioPeriodoId,
+        silaboEventoId: silaboEventoId ?? this.silaboEventoId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TareaUnidadData(')
+          ..write('unidadAprendizajeId: $unidadAprendizajeId, ')
+          ..write('titulo: $titulo, ')
+          ..write('nroUnidad: $nroUnidad, ')
+          ..write('calendarioPeriodoId: $calendarioPeriodoId, ')
+          ..write('silaboEventoId: $silaboEventoId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      unidadAprendizajeId.hashCode,
+      $mrjc(
+          titulo.hashCode,
+          $mrjc(nroUnidad.hashCode,
+              $mrjc(calendarioPeriodoId.hashCode, silaboEventoId.hashCode)))));
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TareaUnidadData &&
+          other.unidadAprendizajeId == this.unidadAprendizajeId &&
+          other.titulo == this.titulo &&
+          other.nroUnidad == this.nroUnidad &&
+          other.calendarioPeriodoId == this.calendarioPeriodoId &&
+          other.silaboEventoId == this.silaboEventoId);
+}
+
+class TareaUnidadCompanion extends UpdateCompanion<TareaUnidadData> {
+  final Value<int> unidadAprendizajeId;
+  final Value<String?> titulo;
+  final Value<int?> nroUnidad;
+  final Value<int?> calendarioPeriodoId;
+  final Value<int?> silaboEventoId;
+  const TareaUnidadCompanion({
+    this.unidadAprendizajeId = const Value.absent(),
+    this.titulo = const Value.absent(),
+    this.nroUnidad = const Value.absent(),
+    this.calendarioPeriodoId = const Value.absent(),
+    this.silaboEventoId = const Value.absent(),
+  });
+  TareaUnidadCompanion.insert({
+    this.unidadAprendizajeId = const Value.absent(),
+    this.titulo = const Value.absent(),
+    this.nroUnidad = const Value.absent(),
+    this.calendarioPeriodoId = const Value.absent(),
+    this.silaboEventoId = const Value.absent(),
+  });
+  static Insertable<TareaUnidadData> custom({
+    Expression<int>? unidadAprendizajeId,
+    Expression<String?>? titulo,
+    Expression<int?>? nroUnidad,
+    Expression<int?>? calendarioPeriodoId,
+    Expression<int?>? silaboEventoId,
+  }) {
+    return RawValuesInsertable({
+      if (unidadAprendizajeId != null)
+        'unidad_aprendizaje_id': unidadAprendizajeId,
+      if (titulo != null) 'titulo': titulo,
+      if (nroUnidad != null) 'nro_unidad': nroUnidad,
+      if (calendarioPeriodoId != null)
+        'calendario_periodo_id': calendarioPeriodoId,
+      if (silaboEventoId != null) 'silabo_evento_id': silaboEventoId,
+    });
+  }
+
+  TareaUnidadCompanion copyWith(
+      {Value<int>? unidadAprendizajeId,
+      Value<String?>? titulo,
+      Value<int?>? nroUnidad,
+      Value<int?>? calendarioPeriodoId,
+      Value<int?>? silaboEventoId}) {
+    return TareaUnidadCompanion(
+      unidadAprendizajeId: unidadAprendizajeId ?? this.unidadAprendizajeId,
+      titulo: titulo ?? this.titulo,
+      nroUnidad: nroUnidad ?? this.nroUnidad,
+      calendarioPeriodoId: calendarioPeriodoId ?? this.calendarioPeriodoId,
+      silaboEventoId: silaboEventoId ?? this.silaboEventoId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (unidadAprendizajeId.present) {
+      map['unidad_aprendizaje_id'] = Variable<int>(unidadAprendizajeId.value);
+    }
+    if (titulo.present) {
+      map['titulo'] = Variable<String?>(titulo.value);
+    }
+    if (nroUnidad.present) {
+      map['nro_unidad'] = Variable<int?>(nroUnidad.value);
+    }
+    if (calendarioPeriodoId.present) {
+      map['calendario_periodo_id'] = Variable<int?>(calendarioPeriodoId.value);
+    }
+    if (silaboEventoId.present) {
+      map['silabo_evento_id'] = Variable<int?>(silaboEventoId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TareaUnidadCompanion(')
+          ..write('unidadAprendizajeId: $unidadAprendizajeId, ')
+          ..write('titulo: $titulo, ')
+          ..write('nroUnidad: $nroUnidad, ')
+          ..write('calendarioPeriodoId: $calendarioPeriodoId, ')
+          ..write('silaboEventoId: $silaboEventoId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TareaUnidadTable extends TareaUnidad
+    with TableInfo<$TareaUnidadTable, TareaUnidadData> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $TareaUnidadTable(this._db, [this._alias]);
+  final VerificationMeta _unidadAprendizajeIdMeta =
+      const VerificationMeta('unidadAprendizajeId');
+  late final GeneratedColumn<int?> unidadAprendizajeId = GeneratedColumn<int?>(
+      'unidad_aprendizaje_id', aliasedName, false,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _tituloMeta = const VerificationMeta('titulo');
+  late final GeneratedColumn<String?> titulo = GeneratedColumn<String?>(
+      'titulo', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _nroUnidadMeta = const VerificationMeta('nroUnidad');
+  late final GeneratedColumn<int?> nroUnidad = GeneratedColumn<int?>(
+      'nro_unidad', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _calendarioPeriodoIdMeta =
+      const VerificationMeta('calendarioPeriodoId');
+  late final GeneratedColumn<int?> calendarioPeriodoId = GeneratedColumn<int?>(
+      'calendario_periodo_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _silaboEventoIdMeta =
+      const VerificationMeta('silaboEventoId');
+  late final GeneratedColumn<int?> silaboEventoId = GeneratedColumn<int?>(
+      'silabo_evento_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        unidadAprendizajeId,
+        titulo,
+        nroUnidad,
+        calendarioPeriodoId,
+        silaboEventoId
+      ];
+  @override
+  String get aliasedName => _alias ?? 'tarea_unidad';
+  @override
+  String get actualTableName => 'tarea_unidad';
+  @override
+  VerificationContext validateIntegrity(Insertable<TareaUnidadData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('unidad_aprendizaje_id')) {
+      context.handle(
+          _unidadAprendizajeIdMeta,
+          unidadAprendizajeId.isAcceptableOrUnknown(
+              data['unidad_aprendizaje_id']!, _unidadAprendizajeIdMeta));
+    }
+    if (data.containsKey('titulo')) {
+      context.handle(_tituloMeta,
+          titulo.isAcceptableOrUnknown(data['titulo']!, _tituloMeta));
+    }
+    if (data.containsKey('nro_unidad')) {
+      context.handle(_nroUnidadMeta,
+          nroUnidad.isAcceptableOrUnknown(data['nro_unidad']!, _nroUnidadMeta));
+    }
+    if (data.containsKey('calendario_periodo_id')) {
+      context.handle(
+          _calendarioPeriodoIdMeta,
+          calendarioPeriodoId.isAcceptableOrUnknown(
+              data['calendario_periodo_id']!, _calendarioPeriodoIdMeta));
+    }
+    if (data.containsKey('silabo_evento_id')) {
+      context.handle(
+          _silaboEventoIdMeta,
+          silaboEventoId.isAcceptableOrUnknown(
+              data['silabo_evento_id']!, _silaboEventoIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {unidadAprendizajeId};
+  @override
+  TareaUnidadData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return TareaUnidadData.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $TareaUnidadTable createAlias(String alias) {
+    return $TareaUnidadTable(_db, alias);
+  }
+}
+
 abstract class _$AppDataBase extends GeneratedDatabase {
   _$AppDataBase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $SessionUserTable sessionUser = $SessionUserTable(this);
@@ -37265,6 +38421,8 @@ abstract class _$AppDataBase extends GeneratedDatabase {
       $TipoNotaResultadoTable(this);
   late final $ValorTipoNotaResultadoTable valorTipoNotaResultado =
       $ValorTipoNotaResultadoTable(this);
+  late final $TareaTable tarea = $TareaTable(this);
+  late final $TareaUnidadTable tareaUnidad = $TareaUnidadTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
@@ -37335,6 +38493,8 @@ abstract class _$AppDataBase extends GeneratedDatabase {
         rubroUpdateServidor,
         calendarioPeriodoCargaCurso,
         tipoNotaResultado,
-        valorTipoNotaResultado
+        valorTipoNotaResultado,
+        tarea,
+        tareaUnidad
       ];
 }

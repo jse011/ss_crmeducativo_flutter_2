@@ -12,6 +12,7 @@ import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_view.dart
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_view_2.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/wrap_widget_demo.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
@@ -75,7 +76,7 @@ class AppRouter {
       final CursosUi cursosUi = settings.arguments as CursosUi;
       return MaterialPageRoute(
         builder: (context) {
-          return TareaView(cursosUi);
+          return TareaView2(cursosUi);
         },
       );
     }else if(settings.name == SESION_LISTA){
