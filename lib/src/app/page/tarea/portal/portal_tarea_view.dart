@@ -180,6 +180,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView, PortalTareaContro
                               ),
                           ])
                       ),
+                      if(!state.isCollapsed)
                       SliverToBoxAdapter(
                         child: ListView.builder(
                           shrinkWrap: true,
