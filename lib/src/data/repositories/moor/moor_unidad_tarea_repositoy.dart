@@ -4,11 +4,12 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/serializable_
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 import 'database/app_database.dart';
 
 class MoorUnidadTareaRepository extends UnidadTareaRepository{
-
+  static const int ESTADO_CREADO = 263, ESTADO_PUBLICADO = 164, ESTADO_ELIMINADO = 265;
   @override
   Future<List<UnidadUi>> getUnidadTarea(int calendarioPeriodoId, int silaboEventoId) async{
     AppDataBase SQL = AppDataBase();
@@ -24,6 +25,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
 
     var queryTarea = SQL.select(SQL.tarea)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     queryTarea.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
+    queryTarea.where((tbl) => tbl.estadoId.isNotIn([ESTADO_ELIMINADO]));
     queryTarea.orderBy([
           (u) =>
           OrderingTerm(expression: u.fechaCreacion, mode: OrderingMode.desc),
@@ -46,6 +48,8 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       tareaUi.instrucciones = tareaData.instrucciones;
       tareaUi.rubroEvalProcesoId = tareaData.rubroEvalProcesoId;
       tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;
+      tareaUi.fechaEntrega = DomainTools.tiempoFechaCreacionTarea(DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega));
+      tareaUi.publicado = tareaData.estadoId == ESTADO_PUBLICADO;
       tareaUiList.add(tareaUi);
     }
 

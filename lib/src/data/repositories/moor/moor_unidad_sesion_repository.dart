@@ -7,7 +7,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_sesion_repository.dart';
 import 'package:collection/collection.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 import 'database/app_database.dart';
 
 class MoorUnidadSesionRepository extends UnidadSesionRepository{
@@ -96,8 +96,8 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
         sesionUi.nroSesion = sesionEvento.nroSesion;
         sesionUi.proposito = sesionEvento.proposito;
         sesionUi.horas = (sesionEvento.horas??0).toString() + " min" ;
-        sesionUi.fechaEjecucion = AppTools.f_fecha_letras(DateTime.fromMillisecondsSinceEpoch(sesionEvento.fechaEjecucion??0));
-        sesionUi.fechaEjecucionFin = (sesionEvento.fechaEjecucionFin??0) > 943938000000? AppTools.f_fecha_letras(DateTime.fromMillisecondsSinceEpoch(sesionEvento.fechaEjecucionFin??0)):null;
+        sesionUi.fechaEjecucion = DomainTools.f_fecha_letras(DateTime.fromMillisecondsSinceEpoch(sesionEvento.fechaEjecucion??0));
+        sesionUi.fechaEjecucionFin = (sesionEvento.fechaEjecucionFin??0) > 943938000000? DomainTools.f_fecha_letras(DateTime.fromMillisecondsSinceEpoch(sesionEvento.fechaEjecucionFin??0)):null;
         sesionUi.sesionAprendizajePadreId = sesionEvento.parentSesionId;
         sesionUi.estadoEjecucionId = sesionEvento.estadoEjecucionId;
         if(sesionEvento.rolId == rolId)unidadUi.sesionUiList?.add(sesionUi);

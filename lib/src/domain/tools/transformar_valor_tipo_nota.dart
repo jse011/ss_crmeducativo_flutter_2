@@ -2,13 +2,13 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_eventoUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class TransformarValoTipoNota{
 
   static TransformarValoTipoNotaResponse execute(TransformarValoTipoNotaParams params){
     ValorTipoNotaUi? valorTipoNotaUi = null;
-    double notaRubro = AppTools.transformacionInvariante(params.notaValorMinimo.toDouble(), params.notaValorMaximo.toDouble(), params.nota??0.0, params.tipoNotaUi?.escalavalorMinimo?.toDouble()??0.0, params.tipoNotaUi?.escalavalorMaximo?.toDouble()??0.0);
+    double notaRubro = DomainTools.transformacionInvariante(params.notaValorMinimo.toDouble(), params.notaValorMaximo.toDouble(), params.nota??0.0, params.tipoNotaUi?.escalavalorMinimo?.toDouble()??0.0, params.tipoNotaUi?.escalavalorMaximo?.toDouble()??0.0);
     if (params.tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || params.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
       valorTipoNotaUi = getValorTipoNotaCalculado(params.tipoNotaUi, notaRubro);
     }

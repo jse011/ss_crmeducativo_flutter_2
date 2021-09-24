@@ -13,12 +13,14 @@ import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_view.
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_view_2.dart';
+import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_view.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/wrap_widget_demo.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 class AppRouter {
   AppRouter._();
 
@@ -33,6 +35,7 @@ class AppRouter {
   static final String EVALUACION_CAPACIDAD = 'Curso/Rubro/EvaluacionCapacidad';
   static final String EVALUACION_MULTIPLE = 'Curso/Rubro/EvaluacionMultiple';
   static final String EVALUACION_SIMPLE = 'Curso/Rubro/EvaluacionSimple';
+  static final String TAREA_PORTAL = 'Curso/Tarea/Portal';
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     LOGIN: (BuildContext context) => LoginView(),
@@ -93,6 +96,16 @@ class AppRouter {
           CursosUi cursosUi = arguments['cursoUi'];
           SesionUi sesionUi = arguments['sesionUi'];
           return SesionView(cursosUi, sesionUi);
+        },
+      );
+    }else if(settings.name == TAREA_PORTAL){
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi? cursosUi = arguments['cursoUi'];
+          TareaUi? tareaUi = arguments['tareaUi'];
+          CalendarioPeriodoUI? calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
+          return PortalTareaView(cursosUi, tareaUi, calendarioPeriodoUI);
         },
       );
     }else if(settings.name == EVALUACION_CAPACIDAD){
@@ -218,7 +231,12 @@ class AppRouter {
     );
   }
 
-
+  static Future<dynamic> createRouteTareaPortalRouter(BuildContext context, CursosUi? cursosUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
+    return await Navigator.pushNamed(context,
+        TAREA_PORTAL,
+        arguments:  {'cursoUi': cursosUi, 'tareaUi':tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI }
+    );
+  }
 
 
 }

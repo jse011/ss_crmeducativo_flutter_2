@@ -4,7 +4,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
 
-import 'app_tools.dart';
+import 'domain_tools.dart';
 
 class CalcularEvaluacionProceso {
   static void actualizarCabecera(RubricaEvaluacionUi? rubricaEvaluacionUi, PersonaUi? personaUi) {
@@ -25,7 +25,7 @@ class CalcularEvaluacionProceso {
       int countSelecionado = 0;
       for(EvaluacionUi evaluacionUi in evaluacionUiDetalleList){
         double peso = (evaluacionUi.rubroEvaluacionUi?.formula_peso??0)/100;
-        notaDetalle += AppTools.roundDouble((evaluacionUi.nota??0.0) * peso,2);//Para evitar calcular con muchos decimasles se redonde a dos
+        notaDetalle += DomainTools.roundDouble((evaluacionUi.nota??0.0) * peso,2);//Para evitar calcular con muchos decimasles se redonde a dos
         notaMaxRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo??0;
         notaMinRubro = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo??0;
         if(evaluacionUi.valorTipoNotaId!=null)countSelecionado++;
@@ -35,7 +35,7 @@ class CalcularEvaluacionProceso {
         TransformarValoTipoNotaResponse response = TransformarValoTipoNota.execute(TransformarValoTipoNotaParams(notaDetalle, notaMinRubro, notaMaxRubro, rubricaEvaluacionUi?.tipoNotaUi));
         evaluacionUiCabecera?.valorTipoNotaId = response.valorTipoNotaUi?.valorTipoNotaId;
         evaluacionUiCabecera?.valorTipoNotaUi = response.valorTipoNotaUi;
-        evaluacionUiCabecera?.nota = AppTools.roundDouble(response.nota??0.0, 2);// Se redondea a dos diguitos pero se muesta solo un digito para mostar al usuario
+        evaluacionUiCabecera?.nota = DomainTools.roundDouble(response.nota??0.0, 2);// Se redondea a dos diguitos pero se muesta solo un digito para mostar al usuario
       }else{
         evaluacionUiCabecera?.valorTipoNotaId = null;
         evaluacionUiCabecera?.valorTipoNotaUi = null;

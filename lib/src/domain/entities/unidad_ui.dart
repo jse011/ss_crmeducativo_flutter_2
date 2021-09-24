@@ -6,6 +6,8 @@ class UnidadUi{
   String? titulo;
   List<SesionUi>? sesionUiList;
   int? nroUnidad;
+  bool? toogle;
+  int? cantUnidades;
   int? cantSesionesVisibles;
   int? silaboEventoId;
   List<TareaUi>? tareaUiList;

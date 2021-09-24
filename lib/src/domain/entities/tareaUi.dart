@@ -4,5 +4,7 @@ class TareaUi{
   String? instrucciones;
   String? rubroEvalProcesoId;
   int? unidadAprendizajeId;
-
+  int? position;
+  String? fechaEntrega;
+  bool? publicado;
 }

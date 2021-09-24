@@ -39,7 +39,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class EvaluacionCapacidadView extends View{
   EvaluacionCapacidadUi? evaluacionCapacidadUi;
@@ -1092,7 +1092,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)
                       Padding(padding: EdgeInsets.all(8)),
                       if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false))
-                      Text("${AppTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 2)}%", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
+                      Text("${DomainTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 2)}%", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
                       Padding(padding: EdgeInsets.all(2)),
                       Text((){
                         if(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false)
@@ -1129,7 +1129,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("${AppTools.removeDecimalZeroFormat(o.total,fractionDigits: 3)??"-"}", style: TextStyle(fontSize: 14, color: AppTheme.textGrey, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
+                    Text("${DomainTools.removeDecimalZeroFormat(o.total,fractionDigits: 3)??"-"}", style: TextStyle(fontSize: 14, color: AppTheme.textGrey, fontWeight: FontWeight.w400, fontFamily: AppTheme.fontTTNormsMedium,),),
                   ],
                 ),
                 decoration: BoxDecoration(

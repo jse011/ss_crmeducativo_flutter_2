@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'dart:math';
 
-class AppTools {
+class DomainTools {
   static String capitalize(String texto) {
     try {
       StringBuffer result = new StringBuffer();
@@ -59,7 +59,6 @@ class AppTools {
       String day = "0001";
       String month = "11";
       String year = "30";
-
       List<String>? validadeSplit = fecha?.split('/');
 
       if (validadeSplit != null && validadeSplit.length > 1) {
@@ -103,7 +102,7 @@ class AppTools {
     return parsedDate;
   }
 
-  static String tiempoFechaCreacion(DateTime? fecha) {
+  static String tiempoFechaCreacionAgenda(DateTime? fecha) {
     if (fecha != null) {
       try {
         DateTime calendarActual = DateTime.now();
@@ -136,21 +135,21 @@ class AppTools {
             return "para mañana";
           } else {
             return "para mañana a las " +
-                changeTime12Hour(fecha.hour, fecha.minute);
+                changeTime12Hour(hora, minuto);
           }
         } else if (anhio == anhoActual) {
           if (hora == 0 && minuto == 0) {
             return "para el " + f_fecha_letras(fecha);
           } else {
             return "para el " + f_fecha_letras(fecha) + " " +
-                changeTime12Hour(fecha.day, fecha.minute);
+                changeTime12Hour(hora, minuto);
           }
         } else {
           if (hora == 0 && minuto == 0) {
             return "para el " + getFechaDiaMesAnho(fecha);
           } else {
             return "para el " + getFechaDiaMesAnho(fecha) + " " +
-                changeTime12Hour(fecha.day, fecha.minute);
+                changeTime12Hour(hora, minuto);
           }
         }
       } catch (e) {
@@ -162,7 +161,75 @@ class AppTools {
   }
 
   static String changeTime12Hour(int hr, int min) {
-    return "${hr % 12}:${min} ${((hr >= 12) ? "PM" : "AM")}";
+    print("tiempoFechaCreacionTarea: ${hr} ${min}");
+    String format_min = "";
+    if(min<10){
+      format_min = "0${min}";
+    }else {
+      format_min =  "${min}";
+    }
+    String s =  "${hr==12?"12":hr%12}:${format_min} ${((hr>=12) ? "p.m." : "a.m.")}";
+
+    return s;
+  }
+
+  static String tiempoFechaCreacionTarea(DateTime? fecha) {
+    if (fecha != null) {
+      try {
+        DateTime calendarActual = DateTime.now();
+        int anhoActual = calendarActual.year;
+        int mesActual = calendarActual.month;
+        int diaActual = calendarActual.day;
+
+        int anhio = fecha.year;
+        int mes = fecha.month;
+        int dia = fecha.day;
+        int hora = fecha.hour;
+        int minuto = fecha.minute;
+
+        calendarActual.add(new Duration(days: 1));
+
+
+        int anioManiana = calendarActual.year;
+        int mesManiana = calendarActual.month;
+        int diaManiana = calendarActual.day;
+
+
+        if (anhio == anhoActual && mesActual == mes && dia == diaActual) {
+          if ((hora == 0) && minuto == 0) {
+            return "Para hoy";
+          } else {
+            return "Para hoy a las " + changeTime12Hour(hora, minuto);
+          }
+        } else
+        if (anhio == anioManiana && mesManiana == mes && dia == diaManiana) {
+          if ((hora == 0) && minuto == 0) {
+            return "Para mañana";
+          } else {
+            return "Para mañana a las " +
+                changeTime12Hour(hora, minuto);
+          }
+        } else if (anhio == anhoActual) {
+          if ((hora == 0) && minuto == 0) {
+            return "Para el " + f_fecha_letras(fecha);
+          } else {
+            return "Para el " + f_fecha_letras(fecha) + "\n" +
+                changeTime12Hour(hora, minuto);
+          }
+        } else {
+          if ((hora == 0) && minuto == 0) {
+            return "Para el " + getFechaDiaMesAnho(fecha);
+          } else {
+            return "Para el " + getFechaDiaMesAnho(fecha) + "\n" +
+                changeTime12Hour(hora, minuto);
+          }
+        }
+      } catch (e) {
+        return "";
+      }
+    } else {
+      return "";
+    }
   }
 
   static String getFechaDiaMesAnho(DateTime? fecha) {

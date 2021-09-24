@@ -6,7 +6,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_eventoUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/agenda_evento_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgendaParams>{
   AgendaEventoRepository agendaRepository;
@@ -53,13 +53,13 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
           if(fechaEntrega.millisecondsSinceEpoch>912402000000){
             switch (eventosUi.tipoEventoUi?.tipo??EventoIconoEnumUI.EVENTO){
               case EventoIconoEnumUI.EVENTO:
-                eventosUi.nombreFecha = AppTools.tiempoFechaCreacion(eventosUi.fecha);
+                eventosUi.nombreFecha = DomainTools.tiempoFechaCreacionAgenda(eventosUi.fecha);
                 break;
               case EventoIconoEnumUI.NOTICIA:
-                eventosUi.nombreFecha = AppTools.getFechaDiaMesAnho(eventosUi.fecha);
+                eventosUi.nombreFecha = DomainTools.getFechaDiaMesAnho(eventosUi.fecha);
                 break;
               default:
-                eventosUi.nombreFecha = AppTools.tiempoFechaCreacion(eventosUi.fecha);
+                eventosUi.nombreFecha = DomainTools.tiempoFechaCreacionAgenda(eventosUi.fecha);
                 break;
             }
           }else{

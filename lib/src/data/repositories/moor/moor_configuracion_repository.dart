@@ -15,7 +15,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_eventoUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 import 'database/app_database.dart';
 
@@ -448,19 +448,19 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
     String fechaNacimiento = "";
     if(personaData.fechaNac !=null && personaData.fechaNac!.isNotEmpty){
-      DateTime fecPad = AppTools.convertDateTimePtBR(personaData.fechaNac!, null);
-      fechaNacimiento = "${AppTools.calcularEdad(fecPad)} años (${AppTools.f_fecha_anio_mes_letras(fecPad)})";
+      DateTime fecPad = DomainTools.convertDateTimePtBR(personaData.fechaNac!, null);
+      fechaNacimiento = "${DomainTools.calcularEdad(fecPad)} años (${DomainTools.f_fecha_anio_mes_letras(fecPad)})";
 
     }
 
     UsuarioUi usuarioUi = UsuarioUi();
     usuarioUi.personaId = personaData.personaId;
-    usuarioUi.nombre = '${AppTools.capitalize(personaData.nombres??"")} ${AppTools.capitalize(personaData.apellidoPaterno??"")} ${AppTools.capitalize(personaData.apellidoMaterno??"")}';
+    usuarioUi.nombre = '${DomainTools.capitalize(personaData.nombres??"")} ${DomainTools.capitalize(personaData.apellidoPaterno??"")} ${DomainTools.capitalize(personaData.apellidoMaterno??"")}';
     usuarioUi.foto = '${personaData.foto??""}';
     usuarioUi.correo = personaData.correo??"";
     usuarioUi.celular = personaData.celular??personaData.telefono??"";
     usuarioUi.fechaNacimiento = fechaNacimiento;
-    usuarioUi.nombreSimple = AppTools.capitalize(personaData.nombres??"");
+    usuarioUi.nombreSimple = DomainTools.capitalize(personaData.nombres??"");
     usuarioUi.fechaNacimiento2 = personaData.fechaNac??"";
 
     return usuarioUi;
@@ -483,7 +483,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     List<AnioAcademicoData> anioAcademicoList = await (SQL.select(SQL.anioAcademico)..where((tbl) => tbl.georeferenciaId.isIn(gereferenciaIdList))).get();
     anioAcademicoList.sort((o2, o1) {
 
-      int sComp =  AppTools.convertDateTimePtBR(o2.fechaFin, null).compareTo(AppTools.convertDateTimePtBR(o1.fechaFin, null));
+      int sComp =  DomainTools.convertDateTimePtBR(o2.fechaFin, null).compareTo(DomainTools.convertDateTimePtBR(o1.fechaFin, null));
       if (sComp != 0) {
         return sComp;
       }
@@ -789,7 +789,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
           contactoUi.personaUi?.personaId = contactoData.personaId;
           contactoUi.relacionList = [];
           contactoUi.personaUi?.foto = contactoData.foto;
-          contactoUi.personaUi?.nombreCompleto = '${AppTools.capitalize(contactoData.nombres??"")} ${AppTools.capitalize(contactoData.apellidoPaterno??"")} ${AppTools.capitalize(contactoData.apellidoMaterno??"")}';
+          contactoUi.personaUi?.nombreCompleto = '${DomainTools.capitalize(contactoData.nombres??"")} ${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
           contactoUi.relacion = contactoData.relacion;
           contactoUi.personaUi?.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
 
@@ -845,9 +845,9 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         PersonaUi personaUi = new PersonaUi();
         personaUi.personaId = contactoData.personaId;
         personaUi.foto = contactoData.foto;
-        personaUi.nombreCompleto = '${AppTools.capitalize(contactoData.nombres??"")} ${AppTools.capitalize(contactoData.apellidoPaterno??"")} ${AppTools.capitalize(contactoData.apellidoMaterno??"")}';
-        personaUi.nombres = AppTools.capitalize(contactoData.nombres??"");
-        personaUi.apellidos  = '${AppTools.capitalize(contactoData.apellidoPaterno??"")} ${AppTools.capitalize(contactoData.apellidoMaterno??"")}';
+        personaUi.nombreCompleto = '${DomainTools.capitalize(contactoData.nombres??"")} ${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
+        personaUi.nombres = DomainTools.capitalize(contactoData.nombres??"");
+        personaUi.apellidos  = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
         personaUi.contratoVigente =  contactoData.contratoVigente;
         personaUi.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
         contactoUiList.add(personaUi);

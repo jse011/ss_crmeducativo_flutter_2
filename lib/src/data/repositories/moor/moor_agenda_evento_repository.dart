@@ -3,7 +3,7 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/serializable_
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_eventoUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/agenda_evento_repository.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 import 'database/app_database.dart';
 
@@ -69,7 +69,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
     eventoUi.cantLike =  eventoData.likeCount;
     eventoUi.titulo = eventoData.titulo;
     eventoUi.descripcion = eventoData.descripcion;
-    eventoUi.fecha =  eventoData.fechaEvento!=null?AppTools.convertDateTimePtBR2(eventoData.fechaEvento, eventoData.horaEvento):null;
+    eventoUi.fecha =  eventoData.fechaEvento!=null?DomainTools.convertDateTimePtBR2(eventoData.fechaEvento, eventoData.horaEvento):null;
     eventoUi.foto = eventoData.pathImagen;
     eventoUi.tipoEventoUi = TipoEventoUi();
     eventoUi.tipoEventoUi?.id = eventoData.tipoEventoId;

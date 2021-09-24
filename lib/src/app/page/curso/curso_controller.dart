@@ -2,7 +2,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/curso/curso_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class CursoController extends Controller{
   CursoPresenter cursoPresenter;
@@ -46,7 +46,7 @@ class CursoController extends Controller{
   }
 
   void getFecha() {
-    _fechaHoy = AppTools.f_fecha_letras(DateTime.now());
+    _fechaHoy = DomainTools.f_fecha_letras(DateTime.now());
     refreshUI();
   }
 

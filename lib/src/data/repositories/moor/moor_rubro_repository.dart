@@ -28,7 +28,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:collection/collection.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/app_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 
 
@@ -579,7 +579,7 @@ class MoorRubroRepository extends RubroRepository{
     rubricaEvaluacionUi.rubricaId = rubroEvaluacionProcesoData?.rubroEvalProcesoId;
     rubricaEvaluacionUi.titulo = rubroEvaluacionProcesoData?.titulo;
     rubricaEvaluacionUi.desempenioIcdId = rubroEvaluacionProcesoData?.desempenioIcdId;
-    rubricaEvaluacionUi.efechaCreacion = AppTools.f_fecha_letras(rubroEvaluacionProcesoData?.fechaCreacion);
+    rubricaEvaluacionUi.efechaCreacion = DomainTools.f_fecha_letras(rubroEvaluacionProcesoData?.fechaCreacion);
     rubricaEvaluacionUi.fechaCreacion = rubroEvaluacionProcesoData?.fechaCreacion;
     rubricaEvaluacionUi.mediaDesvicion = '${(rubroEvaluacionProcesoData?.promedio??0).toStringAsFixed(1)} (${(rubroEvaluacionProcesoData?.desviacionEstandar??0).toStringAsFixed(1)})';
     rubricaEvaluacionUi.rubroGrupal = rubroEvaluacionProcesoData?.formaEvaluacionId == FORMA_EVAL_GRUPAL;
@@ -604,8 +604,8 @@ class MoorRubroRepository extends RubroRepository{
     evaluacionUi.personaUi = PersonaUi();
     evaluacionUi.personaUi?.personaId = evaluacionProcesoData.alumnoId;
     evaluacionUi.personaUi?.nombres = evaluacionProcesoData.nombres;
-    evaluacionUi.personaUi?.nombreCompleto = '${AppTools.capitalize(evaluacionProcesoData.nombres??"")} ${AppTools.capitalize(evaluacionProcesoData.apellidoPaterno??"")} ${AppTools.capitalize(evaluacionProcesoData.apellidoMaterno??"")}';
-    evaluacionUi.personaUi?.apellidos  = '${AppTools.capitalize(evaluacionProcesoData.apellidoPaterno??"")} ${AppTools.capitalize(evaluacionProcesoData.apellidoMaterno??"")}';
+    evaluacionUi.personaUi?.nombreCompleto = '${DomainTools.capitalize(evaluacionProcesoData.nombres??"")} ${DomainTools.capitalize(evaluacionProcesoData.apellidoPaterno??"")} ${DomainTools.capitalize(evaluacionProcesoData.apellidoMaterno??"")}';
+    evaluacionUi.personaUi?.apellidos  = '${DomainTools.capitalize(evaluacionProcesoData.apellidoPaterno??"")} ${DomainTools.capitalize(evaluacionProcesoData.apellidoMaterno??"")}';
     evaluacionUi.personaUi?.apellidoPaterno = evaluacionProcesoData.apellidoPaterno;
     evaluacionUi.personaUi?.apellidoMaterno = evaluacionProcesoData.apellidoMaterno;
     evaluacionUi.personaUi?.foto = evaluacionProcesoData.foto;
@@ -1100,8 +1100,8 @@ class MoorRubroRepository extends RubroRepository{
       ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaId)))
         .write(
         RubroEvaluacionProcesoCompanion(
-          promedio:  Value(AppTools.promedio(notas)),
-          desviacionEstandar: Value(AppTools.desviacionEstandar(notas)),
+          promedio:  Value(DomainTools.promedio(notas)),
+          desviacionEstandar: Value(DomainTools.desviacionEstandar(notas)),
           usuarioAccionId: Value(usuarioId??0,),
           fechaAccion: Value(DateTime.now()),
           syncFlag: Value(EstadoSync.FLAG_UPDATED),
@@ -1120,8 +1120,8 @@ class MoorRubroRepository extends RubroRepository{
         ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi.rubricaId)))
           .write(
           RubroEvaluacionProcesoCompanion(
-            promedio:  Value(AppTools.promedio(notas)),
-            desviacionEstandar: Value(AppTools.desviacionEstandar(notas)),
+            promedio:  Value(DomainTools.promedio(notas)),
+            desviacionEstandar: Value(DomainTools.desviacionEstandar(notas)),
             usuarioAccionId: Value(usuarioId??0,),
             fechaAccion: Value(DateTime.now()),
             syncFlag: Value(EstadoSync.FLAG_UPDATED),
