@@ -95,7 +95,8 @@ class CalcularEvaluacionResultados {
         cant_evaluacines_calificadas++;
       }
     }
-    return cant_evaluacines_calificadas == 0;
+    //return cant_evaluacines_calificadas == 0;
+    return false;
   }
 
   static int getPesoRubro(RubricaEvaluacionUi? rubricaEvaluacionUi){

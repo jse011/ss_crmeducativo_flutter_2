@@ -5,18 +5,17 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repo
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_sesion_repository.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/update_calendario_periodo.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_calendario_periodo.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_unidad_sesion.dart';
 
 class SesionListaPresenter extends Presenter{
-  UpdateCalendarioPerido _getCalendarioPerido;
+  GetCalendarioPerido _getCalendarioPerido;
   late Function getCalendarioPeridoOnComplete, getCalendarioPeridoOnError;
   GetUnidadSesion _getUnidadSesion;
   late Function getUnidadSesionDocenteOnComplete, getUnidadSesionDocenteOnError;
-  late Function getUnidadSesionAlumnoOnComplete, getUnidadSesionAlumnoOnError;
 
   SesionListaPresenter(ConfiguracionRepository configuracionRepo, CalendarioPeriodoRepository calendarioPeriodoRepo, HttpDatosRepository httpDatosRepo, UnidadSesionRepository unidadSesionRepo):
-        _getCalendarioPerido = UpdateCalendarioPerido(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo),
+        _getCalendarioPerido = GetCalendarioPerido(configuracionRepo, calendarioPeriodoRepo),
         _getUnidadSesion = GetUnidadSesion(httpDatosRepo, configuracionRepo, unidadSesionRepo);
 
   void getCalendarioPerido(CursosUi? cursosUi){
@@ -34,9 +33,6 @@ class SesionListaPresenter extends Presenter{
     _getUnidadSesion.execute(_GetUnidadSesionDocenteCase(this), GetUnidadSesionParams(calendarioPeriodoUI?.tipoId, cursosUi?.silaboEventoId, 4));
   }
 
-  void getUnidadAprendizajeAlumno(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
-    _getUnidadSesion.execute(_GetUnidadSesionAlumnoCase(this), GetUnidadSesionParams(calendarioPeriodoUI?.tipoId, cursosUi?.silaboEventoId, 6));
-  }
 }
 
 class _GetCalendarioPeriodoCase extends Observer<GetCalendarioPeridoResponse>{
@@ -85,31 +81,6 @@ class _GetUnidadSesionDocenteCase extends Observer<GetUnidadSesionResponse>{
     print("getCalendarioPeridoOnComplete");
     assert(presenter.getUnidadSesionDocenteOnComplete!=null);
     presenter.getUnidadSesionDocenteOnComplete(response?.unidadUiList, response?.datosOffline, response?.errorServidor);
-  }
-
-}
-
-class _GetUnidadSesionAlumnoCase extends Observer<GetUnidadSesionResponse>{
-  SesionListaPresenter presenter;
-
-  _GetUnidadSesionAlumnoCase(this.presenter);
-
-  @override
-  void onComplete() {
-
-  }
-
-  @override
-  void onError(e) {
-    assert(presenter.getUnidadSesionAlumnoOnError!=null);
-    presenter.getUnidadSesionAlumnoOnError(e);
-  }
-
-  @override
-  void onNext(GetUnidadSesionResponse? response) {
-    print("getCalendarioPeridoOnComplete");
-    assert(presenter.getUnidadSesionAlumnoOnComplete!=null);
-    presenter.getUnidadSesionAlumnoOnComplete(response?.unidadUiList, response?.datosOffline, response?.errorServidor);
   }
 
 }

@@ -8,13 +8,13 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_sesion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
 
-class GetUnidadTarea extends UseCase<GetUnidadTareaResponse, GetUnidadTareaParams>{
+class UpdateUnidadTarea extends UseCase<GetUnidadTareaResponse, GetUnidadTareaParams>{
   ConfiguracionRepository configuracionRepository;
   UnidadTareaRepository  unidadTareaRepository;
   HttpDatosRepository httpRepository;
 
 
-  GetUnidadTarea(
+  UpdateUnidadTarea(
   this.httpRepository, this.configuracionRepository, this.unidadTareaRepository, );
 
   @override
@@ -47,8 +47,6 @@ class GetUnidadTarea extends UseCase<GetUnidadTareaResponse, GetUnidadTareaParam
         controller.addError(e);
         // Finally, callback fires.
         // throw Exception(e);              // Future completes with 42.
-      }).timeout(const Duration (seconds:10),onTimeout : () {
-        throw Exception("GetUnidadSesion timeout 10 seconds");
       });
 
     } catch (e) {

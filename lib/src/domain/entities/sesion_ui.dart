@@ -15,4 +15,5 @@ class SesionUi{
   String? estadoEjecucion;
   String? colorSesion;
   String? fechaEjecucionFin;
+  int? position;
 }

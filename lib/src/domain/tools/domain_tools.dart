@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
-import 'dart:math';
+import 'dart:math' as math;
+import 'package:path/path.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 
 class DomainTools {
   static String capitalize(String texto) {
@@ -100,6 +102,10 @@ class DomainTools {
     }
 
     return parsedDate;
+  }
+
+  static String dataTimeHourMinute(DateTime dateTime){
+    return "${dateTime.hour}:${dateTime.minute}";
   }
 
   static String tiempoFechaCreacionAgenda(DateTime? fecha) {
@@ -213,14 +219,14 @@ class DomainTools {
           if ((hora == 0) && minuto == 0) {
             return "Para el " + f_fecha_letras(fecha);
           } else {
-            return "Para el " + f_fecha_letras(fecha) + "\n" +
+            return "Para el " + f_fecha_letras(fecha) +
                 changeTime12Hour(hora, minuto);
           }
         } else {
           if ((hora == 0) && minuto == 0) {
             return "Para el " + getFechaDiaMesAnho(fecha);
           } else {
-            return "Para el " + getFechaDiaMesAnho(fecha) + "\n" +
+            return "Para el " + getFechaDiaMesAnho(fecha) +
                 changeTime12Hour(hora, minuto);
           }
         }
@@ -296,10 +302,19 @@ class DomainTools {
   }
 
   static double roundDouble(double value, int places) {
-    num mod = pow(10.0, places);
-    return ((value * mod).round().toDouble() / mod);
+    //num mod = math.pow(10.0, places+1);
+    //value = ((value * mod).round().toDouble() / mod);
+    //return ((value * mod).round().toDouble() / mod);
+    //return value.toPrecision(places);
+    //return _roundToDecimals(value, places);
+    //return double.parse((value).toStringAsFixed(places));
+    return _roundDouble(_roundDouble(value, places+1), places);
   }
 
+  static double _roundDouble(double value, int places) {
+    num mod = math.pow(10.0, places);
+    return ((value * mod).round().toDouble() / mod);
+  }
 
   static double promedio(List<double> notas){
     double promedio = 0.0;
@@ -318,13 +333,97 @@ class DomainTools {
     int i;
     int n = notas.length;
     for (i = 0; i < n; i++){
-      sum += pow( notas[i]- promedio, 2);
+      sum += math.pow( notas[i]- promedio, 2);
     }
-    return sqrt(sum / n);
+    return math.sqrt(sum / n);
   }
 
   static String? removeDecimalZeroFormat(double? n, {int fractionDigits = 1}) {
-    return n?.toStringAsFixed(n.truncateToDouble() == n ? 0 : fractionDigits);
+    if(fractionDigits==1){
+      print("nota decimal: ${n}");
+    }
+    n = (n != null? roundDouble(n,fractionDigits) : null);
+
+    if(fractionDigits == 1){
+      print("nota decimal round: ${n}");
+    }
+    //n = (n != null? double.parse(n.toStringAsFixed(fractionDigits)) : null);
+    RegExp regex = RegExp(r"([.]*0)(?!.*\d)");
+    return n != null ? n.toString().replaceAll(regex, "") : null;
+
+  }
+
+  static String? getYoutubeVideoId(String? url) {
+    RegExp regExp = new RegExp(
+      r'.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*',
+      caseSensitive: false,
+      multiLine: false,
+    );
+    return url!=null?regExp.firstMatch(url)?.group(1):""; // <- This is the fix;
+  }
+
+   static String? getDocumentId(String docIDfull) {
+    int docIDstart = docIDfull.indexOf("/d/");
+    int DocIDend = docIDfull.indexOf('/', docIDstart + 3);
+    String? docID = null;
+    if (docIDstart == -1) {
+      //Invalid URL readonly
+      return null;
+    }
+    if (DocIDend == -1) {
+      docID = docIDfull.substring(docIDstart + 3);
+    }
+    else {
+      docID = docIDfull.substring(docIDstart + 3, DocIDend);
+    }
+
+    return docID;
+  }
+
+  static TipoRecursosUi getType(String? path){
+    String extencion = path?.toLowerCase()??"";
+    if (extencion.contains(".doc") || extencion.contains(".docx")) {
+      // Word document
+      return TipoRecursosUi.TIPO_DOCUMENTO;
+    } else if (extencion.contains(".pdf")) {
+      // PDF file
+      return TipoRecursosUi.TIPO_PDF;
+    } else if (extencion.contains(".ppt") || extencion.contains(".pptx")) {
+      // Powerpoint file
+      return TipoRecursosUi.TIPO_DIAPOSITIVA;
+    } else if (extencion.contains(".xls") || extencion.contains(".xlsx")||extencion.contains(".csv")) {
+      // Excel file
+      return TipoRecursosUi.TIPO_HOJA_CALCULO;
+    } else if (extencion.contains(".zip") || extencion.contains(".rar")) {
+      // WAV audio file
+      return TipoRecursosUi.TIPO_RECURSO;
+    } else if (extencion.contains(".rtf")) {
+      // RTF file
+      return TipoRecursosUi.TIPO_RECURSO;
+    } else if (extencion.contains(".wav") || extencion.contains(".mp3")) {
+      // WAV audio file
+      return TipoRecursosUi.TIPO_AUDIO;
+    } else if (extencion.contains(".gif")) {
+      // GIF file
+      return TipoRecursosUi.TIPO_IMAGEN;
+    } else if (extencion.contains(".jpg") || extencion.contains(".jpeg") || extencion.contains(".png")) {
+      // JPG file
+      return TipoRecursosUi.TIPO_IMAGEN;
+    } else if (extencion.contains(".txt")) {
+      // Text file
+      return TipoRecursosUi.TIPO_DOCUMENTO;
+    } else if (extencion.contains(".3gp") || extencion.contains(".mpg") || extencion.contains(".mpeg") || extencion.contains(".mpe") || extencion.contains(".mp4") || extencion.contains(".avi")) {
+      // Video files
+      return TipoRecursosUi.TIPO_VIDEO;
+    } else {
+      // Other files
+      return TipoRecursosUi.TIPO_RECURSO;
+    }
+  }
+
+  static Map<String, dynamic> removeNull(Map<String, dynamic> map) {
+    map.removeWhere((key, value) => key == null || value == null);
+    return map;
   }
 
 }

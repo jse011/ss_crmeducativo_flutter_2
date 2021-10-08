@@ -13,6 +13,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:collection/collection.dart';
@@ -45,6 +46,8 @@ class RubroController extends Controller{
   TipoNotaUi? get tipoNotaUi => _tipoNotaUi;
   bool _showDialogModoOffline = false;
   bool get showDialogModoOffline => _showDialogModoOffline;
+  bool _showDialogInformar = false;
+  bool get showDialogInformar => _showDialogInformar;
   int _seletedItem = 0;
   int get seletedItem => _seletedItem;
   bool _precision = false;
@@ -152,7 +155,9 @@ class RubroController extends Controller{
     //presenter.getCompetenciaRubroEvalOnNext(response?.competenciaUiList, response?.personaUiList, response?.evaluacionCompetenciaUiList);
     presenter.getCompetenciaRubroEvalOnNext = (List<CompetenciaUi> competenciaUiList, List<PersonaUi> personaUiList, List<EvaluacionCompetenciaUi> evaluacionCompetenciaUiList,  List<EvaluacionCalendarioPeriodoUi> evaluacionCalendarioPeriodoUiList, TipoNotaUi tipoNotaUi){
      _tipoNotaUi = tipoNotaUi;
-
+     // static const int TN_VALOR_NUMERICO = 410, TN_SELECTOR_NUMERICO = 411, TN_SELECTOR_VALORES = 412, TN_SELECTOR_ICONOS = 409, TN_VALOR_ASISTENCIA= 474;
+     //_tipoNotaUi?.tipoId = 409;
+     //_tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_ICONOS;
       _rowList2.clear();
       _rowList2.addAll(personaUiList);
       _rowList2.add("");//Espacio
@@ -366,6 +371,23 @@ class RubroController extends Controller{
 
   onClicPrecision() {
     this._precision = !_precision;
+    refreshUI();
+  }
+
+  void respuestaPesoCriterio() {
+    print("respuestaPesoCriterio");
+    _progress = true;
+    refreshUI();
+    onListarTabsRubroEvaluacion2();
+  }
+
+  void onClickSalirDialogInformar() {
+    _showDialogInformar = false;
+    refreshUI();
+  }
+
+  void onClickShowDialogInformar() {
+    _showDialogInformar = true;
     refreshUI();
   }
 

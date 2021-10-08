@@ -2099,6 +2099,10 @@ TareaSerial _$TareaSerialFromJson(Map<String, dynamic> json) {
     calendarioPeriodoId: json['calendarioPeriodoId'] as int?,
     silaboEventoId: json['silaboEventoId'] as int?,
     estadoId: json['estadoId'] as int?,
+    fechaEntrega: json['fechaEntrega'] as int?,
+    fechaAccion: json['fechaAccion'] as int?,
+    usuarioAccionId: json['usuarioAccionId'] as int?,
+    usuarioCreacionId: json['usuarioCreacionId'] as int?,
   );
 }
 
@@ -2122,6 +2126,10 @@ Map<String, dynamic> _$TareaSerialToJson(TareaSerial instance) =>
       'calendarioPeriodoId': instance.calendarioPeriodoId,
       'silaboEventoId': instance.silaboEventoId,
       'estadoId': instance.estadoId,
+      'fechaEntrega': instance.fechaEntrega,
+      'usuarioCreacionId': instance.usuarioCreacionId,
+      'usuarioAccionId': instance.usuarioAccionId,
+      'fechaAccion': instance.fechaAccion,
     };
 
 TareaUnidadSerial _$TareaUnidadSerialFromJson(Map<String, dynamic> json) {
@@ -2141,4 +2149,91 @@ Map<String, dynamic> _$TareaUnidadSerialToJson(TareaUnidadSerial instance) =>
       'nroUnidad': instance.nroUnidad,
       'calendarioPeriodoId': instance.calendarioPeriodoId,
       'silaboEventoId': instance.silaboEventoId,
+    };
+
+TareaAlumnoSerial _$TareaAlumnoSerialFromJson(Map<String, dynamic> json) {
+  return TareaAlumnoSerial(
+    tareaId: json['tareaId'] as String?,
+    alumnoId: json['alumnoId'] as int?,
+    entregado: json['entregado'] as bool?,
+    fechaEntrega: json['fechaEntrega'] as int?,
+    valorTipoNotaId: json['valorTipoNotaId'] as String?,
+    silaboEventoId: json['silaboEventoId'] as int?,
+    fechaServidor: json['fechaServidor'] as int?,
+  );
+}
+
+Map<String, dynamic> _$TareaAlumnoSerialToJson(TareaAlumnoSerial instance) =>
+    <String, dynamic>{
+      'tareaId': instance.tareaId,
+      'alumnoId': instance.alumnoId,
+      'entregado': instance.entregado,
+      'fechaEntrega': instance.fechaEntrega,
+      'valorTipoNotaId': instance.valorTipoNotaId,
+      'silaboEventoId': instance.silaboEventoId,
+      'fechaServidor': instance.fechaServidor,
+    };
+
+TareaAlumnoArchivoSerial _$TareaAlumnoArchivoSerialFromJson(
+    Map<String, dynamic> json) {
+  return TareaAlumnoArchivoSerial(
+    tareaId: json['tareaId'] as String?,
+    alumnoId: json['alumnoId'] as int?,
+    repositorio: json['repositorio'] as bool?,
+    nombre: json['nombre'] as String?,
+    path: json['path'] as String?,
+    silaboEventoId: json['silaboEventoId'] as int?,
+    id: json['id'] as String?,
+  );
+}
+
+Map<String, dynamic> _$TareaAlumnoArchivoSerialToJson(
+        TareaAlumnoArchivoSerial instance) =>
+    <String, dynamic>{
+      'tareaId': instance.tareaId,
+      'alumnoId': instance.alumnoId,
+      'repositorio': instance.repositorio,
+      'nombre': instance.nombre,
+      'path': instance.path,
+      'silaboEventoId': instance.silaboEventoId,
+      'id': instance.id,
+    };
+
+TareaRecursoDidacticoSerial _$TareaRecursoDidacticoSerialFromJson(
+    Map<String, dynamic> json) {
+  return TareaRecursoDidacticoSerial(
+    recursoDidacticoId: json['recursoDidacticoId'] as String?,
+    titulo: json['titulo'] as String?,
+    descripcion: json['descripcion'] as String?,
+    tipoId: json['tipoId'] as int?,
+    silaboEventoId: json['silaboEventoId'] as int?,
+    estado: json['estado'] as int?,
+    planCursoId: json['planCursoId'] as int?,
+    url: json['url'] as String?,
+    driveId: json['driveId'] as String?,
+    tareaId: json['tareaId'] as String?,
+    usuarioCreacionId: json['usuarioCreacionId'] as int?,
+    fechaCreacion: json['fechaCreacion'] as int?,
+    fechaAccion: json['fechaAccion'] as int?,
+    usuarioAccionId: json['usuarioAccionId'] as int?,
+  );
+}
+
+Map<String, dynamic> _$TareaRecursoDidacticoSerialToJson(
+        TareaRecursoDidacticoSerial instance) =>
+    <String, dynamic>{
+      'recursoDidacticoId': instance.recursoDidacticoId,
+      'titulo': instance.titulo,
+      'descripcion': instance.descripcion,
+      'tipoId': instance.tipoId,
+      'silaboEventoId': instance.silaboEventoId,
+      'estado': instance.estado,
+      'planCursoId': instance.planCursoId,
+      'url': instance.url,
+      'driveId': instance.driveId,
+      'tareaId': instance.tareaId,
+      'usuarioCreacionId': instance.usuarioCreacionId,
+      'usuarioAccionId': instance.usuarioAccionId,
+      'fechaAccion': instance.fechaAccion,
+      'fechaCreacion': instance.fechaCreacion,
     };

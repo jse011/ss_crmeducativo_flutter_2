@@ -1001,8 +1001,8 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(o.nombreCompleto??"", maxLines: 1, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: AppTheme.black),),
-                            Text(o.apellidos??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10),),
+                            Text(o.apellidos??"", maxLines: 1, overflow: TextOverflow.ellipsis,  textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: AppTheme.black),),
+                            Text(o.nombres??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10),),
                           ],
                         ),
                         decoration: BoxDecoration(

@@ -310,6 +310,10 @@ class ScrollControllers {
             horizontalBodyController ?? ScrollController(),
         this._horizontalTitleController =
             horizontalTitleController ?? ScrollController();
+
+  ScrollController get verticalBodyController => _verticalBodyController;
+
+
 }
 
 /// SyncScrollController keeps scroll controllers in sync.

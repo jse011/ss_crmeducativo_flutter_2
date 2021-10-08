@@ -2049,6 +2049,12 @@ class TareaSerial {
   int? calendarioPeriodoId;
   int? silaboEventoId;
   int? estadoId;
+  int? fechaEntrega;
+
+  int? usuarioCreacionId;
+  int? usuarioAccionId;
+  int? fechaAccion;
+
 
   TareaSerial(
   {this.tareaId,
@@ -2068,7 +2074,12 @@ class TareaSerial {
     this.unidadAprendizajeId,
     this.calendarioPeriodoId,
     this.silaboEventoId,
-    this.estadoId});
+    this.estadoId,
+    this.fechaEntrega,
+    this.fechaAccion,
+    this.usuarioAccionId,
+    this.usuarioCreacionId
+    });
 
   factory TareaSerial.fromJson(Map<String, dynamic> json) => _$TareaSerialFromJson(json);
 
@@ -2091,6 +2102,95 @@ class TareaUnidadSerial {
   factory TareaUnidadSerial.fromJson(Map<String, dynamic> json) => _$TareaUnidadSerialFromJson(json);
 
   Map<String, dynamic> toJson() => _$TareaUnidadSerialToJson(this);
+
+}
+@JsonSerializable()
+class TareaAlumnoSerial {
+
+  String? tareaId;
+  int? alumnoId;
+  bool? entregado;
+  int? fechaEntrega;
+  String? valorTipoNotaId;
+  int? silaboEventoId;
+  int? fechaServidor;
+
+
+  TareaAlumnoSerial({
+    this.tareaId,
+    this.alumnoId,
+    this.entregado,
+    this.fechaEntrega,
+    this.valorTipoNotaId,
+    this.silaboEventoId,
+    this.fechaServidor
+});
+
+  factory TareaAlumnoSerial.fromJson(Map<String, dynamic> json) => _$TareaAlumnoSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TareaAlumnoSerialToJson(this);
+
+}
+@JsonSerializable()
+class TareaAlumnoArchivoSerial {
+
+  String? tareaId;
+  int? alumnoId;
+  bool? repositorio;
+  String? nombre;
+  String? path;
+  int? silaboEventoId;
+  String? id;
+
+
+  TareaAlumnoArchivoSerial({
+    this.tareaId, this.alumnoId, this.repositorio,
+    this.nombre, this.path, this.silaboEventoId, this.id });
+
+  factory TareaAlumnoArchivoSerial.fromJson(Map<String, dynamic> json) => _$TareaAlumnoArchivoSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TareaAlumnoArchivoSerialToJson(this);
+
+}
+
+@JsonSerializable()
+class TareaRecursoDidacticoSerial {
+  String? recursoDidacticoId;
+  String? titulo;
+  String? descripcion;
+  int?  tipoId;
+  int?  silaboEventoId;
+  int?  estado;
+  int? planCursoId;
+  String? url;
+  String? driveId;
+  String? tareaId;
+
+  int? usuarioCreacionId;
+  int? usuarioAccionId;
+  int? fechaAccion;
+  int? fechaCreacion;
+
+  TareaRecursoDidacticoSerial({
+    this.recursoDidacticoId,
+    this.titulo,
+    this.descripcion,
+    this.tipoId,
+    this.silaboEventoId,
+    this.estado,
+    this.planCursoId,
+    this.url,
+    this.driveId,
+    this.tareaId,
+    this.usuarioCreacionId,
+    this.fechaCreacion,
+    this.fechaAccion,
+    this.usuarioAccionId
+  });
+
+  factory TareaRecursoDidacticoSerial.fromJson(Map<String, dynamic> json) => _$TareaRecursoDidacticoSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TareaRecursoDidacticoSerialToJson(this);
 
 }
 //#endregion

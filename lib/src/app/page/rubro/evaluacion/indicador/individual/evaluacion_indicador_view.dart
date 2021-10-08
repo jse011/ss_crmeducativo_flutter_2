@@ -755,8 +755,8 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(o.apellidos??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10, color: AppTheme.black),),
-                            Text(o.nombreCompleto??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 8),),
+                            Text(o.apellidos??"", maxLines: 1, overflow: TextOverflow.ellipsis,  textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: AppTheme.black),),
+                            Text(o.nombres??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10),),
                           ],
                         ),
                         decoration: BoxDecoration(

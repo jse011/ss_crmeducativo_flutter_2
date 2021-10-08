@@ -7,6 +7,8 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/usuario_evento.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/calendario_periodo_carga_curso.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/archivo_rubro.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_alumno_archivo.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_recurso_didactico.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_unidad.dart';
 
 class SerializableConvert{
@@ -1659,6 +1661,72 @@ class SerializableConvert{
     return items;
   }
 
+  static TareaAlumnoData converSerializeTareaAlumno(Map<String,dynamic> model){
+    TareaAlumnoSerial serial = TareaAlumnoSerial.fromJson(model);
+    return TareaAlumnoData(
+      tareaId: serial.tareaId??"",
+      alumnoId: serial.alumnoId??0,
+      entregado: serial.entregado,
+      fechaEntrega: serial.fechaEntrega,
+      silaboEventoId: serial.silaboEventoId,
+      fechaServidor: serial.fechaServidor,
+      valorTipoNotaId: serial.valorTipoNotaId
+    );
+  }
+
+  static List<TareaAlumnoData> converListSerializeTareaAlumno(dynamic model){
+    List<TareaAlumnoData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeTareaAlumno(item));
+    }
+    return items;
+  }
+  static TareaRecursoDidacticoData converSerializeTareaRecursoDidactico(Map<String,dynamic> model){
+    TareaRecursoDidacticoSerial serial = TareaRecursoDidacticoSerial.fromJson(model);
+    return TareaRecursoDidacticoData(
+      recursoDidacticoId: serial.recursoDidacticoId??"",
+      titulo: serial.titulo,
+      descripcion: serial.descripcion,
+      url: serial.url,
+      tipoId: serial.tipoId,
+      driveId: serial.driveId,
+      tareaId: serial.tareaId,
+      estado: serial.estado,
+      planCursoId: serial.planCursoId,
+      silaboEventoId: serial.silaboEventoId
+    );
+  }
+
+  static List<TareaRecursoDidacticoData> converListSerializeTareaRecursoDidactico(dynamic model){
+    List<TareaRecursoDidacticoData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeTareaRecursoDidactico(item));
+    }
+    return items;
+  }
+
+  static TareaAlumnoArchivoData converSerializeTareaAlumnoArchivo(Map<String,dynamic> model){
+    TareaAlumnoArchivoSerial serial = TareaAlumnoArchivoSerial.fromJson(model);
+    return TareaAlumnoArchivoData(
+      tareaAlumnoArchivoId: serial.id??"",
+      alumnoId: serial.alumnoId,
+      nombre: serial.nombre,
+      path: serial.path,
+      repositorio: serial.repositorio,
+      tareaId: serial.tareaId
+    );
+  }
+
+  static List<TareaAlumnoArchivoData> converListSerializeTareaAlumnoArchivo(dynamic model){
+    List<TareaAlumnoArchivoData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeTareaAlumnoArchivo(item));
+    }
+    return items;
+  }
 
 }
 

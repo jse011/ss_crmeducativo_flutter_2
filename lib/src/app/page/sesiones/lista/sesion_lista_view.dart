@@ -6,9 +6,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_periodo_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_sesion_repository.dart';
@@ -83,70 +85,28 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
   @override
   void dispose() {
     animationController.dispose();
-    _pageController.dispose();
     super.dispose();
   }
 
-  int _seletedItem = 0;
-  bool result = true;
-  PageController _pageController = PageController();
-
-  Widget get view => Scaffold(
-    extendBody: true,
-    backgroundColor: AppTheme.background,
-    body: Stack(
-      children: [
-        getMainTab(),
-        getAppBarUI(),
-
-      ],
-    ),
-    bottomNavigationBar: Padding(
-      padding: const EdgeInsets.all(30.0),
-      child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(100),
-                topLeft: Radius.circular(100),
-                bottomLeft: Radius.circular(100),
-                bottomRight: Radius.circular(100)),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black12, spreadRadius: 0, blurRadius: 10),
+  Widget get view => ControlledWidgetBuilder<SesionListaController>(
+      builder: (context, controller) {
+        return Scaffold(
+          extendBody: true,
+          backgroundColor: AppTheme.background,
+          body: Stack(
+            children: [
+              getMainTab(),
+              getAppBarUI(),
+              if(controller.progressDocente)
+                ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500),
+                )
             ],
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(100.0),
-                topRight: Radius.circular(100.0),
-                bottomLeft: Radius.circular(100),
-                bottomRight: Radius.circular(100)),
-            child: BottomNavigationBar(
-              selectedItemColor: Theme.of(context).primaryColor,
-              unselectedItemColor: Colors.grey[500],
-              items: [
-                // ignore: deprecated_member_use
-                BottomNavigationBarItem(
-                  // ignore: deprecated_member_use
-                    icon: Container(),
-                    // ignore: deprecated_member_use
-                    title: Text('Docente')),
-                BottomNavigationBarItem(
-                  // ignore: deprecated_member_use
-                    icon: Container(),
-                    // ignore: deprecated_member_use
-                    title: Text('Alumno'))
-              ],
-              currentIndex: _seletedItem,
-              onTap: (index) {
-                setState(() {
-                  _seletedItem = index;
-                  _pageController.jumpToPage(_seletedItem);
-                });
-              },
-            ),
-          )),
-    ),
+        );
+      }
   );
 
   Widget getAppBarUI() {
@@ -203,7 +163,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                     )
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
+                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -227,23 +187,6 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                     ],
                                   ),
                                 ),
-                                Positioned(
-                                  right: 10,
-                                  child: ClipOval(
-                                    child: Material(
-                                      color: AppTheme.colorPrimary.withOpacity(0.1), // button color
-                                      child: InkWell(
-                                        splashColor: AppTheme.colorPrimary, // inkwell color
-                                        child: SizedBox(width: 43 + 6 - 8 * topBarOpacity, height: 43 + 6 - 8 * topBarOpacity,
-                                          child: Icon(Ionicons.sync, size: 24 + 6 - 8 * topBarOpacity,color: AppTheme.colorPrimary, ),
-                                        ),
-                                        onTap: () {
-                                          controller.onSyncronizarUnidades();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
                               ],
                             );
                           },
@@ -286,19 +229,203 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                     left: 0,//24
                     right: 0//16
                 ),
-                child:  PageView(
-                  //scrollDirection: Axis.vertical,
-                  children: [
-                    progress(tabSesionDocente(controller, countTareaRow)),
-                    progress(tabSesionAlumno(controller, countTareaRow)),
-                  ],
-                  onPageChanged: (index) {
-                    setState(() {
-                      topBarOpacity = 0;
-                      _seletedItem = index;
-                    });
-                  },
-                  controller: _pageController,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 24, right: 48),
+                  child: Stack(
+                    children: [
+                      controller.calendarioPeriodoUI==null||(controller.calendarioPeriodoUI??0)==0?
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                          ),
+                          Padding(padding: EdgeInsets.all(4)),
+                          Center(
+                            child: Text("Seleciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                          )
+                        ],
+                      ):
+                      controller.unidadUiDocenteList.isEmpty?
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                          ),
+                          Padding(padding: EdgeInsets.all(4)),
+                          Center(
+                            child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                          )
+                        ],
+                      ):Container(),
+                      SingleChildScrollView(
+                        physics: ScrollPhysics(),
+                        controller: scrollController,
+                        child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: controller.unidadUiDocenteList.length,
+                          itemBuilder: (BuildContext ctxt, int index){
+                            UnidadUi unidadUi =  controller.unidadUiDocenteList[index];
+                            List<dynamic> unidadItemList = controller.unidadItemsMap[unidadUi]??[];
+                            int cant_sesiones = unidadItemList.length;
+                            int columnas = ColumnCountProvider.columnsForWidthSesion(context);
+                            bool toogle = unidadUi.toogle??false;
+                            int cant_reducida = columnas * 2;
+                            bool isVisibleVerMas = cant_reducida < cant_sesiones;
+                            if(unidadUi.cantUnidades == 1){
+                              isVisibleVerMas = false;
+                            }
+
+                            int cant_lista;
+                            if(toogle){
+                              if(isVisibleVerMas){
+
+                              }
+                              cant_lista = cant_sesiones;
+                            }else{
+                              if(isVisibleVerMas){
+                                cant_lista = cant_reducida;
+                              }else{
+                                cant_lista = cant_sesiones;
+                              }
+                            }
+
+                            return Container(
+                                margin: EdgeInsets.only(
+                                bottom: controller.unidadUiDocenteList.length == index + 1 ?70: 30,
+                                ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only( top: 8, bottom: 20),
+                                            child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontFamily: AppTheme.fontTTNorms
+                                              ),
+                                            ),
+                                          ),
+                                          cant_sesiones > 0?
+                                          GridView.builder(
+                                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: columnas,
+                                                mainAxisSpacing: 24.0,
+                                                crossAxisSpacing: 24.0,
+                                              ),
+                                              physics: NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: cant_lista,
+                                              itemBuilder: (context, index){
+                                                dynamic o = unidadItemList[index];
+                                                if(o is SesionUi){
+                                                  return getViewItemSesion(o, controller);
+                                                }else {
+                                                  return InkWell(
+                                                    onTap: () async{
+                                                      //dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi.unidadAprendizajeId, null);
+                                                      //if(result is int) controller.refrescarListTarea(unidadUi);
+                                                    },
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(8),
+                                                      decoration: BoxDecoration(
+                                                        color: HexColor(controller.cursosUi.color2),
+                                                        borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                      ),
+                                                      child: FDottedLine(
+                                                        color: AppTheme.white,
+                                                        strokeWidth: 3.0,
+                                                        dottedLength: 10.0,
+                                                        space: 3.0,
+                                                        corner: FDottedLineCorner.all(14.0),
+
+                                                        /// add widget
+                                                        child: Container(
+                                                          alignment: Alignment.center,
+                                                          child:  Column(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              Icon(Ionicons.add, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthTarea(context, 40),),
+                                                              Padding(padding: EdgeInsets.only(top: 4)),
+                                                              Text("Crear tarea",
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
+                                                                    fontWeight: FontWeight.w700,
+                                                                    letterSpacing: 0.5,
+                                                                    color: AppTheme.white
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }
+
+                                              }
+                                          )
+                                              :Container(
+                                            padding: EdgeInsets.all(8),
+                                            decoration: BoxDecoration(
+                                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                            ),
+                                            child: FDottedLine(
+                                              color: AppTheme.white,
+                                              strokeWidth: 3.0,
+                                              dottedLength: 10.0,
+                                              space: 3.0,
+                                              corner: FDottedLineCorner.all(14.0),
+
+                                              /// add widget
+                                              child: Container(
+                                                padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
+                                                alignment: Alignment.center,
+                                                child: Text("Unidad sin sesiones",  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w800,
+                                                    fontFamily: AppTheme.fontTTNorms,
+                                                    color: AppTheme.white
+                                                ),),
+                                              ),
+                                            ),
+                                          )
+                                        ]),
+                                  ),
+                                  if(isVisibleVerMas)
+                                    InkWell(
+                                      onTap: (){
+                                        controller.onClickVerMas(unidadUi);
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(top: 18),
+                                        padding: EdgeInsets.all(10),
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: AppTheme.white,
+                                            borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
+                                        ),
+                                        child: Center(
+                                          child: Text("${toogle?"Ver solo las últimas sesiones":"Ver más sesiones"}", style: TextStyle(color: AppTheme.black, fontSize: 12, fontWeight: FontWeight.w500),),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               Positioned(
@@ -388,499 +515,6 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
     return true;
   }
 
-
-  Widget tabSesionDocente(SesionListaController controller, int countRow) {
-
-     return Padding(
-      padding: EdgeInsets.only(left: 24, right: 48),
-      child: Stack(
-        children: [
-          controller.unidadUiDocenteList.isEmpty?
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
-              ),
-              Padding(padding: EdgeInsets.all(4)),
-              Center(
-                child: Text("Sin unidades", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
-              )
-            ],
-          ):
-          SingleChildScrollView(
-            physics: ScrollPhysics(),
-            controller: scrollController,
-            child: ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.unidadUiDocenteList.length,
-              itemBuilder: (BuildContext ctxt, int index){
-                UnidadUi unidadUi =  controller.unidadUiDocenteList[index];
-
-                int cantidad = unidadUi.sesionUiList?.length??0;
-                int cantSesionesVisibles = unidadUi.cantSesionesVisibles??0;
-                bool vermas = cantSesionesVisibles < cantidad;
-                int cantItems = vermas?cantSesionesVisibles+1:cantidad;
-
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only( top: index==0?8:24, bottom: 16),
-                        child: Text("U${unidadUi.nroUnidad}: ${unidadUi.titulo}",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              fontFamily: AppTheme.fontTTNorms
-                          ),
-                        ),
-                      ),
-                      (unidadUi.sesionUiList?.length??0)>0?
-                      GridView.builder(
-                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            //crossAxisCount: countRow,
-                            maxCrossAxisExtent: 200.0,
-                            mainAxisExtent: 150.0,
-                            mainAxisSpacing: 24.0,
-                            crossAxisSpacing: 24.0,
-                            childAspectRatio: 1,
-                          ),
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: cantItems,
-                          itemBuilder: (context, index){
-
-                            if(vermas && cantSesionesVisibles == index){
-                              return InkWell(
-                                onTap: (){
-                                  controller.unidadUiSelected = unidadUi;
-                                  showSesionDocente(countRow, context);
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: HexColor(controller.cursosUi.color2),
-                                    borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                                  ),
-                                  child: FDottedLine(
-                                    color: AppTheme.white,
-                                    strokeWidth: 3.0,
-                                    dottedLength: 10.0,
-                                    space: 3.0,
-                                    corner: FDottedLineCorner.all(14.0),
-
-                                    /// add widget
-                                    child: Container(
-                                      color: HexColor(controller.cursosUi.color2),
-                                      alignment: Alignment.center,
-                                      child: Center(
-                                        child: Text("Ver más",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w800,
-                                              fontFamily: AppTheme.fontTTNorms,
-                                              color: AppTheme.white
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }else {
-                              SesionUi sesionUi = unidadUi.sesionUiList![index];
-                              return getViewItemSesion(sesionUi, controller);
-                            }
-
-                          }
-                      )
-                          :Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                        ),
-                        child: FDottedLine(
-                          color: AppTheme.white,
-                          strokeWidth: 3.0,
-                          dottedLength: 10.0,
-                          space: 3.0,
-                          corner: FDottedLineCorner.all(14.0),
-
-                          /// add widget
-                          child: Container(
-                            padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
-                            alignment: Alignment.center,
-                            child: Text("Unidad sin sesiones",  style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                fontFamily: AppTheme.fontTTNorms,
-                                color: AppTheme.white
-                            ),),
-                          ),
-                        ),
-                      )
-                    ]);
-              },
-            ),
-          ),
-          if(controller.progressDocente)
-          Center(
-            child: CircularProgressIndicator(),
-          )
-        ],
-      ),
-    );
-
-
-  }
-
-  Widget tabSesionAlumno(SesionListaController controller, int countRow) {
-    return Padding(
-      padding: EdgeInsets.only(left: 24, right: 48),
-      child: Stack(
-        children: [
-          controller.unidadAUiAlumnoList.isEmpty?
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
-              ),
-              Padding(padding: EdgeInsets.all(4)),
-              Center(
-                child: Text("Sin unidades", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
-              )
-            ],
-          ):
-          SingleChildScrollView(
-            physics: ScrollPhysics(),
-            controller: scrollController,
-            child: ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: controller.unidadAUiAlumnoList.length,
-              itemBuilder: (BuildContext ctxt, int index){
-                UnidadUi unidadUi =  controller.unidadAUiAlumnoList[index];
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only( top: index==0?8:24, bottom: 16),
-                        child: Text("U${unidadUi.nroUnidad}: ${unidadUi.titulo}",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              fontFamily: AppTheme.fontTTNorms
-                          ),
-                        ),
-                      ),
-                      (unidadUi.sesionUiList?.length??0)>0?
-                      GridView.builder(
-                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            //crossAxisCount: countRow,
-                            maxCrossAxisExtent: 200.0,
-                            mainAxisExtent: 150.0,
-                            mainAxisSpacing: 24.0,
-                            crossAxisSpacing: 24.0,
-                            childAspectRatio: 1,
-                          ),
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: unidadUi.sesionUiList?.length,
-                          itemBuilder: (context, index){
-                            SesionUi sesionUi = unidadUi.sesionUiList![index];
-                            return InkWell(
-                              onTap: (){
-                                AppRouter.createRouteSesionPortalRouter(context, controller.cursosUi, sesionUi);
-                              },
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: AppTheme.white,
-                                        borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 12, right: 16, top: 16, bottom: 0),
-                                          child: Row(
-                                            children: [
-                                              Expanded(child: Text("Sesión ${sesionUi.nroSesion??0}", style: TextStyle(color: AppTheme.black, fontSize: 12, fontWeight: FontWeight.w600),),),
-                                              Text(sesionUi.horas??"",  style: TextStyle(color: AppTheme.colorAccent, fontSize: 10,))
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 12, right: 16, top: 4, bottom: 0),
-                                          child: Text(sesionUi.fechaEjecucion??"",  style: TextStyle(color: AppTheme.colorAccent, fontSize: 10,)),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 12, right: 16, top: 4, bottom: 0),
-                                          child: Divider(
-                                            height: 1,
-                                            color: AppTheme.colorAccent,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 12, right: 16, top: 8, bottom: 0),
-                                          child: Center(
-                                            child: Text(sesionUi.titulo??"", style: TextStyle(color: AppTheme.black, fontSize: 12),),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: 14,
-                                    right: 14,
-                                    child: Material(
-                                      color: AppTheme.colorAccent.withOpacity(0.8),
-                                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                      child: Container(
-                                        margin: EdgeInsets.all(1),
-                                        decoration: BoxDecoration(
-                                            color: AppTheme.white,
-                                            borderRadius: BorderRadius.circular(7) // use instead of BorderRadius.all(Radius.circular(20))
-                                        ),
-                                        child: InkWell(
-                                          focusColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                          hoverColor: Colors.transparent,
-                                          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                          splashColor: HexColor(controller.cursosUi.color1).withOpacity(0.4),
-                                          onTap: () {
-
-                                          },
-                                          child:
-                                          Container(
-                                              padding: const EdgeInsets.only(top: 4, left: 4, bottom: 4, right: 4),
-                                              child: Text("Ejecución",
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: AppTheme.colorAccent.withOpacity(0.9),
-                                                  fontFamily: AppTheme.fontName,
-                                                ),)
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                      )
-                          :Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                        ),
-                        child: FDottedLine(
-                          color: AppTheme.white,
-                          strokeWidth: 3.0,
-                          dottedLength: 10.0,
-                          space: 3.0,
-                          corner: FDottedLineCorner.all(14.0),
-
-                          /// add widget
-                          child: Container(
-                            padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
-                            alignment: Alignment.center,
-                            child: Text("Unidad sin sesiones",  style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                fontFamily: AppTheme.fontTTNorms,
-                                color: AppTheme.white
-                            ),),
-                          ),
-                        ),
-                      )
-                    ]);
-              },
-            ),
-          ),
-          if(controller.progressAlumno)
-            Center(
-              child: CircularProgressIndicator(),
-            )
-        ],
-      ),
-    );
-
-
-  }
-
-  void showSesionDocente(int countRow, BuildContext context) {
-    SesionListaController controller =
-    FlutterCleanArchitecture.getController<SesionListaController>(context, listen: false);
-
-    showModalBottomSheet(
-        shape:  RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (ctx) {
-
-          return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              statetDialogSesion = (){
-                setState((){});
-              };
-              controller.addListener(statetDialogSesion!);
-              return Container(
-                height: MediaQuery.of(context).size.height * 1,
-                child: Container(
-                  padding: EdgeInsets.all(0),
-                  decoration: new BoxDecoration(
-                    color: AppTheme.background,
-                    borderRadius: new BorderRadius.only(
-                      topLeft: const Radius.circular(25.0),
-                      topRight: const Radius.circular(25.0),
-                    ),
-                  ),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(this.context).padding.top,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 8,
-                                right: 8,
-                                top: 16 - 8.0,
-                                bottom: 12 - 8.0),
-                            child:   Stack(
-                              children: <Widget>[
-                                Positioned(
-                                    child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6,),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_sesion, height: 35 +  6 , width: 35 +  6,),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 12, top: 8),
-                                        child: Text(
-                                          'Sesión',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16 + 6,
-                                            letterSpacing: 0.8,
-                                            color: AppTheme.darkerText,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 10,
-                                  child: ClipOval(
-                                    child: Material(
-                                      color: AppTheme.colorPrimary.withOpacity(0.1), // button color
-                                      child: InkWell(
-                                        splashColor: AppTheme.colorPrimary, // inkwell color
-                                        child: SizedBox(width: 43 + 6, height: 43 + 6,
-                                          child: Icon(Ionicons.sync, size: 24 + 6,color: AppTheme.colorPrimary, ),
-                                        ),
-                                        onTap: () {
-                                          controller.onSyncronizarUnidades();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: CustomScrollView(
-                                scrollDirection: Axis.vertical,
-                                slivers: <Widget>[
-                                  SliverPadding(
-                                    padding: EdgeInsets.only(left: 24, right: 24, top: 16, bottom: 16),
-                                    sliver: SliverList(
-                                        delegate: SliverChildListDelegate([
-                                          Text("U${controller.unidadUiSelected?.nroUnidad??0}: ${controller.unidadUiSelected?.titulo??""}",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w800,
-                                                fontFamily: AppTheme.fontTTNorms
-                                            ),
-                                          ),
-                                        ])
-                                    ),
-                                  ),
-                                  SliverPadding(
-                                    padding: EdgeInsets.only(left: 24, right: 24, top: 24),
-                                    sliver: SliverGrid(
-                                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                                        //crossAxisCount: countRow,
-                                        maxCrossAxisExtent: 200.0,
-                                        mainAxisExtent: 150.0,
-                                        mainAxisSpacing: 24.0,
-                                        crossAxisSpacing: 24.0,
-                                        childAspectRatio: 1,
-                                      ),
-                                      delegate: SliverChildBuilderDelegate(
-                                              (BuildContext context, int index){
-                                            SesionUi sesionUi = controller.unidadUiSelected!.sesionUiList![index];
-                                            return getViewItemSesion(sesionUi, controller);
-                                          },
-                                          childCount: controller.unidadUiSelected?.sesionUiList?.length??0
-                                      ),
-                                    ),
-                                  ),
-                                  SliverList(
-                                      delegate: SliverChildListDelegate([
-                                        Container(
-                                          height: 100,
-                                        )
-                                      ])
-                                  ),
-                                ]
-                            ),
-                          )
-                        ],
-                      ),
-                      if(controller.progressDocente)
-                        Center(
-                          child: CircularProgressIndicator(),
-                        )
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        })
-        .then((value) => {
-         if(statetDialogSesion!=null)controller.removeListener(statetDialogSesion!), statetDialogSesion = null
-        });
-  }
-
   Widget getViewItemSesion(SesionUi sesionUi, SesionListaController controller) {
     return InkWell(
       onTap: (){
@@ -891,68 +525,108 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
           Container(
             decoration: BoxDecoration(
                 color: AppTheme.white,
-                borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
+                borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 14)) // use instead of BorderRadius.all(Radius.circular(20))
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 12, right: 16, top: 16, bottom: 0),
+                  padding: EdgeInsets.only(
+                      left: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
+                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
+                      bottom: 0),
                   child: Row(
                     children: [
-                      Expanded(child: Text("Sesión ${sesionUi.nroSesion??0}", style: TextStyle(color: AppTheme.black, fontSize: 12, fontWeight: FontWeight.w600),),),
-                      Text(sesionUi.horas??"",  style: TextStyle(color: HexColor(sesionUi.colorSesion), fontSize: 10,))
+                      Expanded(
+                          child: Text("Sesión ${sesionUi.nroSesion??0}",
+                              style: TextStyle(
+                                  color: AppTheme.black,
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+                                  fontWeight: FontWeight.w600
+                              )
+                          )
+                      ),
+                      Text(sesionUi.horas??"",
+                          style: TextStyle(
+                            color: HexColor(sesionUi.colorSesion),
+                            fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10)
+                          )
+                      )
                     ],
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 12, right: 16, top: 4, bottom: 0),
-                  child: Text(sesionUi.fechaEjecucion??"",  style: TextStyle(color: HexColor(sesionUi.colorSesion), fontSize: 10,)),
+                  padding: EdgeInsets.only(
+                      left: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
+                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                      bottom: 0
+                  ),
+                  child: Text(sesionUi.fechaEjecucion??"",
+                      style: TextStyle(
+                        color: HexColor(sesionUi.colorSesion),
+                        fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10)
+                      )
+                  ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 12, right: 16, top: 4, bottom: 0),
+                  padding: EdgeInsets.only(
+                      left: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
+                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                      bottom: 0
+                  ),
                   child: Divider(
-                    height: 1,
+                    height: ColumnCountProvider.aspectRatioForWidthSesion(context, 1),
                     color: HexColor(sesionUi.colorSesion),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 12, right: 16, top: 8, bottom: 0),
+                  padding: EdgeInsets.only(
+                      left: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
+                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+                      bottom: 0),
                   child: Center(
-                    child: Text(sesionUi.titulo??"", style: TextStyle(color: AppTheme.black, fontSize: 12),),
+                    child: Text(sesionUi.titulo??"",
+                      style: TextStyle(
+                          color: AppTheme.black,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 12)
+                      )
+                    ),
                   ),
                 )
               ],
             ),
           ),
           Positioned(
-            bottom: 14,
-            right: 14,
+            bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
+            right: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
             child: Material(
               color:HexColor(sesionUi.colorSesion).withOpacity(0.8),
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
               child: Container(
                 margin: EdgeInsets.all(1),
                 decoration: BoxDecoration(
                     color: AppTheme.white,
-                    borderRadius: BorderRadius.circular(7) // use instead of BorderRadius.all(Radius.circular(20))
+                    borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 7)) // use instead of BorderRadius.all(Radius.circular(20))
                 ),
                 child: InkWell(
-                  focusColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                  splashColor: HexColor(controller.cursosUi.color1).withOpacity(0.4),
                   onTap: () {
 
                   },
                   child:
                   Container(
-                      padding: const EdgeInsets.only(top: 4, left: 4, bottom: 4, right: 4),
+                      padding: EdgeInsets.only(
+                          top: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                          left: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                          bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                          right: ColumnCountProvider.aspectRatioForWidthSesion(context, 4)),
                       child: Text(sesionUi.estadoEjecucion??"",
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10),
                           color: HexColor(sesionUi.colorSesion).withOpacity(0.9),
                           fontFamily: AppTheme.fontName,
                         ),)

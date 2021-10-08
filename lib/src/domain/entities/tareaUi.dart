@@ -1,3 +1,5 @@
+import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
+
 class TareaUi{
   String? tareaId;
   String? titulo;
@@ -7,4 +9,8 @@ class TareaUi{
   int? position;
   String? fechaEntrega;
   bool? publicado;
+  DateTime? fechaEntregaTime;
+  int? sesionAprendizajeId;
+  String? horaTarea;
+  List<TareaRecusoUi>? recursos;
 }

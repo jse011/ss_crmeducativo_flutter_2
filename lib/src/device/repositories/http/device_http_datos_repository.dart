@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:http/io_client.dart';
 import 'package:ss_crmeducativo_2/src/device/utils/http_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:http/http.dart' as http;
@@ -346,6 +349,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_GeoreferenciaId"] = georeferenciaId;
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["bERubroEvalEnvioSimplesList"] = rubrosEnviados;
+    print("updateCompetenciaRubroFlutter");
     final response = await http.post(Uri.parse(urlServidorLocal), body: getBody("updateCompetenciaRubroFlutter", parameters))
         .timeout(Duration(seconds: 45), onTimeout: (){throw Exception('Failed to load rubro eval');});
 
@@ -355,6 +359,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       Map<String,dynamic> body = json.decode(response.body);
 
       if(body.containsKey("Successful")&&body.containsKey("Value")){
+        print("Value: ${body.containsKey("Value")}");
         return body["Value"];
       }else{
         return false;
@@ -393,17 +398,162 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     }
   }
 
+  @override
+  Future<Map<String, dynamic>?> getInfoTareaDocente(String urlServidorLocal, String? tareaId, String? rubroEvaluacionId, int? silaboEventoId, int? unidadEventoId) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vstr_TareaId"] = tareaId;
+    parameters["vstr_rubroEvaluacionId"] = rubroEvaluacionId;
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+    parameters["vint_UnidadEventoId"] = unidadEventoId;
+    final response = await http.post(Uri.parse(urlServidorLocal), body: getBody("getInfoTareaDocente", parameters))
+        .timeout(Duration(seconds: 45), onTimeout: (){throw Exception('Failed to load rubro eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<HttpStream> uploadFileArchivoDocente(String urlServidorLocal, int silaboEventoId, String nombre, File file, HttpProgressListen progressListen, HttpSuccess httpSuccessListen) async{
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+
+    var formData = FormData.fromMap({
+      'body': getBody("uploadFileArchivoDocente", parameters),
+      'file': await MultipartFile.fromFile(file.path, filename: nombre),
+    });
+
+    Dio dio = new Dio();
+    dio.post(
+      urlServidorLocal,
+      data: formData,
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+          print("${progress}%");
+          progressListen.call(progress);
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(true, body["Value"]);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, null);
+          print("Response null");
+        }
+      }
+    });
+
+    return dioCancellation;
+  }
+
+  @override
+  Future<bool?> saveTareaDocente(String urlServidorLocal, Map<String, dynamic> data) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vobj_TareEvento"] = data;
+    final response = await http.post(Uri.parse(urlServidorLocal), body: getBody("saveTareaDocente", parameters))
+        .timeout(Duration(seconds: 20), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+
+  }
+
 
 }
 
-class _DeviceHttpStream extends HttpStream{
-  var listen;
+class CloseableMultipartRequest extends http.MultipartRequest  with HttpStream{
+  IOClient client = IOClient(HttpClient());
 
-  _DeviceHttpStream(this.listen);
+  CloseableMultipartRequest(String method, Uri url) : super(method, url);
+
+  @override
+  Future<http.StreamedResponse> send() async {
+    try {
+      var response = await client.send(this);
+      var stream = onDone(response.stream, client.close);
+      return new http.StreamedResponse(
+        new http.ByteStream(stream),
+        response.statusCode,
+        contentLength: response.contentLength,
+        request: response.request,
+        headers: response.headers,
+        isRedirect: response.isRedirect,
+        persistentConnection: response.persistentConnection,
+        reasonPhrase: response.reasonPhrase,
+      );
+    } catch (_) {
+      client.close();
+      rethrow;
+    }
+  }
+
+  Stream<T> onDone<T>(Stream<T> stream, void onDone()) =>
+      stream.transform(new StreamTransformer.fromHandlers(handleDone: (sink) {
+        sink.close();
+        onDone();
+      }));
 
   @override
   void cancel() {
-   listen?.cancel();
+    client.close();
   }
 
+  @override
+  bool isFinished() {
+   return true;
+  }
+
+}
+
+class DioCancellation  extends HttpStream{
+  CancelToken token;
+  bool? finishesd;
+
+  DioCancellation(this.token);
+
+  @override
+  void cancel() {
+    token.cancel();
+  }
+
+  @override
+  bool isFinished() {
+    return finishesd??false;
+  }
 }

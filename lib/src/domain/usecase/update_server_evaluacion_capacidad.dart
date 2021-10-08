@@ -23,8 +23,10 @@ class UpdateServerEvaluacionCompetencia {
         Map<String, dynamic>? data = await repository.getRubroEvaluacionSerial(rubroEvaluacionId);
         if(data != null) mapList.add(data);
       }
-
+      print("mapList: ${mapList.length}");
+      print("mapList: ${mapList.isNotEmpty}");
       if(mapList.isNotEmpty){
+
         success = await httpDatosRepository.updateCompetenciaRubroFlutter(urlServidorLocal, georeferenciaId, usuarioId, mapList);
         if(success??false){
           for(String rubroEvaluacionId in params.rubroEvaluacionIdList??[]){

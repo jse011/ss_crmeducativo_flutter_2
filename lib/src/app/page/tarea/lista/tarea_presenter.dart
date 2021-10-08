@@ -1,23 +1,24 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/get_unidad_tarea.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/update_calendario_periodo.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_calendario_periodo.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_unidad_tarea.dart';
 
 class TareaPresenter extends Presenter{
 
-  UpdateCalendarioPerido _getCalendarioPerido;
+  GetCalendarioPerido _getCalendarioPerido;
   late Function getCalendarioPeridoOnComplete, getCalendarioPeridoOnError;
-  GetUnidadTarea _getUnidadTarea;
+  UpdateUnidadTarea _getUnidadTarea;
   late Function getUnidadTareaOnComplete, getUnidadTareaOnError;
 
   TareaPresenter(ConfiguracionRepository configuracionRepo, CalendarioPeriodoRepository calendarioPeriodoRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo):
-        _getCalendarioPerido = UpdateCalendarioPerido(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo),
-        _getUnidadTarea = GetUnidadTarea(httpDatosRepo, configuracionRepo, unidadTareaRepo);
+        _getCalendarioPerido = GetCalendarioPerido(configuracionRepo, calendarioPeriodoRepo),
+        _getUnidadTarea = UpdateUnidadTarea(httpDatosRepo, configuracionRepo, unidadTareaRepo);
 
   @override
   void dispose() {
@@ -30,6 +31,7 @@ class TareaPresenter extends Presenter{
 
   void getUnidadTarea(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
     print("getUnidadTarea");
+
     _getUnidadTarea.execute(_GetUnidadTareaCase(this), GetUnidadTareaParams(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
   }
 
@@ -72,7 +74,7 @@ class _GetUnidadTareaCase extends Observer<GetUnidadTareaResponse>{
 
   @override
   void onError(e) {
-    assert(presenter.getUnidadTareaOnComplete!=null);
+    assert(presenter.getUnidadTareaOnError!=null);
     presenter.getUnidadTareaOnError(e);
   }
 
@@ -84,3 +86,4 @@ class _GetUnidadTareaCase extends Observer<GetUnidadTareaResponse>{
   }
 
 }
+

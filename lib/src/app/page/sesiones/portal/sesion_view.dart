@@ -157,7 +157,7 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                                     )
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
+                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 16),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -166,7 +166,7 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                                       Padding(
                                         padding: EdgeInsets.only(left: 12, top: 8),
                                         child: Text(
-                                          'Sesión',
+                                          'Sesión ${controller.sesionUi.nroSesion}',
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -181,23 +181,7 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                                     ],
                                   ),
                                 ),
-                                Positioned(
-                                  right: 10,
-                                  child: ClipOval(
-                                    child: Material(
-                                      color: AppTheme.colorPrimary.withOpacity(0.1), // button color
-                                      child: InkWell(
-                                        splashColor: AppTheme.colorPrimary, // inkwell color
-                                        child: SizedBox(width: 43 + 6 - 8 * topBarOpacity, height: 43 + 6 - 8 * topBarOpacity,
-                                          child: Icon(Ionicons.sync, size: 24 + 6 - 8 * topBarOpacity,color: AppTheme.colorPrimary, ),
-                                        ),
-                                        onTap: () {
-                                          //controller.onSyncronizarCurso();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
+
                               ],
                             );
                           },
@@ -229,661 +213,1229 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                       padding: EdgeInsets.only(
                           top: AppBar().preferredSize.height +
                               MediaQuery.of(context).padding.top +
-                              0,
+                              16,
                           left: 24,
                           right: 24
                       ),
-                      child: CustomScrollView(
-                        controller: scrollController,
-                        slivers: [
-                          SliverList(
-                              delegate: SliverChildListDelegate([
-                                Container(
-                                  padding: EdgeInsets.only(top: 32),
-                                  child: Text("U${controller.sesionUi.nroUnidad}: ${controller.sesionUi.tituloUnidad}", style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      fontFamily: AppTheme.fontTTNorms
-                                  ),),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(top: 8),
-                                  child: Text("- ${controller.cursosUi.nombreCurso??""} ${controller.cursosUi.gradoSeccion??""} - ${controller.cursosUi.nivelAcademico??""}",
-                                          style: TextStyle( fontSize: 12),),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 8),
-                                  height: 160,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(16))
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: AppTheme.colorSesion,
-                                            borderRadius: BorderRadius.all(Radius.circular(12))
-                                        ),
-                                        margin: EdgeInsets.all(8),
-                                        constraints: BoxConstraints.expand(),
-                                        padding: EdgeInsets.all(24),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
+                      child: DefaultTabController(
+                        length: 4,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              constraints: BoxConstraints.expand(height: 50),
+                              child: TabBar(
+                                  indicatorColor: AppTheme.colorSesion,
+                                  labelColor: AppTheme.colorSesion,
+                                  unselectedLabelColor: Colors.grey,
+                                  isScrollable: true,
+                                  tabs: [
+                                Tab(text: "APRENDIZAJE"),
+                                Tab(text: "ACTIVIDADES"),
+                                Tab(text: "TRABAJOS"),
+                                Tab(text: "EVALUACIÓN"),
+                              ]),
+                            ),
+                            Expanded(
+                              child: Container(
+                                child: TabBarView(children: [
+                                  CustomScrollView(
+                                    slivers: [
+                                      SliverList(
+                                          delegate: SliverChildListDelegate([
+                                            Container(
+                                              margin: EdgeInsets.only(top: 24),
+                                              height: 170,
+                                              decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.all(Radius.circular(16))
+                                              ),
+                                              child: Stack(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                        color: AppTheme.colorSesion,
+                                                        borderRadius: BorderRadius.all(Radius.circular(12))
+                                                    ),
+                                                    constraints: BoxConstraints.expand(),
+                                                    padding: EdgeInsets.all(24),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                                      children: [
+
+                                                        Expanded(
+                                                            child: Container(),
+                                                        ),
+                                                        Container(
+                                                          alignment: Alignment.bottomLeft,
+                                                          child: Text("${controller.sesionUi.titulo}",
+                                                            textAlign: TextAlign.start,
+                                                            maxLines: 3,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                                color: AppTheme.white.withOpacity(0.9),
+                                                                fontSize: 22,
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w700
+                                                            ),
+                                                          ),
+                                                        )
+
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                ],
+                                              ),
+                                            ),
                                             Container(
                                               decoration: BoxDecoration(
-                                                  color: AppTheme.black.withOpacity(0.2),
+                                                  color: AppTheme.white,
                                                   borderRadius: BorderRadius.all(Radius.circular(6))
                                               ),
-                                              padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
-                                              child: RichText(
-                                                text: TextSpan(
-                                                    children: [
-                                                      TextSpan(text: "Sesión "),
-                                                      TextSpan(text: "Docente", style: new TextStyle(fontWeight: FontWeight.bold))
-                                                    ]
+                                              margin: EdgeInsets.only(top: 16),
+                                              padding: EdgeInsets.all(16),
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("${controller.sesionUi.titulo}",
+                                                      textAlign: TextAlign.start,
+                                                      maxLines: 3,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppTheme.darkText,
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w700
+                                                      ),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(top: 16)),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        style: TextStyle(
+                                                            fontSize: 12.0,
+                                                            color: AppTheme.darkText,
+                                                            height: 1.5
+                                                        ),
+                                                        children: <TextSpan>[
+                                                          TextSpan(text: 'Propósito: ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                                                          TextSpan(text: controller.sesionUi.proposito??""),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ),
-                                            Padding(padding: EdgeInsets.all(4)),
-                                            Expanded(
-                                                child: Text("S${controller.sesionUi.nroSesion}: ${controller.sesionUi.titulo}",
-                                                  textAlign: TextAlign.center,
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(color: AppTheme.white, fontSize: 20),
-                                                )
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: AppTheme.white,
+                                                  borderRadius: BorderRadius.all(Radius.circular(6))
+                                              ),
+                                              margin: EdgeInsets.only(top: 16),
+                                              padding: EdgeInsets.all(16),
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("Competencia Base",
+                                                      textAlign: TextAlign.start,
+                                                      maxLines: 3,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppTheme.darkText,
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w700
+                                                      ),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(top: 16)),
+                                                    Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Container(
+                                                          color: HexColor("#3AB174"),
+                                                          padding: EdgeInsets.all(8),
+                                                          child: RichText(
+                                                            text: TextSpan(
+                                                              style: TextStyle(
+                                                                  fontSize: 12.0,
+                                                                  color: AppTheme.white,
+                                                                  height: 1.5,
+                                                                  fontWeight: FontWeight.w400
+                                                              ),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: 'Competencia:  ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                                                                TextSpan(text: "Explica el mundo físico basándose en conocimientos sobre los seres vivos, materia y energía, biodiversidad, tierra y universo."),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.white,
+                                                          padding: EdgeInsets.all(8),
+                                                          child: RichText(
+                                                            text: TextSpan(
+                                                              style: TextStyle(
+                                                                  fontSize: 12.0,
+                                                                  color: AppTheme.darkerText,
+                                                                  height: 1.5,
+                                                                  fontWeight: FontWeight.w400
+                                                              ),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: 'Capacidad:  ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                                                                TextSpan(text: "Comprende y usa conocimientos sobre los seres vivos, materia y energía, biodiversidad, Tierra y universo"),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.grey,
+                                                          height: 0.5,
+                                                        ),
+                                                        Container(
+                                                          color: HexColor("#EDECEC"),
+                                                          height: 35,
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                  child: Container(
+                                                                    alignment: Alignment.center,
+                                                                    child: Text("Desempeño",
+                                                                      style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w700
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                              ),
+                                                              Expanded(
+                                                                  child: Container(
+                                                                    alignment: Alignment.center,
+                                                                    child: Text("ICDs",
+                                                                      style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w700
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.grey,
+                                                          height: 0.5,
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.white,
+                                                          padding: EdgeInsets.all(8),
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Expanded(
+                                                                  child: Container(
+                                                                    margin: EdgeInsets.only(right: 8),
+                                                                    child: Text(
+                                                                        "Explica que el suelo está formado por seres vivos y no vivos. Ejemplo: El estudiante distingue lo que hay dentro del suelo, tierra, gusanos, rocas, objetos plásticos, etc Justifica por qué el agua, el aire y el suelo son importantes para los seres vivos. (CN 2017: P1-CT-C25-D5) Explica que un sistema puede describirse en términos de sus interacciones. ¿Cómo te relacionas con los demás? ¿Cómo debemos"
+                                                                        ,style: TextStyle(
+                                                                      fontSize: 12.0,
+                                                                      color: AppTheme.darkerText,
+                                                                      height: 1.5,
+                                                                      fontWeight: FontWeight.w400,
+                                                                    ),
+                                                                        textAlign: TextAlign.justify
+                                                                    ),
+                                                                  ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  children: [
+                                                                    Container(
+                                                                      child: Text("01. Explica que el suelo",
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(left: 20),
+                                                                      child: Text("a. ECOSISTEMAS: INTERACCIONES, ENERGÍA, Y DINÁMICA",
+                                                                        textAlign: TextAlign.justify,
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(left: 30),
+                                                                      child: Text("* Nuestra necesidades básicas.",
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      child: Text("01. Explica que el suelo",
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(left: 20),
+                                                                      child: Text("a. ECOSISTEMAS: INTERACCIONES, ENERGÍA, Y DINÁMICA",
+                                                                        textAlign: TextAlign.justify,
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(left: 30),
+                                                                      child: Text("* Nuestra necesidades básicas.",
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 16,
-                                        left: 0,
-                                        right: 120,
-                                        child: Transform.rotate(
-                                          angle: -math.pi / 7,
-                                          child: Container(
-                                            width:35,
-                                            height:35,
-                                            margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
-                                            child: Image.asset(AppIcon.img_sesion_birrete),
-                                          ),
-                                        ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: AppTheme.white,
+                                                  borderRadius: BorderRadius.all(Radius.circular(6))
+                                              ),
+                                              margin: EdgeInsets.only(top: 16),
+                                              padding: EdgeInsets.all(16),
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("Competencia Transversal",
+                                                      textAlign: TextAlign.start,
+                                                      maxLines: 3,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppTheme.darkText,
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w700
+                                                      ),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(top: 16)),
+                                                    Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Container(
+                                                          color: HexColor("#3AB174"),
+                                                          padding: EdgeInsets.all(8),
+                                                          child: Row(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  RichText(
+                                                                    text: TextSpan(
+                                                                      style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.white,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400
+                                                                      ),
+                                                                      children: <TextSpan>[
+                                                                        TextSpan(text: 'Competencia:  ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                                                                        TextSpan(text: "Servicio Cristiano (Orientación al Bien Común)"),
+                                                                      ],
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.white,
+                                                          padding: EdgeInsets.all(8),
+                                                          child: RichText(
+                                                            text: TextSpan(
+                                                              style: TextStyle(
+                                                                  fontSize: 12.0,
+                                                                  color: AppTheme.darkerText,
+                                                                  height: 1.5,
+                                                                  fontWeight: FontWeight.w400
+                                                              ),
+                                                              children: <TextSpan>[
+                                                                TextSpan(text: 'Capacidad:  ', style: new TextStyle(fontWeight: FontWeight.bold)),
+                                                                TextSpan(text: "Demostrar Empatía - Servicio/Convivencia"),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.grey,
+                                                          height: 0.5,
+                                                        ),
+                                                        Container(
+                                                          color: HexColor("#EDECEC"),
+                                                          height: 35,
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                  child: Container(
+                                                                    alignment: Alignment.center,
+                                                                    child: Text("Desempeño",
+                                                                      style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w700
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                              ),
+                                                              Expanded(
+                                                                  child: Container(
+                                                                      alignment: Alignment.center,
+                                                                    child: Text("ICDs",
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w700
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.grey,
+                                                          height: 0.5,
+                                                        ),
+                                                        Container(
+                                                          color: AppTheme.white,
+                                                          padding: EdgeInsets.all(8),
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Expanded(
+                                                                child: Container(
+                                                                  margin: EdgeInsets.only(right: 8),
+                                                                  child: Text(
+                                                                      "Identificación afectiva con los sentimientos del otro y disposición para apoyar y comprender sus circunstancias. Se demuestra por ejemplo cuando los docentes identifican, valoran y destacan continuamente actos espontáneos de los estudiantes en beneficio de otros, dirigidos a procurar o restaurar su bienestar en situaciones que lo requieran."
+                                                                      ,style: TextStyle(
+                                                                    fontSize: 12.0,
+                                                                    color: AppTheme.darkerText,
+                                                                    height: 1.5,
+                                                                    fontWeight: FontWeight.w400,
+                                                                  ),
+                                                                      textAlign: TextAlign.justify
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  children: [
+                                                                    Container(
+                                                                      child: Text("01. Disposición a escuchar, comprender y ayudar afectivamente problemas de otras personas",
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(left: 20),
+                                                                      child: Text("a. Valores",
+                                                                        textAlign: TextAlign.justify,
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(left: 30),
+                                                                      child: Text("Empatía",
+                                                                        style: TextStyle(
+                                                                          fontSize: 12.0,
+                                                                          color: AppTheme.darkerText,
+                                                                          height: 1.5,
+                                                                          fontWeight: FontWeight.w400,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: AppTheme.white,
+                                                  borderRadius: BorderRadius.all(Radius.circular(6))
+                                              ),
+                                              margin: EdgeInsets.only(top: 16),
+                                              padding: EdgeInsets.all(16),
+                                              child: Container(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("Campos Temáticos",
+                                                      textAlign: TextAlign.start,
+                                                      maxLines: 3,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          color: AppTheme.darkText,
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w700
+                                                      ),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(top: 16)),
+                                                    Row(
+                                                        children: [
+                                                          Icon(Icons.add),
+                                                          Padding(padding: EdgeInsets.all(4)),
+                                                          Expanded(
+                                                              child: Text(
+                                                                  "1. ECOSISTEMAS: INTERACCIONES, ENERGÍA, Y DINÁMICA",
+                                                                  style: TextStyle(
+                                                                    fontSize: 12.0,
+                                                                    color: AppTheme.darkerText,
+                                                                    height: 1.5,
+                                                                    fontWeight: FontWeight.w400,
+                                                                  )
+                                                              ),
+                                                          )
+                                                        ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Icon(Icons.add),
+                                                        Padding(padding: EdgeInsets.all(4)),
+                                                        Expanded(
+                                                          child: Text(
+                                                              "1. ECOSISTEMAS: INTERACCIONES, ENERGÍA, Y DINÁMICA",
+                                                              style: TextStyle(
+                                                                fontSize: 12.0,
+                                                                color: AppTheme.darkerText,
+                                                                height: 1.5,
+                                                                fontWeight: FontWeight.w400,
+                                                              )
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Icon(Icons.add),
+                                                        Padding(padding: EdgeInsets.all(4)),
+                                                        Expanded(
+                                                          child: Text(
+                                                              "1. ECOSISTEMAS: INTERACCIONES, ENERGÍA, Y DINÁMICA",
+                                                              style: TextStyle(
+                                                                fontSize: 12.0,
+                                                                color: AppTheme.darkerText,
+                                                                height: 1.5,
+                                                                fontWeight: FontWeight.w400,
+                                                              )
+                                                          ),
+                                                        )
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(padding: EdgeInsets.only(bottom: 200),)
+                                          ])
                                       ),
                                     ],
                                   ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 16, left: 8, right: 8),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
+                                  CustomScrollView(
+                                    slivers: [
 
-                                      RichText(
-                                        text: new TextSpan(
-                                          // Note: Styles for TextSpans must be explicitly defined.
-                                          // Child text spans will inherit styles from parent
-                                          style: new TextStyle(
-                                              fontSize: 14.0,
-                                              color: AppTheme.darkText,
-                                              height: 1.5
-                                          ),
-                                          children: <TextSpan>[
-                                            TextSpan(text: 'Propósito de la Sesión: ', style: new TextStyle(fontWeight: FontWeight.bold)),
-                                            TextSpan(text: controller.sesionUi.proposito??""),
-                                            TextSpan(
-                                              text: true ? " Toca aquí para conocer más." : " show less",
-                                              style: new TextStyle(color: Colors.blue),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(top: 32, left: 8, right: 8),
-                                  child: Text("ACTIVIDADES", style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      fontFamily: AppTheme.fontTTNorms
-                                  ),),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                                  child: Text("- Fecha a ejecutar: ${controller.sesionUi.fechaEjecucion}" + (controller.sesionUi.fechaEjecucionFin!=null? "al " + (controller.sesionUi.fechaEjecucionFin??""):""), style: TextStyle(
-                                    fontSize: 12,
-                                  ),),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(top: 8, left: 8, right: 8),
-                                  child: Text("- Tiempo: ${controller.sesionUi.horas}.", style: TextStyle(
-                                      fontSize: 12,
-                                  ),),
-                                ),
-                              ])
-                          ),
-                          SliverList(
-                              delegate: SliverChildListDelegate([
-                                GestureDetector(
-                                  onTap: () =>  {
-                                    showActivdadDocente(context)
-                                  },
-                                  child: Container(
-                                    height: 90,
-                                    margin: EdgeInsets.only(top: 16,left: 16, right: 0, bottom: 20),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                          width: 2
-                                      ),
-                                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                                      color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                                          decoration: BoxDecoration(
-                                              color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                              borderRadius: BorderRadius.all(Radius.circular(16))
-                                          ),
-                                          width: 65,
-                                          height: 65,
-                                          child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                                        ),
-                                        Padding(padding: EdgeInsets.only(left: 8)),
-                                        Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("CONECTA TU MENTE",
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: 14,
-                                                    letterSpacing: 0.8,
-                                                    color: AppTheme.darkerText,
-                                                )),
-                                                Padding(padding: EdgeInsets.all(4),),
-                                                Text("Inicio",
-                                                  style: TextStyle(
-                                                  fontSize: 12,
-                                                  letterSpacing: 0.8,
-                                                  color: AppTheme.darkerText,
-                                                ))
-                                              ],
-                                            )
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 16, right: 16),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(25)),
-                                                color: Colors.white,
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: true
-                                                  ? Icon(
-                                                Icons.check_outlined,
-                                                size: 25.0,
-                                                color: HexColor(controller.cursosUi.color1),
-                                              )
-                                                  : Container(width: 25, height: 25,),
-                                            ),
-                                          ),
-                                        ),
+                                      SliverList(
+                                          delegate: SliverChildListDelegate([
+                                            GestureDetector(
+                                              onTap: () =>  {
+                                                showActivdadDocente(context)
+                                              },
+                                              child: Container(
+                                                height: 90,
+                                                margin: EdgeInsets.only(top: 16,left: 16, right: 0, bottom: 20),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                        width: 2
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                                          borderRadius: BorderRadius.all(Radius.circular(16))
+                                                      ),
+                                                      width: 65,
+                                                      height: 65,
+                                                      child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(left: 8)),
+                                                    Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("CONECTA TU MENTE",
+                                                                maxLines: 2,
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: TextStyle(
+                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                  fontWeight: FontWeight.w800,
+                                                                  fontSize: 14,
+                                                                  letterSpacing: 0.8,
+                                                                  color: AppTheme.darkerText,
+                                                                )),
+                                                            Padding(padding: EdgeInsets.all(4),),
+                                                            Text("Inicio",
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  letterSpacing: 0.8,
+                                                                  color: AppTheme.darkerText,
+                                                                ))
+                                                          ],
+                                                        )
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(left: 16, right: 16),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: true
+                                                              ? Icon(
+                                                            Icons.check_outlined,
+                                                            size: 25.0,
+                                                            color: HexColor(controller.cursosUi.color1),
+                                                          )
+                                                              : Container(width: 25, height: 25,),
+                                                        ),
+                                                      ),
+                                                    ),
 
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () =>  {
-                                    showActivdadDocente(context)
-                                  },
-                                  child: Container(
-                                    height: 90,
-                                    margin: EdgeInsets.only(top: 4,left: 16, right: 0, bottom: 20),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                            width: 2
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                                          decoration: BoxDecoration(
-                                              color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                              borderRadius: BorderRadius.all(Radius.circular(16))
-                                          ),
-                                          width: 65,
-                                          height: 65,
-                                          child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                                        ),
-                                        Padding(padding: EdgeInsets.only(left: 8)),
-                                        Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("EXPLORANDO Y EXPLICANDO",
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () =>  {
+                                                showActivdadDocente(context)
+                                              },
+                                              child: Container(
+                                                height: 90,
+                                                margin: EdgeInsets.only(top: 4,left: 16, right: 0, bottom: 20),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                        width: 2
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                                          borderRadius: BorderRadius.all(Radius.circular(16))
+                                                      ),
+                                                      width: 65,
+                                                      height: 65,
+                                                      child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(left: 8)),
+                                                    Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("EXPLORANDO Y EXPLICANDO",
+                                                              maxLines: 2,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w800,
+                                                                fontSize: 14,
+                                                                letterSpacing: 0.8,
+                                                                color: AppTheme.darkerText,
+                                                              ),),
+                                                            Padding(padding: EdgeInsets.all(4),),
+                                                            Text("Desarrollo",
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  letterSpacing: 0.8,
+                                                                  color: AppTheme.darkerText,
+                                                                ))
+                                                          ],
+                                                        )
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(left: 16, right: 16),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: true
+                                                              ? Icon(
+                                                            Icons.check_outlined,
+                                                            size: 25.0,
+                                                            color: HexColor(controller.cursosUi.color1),
+                                                          )
+                                                              : Container(width: 25, height: 25,),
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () =>  {
+                                                showActivdadDocente(context)
+                                              },
+                                              child: Container(
+                                                height: 90,
+                                                margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
+                                                        width: 2
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    color: HexColor(controller.cursosUi.color2).withOpacity(0.5)
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                                          borderRadius: BorderRadius.all(Radius.circular(16))
+                                                      ),
+                                                      width: 65,
+                                                      height: 65,
+                                                      child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(left: 8)),
+                                                    Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("APLICA/REFLEXIONA",
+                                                              maxLines: 2,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w800,
+                                                                fontSize: 14,
+                                                                letterSpacing: 0.8,
+                                                                color: AppTheme.darkerText,
+                                                              ),),
+                                                            Padding(padding: EdgeInsets.all(4),),
+                                                            Text("Desarrollo",
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  letterSpacing: 0.8,
+                                                                  color: AppTheme.darkerText,
+                                                                ))
+                                                          ],
+                                                        )
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.all(1),
+                                                      padding: EdgeInsets.only(left: 16, right: 16),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                          border: Border.all(
+                                                              color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
+                                                              width: 2
+                                                          ),
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: true
+                                                              ? Icon(
+                                                            Icons.check_outlined,
+                                                            size: 25.0,
+                                                            color: HexColor(controller.cursosUi.color1),
+                                                          )
+                                                              : Icon(
+                                                            Icons.check_box_outline_blank,
+                                                            size: 20.0,
+                                                            color: Colors.blue,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () =>  {
+                                                showActivdadDocente(context)
+                                              },
+                                              child: Container(
+                                                height: 90,
+                                                margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                        width: 2
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                                          borderRadius: BorderRadius.all(Radius.circular(16))
+                                                      ),
+                                                      width: 65,
+                                                      height: 65,
+                                                      child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(left: 8)),
+                                                    Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("INSTRUMENTO DE EVALUACIÓN",
+                                                              maxLines: 2,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w800,
+                                                                fontSize: 14,
+                                                                letterSpacing: 0.8,
+                                                                color: AppTheme.darkerText,
+                                                              ),),
+                                                            Padding(padding: EdgeInsets.all(4),),
+                                                            Text("Desarrollo",
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  letterSpacing: 0.8,
+                                                                  color: AppTheme.darkerText,
+                                                                ))
+                                                          ],
+                                                        )
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(left: 16, right: 16),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: false
+                                                              ? Icon(
+                                                            Icons.check_outlined,
+                                                            size: 25.0,
+                                                            color: HexColor(controller.cursosUi.color1),
+                                                          )
+                                                              : Container(width: 25, height: 25,),
+                                                        ),
+                                                      ),
+
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () =>  {
+                                                showActivdadDocente(context)
+                                              },
+                                              child: Container(
+                                                height: 90,
+                                                margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                        width: 2
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                    color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                                          borderRadius: BorderRadius.all(Radius.circular(16))
+                                                      ),
+                                                      width: 65,
+                                                      height: 65,
+                                                      child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(left: 8)),
+                                                    Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("EVALUACIÓN",
+                                                              maxLines: 2,
+                                                              overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w800,
+                                                                fontSize: 14,
+                                                                letterSpacing: 0.8,
+                                                                color: AppTheme.darkerText,
+                                                              ),),
+                                                            Padding(padding: EdgeInsets.all(4),),
+                                                            Text("Cierre",
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  letterSpacing: 0.8,
+                                                                  color: AppTheme.darkerText,
+                                                                ))
+                                                          ],
+                                                        )
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(left: 16, right: 16),
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                          color: Colors.white,
+                                                        ),
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: false
+                                                              ? Icon(
+                                                            Icons.check_outlined,
+                                                            size: 25.0,
+                                                            color: HexColor(controller.cursosUi.color1),
+                                                          )
+                                                              : Container(width: 25, height: 25,),
+                                                        ),
+                                                      ),
+
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ])
+                                      ),
+                                      SliverList(
+                                          delegate: SliverChildListDelegate([
+                                            Container(
+                                              padding: EdgeInsets.only(top: 32, left: 8, right: 8),
+                                              child: Text("TRABAJOS", style: TextStyle(
+                                                  fontSize: 16,
                                                   fontWeight: FontWeight.w800,
-                                                  fontSize: 14,
-                                                  letterSpacing: 0.8,
-                                                  color: AppTheme.darkerText,
-                                                ),),
-                                                Padding(padding: EdgeInsets.all(4),),
-                                                Text("Desarrollo",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      letterSpacing: 0.8,
-                                                      color: AppTheme.darkerText,
-                                                    ))
-                                              ],
-                                            )
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 16, right: 16),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(25)),
-                                              color: Colors.white,
+                                                  fontFamily: AppTheme.fontTTNorms
+                                              ),),
                                             ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: true
-                                                  ? Icon(
-                                                Icons.check_outlined,
-                                                size: 25.0,
-                                                color: HexColor(controller.cursosUi.color1),
-                                              )
-                                                  : Container(width: 25, height: 25,),
-                                            ),
+                                          ])
+                                      ),
+                                      SliverPadding(
+                                        padding: EdgeInsets.only(left: 8, right: 0, top: 16),
+                                        sliver: SliverGrid(
+                                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                            //crossAxisCount: countRow,
+                                            maxCrossAxisExtent: 160.0,
+                                            mainAxisExtent: 160.0,
+                                            mainAxisSpacing: 24.0,
+                                            crossAxisSpacing: 24.0,
+                                            childAspectRatio: 1,
+                                          ),
+                                          delegate: SliverChildBuilderDelegate(
+                                                  (BuildContext context, int index){
+                                                if(index == 0){
+                                                  return Container(
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: HexColor(controller.cursosUi.color2),
+                                                      borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                    ),
+                                                    child: FDottedLine(
+                                                      color: AppTheme.white,
+                                                      strokeWidth: 3.0,
+                                                      dottedLength: 10.0,
+                                                      space: 3.0,
+                                                      corner: FDottedLineCorner.all(14.0),
+
+                                                      /// add widget
+                                                      child: Container(
+                                                        color: HexColor(controller.cursosUi.color2),
+                                                        alignment: Alignment.center,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Icon(Ionicons.add, color: AppTheme.white, size: 45,),
+                                                            Text("Crear Tarea",
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight: FontWeight.w800,
+                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                  color: AppTheme.white
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }else{
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                        color: HexColor(controller.cursosUi.color3??"#FEFAE2").withOpacity(0.1),
+                                                        borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 12, right: 16, top: 16, bottom: 0),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(Icons.assignment, color: HexColor(controller.cursosUi.color1), size: 18,),
+                                                              Padding(padding: EdgeInsets.all(2)),
+                                                              Text("Tarea ${index+1}",
+                                                                style: TextStyle(
+                                                                    color: HexColor(controller.cursosUi.color1),
+                                                                    fontSize: 12),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+                                                          child: Text("APRENDEMOS ADIVINANZAS", style: TextStyle(color: AppTheme.black, fontSize: 12),),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
+                                                          child: Text("Pare el Dom 11 de Abr. 09:11 p. m.", style: TextStyle(fontSize: 10),),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 8),
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(child: Text("Sin Publicar", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),),
+                                                              Text("0/15", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }
+
+                                              },
+                                              childCount: 2
                                           ),
                                         ),
-
-                                      ],
-                                    ),
+                                      ),
+                                      SliverList(
+                                          delegate: SliverChildListDelegate(
+                                            [
+                                              Padding(padding: EdgeInsets.only( top: 150)),
+                                            ],
+                                          )
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () =>  {
-                                    showActivdadDocente(context)
-                                  },
-                                  child: Container(
-                                    height: 90,
-                                    margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
-                                            width: 2
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        color: HexColor(controller.cursosUi.color2).withOpacity(0.5)
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                                          decoration: BoxDecoration(
-                                              color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                              borderRadius: BorderRadius.all(Radius.circular(16))
+                                  CustomScrollView(
+                                    slivers: [
+                                      SliverPadding(
+                                        padding: EdgeInsets.only(left: 8, right: 0, top: 16),
+                                        sliver: SliverGrid(
+                                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                            //crossAxisCount: countRow,
+                                            maxCrossAxisExtent: 160.0,
+                                            mainAxisExtent: 160.0,
+                                            mainAxisSpacing: 24.0,
+                                            crossAxisSpacing: 24.0,
+                                            childAspectRatio: 1,
                                           ),
-                                          width: 65,
-                                          height: 65,
-                                          child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                                        ),
-                                        Padding(padding: EdgeInsets.only(left: 8)),
-                                        Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("APLICA/REFLEXIONA",
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: 14,
-                                                    letterSpacing: 0.8,
-                                                    color: AppTheme.darkerText,
-                                                  ),),
-                                                Padding(padding: EdgeInsets.all(4),),
-                                                Text("Desarrollo",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      letterSpacing: 0.8,
-                                                      color: AppTheme.darkerText,
-                                                    ))
-                                              ],
-                                            )
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.all(1),
-                                          padding: EdgeInsets.only(left: 16, right: 16),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(25)),
-                                              border: Border.all(
-                                                  color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
-                                                  width: 2
-                                              ),
-                                              color: Colors.white,
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: true
-                                                  ? Icon(
-                                                Icons.check_outlined,
-                                                size: 25.0,
-                                                color: HexColor(controller.cursosUi.color1),
-                                              )
-                                                  : Icon(
-                                                Icons.check_box_outline_blank,
-                                                size: 20.0,
-                                                color: Colors.blue,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                          delegate: SliverChildBuilderDelegate(
+                                                  (BuildContext context, int index){
+                                                if(index == 0){
+                                                  return Container(
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: HexColor(controller.cursosUi.color2),
+                                                      borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                    ),
+                                                    child: FDottedLine(
+                                                      color: AppTheme.white,
+                                                      strokeWidth: 3.0,
+                                                      dottedLength: 10.0,
+                                                      space: 3.0,
+                                                      corner: FDottedLineCorner.all(14.0),
 
-                                      ],
-                                    ),
+                                                      /// add widget
+                                                      child: Container(
+                                                        color: HexColor(controller.cursosUi.color2),
+                                                        alignment: Alignment.center,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Icon(Ionicons.add, color: AppTheme.white, size: 45,),
+                                                            Text("Crear Tarea",
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight: FontWeight.w800,
+                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                  color: AppTheme.white
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }else{
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                        color: HexColor(controller.cursosUi.color3??"#FEFAE2").withOpacity(0.1),
+                                                        borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 12, right: 16, top: 16, bottom: 0),
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(Icons.assignment, color: HexColor(controller.cursosUi.color1), size: 18,),
+                                                              Padding(padding: EdgeInsets.all(2)),
+                                                              Text("Tarea ${index+1}",
+                                                                style: TextStyle(
+                                                                    color: HexColor(controller.cursosUi.color1),
+                                                                    fontSize: 12),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
+                                                          child: Text("APRENDEMOS ADIVINANZAS", style: TextStyle(color: AppTheme.black, fontSize: 12),),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
+                                                          child: Text("Pare el Dom 11 de Abr. 09:11 p. m.", style: TextStyle(fontSize: 10),),
+                                                        ),
+                                                        Padding(
+                                                          padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 8),
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(child: Text("Sin Publicar", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),),
+                                                              Text("0/15", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }
+
+                                              },
+                                              childCount: 2
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () =>  {
-                                    showActivdadDocente(context)
-                                  },
-                                  child: Container(
-                                    height: 90,
-                                    margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                            width: 2
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                                          decoration: BoxDecoration(
-                                              color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                              borderRadius: BorderRadius.all(Radius.circular(16))
-                                          ),
-                                          width: 65,
-                                          height: 65,
-                                          child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                                        ),
-                                        Padding(padding: EdgeInsets.only(left: 8)),
-                                        Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("INSTRUMENTO DE EVALUACIÓN",
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: 14,
-                                                    letterSpacing: 0.8,
-                                                    color: AppTheme.darkerText,
-                                                  ),),
-                                                Padding(padding: EdgeInsets.all(4),),
-                                                Text("Desarrollo",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      letterSpacing: 0.8,
-                                                      color: AppTheme.darkerText,
-                                                    ))
-                                              ],
-                                            )
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 16, right: 16),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(25)),
-                                              color: Colors.white,
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: false
-                                                  ? Icon(
-                                                Icons.check_outlined,
-                                                size: 25.0,
-                                                color: HexColor(controller.cursosUi.color1),
-                                              )
-                                                  : Container(width: 25, height: 25,),
-                                            ),
-                                          ),
-
-                                        ),
-
-                                      ],
-                                    ),
+                                  Container(
+                                    child: Text("User Body"),
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () =>  {
-                                    showActivdadDocente(context)
-                                  },
-                                  child: Container(
-                                    height: 90,
-                                    margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                            width: 2
-                                        ),
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                                          decoration: BoxDecoration(
-                                              color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                              borderRadius: BorderRadius.all(Radius.circular(16))
-                                          ),
-                                          width: 65,
-                                          height: 65,
-                                          child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                                        ),
-                                        Padding(padding: EdgeInsets.only(left: 8)),
-                                        Expanded(
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("EVALUACIÓN",
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: 14,
-                                                    letterSpacing: 0.8,
-                                                    color: AppTheme.darkerText,
-                                                  ),),
-                                                Padding(padding: EdgeInsets.all(4),),
-                                                Text("Cierre",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      letterSpacing: 0.8,
-                                                      color: AppTheme.darkerText,
-                                                    ))
-                                              ],
-                                            )
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 16, right: 16),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(25)),
-                                              color: Colors.white,
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(10.0),
-                                              child: false
-                                                  ? Icon(
-                                                Icons.check_outlined,
-                                                size: 25.0,
-                                                color: HexColor(controller.cursosUi.color1),
-                                              )
-                                                  : Container(width: 25, height: 25,),
-                                            ),
-                                          ),
-
-                                        ),
-
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ])
-                          ),
-                          SliverList(
-                              delegate: SliverChildListDelegate([
-                                Container(
-                                  padding: EdgeInsets.only(top: 32, left: 8, right: 8),
-                                  child: Text("TRABAJOS", style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                      fontFamily: AppTheme.fontTTNorms
-                                  ),),
-                                ),
-                              ])
-                          ),
-                          SliverPadding(
-                            padding: EdgeInsets.only(left: 8, right: 0, top: 16),
-                            sliver: SliverGrid(
-                              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                                //crossAxisCount: countRow,
-                                maxCrossAxisExtent: 160.0,
-                                mainAxisExtent: 160.0,
-                                mainAxisSpacing: 24.0,
-                                crossAxisSpacing: 24.0,
-                                childAspectRatio: 1,
+                                ]),
                               ),
-                              delegate: SliverChildBuilderDelegate(
-                                      (BuildContext context, int index){
-                                    if(index == 0){
-                                      return Container(
-                                        padding: EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: HexColor(controller.cursosUi.color2),
-                                          borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                                        ),
-                                        child: FDottedLine(
-                                          color: AppTheme.white,
-                                          strokeWidth: 3.0,
-                                          dottedLength: 10.0,
-                                          space: 3.0,
-                                          corner: FDottedLineCorner.all(14.0),
-
-                                          /// add widget
-                                          child: Container(
-                                            color: HexColor(controller.cursosUi.color2),
-                                            alignment: Alignment.center,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Icon(Ionicons.add, color: AppTheme.white, size: 45,),
-                                                Text("Crear Tarea",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w800,
-                                                      fontFamily: AppTheme.fontTTNorms,
-                                                      color: AppTheme.white
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }else{
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                            color: HexColor(controller.cursosUi.color3??"#FEFAE2").withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 12, right: 16, top: 16, bottom: 0),
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.assignment, color: HexColor(controller.cursosUi.color1), size: 18,),
-                                                  Padding(padding: EdgeInsets.all(2)),
-                                                  Text("Tarea ${index+1}",
-                                                    style: TextStyle(
-                                                        color: HexColor(controller.cursosUi.color1),
-                                                        fontSize: 12),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-                                              child: Text("APRENDEMOS ADIVINANZAS", style: TextStyle(color: AppTheme.black, fontSize: 12),),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
-                                              child: Text("Pare el Dom 11 de Abr. 09:11 p. m.", style: TextStyle(fontSize: 10),),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 8),
-                                              child: Row(
-                                                children: [
-                                                  Expanded(child: Text("Sin Publicar", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),),
-                                                  Text("0/15", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
-
-                                  },
-                                  childCount: 2
-                              ),
-                            ),
-                          ),
-                          SliverList(
-                              delegate: SliverChildListDelegate(
-                                [
-                                  Padding(padding: EdgeInsets.only( top: 150)),
-                                ],
-                              )
-                          ),
-                        ],
+                            )
+                          ],
+                        ),
                       )
                   );
                 }),

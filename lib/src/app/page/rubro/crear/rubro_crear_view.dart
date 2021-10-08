@@ -334,7 +334,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                           color: Colors.black,
                                         ),
                                         decoration: InputDecoration(
-                                          labelText: "Título de la rubica *",
+                                          labelText: "Título de la rúbrica *",
                                           labelStyle: TextStyle(
                                               color:  AppTheme.colorPrimary,
                                               fontFamily: AppTheme.fontTTNormsMedium

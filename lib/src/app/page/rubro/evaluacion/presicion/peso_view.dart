@@ -70,7 +70,7 @@ class _PesoView extends State<PesoView> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                    children: [
-                     Text("Peso en la calificación".toUpperCase(),
+                     Text("Peso del criterio    0%".toUpperCase(),
                          maxLines: 2,
                          overflow: TextOverflow.ellipsis,
                          style: TextStyle(
@@ -90,10 +90,10 @@ class _PesoView extends State<PesoView> {
           Row(
             children: [
               Padding(padding: EdgeInsets.all(16)),
-              Text("Prioridad del criterio".toUpperCase(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppTheme.greyDarken1),),
+              Text("Nivel complejidad del criterio".toUpperCase(), style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppTheme.greyDarken1),),
             ],
           ),
-          Padding(padding: EdgeInsets.all(8)),
+          Padding(padding: EdgeInsets.all(4)),
           CupertinoSlidingSegmentedControl(
             //padding: EdgeInsets.only(left: 16, top: 16),
             groupValue: widget.selectedValue,
@@ -124,7 +124,7 @@ class _PesoView extends State<PesoView> {
               ),
               RubricaEvaluacionUi.PESO_NORMAL:  Container(
                 margin: EdgeInsets.all(8),
-                child: Text("NORMAL", style: TextStyle(color:widget.selectedValue==RubricaEvaluacionUi.PESO_NORMAL?AppTheme.white:null)),
+                child: Text("ESTANDAR", style: TextStyle(color:widget.selectedValue==RubricaEvaluacionUi.PESO_NORMAL?AppTheme.white:null)),
 
                 //color: _selectedValue==RubricaEvaluacionUi.PESO_NORMAL? Colors.blue[100] : Colors.white,
               ),
@@ -146,7 +146,7 @@ class _PesoView extends State<PesoView> {
           Row(
             children: [
               Padding(padding: EdgeInsets.all(8)),
-              Expanded(child: Text("Seleccione que tipo de prioridad tendrá el criterio. El peso en la calificación depende del tipo de prioridad.", style: TextStyle(fontSize: 12, color: AppTheme.colorAccent, fontStyle: FontStyle.italic),),)
+              Expanded(child: Text("Seleccione que tipo de prioridad tendrá el criterio. El peso_criterio en la calificación depende del tipo de prioridad.", style: TextStyle(fontSize: 12, color: AppTheme.colorAccent, fontStyle: FontStyle.italic),),)
             ],
           ),
           Padding(padding: EdgeInsets.all(16)),

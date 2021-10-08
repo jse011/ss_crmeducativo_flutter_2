@@ -1,10 +1,11 @@
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class DataConvert{
   static Map<String,dynamic> converRubroEvaluacionProceso(RubroEvaluacionProcesoData data){
 
-    return removeNull(RubroEvaluacionProcesoSerial(
+    return DomainTools.removeNull(RubroEvaluacionProcesoSerial(
         key: data.rubroEvalProcesoId,
         usuarioCreacionId: data.usuarioCreacionId??0,
         fechaCreacion: data.fechaCreacion?.millisecondsSinceEpoch,
@@ -62,7 +63,7 @@ class DataConvert{
 
   static Map<String,dynamic> converRubroEvalRNPFormula(RubroEvalRNPFormulaData data){
 
-    return  removeNull(RubroEvalRNPFormulaSerial(
+    return  DomainTools.removeNull(RubroEvalRNPFormulaSerial(
         usuarioCreacionId: data.usuarioCreacionId,
         fechaCreacion: data.fechaCreacion?.millisecondsSinceEpoch,
         usuarioAccionId: data.usuarioAccionId,
@@ -84,7 +85,7 @@ class DataConvert{
 
   static Map<String,dynamic> converEvaluacionProceso(EvaluacionProcesoData data){
 
-    return  removeNull(EvaluacionProcesoSerial(
+    return  DomainTools.removeNull(EvaluacionProcesoSerial(
       usuarioCreacionId: data.usuarioCreacionId,
       fechaCreacion: data.fechaCreacion?.millisecondsSinceEpoch,
       usuarioAccionId: data.usuarioAccionId,
@@ -119,7 +120,7 @@ class DataConvert{
   }
 
   static Map<String,dynamic> converRubroCampotematico(RubroCampotematicoData data){
-    return  removeNull(RubroEvaluacionProcesoCampotematicoSerial(
+    return  DomainTools.removeNull(RubroEvaluacionProcesoCampotematicoSerial(
       usuarioCreacionId: data.usuarioCreacionId,
       fechaCreacion: data.fechaCreacion?.millisecondsSinceEpoch,
       usuarioAccionId: data.usuarioAccionId,
@@ -138,7 +139,7 @@ class DataConvert{
   }
 
   static Map<String,dynamic> converRubroComentario(RubroComentarioData data){
-    return  removeNull(RubroEvaluacionProcesoComentarioSerial(
+    return  DomainTools.removeNull(RubroEvaluacionProcesoComentarioSerial(
       usuarioCreacionId: data.usuarioCreacionId,
       fechaCreacion: data.fechaCreacion?.millisecondsSinceEpoch,
       usuarioAccionId: data.usuarioAccionId,
@@ -161,7 +162,7 @@ class DataConvert{
 
 
   static Map<String,dynamic> converArchivoRubro(ArchivoRubroData data){
-    return  removeNull(ArchivosRubroProcesoSerial(
+    return  DomainTools.removeNull(ArchivosRubroProcesoSerial(
       usuarioCreacionId: data.usuarioCreacionId,
       fechaCreacion:data.fechaCreacion?.millisecondsSinceEpoch,
       usuarioAccionId: data.usuarioAccionId,
@@ -182,9 +183,6 @@ class DataConvert{
     return items;
   }
 
-  static Map<String, dynamic> removeNull(Map<String, dynamic> map) {
-    map.removeWhere((key, value) => key == null || value == null);
-   return map;
-  }
+
 
 }

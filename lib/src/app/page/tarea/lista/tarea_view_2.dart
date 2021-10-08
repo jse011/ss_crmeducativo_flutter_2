@@ -175,7 +175,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                       Padding(
                                         padding: EdgeInsets.only(left: 12, top: 8),
                                         child: Text(
-                                          'Trabajo',
+                                          'Tareas',
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -238,7 +238,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                 ),
                 child: Stack(
                   children: [
-                    false?
+                    controller.calendarioPeriodoUI==null||(controller.calendarioPeriodoUI??0)==0?
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -247,7 +247,20 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                         ),
                         Padding(padding: EdgeInsets.all(4)),
                         Center(
-                          child: Text("Sin unidades", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                          child: Text("Seleciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                        )
+                      ],
+                    ):
+                    controller.unidadUiList.isEmpty?
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                        ),
+                        Padding(padding: EdgeInsets.all(4)),
+                        Center(
+                          child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                         )
                       ],
                     ):Container(),
@@ -322,7 +335,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                               if(o is TareaUi){
                                                 return InkWell(
                                                   onTap: () async{
-                                                    bool result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI);
+                                                    bool? result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI);
                                                     //controller.onClickTarea(o);
                                                   },
                                                   child: Container(
@@ -433,35 +446,43 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                                   ),
                                                 );
                                               }else{
-                                                return Container(
-                                                  padding: EdgeInsets.all(8),
-                                                  decoration: BoxDecoration(
-                                                    color: HexColor(controller.cursosUi.color2),
-                                                    borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                                                  ),
-                                                  child: FDottedLine(
-                                                    color: AppTheme.white,
-                                                    strokeWidth: 3.0,
-                                                    dottedLength: 10.0,
-                                                    space: 3.0,
-                                                    corner: FDottedLineCorner.all(14.0),
+                                                return InkWell(
+                                                  onTap: () async{
+                                                    dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi.unidadAprendizajeId, null);
+                                                    if(result is int) controller.refrescarListTarea(unidadUi);
+                                                  },
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: HexColor(controller.cursosUi.color2),
+                                                      borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                    ),
+                                                    child: FDottedLine(
+                                                      color: AppTheme.white,
+                                                      strokeWidth: 3.0,
+                                                      dottedLength: 10.0,
+                                                      space: 3.0,
+                                                      corner: FDottedLineCorner.all(14.0),
 
-                                                    /// add widget
-                                                    child: Container(
-                                                      alignment: Alignment.center,
-                                                      child:  Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        children: [
-                                                          Icon(Ionicons.add, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthTarea(context, 38),),
-                                                          Text("Crear tarea",
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(
-                                                                fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
-                                                                fontWeight: FontWeight.w500,
-                                                                color: AppTheme.white
-                                                            ),
-                                                          )
-                                                        ],
+                                                      /// add widget
+                                                      child: Container(
+                                                        alignment: Alignment.center,
+                                                        child:  Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Icon(Ionicons.add, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthTarea(context, 40),),
+                                                            Padding(padding: EdgeInsets.only(top: 4)),
+                                                            Text("Crear tarea",
+                                                              textAlign: TextAlign.center,
+                                                              style: TextStyle(
+                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
+                                                                  fontWeight: FontWeight.w700,
+                                                                  letterSpacing: 0.5,
+                                                                  color: AppTheme.white
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),

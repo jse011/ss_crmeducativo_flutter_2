@@ -997,6 +997,9 @@ class MoorRubroRepository extends RubroRepository{
 
       for(var row in await queryRubroDetalle.get()){
         RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
+        print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.rubroEvalProcesoId}");
+        print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.titulo}");
+        print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.peso}");
         rubroEvaluacionDataList.add(rubroEvaluacionProcesoData);
         rubroEvaluacionIdEvaluacionList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
         rubroFormulaDataList.add(row.readTable(SQL.rubroEvalRNPFormula));
@@ -1202,7 +1205,7 @@ class MoorRubroRepository extends RubroRepository{
   @override
   Future<void> updatePesoRubro(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId) async {
     AppDataBase SQL = AppDataBase();
-
+    print("updatePesoRubro: ${rubricaEvaluacionUi?.rubricaIdRubroCabecera}");
     await (SQL.update(SQL.rubroEvaluacionProceso)
       ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaIdRubroCabecera)))
         .write(
@@ -1211,7 +1214,7 @@ class MoorRubroRepository extends RubroRepository{
           fechaAccion: Value(DateTime.now()),
           syncFlag: Value(EstadoSync.FLAG_UPDATED),
         ));
-
+    print("updatePesoRubro: ${rubricaEvaluacionUi?.peso}");
     await (SQL.update(SQL.rubroEvaluacionProceso)
       ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaId)))
         .write(

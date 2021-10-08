@@ -28,15 +28,13 @@ class EvaluacionCapacidadController extends Controller{
   CursosUi cursosUi;
   EvaluacionCapacidadPresenter presenter;
   TipoNotaUi? _tipoNotaUi = null;
-  bool _precision = true;
+  bool _precision = false;
   bool get precision => _precision;
   TipoNotaUi? get tipoNotaUi => _tipoNotaUi;
   List<dynamic> _tableTipoNotaColumns = [];
   List<dynamic> get tableTipoNotaColumns => _tableTipoNotaColumns;
   List<List<dynamic>> _tableTipoNotaCells = [];
   List<List<dynamic>> get tableTipoNotaCells => _tableTipoNotaCells;
-  List<double> _tableTipoNotacolumnWidths = [];
-  List<double> get tableTipoNotacolumnWidths => _tableTipoNotacolumnWidths;
   List<RubricaEvaluacionUi> _rubricaEvaluacionList = [];
   List<RubricaEvaluacionUi> get rubricaEvaluacionList => _rubricaEvaluacionList;
   bool _showMsgAlumnoNoVigente = false;
@@ -45,7 +43,7 @@ class EvaluacionCapacidadController extends Controller{
   bool get showDialogClearEvaluacion => _showDialogClearEvaluacion;
   bool _showDialog = false;
   bool get showDialog => _showDialog;
-  Map<String?, int> rubroModificadosMap = Map();//Se guarda que rubro se modifico ademas si el contenido es 0 se modifico el peso y si es 1 se modifoco la evaluacion
+  Map<String?, int> rubroModificadosMap = Map();//Se guarda que rubro se modifico ademas si el contenido es 0 se modifico el peso_criterio y si es 1 se modifoco la evaluacion
 
   EvaluacionCapacidadController(this.evaluacionCapacidadUi, this.cursosUi, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
       presenter = EvaluacionCapacidadPresenter(configuracionRepo, rubroRepo, httpDatosRepo);
@@ -58,6 +56,9 @@ class EvaluacionCapacidadController extends Controller{
 
     presenter.getTipoNotaResultadoOnNext = (TipoNotaUi tipoNotaUi){
       _tipoNotaUi = tipoNotaUi;
+      // static const int TN_VALOR_NUMERICO = 410, TN_SELECTOR_NUMERICO = 411, TN_SELECTOR_VALORES = 412, TN_SELECTOR_ICONOS = 409, TN_VALOR_ASISTENCIA= 474;
+      //_tipoNotaUi?.tipoId = 410;
+      //_tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
       iniciarTablaTipoNota();
       refreshUI();
     };
@@ -75,7 +76,7 @@ class EvaluacionCapacidadController extends Controller{
 
   void iniciarTablaTipoNota(){
     _tableTipoNotaColumns.clear();
-    _tableTipoNotacolumnWidths.clear();
+
     _tableTipoNotaCells.clear();
     _rubricaEvaluacionList.clear();
 
@@ -85,19 +86,13 @@ class EvaluacionCapacidadController extends Controller{
       if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
         for (ValorTipoNotaUi valorTipoNotaUi in _tipoNotaUi?.valorTipoNotaList??[]) {
           _tableTipoNotaColumns.add(valorTipoNotaUi);
-          _tableTipoNotacolumnWidths.add(50.0);
         }
-
       }else {
         _tableTipoNotaColumns.add(EvaluacionUi());//Notas de tipo Numerico
-        _tableTipoNotacolumnWidths.add(50.0);
       }
-
-      _tableTipoNotaColumns.add("peso");
-      _tableTipoNotacolumnWidths.add(80.0);
+      _tableTipoNotaColumns.add("peso_criterio");
 
       _tableTipoNotaColumns.add("total");
-      _tableTipoNotacolumnWidths.add(70.0);
 
       List<List<dynamic>> output = [];
       for (int i = 0; i < _rubricaEvaluacionList.length; i++) {
@@ -293,7 +288,7 @@ class EvaluacionCapacidadController extends Controller{
 
   validacionModificacion(RubricaEvaluacionUi? rubricaEvaluacionUi, int tipoModificacion){
     if(rubroModificadosMap.containsKey(rubricaEvaluacionUi?.rubricaId) == Modifico_Evaluacion && tipoModificacion == Modifico_Peso_Rubro){
-      // Si ya se modifico el peso a evaluacion no es nesario pasar al estado Modifico_Peso_Rubro devido a que con el estado modificacion se actaualizar tambien el peso
+      // Si ya se modifico el peso_criterio a evaluacion no es nesario pasar al estado Modifico_Peso_Rubro devido a que con el estado modificacion se actaualizar tambien el peso_criterio
       rubroModificadosMap[rubricaEvaluacionUi?.rubricaId] = Modifico_Evaluacion;
     }else{
       rubroModificadosMap[rubricaEvaluacionUi?.rubricaId] = tipoModificacion;

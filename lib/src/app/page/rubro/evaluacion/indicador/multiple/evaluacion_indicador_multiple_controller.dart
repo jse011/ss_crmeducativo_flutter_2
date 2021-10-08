@@ -260,7 +260,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }else{
         _mapColumnList[personaUi]?.add(EvaluacionUi());//Teclado numerico
       }
-      _mapColumnList[personaUi]?.add(RubricaEvaluacionFormulaPesoUi(RubricaEvaluacionUi()));//peso
+      _mapColumnList[personaUi]?.add(RubricaEvaluacionFormulaPesoUi(RubricaEvaluacionUi()));//peso_criterio
 
       for(RubricaEvaluacionUi row in _mapRowList[personaUi]??[]){
         List<dynamic> cellList = [];

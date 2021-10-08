@@ -67,6 +67,10 @@ dependencies:
   #table_sticky_headers: ^2.0.0 // se modifo esta version para funcione con un solo scroling quitando la etiqueta Expande
   #fdottedline: ^1.0.1
   sliding_sheet: ^0.5.0
+  datetime_picker_formfield: ^2.0.0
+  file_picker: ^4.1.3
+  dio: ^4.0.0
+  number_display: ^3.0.0
 
 dev_dependencies:
   flutter_test:

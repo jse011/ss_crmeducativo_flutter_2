@@ -2,6 +2,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 
 class SesionListaController extends Controller{
@@ -15,14 +16,14 @@ class SesionListaController extends Controller{
   CalendarioPeriodoUI? get calendarioPeriodoUI => _calendarioPeriodoUI;
   List<UnidadUi> _unidadUiDocenteList = [];
   List<UnidadUi> get unidadUiDocenteList => _unidadUiDocenteList;
-  List<UnidadUi> _unidadUiAlumnoList = [];
-  List<UnidadUi> get unidadAUiAlumnoList => _unidadUiAlumnoList;
+  Map<UnidadUi, List<dynamic>> _unidadItemsMap = Map();
+  Map<UnidadUi, List<dynamic>> get unidadItemsMap => _unidadItemsMap;
   bool _progressDocente = false;
   bool get progressDocente => _progressDocente;
-  bool _progressAlumno = false;
-  bool get progressAlumno => _progressAlumno;
-  Function? _progressUnidades;
-  Function? get progressUnidades => _progressUnidades;
+
+  bool _datosOffline = false;
+  bool get datosOffline => _datosOffline;
+
 
   SesionListaController(this.cursosUi, configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo):
       presenter = SesionListaPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo);
@@ -32,11 +33,10 @@ class SesionListaController extends Controller{
     presenter.getCalendarioPeridoOnComplete = (List<CalendarioPeriodoUI>? calendarioPeridoList, CalendarioPeriodoUI? calendarioPeriodoUI){
       _calendarioPeriodoList = calendarioPeridoList??[];
       _calendarioPeriodoUI = calendarioPeriodoUI;
-      _progressAlumno = true;
       _progressDocente = true;
       refreshUI();
       presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);
-      presenter.getUnidadAprendizajeAlumno(cursosUi, calendarioPeriodoUI);
+
 
     };
 
@@ -49,6 +49,24 @@ class SesionListaController extends Controller{
     presenter.getUnidadSesionDocenteOnComplete = (List<UnidadUi>? unidadUiList, bool? datosOffline, bool? errorServidor){
       _unidadUiDocenteList = unidadUiList??[];
       _progressDocente = false;
+      _datosOffline = datosOffline??false;
+
+
+      unidadItemsMap.clear();
+      for(UnidadUi unidadUi in unidadUiList??[]){
+        unidadUi.cantUnidades = unidadUiList!.length;
+        unidadItemsMap[unidadUi] = [];
+
+        //if(calendarioPeriodoUI?.habilitado==1)
+        //  unidadItemsMap[unidadUi]?.add("");
+        int  count = 0;
+        for(SesionUi sesionUi in unidadUi.sesionUiList??[]){
+          sesionUi.position = unidadUi.sesionUiList!.length - count;
+          unidadItemsMap[unidadUi]?.add(sesionUi);
+          count++;
+        }
+
+      }
       refreshUI();
 
     };
@@ -58,18 +76,6 @@ class SesionListaController extends Controller{
       refreshUI();
     };
 
-    presenter.getUnidadSesionAlumnoOnComplete = (List<UnidadUi>? unidadUiList, bool? datosOffline, bool? errorServidor){
-      _unidadUiAlumnoList = unidadUiList??[];
-      _progressAlumno = false;
-      refreshUI();
-
-    };
-    presenter.getUnidadSesionAlumnoOnError = (e){
-      _unidadUiAlumnoList = [];
-      _progressAlumno = false;
-      refreshUI();
-
-    };
   }
 
 
@@ -86,29 +92,28 @@ class SesionListaController extends Controller{
     }
     calendarioPeriodoUI?.selected = true;
 
-    _progressAlumno = true;
     _progressDocente = true;
     refreshUI();
     presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);
-    presenter.getUnidadAprendizajeAlumno(cursosUi, calendarioPeriodoUI);
+
   }
 
   void onSyncronizarUnidades() {
-    _progressAlumno = true;
     _progressDocente = true;
     refreshUI();
     presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);
-    presenter.getUnidadAprendizajeAlumno(cursosUi, calendarioPeriodoUI);
+
 
   }
 
-  @override
-  void dispose() {
-
-  }
 
   @override
   void onDisposed() {
+    presenter.dispose();
+  }
 
+  void onClickVerMas(UnidadUi unidadUi) {
+    unidadUi.toogle = !(unidadUi.toogle??false);
+    refreshUI();
   }
 }

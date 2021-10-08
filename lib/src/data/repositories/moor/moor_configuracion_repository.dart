@@ -845,7 +845,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         PersonaUi personaUi = new PersonaUi();
         personaUi.personaId = contactoData.personaId;
         personaUi.foto = contactoData.foto;
-        personaUi.nombreCompleto = '${DomainTools.capitalize(contactoData.nombres??"")} ${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
+        personaUi.nombreCompleto = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}, ${DomainTools.capitalize(contactoData.nombres??"")}';
         personaUi.nombres = DomainTools.capitalize(contactoData.nombres??"");
         personaUi.apellidos  = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
         personaUi.contratoVigente =  contactoData.contratoVigente;

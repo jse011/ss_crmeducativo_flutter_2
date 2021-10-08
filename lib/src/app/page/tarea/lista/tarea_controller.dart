@@ -19,6 +19,8 @@ class TareaController extends Controller{
 
   bool _progress = true;
   bool get progress => _progress;
+  bool _datosOffline = false;
+  bool get datosOffline => _datosOffline;
   List<UnidadUi> get unidadUiList => _unidadUiList;
   Map<UnidadUi, List<dynamic>> _unidadItemsMap = Map();
   Map<UnidadUi, List<dynamic>> get unidadItemsMap => _unidadItemsMap;
@@ -34,7 +36,12 @@ class TareaController extends Controller{
     _presenter.getCalendarioPeridoOnComplete = (List<CalendarioPeriodoUI>? calendarioPeridoList, CalendarioPeriodoUI? calendarioPeriodoUI){
       _calendarioPeriodoList = calendarioPeridoList??[];
       _calendarioPeriodoUI = calendarioPeriodoUI;
-      _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
+      if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
+        _presenter.getUnidadTarea(cursosUi, _calendarioPeriodoUI);
+      }else{
+        _progress = false;
+      }
+
       refreshUI();
 
     };
@@ -46,14 +53,27 @@ class TareaController extends Controller{
     };
 
     _presenter.getUnidadTareaOnComplete = (List<UnidadUi>? unidadUiList, bool? datosOffline, bool? errorServidor){
+      // conserver el toogle
+      _datosOffline = datosOffline??false;
+      for(UnidadUi newUnidadUi in unidadUiList??[]){
+        for(UnidadUi unidadUi in _unidadUiList){
+            if(newUnidadUi.unidadAprendizajeId == unidadUi.unidadAprendizajeId){
+              newUnidadUi.toogle = unidadUi.toogle;
+            }
+        }
+      }
+      //
+
       _unidadUiList = unidadUiList??[];
+
 
       unidadItemsMap.clear();
       for(UnidadUi unidadUi in unidadUiList??[]){
         unidadUi.cantUnidades = unidadUiList!.length;
         unidadItemsMap[unidadUi] = [];
 
-        if(calendarioPeriodoUI?.habilitado==1)unidadItemsMap[unidadUi]?.add("");
+        if(calendarioPeriodoUI?.habilitado==1)
+          unidadItemsMap[unidadUi]?.add("");
         int  count = 0;
         for(TareaUi tareaUi in unidadUi.tareaUiList??[]){
           tareaUi.position = unidadUi.tareaUiList!.length - count;
@@ -90,7 +110,12 @@ class TareaController extends Controller{
     calendarioPeriodoUI?.selected = true;
     _progress = true;
     refreshUI();
-    _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
+    if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
+      _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
+    }else{
+      _progress = false;
+    }
+
 
   }
 
@@ -101,6 +126,16 @@ class TareaController extends Controller{
   void onClickVerMas(UnidadUi unidadUi) {
     unidadUi.toogle = !(unidadUi.toogle??false);
     refreshUI();
+  }
+
+  void refrescarListTarea(UnidadUi unidadUi) {
+    _progress = true;
+    refreshUI();
+    if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
+      _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
+    }else{
+      _progress = false;
+    }
   }
 
 

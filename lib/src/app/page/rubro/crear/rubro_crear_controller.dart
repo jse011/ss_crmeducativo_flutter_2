@@ -254,7 +254,7 @@ class RubroCrearController extends Controller{
     }
 
     if(!validarPeso(_tableTipoNotaCells)){
-      _mensaje = "El peso de los inidicadores erroneos";
+      _mensaje = "El peso_criterio de los inidicadores erroneos";
       refreshUI();
       return 0;
     }
@@ -377,7 +377,7 @@ class RubroCrearController extends Controller{
   bool onSaveCriterio(CriterioUi criterioUi) {
 
     if((_tituloCriterio??"").isEmpty){
-      _mensaje = "Título vacio";
+      _mensaje = "Título vacío";
       refreshUI();
       return false;
     }
