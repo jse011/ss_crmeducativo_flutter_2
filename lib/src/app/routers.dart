@@ -113,7 +113,8 @@ class AppRouter {
         builder: (context) {
           CursosUi cursosUi = arguments['cursoUi'];
           SesionUi sesionUi = arguments['sesionUi'];
-          return SesionView(cursosUi, sesionUi);
+          CalendarioPeriodoUI calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
+          return SesionView(cursosUi, sesionUi, calendarioPeriodoUI);
         },
       );
     }else if(settings.name == TAREA_PORTAL){
@@ -217,10 +218,10 @@ class AppRouter {
         arguments: cursosUi
     );
   }
-  static void createRouteSesionPortalRouter(BuildContext context, CursosUi cursosUi, SesionUi sesionUi) {
+  static void createRouteSesionPortalRouter(BuildContext context, CursosUi cursosUi, SesionUi sesionUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
     Navigator.pushNamed(context,
         SESION_PORTAL,
-        arguments:  {'cursoUi': cursosUi, 'sesionUi':sesionUi}
+        arguments:  {'cursoUi': cursosUi, 'sesionUi':sesionUi, "calendarioPeriodoUI": calendarioPeriodoUI }
     );
   }
   static Future<dynamic> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, RubricaEvaluacionUi? rubroUi) async{

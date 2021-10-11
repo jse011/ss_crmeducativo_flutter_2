@@ -518,7 +518,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
   Widget getViewItemSesion(SesionUi sesionUi, SesionListaController controller) {
     return InkWell(
       onTap: (){
-        AppRouter.createRouteSesionPortalRouter(context, controller.cursosUi, sesionUi);
+        AppRouter.createRouteSesionPortalRouter(context, controller.cursosUi, sesionUi, controller.calendarioPeriodoUI);
       },
       child: Stack(
         children: [

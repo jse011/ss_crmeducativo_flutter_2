@@ -23,6 +23,7 @@ class TareaPresenter extends Presenter{
   @override
   void dispose() {
     _getCalendarioPerido.dispose();
+    _getUnidadTarea.dispose();
   }
 
   void getCalendarioPerido(CursosUi? cursosUi){

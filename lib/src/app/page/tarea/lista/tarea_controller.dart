@@ -15,12 +15,11 @@ class TareaController extends Controller{
 
   CalendarioPeriodoUI? _calendarioPeriodoUI = null;
 
-  List<UnidadUi> _unidadUiList = [];
-
   bool _progress = true;
   bool get progress => _progress;
   bool _datosOffline = false;
   bool get datosOffline => _datosOffline;
+  List<UnidadUi> _unidadUiList = [];
   List<UnidadUi> get unidadUiList => _unidadUiList;
   Map<UnidadUi, List<dynamic>> _unidadItemsMap = Map();
   Map<UnidadUi, List<dynamic>> get unidadItemsMap => _unidadItemsMap;
@@ -136,6 +135,12 @@ class TareaController extends Controller{
     }else{
       _progress = false;
     }
+  }
+
+  @override
+  void onDetached() {
+    super.onDetached();
+    _presenter.dispose();
   }
 
 
