@@ -9,6 +9,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_u
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tema_criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
@@ -21,6 +22,7 @@ class RubroCrearController extends Controller{
   RubroCrearPresenter presenter;
   CursosUi? cursosUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
+  SesionUi? sesionUi;
   RubricaEvaluacionUi? rubroUi;
   String? _mensaje = null;
   bool _showDialog = false;
@@ -63,7 +65,7 @@ class RubroCrearController extends Controller{
   String? get tituloCriterio => _tituloCriterio;
   List<TemaCriterioUi> _temaCriterioEditList = [];
   List<TemaCriterioUi> get temaCriterioEditList => _temaCriterioEditList;
-  RubroCrearController(this.cursosUi, this.calendarioPeriodoUI, this.rubroUi, rubroRepo, usuarioRepo, httpDatosRepo): presenter = new RubroCrearPresenter(rubroRepo,usuarioRepo, httpDatosRepo);
+  RubroCrearController(this.cursosUi, this.calendarioPeriodoUI, this.rubroUi, this.sesionUi, rubroRepo, usuarioRepo, httpDatosRepo): presenter = new RubroCrearPresenter(rubroRepo,usuarioRepo, httpDatosRepo);
 
   @override
   void initListeners() {
@@ -154,6 +156,8 @@ class RubroCrearController extends Controller{
       }
       _tableTipoNotaColumns.add(true);
       _tableTipoNotacolumnWidths.add(45.0);
+      _tableTipoNotaColumns.add(0);
+      _tableTipoNotacolumnWidths.add(24.0);
       List<int> percentParts = getPercentPartsV2(100, _criterioUiList.length);
       List<List<dynamic>> output = [];
       for (int i = 0; i < _criterioUiList.length; i++) {
@@ -170,6 +174,7 @@ class RubroCrearController extends Controller{
         criterioPesoUi.peso = percentParts[i];
         criterioPesoUi.criterioUi = criterioUi;
         row.add(criterioPesoUi);
+        row.add(0);
         output.add(row);
       }
       _tableTipoNotaCells = output;
@@ -273,7 +278,7 @@ class RubroCrearController extends Controller{
 
     _showDialog = true;
     refreshUI();
-    SaveRubroEvaluacionResponse? response = await presenter.save(cursosUi, calendarioPeriodoUI, tituloRubrica, formaEvaluacionUi, tipoEvaluacionUi, tipoNotaUi, criterioPesoUiList, criterioValorTipoNotaUiList);
+    SaveRubroEvaluacionResponse? response = await presenter.save(cursosUi, calendarioPeriodoUI, tituloRubrica, formaEvaluacionUi, tipoEvaluacionUi, tipoNotaUi, criterioPesoUiList, criterioValorTipoNotaUiList, sesionUi);
     _showDialog = false;
     refreshUI();
 
@@ -446,6 +451,59 @@ class RubroCrearController extends Controller{
       return false;
     }
 
+  }
+
+  void onClickMostrarTodo(CompetenciaUi competenciaUi) {
+    competenciaUi.toogle = !(competenciaUi.toogle??false);
+
+    for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
+      capacidadUi.toogle =  competenciaUi.toogle;
+    }
+  }
+
+
+
+  void onClickCapacidad(CapacidadUi capacidadUi, CompetenciaUi competenciaUi) {
+    capacidadUi.toogle = !(capacidadUi.toogle??false);
+
+    if(capacidadUi.toogle??false){
+      bool selecionado = true;
+      for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
+        if(!(capacidadUi.toogle??false)){
+          selecionado = false;
+          break;
+        }
+      }
+      competenciaUi.toogle = selecionado;
+    }else{
+      competenciaUi.toogle = false;
+    }
+  }
+
+  void showCamposAccion() {
+
+    List<CompetenciaUi> competenciaUiList = [];
+    competenciaUiList.addAll(_competenciaUiBaseList);
+    competenciaUiList.addAll(_competenciaUiTransversalList);
+    competenciaUiList.addAll(_competenciaUiEnfoqueList);
+    for(CompetenciaUi competenciaUi in competenciaUiList){
+      for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
+        bool toogle = false;
+        for(CriterioUi criterioUi in capacidadUi.criterioUiList??[]){
+          if(criterioUi.toogle??false)toogle=true;
+        }
+        if(toogle && !(capacidadUi.toogle??false)) onClickCapacidad(capacidadUi, competenciaUi);
+      }
+    }
+
+
+
+
+  }
+
+  void retornoDialogCamposAccion() {
+    iniciarTablaTipoNota();
+    refreshUI();
   }
 
 

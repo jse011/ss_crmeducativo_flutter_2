@@ -5,6 +5,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
@@ -61,8 +62,8 @@ class RubroCrearPresenter extends Presenter{
     _getTemaCriterios.execute(_GetTemaCriteriosCase(this), GetTemaCriteriosParms(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
   }
 
-  Future<SaveRubroEvaluacionResponse> save(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, String? tituloRubrica, FormaEvaluacionUi? formaEvaluacionUi, TipoEvaluacionUi? tipoEvaluacionUi, TipoNotaUi? tipoNotaUi, List<CriterioPesoUi> criterioPesoUiList, List<CriterioValorTipoNotaUi> criterioValorTipoNotaUiList) async{
-    var response = await _saveRubroEvaluacion.execute(SaveRubroEvaluacionParms(null, tituloRubrica, formaEvaluacionUi?.id, tipoEvaluacionUi?.id, tipoNotaUi?.tipoNotaId, calendarioPeriodoUI?.id, cursosUi?.silaboEventoId, cursosUi?.cargaCursoId, null, null, criterioPesoUiList, criterioValorTipoNotaUiList, tipoNotaUi));
+  Future<SaveRubroEvaluacionResponse> save(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, String? tituloRubrica, FormaEvaluacionUi? formaEvaluacionUi, TipoEvaluacionUi? tipoEvaluacionUi, TipoNotaUi? tipoNotaUi, List<CriterioPesoUi> criterioPesoUiList, List<CriterioValorTipoNotaUi> criterioValorTipoNotaUiList, SesionUi? sesionUi) async{
+    var response = await _saveRubroEvaluacion.execute(SaveRubroEvaluacionParms(null, tituloRubrica, formaEvaluacionUi?.id, tipoEvaluacionUi?.id, tipoNotaUi?.tipoNotaId, calendarioPeriodoUI?.id, cursosUi?.silaboEventoId, cursosUi?.cargaCursoId, sesionUi?.sesionAprendizajeId, null, criterioPesoUiList, criterioValorTipoNotaUiList, tipoNotaUi));
     return response;
   }
 

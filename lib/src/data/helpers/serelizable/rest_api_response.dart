@@ -2194,5 +2194,123 @@ class TareaRecursoDidacticoSerial {
 
 }
 //#endregion
+//#region Resultado
+@JsonSerializable()
+class ResultadoAlumnoSerial{
+  int? personaId;
+  String? apellidoPaterno;
+  String? apellidoMaterno;
+  String? nombres;
+  String? foto;
+  bool? vigencia;
+
+  ResultadoAlumnoSerial({this.personaId, this.apellidoPaterno, this.apellidoMaterno,
+    this.nombres, this.foto, this.vigencia});
+
+  factory ResultadoAlumnoSerial.fromJson(Map<String, dynamic> json) => _$ResultadoAlumnoSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ResultadoAlumnoSerialToJson(this);
+}
+@JsonSerializable()
+class ResultadoCapacidadSerial{
+  int? rubroEvalResultadoId;
+  String? titulo;
+  String? tipoNotaId;
+  int? tipoId;
+  int? valorMinimo;
+  int? valorMaximo;
+  int? orden;
+  int? orden2;
+  String? competencia;
+  int? parentId;
+  String? competenciaId;
+  bool? evaluado;
+  bool? intervalo;
+  int? rubroEvaluacionPrinId;
+  bool? rFEditable;
+  bool? notaDup;
+
+
+  ResultadoCapacidadSerial({
+    this.rubroEvalResultadoId,
+    this.titulo,
+    this.tipoNotaId,
+    this.tipoId,
+    this.valorMinimo,
+    this.valorMaximo,
+    this.orden,
+    this.orden2,
+    this.competencia,
+    this.parentId,
+    this.competenciaId,
+    this.evaluado,
+    this.intervalo,
+    this.rubroEvaluacionPrinId,
+    this.rFEditable,
+    this.notaDup
+   });
+
+  factory ResultadoCapacidadSerial.fromJson(Map<String, dynamic> json) => _$ResultadoCapacidadSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ResultadoCapacidadSerialToJson(this);
+}
+
+@JsonSerializable()
+class ResultadoCompetenciaSerial {
+  String? titulo;
+  int? tipoId;
+  String? competencia;
+  int? competenciaId;
+  bool? notaDup;
+  int? rubroEvalResultadoId;
+  int? rubroFormal;
+  ResultadoCompetenciaSerial({
+    this.titulo, this.tipoId, this.competencia,
+    this.competenciaId, this.notaDup, this.rubroEvalResultadoId, this.rubroFormal});
+
+  factory ResultadoCompetenciaSerial.fromJson(Map<String, dynamic> json) => _$ResultadoCompetenciaSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ResultadoCompetenciaSerialToJson(this);
+}
+
+@JsonSerializable()
+class ResultadoEvaluacionSerial {
+  int? evaluacionResultadoId;
+  int? alumnoId;
+  int? rubroEvalResultadoId;
+  double? nota;
+  String? valorTipoNotaId;
+  String? tituloNota;
+  String? tipoId;
+  int? orden;
+  int? orden2;
+  bool? evaluado;
+  bool? rFEditable;
+  String? color;
+  bool? notaDup;
+  String? conclusionDescriptiva;
+
+  ResultadoEvaluacionSerial(
+      {this.evaluacionResultadoId,
+      this.alumnoId,
+      this.rubroEvalResultadoId,
+      this.nota,
+      this.valorTipoNotaId,
+      this.tituloNota,
+      this.tipoId,
+      this.orden,
+      this.orden2,
+      this.evaluado,
+      this.rFEditable,
+      this.color,
+      this.notaDup,
+      this.conclusionDescriptiva});
+
+  factory ResultadoEvaluacionSerial.fromJson(Map<String, dynamic> json) => _$ResultadoEvaluacionSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ResultadoEvaluacionSerialToJson(this);
+}
+
+//#endregio
 
 

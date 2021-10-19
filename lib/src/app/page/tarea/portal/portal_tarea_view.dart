@@ -1096,11 +1096,12 @@ class _PortalTareaViewState extends ViewState<PortalTareaView, PortalTareaContro
                                  ],
                                ),
                              ),
+                              controller.tareaRecursoUiList.isNotEmpty?
                               Container(
                                 margin: EdgeInsets.only(top: 32),
                                 height: 1,
                                 color: AppTheme.greyLighten1,
-                              ),
+                              ):Container(),
                               Container(
                                 margin: EdgeInsets.only(top: 16),
                                 child: Text("Comentario de clase",

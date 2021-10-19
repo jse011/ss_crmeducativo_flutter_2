@@ -10,6 +10,7 @@ import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multip
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/peso_criterio/peso_critero_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/portal/rubro_view_2.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/resultado_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/crear/tarea_crear_view.dart';
@@ -42,6 +43,7 @@ class AppRouter {
   static final String EVALUACION_SIMPLE = 'Curso/Rubro/EvaluacionSimple';
   static final String TAREA_PORTAL = 'Curso/Tarea/Portal';
   static final String TAREA_CREAR = 'Curso/Tarea/Crear';
+  static final String RESULTADO = 'Curso/Resultado';
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     LOGIN: (BuildContext context) => LoginView(),
@@ -72,13 +74,17 @@ class AppRouter {
           CursosUi cursosUi = arguments['cursoUi'];
           RubricaEvaluacionUi? rubroUi = null;
           CalendarioPeriodoUI? calendarioPeriodoUI = null;
+          SesionUi? sesionUi = null;
           if(arguments.containsKey('rubroUi')){
             rubroUi  = arguments['rubroUi'];
           }
           if(arguments.containsKey('calendarioPeriodoUI')){
             calendarioPeriodoUI  = arguments['calendarioPeriodoUI'];
           }
-          return RubroCrearView(cursosUi, calendarioPeriodoUI, rubroUi);
+          if(arguments.containsKey('sesionUi')){
+            sesionUi = arguments['sesionUi'];
+          }
+          return RubroCrearView(cursosUi, calendarioPeriodoUI, rubroUi, sesionUi);
         },
       );
     }else if(settings.name == TAREA){
@@ -171,6 +177,16 @@ class AppRouter {
           return EvaluacionIndicadorView(rubroEvaluacionId, cursosUi, calendarioPeriodoUI);
         },
       );
+    }else if(settings.name == RESULTADO){
+      final Map arguments = settings.arguments as Map;
+
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi cursosUi = arguments['cursoUi'];
+          CalendarioPeriodoUI? calendarioPeriodoUI = arguments['calendarioPeriodoUI'];
+          return ResultadoView(cursosUi, calendarioPeriodoUI);
+        },
+      );
     }
   }
 
@@ -224,10 +240,10 @@ class AppRouter {
         arguments:  {'cursoUi': cursosUi, 'sesionUi':sesionUi, "calendarioPeriodoUI": calendarioPeriodoUI }
     );
   }
-  static Future<dynamic> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, RubricaEvaluacionUi? rubroUi) async{
+  static Future<dynamic> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, SesionUi? sesionUi, RubricaEvaluacionUi? rubroUi) async{
    return await Navigator.pushNamed(context,
         RUBROCREAR,
-        arguments: {'cursoUi': cursosUi, 'calendarioPeriodoUI':calendarioPeriodoUI ,'rubroUi': rubroUi}
+        arguments: {'cursoUi': cursosUi, 'calendarioPeriodoUI':calendarioPeriodoUI ,'rubroUi': rubroUi, 'sesionUi': sesionUi}
     );
   }
 
@@ -278,6 +294,13 @@ class AppRouter {
     return await Navigator.pushNamed(context,
         TAREA_CREAR,
         arguments:  {'cursoUi': cursosUi, 'tareaUi': tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI, "unidadEventoId": unidadEventoId, "sesionAprendizajeId": sesionAprendizajeId }
+    );
+  }
+
+  static createRouteResultadoRouter(BuildContext context, CursosUi cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
+    Navigator.pushNamed(context,
+        RESULTADO,
+        arguments: {'cursoUi': cursosUi,'calendarioPeriodoUI': calendarioPeriodoUI}
     );
   }
 

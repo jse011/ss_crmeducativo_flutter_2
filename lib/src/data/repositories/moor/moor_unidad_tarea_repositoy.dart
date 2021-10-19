@@ -16,8 +16,6 @@ import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 import 'database/app_database.dart';
 
 class MoorUnidadTareaRepository extends UnidadTareaRepository{
-  static const int ESTADO_CREADO = 263, ESTADO_PUBLICADO = 264, ESTADO_ELIMINADO = 265;
-  static const int TIPO_RECURSO_VIDEO = 379, TIPO_RECURSO_VINCULO = 380, TIPO_RECURSO_DOCUMENTO = 397, TIPO_RECURSO_HOJA_CALUCLO = 400, TIPO_RECURSO_IMAGEN = 398, TIPO_RECURSO_AUDIO = 399, TIPO_RECURSO_DIAPOSITIVA = 401, TIPO_RECURSO_PDF = 402, TIPO_RECURSO_MATERIALES = 403, TIPO_RECURSO_YOUTUBE = 581;
 
   @override
   Future<List<UnidadUi>> getUnidadTarea(int calendarioPeriodoId, int silaboEventoId) async{
@@ -32,7 +30,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
 
     var queryTarea = SQL.select(SQL.tarea)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     queryTarea.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
-    queryTarea.where((tbl) => tbl.estadoId.isNotIn([ESTADO_ELIMINADO]));
+    queryTarea.where((tbl) => tbl.estadoId.isNotIn([UnidadTareaRepository.ESTADO_ELIMINADO]));
     queryTarea.orderBy([
           (u) =>
           OrderingTerm(expression: u.fechaCreacion, mode: OrderingMode.desc),
@@ -59,7 +57,15 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
         tareaUi.fechaEntrega = DomainTools.tiempoFechaCreacionTarea(DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega));
         tareaUi.fechaEntregaTime = DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega);
       }
-      tareaUi.publicado = tareaData.estadoId == ESTADO_PUBLICADO;
+
+      if((tareaUi.fechaEntregaTime?.year??0) <= 2000){
+        tareaUi.fechaEntrega = null;
+        tareaUi.fechaEntregaTime = null;
+      }
+      tareaUi.horaTarea = tareaData.horaEntrega;
+
+      print("estadoId 1: ${tareaUi.titulo} ${tareaUi.fechaEntrega}");
+      tareaUi.publicado = tareaData.estadoId == UnidadTareaRepository.ESTADO_PUBLICADO;
 
       tareaUiList.add(tareaUi);
     }
@@ -167,28 +173,28 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       TareaRecusoUi tareaRecusoUi = TareaRecusoUi();
       tareaRecusoUi.recursoDidacticoId = item.recursoDidacticoId;
       switch(item.tipoId) {
-        case TIPO_RECURSO_AUDIO:
+        case UnidadTareaRepository.TIPO_RECURSO_AUDIO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_AUDIO;
           break;
-        case TIPO_RECURSO_DIAPOSITIVA:
+        case UnidadTareaRepository.TIPO_RECURSO_DIAPOSITIVA:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_DIAPOSITIVA;
           break;
-        case TIPO_RECURSO_DOCUMENTO:
+        case UnidadTareaRepository.TIPO_RECURSO_DOCUMENTO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_DOCUMENTO;
           break;
-        case TIPO_RECURSO_HOJA_CALUCLO:
+        case UnidadTareaRepository.TIPO_RECURSO_HOJA_CALUCLO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_HOJA_CALCULO;
           break;
-        case TIPO_RECURSO_IMAGEN:
+        case UnidadTareaRepository.TIPO_RECURSO_IMAGEN:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_IMAGEN;
           break;
-        case TIPO_RECURSO_PDF:
+        case UnidadTareaRepository.TIPO_RECURSO_PDF:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_PDF;
           break;
-        case TIPO_RECURSO_VIDEO:
+        case UnidadTareaRepository.TIPO_RECURSO_VIDEO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VIDEO;
           break;
-        case TIPO_RECURSO_VINCULO:
+        case UnidadTareaRepository.TIPO_RECURSO_VINCULO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
           String? idYoutube = DomainTools.getYoutubeVideoId(url);
           String? idDrive = DomainTools.getYoutubeVideoId(url);
@@ -200,10 +206,10 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
           }
           break;
-        case TIPO_RECURSO_YOUTUBE:
+        case UnidadTareaRepository.TIPO_RECURSO_YOUTUBE:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
           break;
-        case TIPO_RECURSO_MATERIALES:
+        case UnidadTareaRepository.TIPO_RECURSO_MATERIALES:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_RECURSO;
           break;
         default:
@@ -214,6 +220,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       tareaRecusoUi.driveId = item.driveId;
       tareaRecusoUi.titulo = item.titulo;
       tareaRecusoUi.url = item.url;
+      tareaRecusoUi.silaboEventoId = item.silaboEventoId;
       tareaRecursosUiList.add(tareaRecusoUi);
     }
 
@@ -282,7 +289,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       sesionAprendizajeId: tareaUi.sesionAprendizajeId,
       fechaEntrega: tareaUi.fechaEntregaTime?.millisecondsSinceEpoch,
       horaEntrega: tareaUi.horaTarea,
-      estadoId: (tareaUi.publicado??false)?ESTADO_PUBLICADO : ESTADO_CREADO,
+      estadoId: (tareaUi.publicado??false)?UnidadTareaRepository.ESTADO_PUBLICADO : UnidadTareaRepository.ESTADO_CREADO,
 
       fechaAccion: DateTime.now().millisecondsSinceEpoch,
       fechaCreacion: DateTime.now().millisecondsSinceEpoch,
@@ -322,28 +329,103 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
     switch(tipoRecursosUi){
 
       case TipoRecursosUi.TIPO_VIDEO:
-        return TIPO_RECURSO_VIDEO;
+        return UnidadTareaRepository.TIPO_RECURSO_VIDEO;
       case TipoRecursosUi.TIPO_VINCULO:
-        return TIPO_RECURSO_VINCULO;
+        return UnidadTareaRepository.TIPO_RECURSO_VINCULO;
       case TipoRecursosUi.TIPO_DOCUMENTO:
-        return TIPO_RECURSO_DOCUMENTO;
+        return UnidadTareaRepository.TIPO_RECURSO_DOCUMENTO;
       case TipoRecursosUi.TIPO_IMAGEN:
-        return TIPO_RECURSO_IMAGEN;
+        return UnidadTareaRepository.TIPO_RECURSO_IMAGEN;
       case TipoRecursosUi.TIPO_AUDIO:
-        return TIPO_RECURSO_AUDIO;
+        return UnidadTareaRepository.TIPO_RECURSO_AUDIO;
       case TipoRecursosUi.TIPO_HOJA_CALCULO:
-        return TIPO_RECURSO_HOJA_CALUCLO;
+        return UnidadTareaRepository.TIPO_RECURSO_HOJA_CALUCLO;
       case TipoRecursosUi.TIPO_DIAPOSITIVA:
-        return TIPO_RECURSO_DIAPOSITIVA;
+        return UnidadTareaRepository.TIPO_RECURSO_DIAPOSITIVA;
       case TipoRecursosUi.TIPO_PDF:
-        return TIPO_RECURSO_PDF;
+        return UnidadTareaRepository.TIPO_RECURSO_PDF;
       case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
-        return TIPO_RECURSO_YOUTUBE;
+        return UnidadTareaRepository.TIPO_RECURSO_YOUTUBE;
       case TipoRecursosUi.TIPO_VINCULO_DRIVE:
-        return TIPO_RECURSO_VINCULO;
+        return UnidadTareaRepository.TIPO_RECURSO_VINCULO;
       case TipoRecursosUi.TIPO_RECURSO:
-        return TIPO_RECURSO_MATERIALES;
+        return UnidadTareaRepository.TIPO_RECURSO_MATERIALES;
     }
+  }
+
+  @override
+  Future<void> saveSesionTarea(Map<String, dynamic> unidadTareaSesion, int calendarioPeriodoId, int silaboEventoId, int sesionAprendizajeId) async{
+    AppDataBase SQL = AppDataBase();
+    await SQL.batch((batch) async {
+      // functions in a batch don't have to be awaited - just
+      // await the whole batch afterwards.
+
+      var queryTarea = SQL.delete(SQL.tarea)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
+      queryTarea.go();
+
+      if(unidadTareaSesion.containsKey("tarea")){
+        batch.insertAll(SQL.tarea, SerializableConvert.converListSerializeTarea(unidadTareaSesion["tarea"])  , mode: InsertMode.insertOrReplace );
+      }
+
+      /*if(unidadTareaSesion.containsKey("unidadAprendizaje")){
+        batch.insertAll(SQL.tareaUnidad, SerializableConvert.converListSerializeTareaUnidad(unidadTareaSesion["unidadAprendizaje"])  , mode: InsertMode.insertOrReplace );
+      }*/
+
+
+
+    });
+  }
+
+  @override
+  Future<List<TareaUi>> getSesionTarea(int calendarioPeriodoId, int silaboEventoId, int sesionAprendizajeId) async{
+    AppDataBase SQL = AppDataBase();
+
+    var queryTarea = SQL.select(SQL.tarea)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
+    queryTarea.where((tbl) => tbl.estadoId.isNotIn([UnidadTareaRepository.ESTADO_ELIMINADO]));
+    queryTarea.orderBy([
+          (u) =>
+          OrderingTerm(expression: u.fechaCreacion, mode: OrderingMode.desc),
+    ]);
+
+    List<TareaUi> tareaUiList = [];
+    for(TareaData tareaData in await queryTarea.get()){
+      TareaUi tareaUi = TareaUi();
+      tareaUi.tareaId = tareaData.tareaId;
+      tareaUi.titulo = tareaData.titulo;
+      tareaUi.instrucciones = tareaData.instrucciones;
+      tareaUi.rubroEvalProcesoId = tareaData.rubroEvalProcesoId;
+      tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;
+      if((tareaData.fechaEntrega??"").isNotEmpty){
+        print("fechaEntrega: ${tareaData.fechaEntrega}");
+        tareaUi.fechaEntrega = DomainTools.tiempoFechaCreacionTarea(DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega));
+        tareaUi.fechaEntregaTime = DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega);
+      }
+      if((tareaUi.fechaEntregaTime?.year??0) <= 2000){
+        tareaUi.fechaEntrega = null;
+        tareaUi.fechaEntregaTime = null;
+      }
+      tareaUi.horaTarea = tareaData.horaEntrega;
+
+      print("estadoId 1: ${tareaData.titulo} ${tareaData.estadoId}");
+
+      tareaUi.publicado = tareaData.estadoId == UnidadTareaRepository.ESTADO_PUBLICADO;
+
+      tareaUiList.add(tareaUi);
+    }
+
+    return tareaUiList;
+  }
+
+  @override
+  Future<void> saveEstadoTareaDocente(TareaUi? tareaUi, int estadoId) async{
+    AppDataBase SQL = AppDataBase();
+
+    await (SQL.update(SQL.tarea)
+      ..where((tbl) => tbl.tareaId.equals(tareaUi?.tareaId)))
+        .write(
+        TareaCompanion(
+          estadoId: Value(estadoId)
+        ));
   }
 
 

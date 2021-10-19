@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
@@ -21,6 +23,11 @@ class PortalTareaController extends Controller{
   List<TareaAlumnoUi> get tareaAlumnoUiList => _tareaAlumnoUiList;
   bool _toogleGeneral = true;
   bool get toogleGeneral => _toogleGeneral;
+  bool _progress = false;
+  bool get progress => _progress;
+  bool _showDialogEliminar = false;
+  bool get showDialogEliminar => _showDialogEliminar;
+  bool _cambiosTarea = false;
   PortalTareaController(this.cursosUi, this.tareaUi, this.calendarioPeriodoUI, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, ConfiguracionRepository configuracionRepo):
         presenter = PortalTareaPresenter(httpDatosRepo, unidadTareaRepo, configuracionRepo);
 
@@ -29,7 +36,7 @@ class PortalTareaController extends Controller{
     presenter.getInformacionTareaOnError = (e){
       _tareaRecursoUiList = [];
       _tareaAlumnoUiList = [];
-
+      _progress = false;
       refreshUI();
     };
 
@@ -39,13 +46,25 @@ class PortalTareaController extends Controller{
       for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
         tareaAlumnoUi.toogle = toogleGeneral;
       }
+      tareaUi?.recursos = tareaRecusoUiList;
+      _progress = false;
       refreshUI();
+    };
+
+    presenter.publicarTareaOnMessage = (bool offline){
+
+    };
+
+    presenter.eliminarTareaOnMessage = (bool offline){
+
     };
   }
 
   @override
   void onInitState() {
     super.onInitState();
+    _progress = true;
+    refreshUI();
     presenter.getInformacionTarea(tareaUi, tareaUi?.rubroEvalProcesoId, cursosUi, tareaUi?.unidadAprendizajeId);
   }
 
@@ -82,5 +101,54 @@ class PortalTareaController extends Controller{
     }
     refreshUI();
   }
+
+  void refrescarListTarea() {
+    refreshUI();
+  }
+
+  Future<bool> onClicPublicar() async{
+      _progress = true;
+      refreshUI();
+      bool success = await presenter.publicarTarea(tareaUi);
+      if(success){
+        tareaUi?.publicado = !(tareaUi?.publicado??false);
+        _cambiosTarea = true;
+      }
+      _progress = false;
+      refreshUI();
+      return success;
+  }
+
+ void onClicEliminar(){
+    _showDialogEliminar = true;
+    refreshUI();
+
+  }
+
+  void onClickCancelarEliminar() {
+    _showDialogEliminar = false;
+
+    refreshUI();
+  }
+
+  Future<bool> onClickAceptarEliminar() async{
+    _showDialogEliminar = false;
+    _progress = true;
+    refreshUI();
+    bool success = await presenter.eliminarTarea(tareaUi);
+    _progress = false;
+    refreshUI();
+    return success;
+  }
+
+  void cambiosTarea() {
+    _cambiosTarea = true;
+    refrescarListTarea();
+  }
+
+  bool onChangeTarea() {
+    return _cambiosTarea;
+  }
+
 
 }

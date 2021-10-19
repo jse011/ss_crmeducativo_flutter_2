@@ -9,5 +9,7 @@ class CompetenciaUi{
   List<CapacidadUi>? capacidadUiList;
   TipoCompetenciaUi? tipoCompetenciaUi;
   String? url;
+  bool? toogle;
+  int? rubroResultadoId;
 
 }

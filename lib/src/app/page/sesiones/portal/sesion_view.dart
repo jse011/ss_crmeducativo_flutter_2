@@ -10,12 +10,14 @@ import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/tab/tab_actividades.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/tab/tab_aprendizaje.dart';
+import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/tab/tab_rubros.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/tab/tab_tareas.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_repositoy.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
@@ -42,7 +44,7 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
   late AnimationController animationController;
 
 
-  _CursoViewState(cursoUi, sesionUi, calendarioPeriodoUI) : super(SesionController(cursoUi, sesionUi, calendarioPeriodoUI, MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository()));
+  _CursoViewState(cursoUi, sesionUi, calendarioPeriodoUI) : super(SesionController(cursoUi, sesionUi, calendarioPeriodoUI, MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorRubroRepository()));
 
   @override
   void initState() {
@@ -220,14 +222,15 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                           top: AppBar().preferredSize.height +
                               MediaQuery.of(context).padding.top +
                               16,
-                          left: 24,
-                          right: 24
+                          left: 0,
+                          right: 0
                       ),
                       child: DefaultTabController(
                         length: 4,
                         child: Column(
                           children: <Widget>[
                             Container(
+                              margin: EdgeInsets.only(left: 24),
                               constraints: BoxConstraints.expand(height: 50),
                               child: TabBar(
                                   indicatorColor: AppTheme.colorSesion,
@@ -237,8 +240,8 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                                   tabs: [
                                 Tab(text: "APRENDIZAJE"),
                                 Tab(text: "ACTIVIDADES"),
-                                Tab(text: "TRABAJOS"),
                                 Tab(text: "EVALUACIÓN"),
+                                Tab(text: "TRABAJOS"),
                               ]),
                             ),
                             Expanded(
@@ -246,10 +249,9 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                                 child: TabBarView(children: [
                                   TabAprendizaje(),
                                   TabActividades(),
+                                  TabRubros(),
                                   TabTareas(),
-                                  Container(
-                                    child: Text("User Body"),
-                                  ),
+
                                 ]),
                               ),
                             )

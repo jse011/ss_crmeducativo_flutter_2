@@ -10,9 +10,9 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 
 abstract class RubroRepository{
-  void saveDatosCrearRubros(Map<String, dynamic> crearRubro, int silaboEventoId, int calendarioPeriodoId);
+  Future<void> saveDatosCrearRubros(Map<String, dynamic> crearRubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId);
 
-  void saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId);
+  Future<void> saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumonId);
 
   Future<List<FormaEvaluacionUi>> getGetFormaEvaluacion();
 
@@ -45,5 +45,7 @@ abstract class RubroRepository{
   Future<void> eliminarEvaluacion(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId);
 
   Future<void> updatePesoRubro(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId);
+
+  Future<List<RubricaEvaluacionUi>> getRubroEvaluacionSesionList(int? silaboEventoId, int? calendarioPeriodoId,  int sesionAprendizajeDocenteId, int sesionAprendizajeAlumonId);
 
 }

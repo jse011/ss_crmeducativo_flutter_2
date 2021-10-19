@@ -16,4 +16,9 @@ class SesionUi{
   String? colorSesion;
   String? fechaEjecucionFin;
   int? position;
+  int? unidadAprendizajeId;
+  bool? ver_mas;
+  bool? toogle2;
+  int? cantSesion;
+  int? rolId;
 }

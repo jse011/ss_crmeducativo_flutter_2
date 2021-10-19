@@ -16,6 +16,7 @@ class TareaController extends Controller{
   CalendarioPeriodoUI? _calendarioPeriodoUI = null;
 
   bool _progress = true;
+
   bool get progress => _progress;
   bool _datosOffline = false;
   bool get datosOffline => _datosOffline;
@@ -71,11 +72,12 @@ class TareaController extends Controller{
         unidadUi.cantUnidades = unidadUiList!.length;
         unidadItemsMap[unidadUi] = [];
 
-        if(calendarioPeriodoUI?.habilitado==1)
+        //if(calendarioPeriodoUI?.habilitado==1)
           unidadItemsMap[unidadUi]?.add("");
         int  count = 0;
         for(TareaUi tareaUi in unidadUi.tareaUiList??[]){
           tareaUi.position = unidadUi.tareaUiList!.length - count;
+          print("estadoId 2: ${tareaUi.titulo} ${tareaUi.fechaEntrega}");
           unidadItemsMap[unidadUi]?.add(tareaUi);
           count++;
         }
@@ -142,6 +144,7 @@ class TareaController extends Controller{
     super.onDetached();
     _presenter.dispose();
   }
+
 
 
 }

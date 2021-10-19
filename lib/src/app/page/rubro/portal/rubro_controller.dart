@@ -1,5 +1,6 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/portal/rubro_presenter.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/table_resultado.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
@@ -8,6 +9,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_calendario_periodo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/matriz_resultado_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/origen_rubro_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
@@ -22,6 +24,7 @@ class RubroController extends Controller{
   OrigenRubroUi _origenRubroUi = OrigenRubroUi.TODOS;
   OrigenRubroUi get origenRubroUi => _origenRubroUi;
   CursosUi cursosUi;
+
   List<CalendarioPeriodoUI> _calendarioPeriodoList = [];
   List<CalendarioPeriodoUI> get calendarioPeriodoList => _calendarioPeriodoList;
   CalendarioPeriodoUI? _calendarioPeriodoUI = null;
@@ -31,7 +34,8 @@ class RubroController extends Controller{
   List<dynamic>? get rubricaEvaluacionUiList => _rubricaEvaluacionUiList;
   List<UnidadUi> _unidadUiList = [];
   List<UnidadUi> get unidadUiList => _unidadUiList;
-  Map<SesionUi, List<dynamic>> mapSesionRubroList = new Map();
+  Map<SesionUi, List<dynamic>> _sesionItemsMap = new Map();
+  Map<SesionUi, List<dynamic>> get sesionItemsMap => _sesionItemsMap;
   String? _msgToast = null;
   String? get msgToast => _msgToast;
   bool _progress = true;
@@ -53,29 +57,41 @@ class RubroController extends Controller{
   bool _precision = false;
   bool get precision => _precision;
 
-  RubroController(this.cursosUi, calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo)
-      :this.presenter = RubroPresenter(calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo)
+  bool _listar_eval_sesiones = false;
+  bool get listar_eval_sesiones => _listar_eval_sesiones;
+
+  bool _datosOfflineResultado = false;
+  bool get datosOfflineResultado => _datosOfflineResultado;
+  List<dynamic> _rowsResultado = [];
+  List<dynamic> get rowsResultado =>_rowsResultado;
+  List<dynamic> _columnsResultado = [];
+  List<dynamic> get columnsResultado => _columnsResultado;
+  List<List<dynamic>> _cellsResultado = [];
+  List<List<dynamic>> get cellsResultado => _cellsResultado;
+  bool _precisionResultado = false;
+  bool get precisionResultado => _precisionResultado;
+  bool _progressResultado = true;
+  bool get progressResultado => _progressResultado;
+
+  RubroController(this.cursosUi, calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
+      :this.presenter = RubroPresenter(calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
   , super();
 
 
 
   @override
   void initListeners() {
-    presenter.getCalendarioPeridoOnComplete = (List<CalendarioPeriodoUI>? calendarioPeridoList, CalendarioPeriodoUI? calendarioPeriodoUI, bool? errorServidor, bool? offlineServidor){
+    presenter.getCalendarioPeridoOnComplete = (List<CalendarioPeriodoUI>? calendarioPeridoList, CalendarioPeriodoUI? calendarioPeriodoUI){
       _calendarioPeriodoList = calendarioPeridoList??[];
       _calendarioPeriodoUI = calendarioPeriodoUI;
-      _calendarioPeriodoUI?.habilitado = 1;
+      //_calendarioPeriodoUI?.habilitado = 1;
       _origenRubroUi = OrigenRubroUi.TODOS;
       _progress = true;
-      _showDialogModoOffline = offlineServidor??false;
       refreshUI();
       //presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
       //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
       //presenter.onGetCompetenciaRubroEval(cursosUi, calendarioPeriodoUI);
-
-      if(!(offlineServidor??false)){
-        presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
-      }
+      presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
     };
 
     presenter.getCalendarioPeridoOnError = (e){
@@ -90,14 +106,10 @@ class RubroController extends Controller{
       _progress = true;
       _msgToast = (errorServidor??false)? "!Oops! Al parecer ocurrió un error involuntario.":null;
       _msgToast = (errorConexion??false)? "No hay Conexión a Internet...":null;
+      //_showDialogModoOffline = errorConexion??false;
 
-      print("updateDatosCrearRubroOnNext");
-      if(!(errorConexion??false)){
-        print("updateDatosCrearRubroOnNext 1");
-        onListarTabsRubroEvaluacion();
-      }else{
-        _progress = false;
-      }
+      onListarTabsRubroEvaluacion();
+
       refreshUI();
     };
 
@@ -110,45 +122,59 @@ class RubroController extends Controller{
       if(calendarioPeriodoUI!=null&&(calendarioPeriodoUI?.habilitado??0)==1){
         _rubricaEvaluacionUiList?.add("add");
       }
+
+      int  count = 0;
+      for(RubricaEvaluacionUi rubroUi in rubricaEvalUiList){
+        rubroUi.position = rubricaEvalUiList.length - count;
+        count++;
+      }
       _rubricaEvaluacionUiList?.addAll(rubricaEvalUiList);
 
-      if(_seletedItem==0)_progress = false;//ocultar el progress cuando se esta en el tab rubro
+      if(_seletedItem==0 )_progress = false;//ocultar el progress cuando se esta en el tab rubro
+
+      print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
 
     presenter.getRubroEvaluacionOnError = (e){
       _rubricaEvaluacionUiList = [];
-      if(_seletedItem==0)_progress = false;//ocultar el progress cuando se esta en el tab rubro
+      if(_seletedItem==0 )_progress = false;//ocultar el progress cuando se esta en el tab rubro
+      print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
 
     presenter.getUnidadRubroEvalOnNext = (List<UnidadUi> unidadUiList){
       _unidadUiList = unidadUiList;
-      mapSesionRubroList.clear();
+      _sesionItemsMap.clear();
       for(UnidadUi unidadUi in unidadUiList){
+        int count_sesion = 0;
         for(SesionUi sesionUi in unidadUi.sesionUiList??[]){
-          mapSesionRubroList[sesionUi] = [];
-          if(calendarioPeriodoUI!=null&&(calendarioPeriodoUI?.habilitado??0)==1){
-            mapSesionRubroList[sesionUi]!.add("add");
-          }
-          mapSesionRubroList[sesionUi]!.addAll(sesionUi.rubricaEvaluacionUiList??[]);
-          int maxCantidad = 4;
-          if(mapSesionRubroList[sesionUi]!.length >= maxCantidad){
-            List<dynamic> list =[];
-            for(int i =0; i < maxCantidad - 1; i++){
-              list.add(mapSesionRubroList[sesionUi]![i]);
-            }
-            list.add("ver_mas");
-            mapSesionRubroList[sesionUi] = list;
-          }
+          sesionUi.cantSesion = unidadUi.sesionUiList?.length;
+          //if(count_sesion==0)sesionUi.toogle2 = true;
+          _sesionItemsMap[sesionUi] = [];
 
+          if(calendarioPeriodoUI?.habilitado==1)
+          _sesionItemsMap[sesionUi]?.add("");
+
+          int  count = 0;
+          for(RubricaEvaluacionUi rubroUi in sesionUi.rubricaEvaluacionUiList??[]){
+            rubroUi.position = sesionUi.rubricaEvaluacionUiList!.length - count;
+            _sesionItemsMap[sesionUi]?.add(rubroUi);
+            count++;
+          }
+          count_sesion ++;
         }
       }
+      if(_seletedItem==0)_progress = false;
+      print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
 
     presenter.getUnidadRubroEvalOnError = (e){
       _unidadUiList = [];
+      _sesionItemsMap.clear();
+      if(_seletedItem==0)_progress = false;
+      print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
 
@@ -252,6 +278,7 @@ class RubroController extends Controller{
       }
 
       if(_seletedItem==1)_progress = false;//ocultar el progress cuando se esta en el tab competencia
+     print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
 
@@ -261,6 +288,32 @@ class RubroController extends Controller{
       _columnList2.clear();
       _cellListList.clear();
       if(_seletedItem==1)_progress = false;//ocultar el progress cuando se esta en el tab competencia
+      print("_seletedItem: ${_seletedItem}");
+      refreshUI();
+    };
+
+
+    presenter.getResultadosOnComplete = (MatrizResultadoUi? matrizResultadoUi, bool? offlineServidor, bool? errorServidor){
+      _rowsResultado = [];
+      _columnsResultado = [];
+      _cellsResultado = [];
+
+      var result = TableResultadoUtils.getTableResulData(matrizResultadoUi, calendarioPeriodoUI);
+      _rowsResultado.addAll(result.rows??[]);
+      _columnsResultado.addAll(result.columns??[]);
+      _cellsResultado.addAll(result.cells??[]);
+
+      _progressResultado = false;
+      print("_seletedItem: ${_seletedItem}");
+      refreshUI();
+    };
+
+    presenter.getResultadosOnError = (e){
+      _cellsResultado.clear();
+      _rowsResultado.clear();
+      _columnsResultado.clear();
+      _progressResultado = false;
+      print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
   }
@@ -274,7 +327,7 @@ class RubroController extends Controller{
 
   void onSelectedCalendarioPeriodo(CalendarioPeriodoUI calendarioPeriodoUi) {
     this._calendarioPeriodoUI = calendarioPeriodoUi;
-    _calendarioPeriodoUI?.habilitado = 1;
+    //_calendarioPeriodoUI?.habilitado = 1;
     for(var item in  _calendarioPeriodoList){
       item.selected = false;
     }
@@ -282,7 +335,14 @@ class RubroController extends Controller{
     _origenRubroUi = OrigenRubroUi.TODOS;
     _progress = true;
     //presenter.getEvaluacion(calendarioPeriodoUi);
+
+    if(_seletedItem == 2){
+      _progressResultado = true;
+      presenter.getResultados(cursosUi, calendarioPeriodoUI);
+    }
+
     refreshUI();
+
     presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
 
     //presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
@@ -318,10 +378,19 @@ class RubroController extends Controller{
 
   void clicMostrarSolo(OrigenRubroUi origenRubroUi) {
     _origenRubroUi = origenRubroUi;
+    _listar_eval_sesiones = false;
     _progress = true;
     refreshUI();
     presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
 
+  }
+
+  void clicMostrarSoloSesiones() {
+    _origenRubroUi = origenRubroUi;
+    _listar_eval_sesiones = true;
+    _progress = true;
+    refreshUI();
+    presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
   }
 
   void successMsg() {
@@ -351,20 +420,31 @@ class RubroController extends Controller{
     refreshUI();
     /*Se limpia la tabla competencia*/
 
+    if(!_listar_eval_sesiones){
+      presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
+    }else{
+      presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
+    }
 
-    presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
-    //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
     presenter.onGetCompetenciaRubroEval(cursosUi, calendarioPeriodoUI);
   }
 
   void onListarTabsRubroEvaluacion2(){
 
-    presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
-    //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
+    if(!_listar_eval_sesiones){
+      presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
+    }else{
+      presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
+    }
+
     presenter.onGetCompetenciaRubroEval(cursosUi, calendarioPeriodoUI);
   }
 
   void onChangeTab(int index) {
+    if(_seletedItem != index && index == 2){
+      _progressResultado = true;
+      presenter.getResultados(cursosUi, calendarioPeriodoUI);
+    }
     _seletedItem = index;
     refreshUI();
   }
@@ -391,4 +471,36 @@ class RubroController extends Controller{
     refreshUI();
   }
 
+  void onClickVerMas(SesionUi sesionUi) {
+    sesionUi.ver_mas = !(sesionUi.ver_mas??false);
+    refreshUI();
+  }
+
+  void onClickSesion(SesionUi sesionUi, UnidadUi unidadUi) {
+    sesionUi.toogle2 = !(sesionUi.toogle2??false);
+
+    if(sesionUi.toogle2??false){
+      bool selecionado = true;
+      for(SesionUi sesionUi in unidadUi.sesionUiList??[]){
+        if(!(sesionUi.toogle2??false)){
+          selecionado = false;
+          break;
+        }
+      }
+      unidadUi.toogle = selecionado;
+    }else{
+      unidadUi.toogle = false;
+    }
+    refreshUI();
+  }
+
+  onClickMostrarTodo(UnidadUi unidadUi) {
+    unidadUi.toogle = !(unidadUi.toogle??false);
+    for(SesionUi sesionUi in unidadUi.sesionUiList??[]){
+      sesionUi.toogle2 =  unidadUi.toogle;
+    }
+    refreshUI();
+  }
+  
 }
+

@@ -30,7 +30,7 @@ class SesionListaPresenter extends Presenter{
 
   void getUnidadAprendizajeDocente(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
     print("getUnidadAprendizajeDocente");
-    _getUnidadSesion.execute(_GetUnidadSesionDocenteCase(this), GetUnidadSesionParams(calendarioPeriodoUI?.tipoId, cursosUi?.silaboEventoId, 4));
+    _getUnidadSesion.execute(_GetUnidadSesionDocenteCase(this), GetUnidadSesionParams(calendarioPeriodoUI?.tipoId, cursosUi?.silaboEventoId, 0));
   }
 
 }

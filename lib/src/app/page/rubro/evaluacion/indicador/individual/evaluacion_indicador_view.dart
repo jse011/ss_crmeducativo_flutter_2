@@ -171,7 +171,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                               ),),
                                             ),
                                             Padding(padding: EdgeInsets.all(4),),
-                                            Text("¿Esta seguro de eliminar la evaluación?. Recuerde que si elimina se borrará permanentemente las calificaciones.",
+                                            Text("¿Está seguro de eliminar la evaluación? Recuerde que si elimina se borrará permanentemente las calificaciones.",
                                               style: TextStyle(
                                                   fontSize: 14,
                                                   height: 1.5

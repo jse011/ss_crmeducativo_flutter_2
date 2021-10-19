@@ -11,6 +11,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/Item_tarea.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_periodo_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
@@ -102,11 +103,12 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
             children: [
               getMainTab(),
               getAppBarUI(),
-              if(controller.progress)ArsProgressWidget(
-                blur: 2,
-                backgroundColor: Color(0x33000000),
-                animationDuration: Duration(milliseconds: 500),
-              ),
+              controller.progress?
+              ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500)):
+              Container(),
             ],
           ),
         );
@@ -333,118 +335,10 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                             itemBuilder: (context, index){
                                               dynamic o = unidadItemList[index];
                                               if(o is TareaUi){
-                                                return InkWell(
-                                                  onTap: () async{
-                                                    bool? result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI);
-                                                    //controller.onClickTarea(o);
-                                                  },
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                        color: AppTheme.white,
-                                                        borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
-                                                    ),
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      children: [
-                                                        Container(
-                                                          padding: EdgeInsets.only(
-                                                              left: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
-                                                              right: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                              top: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                              bottom: 0),
-                                                          child: Row(
-                                                            children: [
-                                                              Icon(Icons.assignment,
-                                                                color: HexColor(controller.cursosUi.color1),
-                                                                size: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                              ),
-                                                              Padding(padding: EdgeInsets.all(2)),
-                                                              Text("Tarea ${o.position??""}",
-                                                                  overflow: TextOverflow.ellipsis,
-                                                                  style: TextStyle(
-                                                                      fontFamily: AppTheme.fontTTNorms,
-                                                                      fontWeight: FontWeight.w700,
-                                                                      letterSpacing: 0.5,
-                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
-                                                                      color: HexColor(controller.cursosUi.color1)
-                                                                  )),
-                                                              //Text("Tarea ${index}", style: TextStyle(color: HexColor(controller.cursosUi.color1), fontSize: 12, fontWeight: FontWeight.w500),),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          child: Column(
-                                                            children: [
-                                                              Padding(
-                                                                padding: EdgeInsets.only(
-                                                                    left: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                    right: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                    top: ColumnCountProvider.aspectRatioForWidthTarea(context, 10),
-                                                                    bottom: 0),
-                                                                child: Text("${o.titulo}",
-                                                                  maxLines: 3,
-                                                                  overflow: TextOverflow.ellipsis,
-                                                                  style: TextStyle(
-                                                                      color: AppTheme.black,
-                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 13)
-                                                                  ),),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                            child: Container(
-                                                              child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  Padding(
-                                                                    padding: EdgeInsets.only(
-                                                                        top: ColumnCountProvider.aspectRatioForWidthTarea(context, 10),
-                                                                        left: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                        right: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                        bottom: 0),
-                                                                    child: Text("${o.fechaEntrega??""}",
-                                                                      style: TextStyle(
-                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 12),
-                                                                      ),),
-                                                                  ),
-                                                                  Expanded(child: Container()),
-                                                                  Container(
-                                                                    padding: EdgeInsets.only(
-                                                                      left: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                      right: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                      bottom: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                    ),
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Expanded(
-                                                                          child:
-                                                                          Text((o.publicado??false)?"Publicado":"Sin Publicar",
-                                                                            style:
-                                                                            TextStyle(
-                                                                              color: AppTheme.colorPrimary,
-                                                                              fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Text("0/15",
-                                                                          style: TextStyle(
-                                                                            color: AppTheme.colorPrimary,
-                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
-                                                                          ),),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )
-                                                        ),
-
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
+                                                return ItemTarea(color1: HexColor(controller.cursosUi.color1), tareaUi: o, onTap: () async{
+                                                  dynamic? result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI);
+                                                  if(result is int) controller.refrescarListTarea(unidadUi);
+                                                });
                                               }else{
                                                 return InkWell(
                                                   onTap: () async{
@@ -463,7 +357,6 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                                       dottedLength: 10.0,
                                                       space: 3.0,
                                                       corner: FDottedLineCorner.all(14.0),
-
                                                       /// add widget
                                                       child: Container(
                                                         alignment: Alignment.center,
@@ -612,8 +505,6 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
           );
   });
   }
-
-
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 1000));

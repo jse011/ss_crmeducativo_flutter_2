@@ -26,517 +26,408 @@ class _TabActividadesSatate extends State<TabActividades>{
     return CustomScrollView(
       slivers: [
 
-        SliverList(
-            delegate: SliverChildListDelegate([
-              GestureDetector(
-                onTap: () =>  {
-                  showActivdadDocente(context)
-                },
-                child: Container(
-                  height: 90,
-                  margin: EdgeInsets.only(top: 16,left: 16, right: 0, bottom: 20),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                          width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                            borderRadius: BorderRadius.all(Radius.circular(16))
-                        ),
-                        width: 65,
-                        height: 65,
-                        child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 8)),
-                      Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("CONECTA TU MENTE",
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontFamily: AppTheme.fontTTNorms,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 14,
-                                    letterSpacing: 0.8,
-                                    color: AppTheme.darkerText,
-                                  )),
-                              Padding(padding: EdgeInsets.all(4),),
-                              Text("Inicio",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    letterSpacing: 0.8,
-                                    color: AppTheme.darkerText,
-                                  ))
-                            ],
-                          )
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: true
-                                ? Icon(
-                              Icons.check_outlined,
-                              size: 25.0,
-                              color: HexColor(controller.cursosUi.color1),
-                            )
-                                : Container(width: 25, height: 25,),
-                          ),
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () =>  {
-                  showActivdadDocente(context)
-                },
-                child: Container(
-                  height: 90,
-                  margin: EdgeInsets.only(top: 4,left: 16, right: 0, bottom: 20),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                          width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                            borderRadius: BorderRadius.all(Radius.circular(16))
-                        ),
-                        width: 65,
-                        height: 65,
-                        child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 8)),
-                      Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("EXPLORANDO Y EXPLICANDO",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                  letterSpacing: 0.8,
-                                  color: AppTheme.darkerText,
-                                ),),
-                              Padding(padding: EdgeInsets.all(4),),
-                              Text("Desarrollo",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    letterSpacing: 0.8,
-                                    color: AppTheme.darkerText,
-                                  ))
-                            ],
-                          )
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: true
-                                ? Icon(
-                              Icons.check_outlined,
-                              size: 25.0,
-                              color: HexColor(controller.cursosUi.color1),
-                            )
-                                : Container(width: 25, height: 25,),
-                          ),
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () =>  {
-                  showActivdadDocente(context)
-                },
-                child: Container(
-                  height: 90,
-                  margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
-                          width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: HexColor(controller.cursosUi.color2).withOpacity(0.5)
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                            borderRadius: BorderRadius.all(Radius.circular(16))
-                        ),
-                        width: 65,
-                        height: 65,
-                        child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 8)),
-                      Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("APLICA/REFLEXIONA",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                  letterSpacing: 0.8,
-                                  color: AppTheme.darkerText,
-                                ),),
-                              Padding(padding: EdgeInsets.all(4),),
-                              Text("Desarrollo",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    letterSpacing: 0.8,
-                                    color: AppTheme.darkerText,
-                                  ))
-                            ],
-                          )
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(1),
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                            border: Border.all(
-                                color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
-                                width: 2
-                            ),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: true
-                                ? Icon(
-                              Icons.check_outlined,
-                              size: 25.0,
-                              color: HexColor(controller.cursosUi.color1),
-                            )
-                                : Icon(
-                              Icons.check_box_outline_blank,
-                              size: 20.0,
-                              color: Colors.blue,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () =>  {
-                  showActivdadDocente(context)
-                },
-                child: Container(
-                  height: 90,
-                  margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                          width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                            borderRadius: BorderRadius.all(Radius.circular(16))
-                        ),
-                        width: 65,
-                        height: 65,
-                        child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 8)),
-                      Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("INSTRUMENTO DE EVALUACIÓN",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                  letterSpacing: 0.8,
-                                  color: AppTheme.darkerText,
-                                ),),
-                              Padding(padding: EdgeInsets.all(4),),
-                              Text("Desarrollo",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    letterSpacing: 0.8,
-                                    color: AppTheme.darkerText,
-                                  ))
-                            ],
-                          )
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: false
-                                ? Icon(
-                              Icons.check_outlined,
-                              size: 25.0,
-                              color: HexColor(controller.cursosUi.color1),
-                            )
-                                : Container(width: 25, height: 25,),
-                          ),
-                        ),
-
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () =>  {
-                  showActivdadDocente(context)
-                },
-                child: Container(
-                  height: 90,
-                  margin: EdgeInsets.only(top: 8,left: 16, right: 0, bottom: 20),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                          width: 2
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                      color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                        decoration: BoxDecoration(
-                            color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                            borderRadius: BorderRadius.all(Radius.circular(16))
-                        ),
-                        width: 65,
-                        height: 65,
-                        child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 8)),
-                      Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("EVALUACIÓN",
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                  letterSpacing: 0.8,
-                                  color: AppTheme.darkerText,
-                                ),),
-                              Padding(padding: EdgeInsets.all(4),),
-                              Text("Cierre",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    letterSpacing: 0.8,
-                                    color: AppTheme.darkerText,
-                                  ))
-                            ],
-                          )
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16, right: 16),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: false
-                                ? Icon(
-                              Icons.check_outlined,
-                              size: 25.0,
-                              color: HexColor(controller.cursosUi.color1),
-                            )
-                                : Container(width: 25, height: 25,),
-                          ),
-                        ),
-
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-            ])
-        ),
-        SliverList(
-            delegate: SliverChildListDelegate([
-              Container(
-                padding: EdgeInsets.only(top: 32, left: 8, right: 8),
-                child: Text("TRABAJOS", style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    fontFamily: AppTheme.fontTTNorms
-                ),),
-              ),
-            ])
-        ),
         SliverPadding(
-          padding: EdgeInsets.only(left: 8, right: 0, top: 16),
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              //crossAxisCount: countRow,
-              maxCrossAxisExtent: 160.0,
-              mainAxisExtent: 160.0,
-              mainAxisSpacing: 24.0,
-              crossAxisSpacing: 24.0,
-              childAspectRatio: 1,
-            ),
-            delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index){
-                  if(index == 0){
-                    return Container(
-                      padding: EdgeInsets.all(8),
+            padding: EdgeInsets.only(left: 24, right: 24, top: 8),
+            sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  GestureDetector(
+                    onTap: () =>  {
+                      showActivdadDocente(context)
+                    },
+                    child: Container(
+                      height: 90,
+                      margin: EdgeInsets.only(top: 16,left: 0, right: 0, bottom: 20),
                       decoration: BoxDecoration(
-                        color: HexColor(controller.cursosUi.color2),
-                        borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                      ),
-                      child: FDottedLine(
-                        color: AppTheme.white,
-                        strokeWidth: 3.0,
-                        dottedLength: 10.0,
-                        space: 3.0,
-                        corner: FDottedLineCorner.all(14.0),
-
-                        /// add widget
-                        child: Container(
-                          color: HexColor(controller.cursosUi.color2),
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Ionicons.add, color: AppTheme.white, size: 45,),
-                              Text("Crear Tarea",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
-                                    fontFamily: AppTheme.fontTTNorms,
-                                    color: AppTheme.white
-                                ),
-                              )
-                            ],
+                          border: Border.all(
+                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                              width: 2
                           ),
-                        ),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
                       ),
-                    );
-                  }else{
-                    return Container(
-                      decoration: BoxDecoration(
-                          color: HexColor(controller.cursosUi.color3??"#FEFAE2").withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                borderRadius: BorderRadius.all(Radius.circular(16))
+                            ),
+                            width: 65,
+                            height: 65,
+                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                          ),
+                          Padding(padding: EdgeInsets.only(left: 8)),
+                          Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("CONECTA TU MENTE",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 14,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.darkerText,
+                                      )),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Inicio",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.darkerText,
+                                      ))
+                                ],
+                              )
+                          ),
                           Padding(
-                            padding: EdgeInsets.only(left: 12, right: 16, top: 16, bottom: 0),
-                            child: Row(
-                              children: [
-                                Icon(Icons.assignment, color: HexColor(controller.cursosUi.color1), size: 18,),
-                                Padding(padding: EdgeInsets.all(2)),
-                                Text("Tarea ${index+1}",
-                                  style: TextStyle(
-                                      color: HexColor(controller.cursosUi.color1),
-                                      fontSize: 12),
-                                ),
-                              ],
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: true
+                                    ? Icon(
+                                  Icons.check_outlined,
+                                  size: 25.0,
+                                  color: HexColor(controller.cursosUi.color1),
+                                )
+                                    : Container(width: 25, height: 25,),
+                              ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 0),
-                            child: Text("APRENDEMOS ADIVINANZAS", style: TextStyle(color: AppTheme.black, fontSize: 12),),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 0),
-                            child: Text("Pare el Dom 11 de Abr. 09:11 p. m.", style: TextStyle(fontSize: 10),),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 8),
-                            child: Row(
-                              children: [
-                                Expanded(child: Text("Sin Publicar", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),),
-                                Text("0/15", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 12),),
-                              ],
-                            ),
-                          ),
+
                         ],
                       ),
-                    );
-                  }
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () =>  {
+                      showActivdadDocente(context)
+                    },
+                    child: Container(
+                      height: 90,
+                      margin: EdgeInsets.only(top: 4,left: 0, right: 0, bottom: 20),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                              width: 2
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                borderRadius: BorderRadius.all(Radius.circular(16))
+                            ),
+                            width: 65,
+                            height: 65,
+                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                          ),
+                          Padding(padding: EdgeInsets.only(left: 8)),
+                          Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("EXPLORANDO Y EXPLICANDO",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14,
+                                      letterSpacing: 0.8,
+                                      color: AppTheme.darkerText,
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Desarrollo",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.darkerText,
+                                      ))
+                                ],
+                              )
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: true
+                                    ? Icon(
+                                  Icons.check_outlined,
+                                  size: 25.0,
+                                  color: HexColor(controller.cursosUi.color1),
+                                )
+                                    : Container(width: 25, height: 25,),
+                              ),
+                            ),
+                          ),
 
-                },
-                childCount: 2
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () =>  {
+                      showActivdadDocente(context)
+                    },
+                    child: Container(
+                      height: 90,
+                      margin: EdgeInsets.only(top: 8,left: 0, right: 0, bottom: 20),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
+                              width: 2
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: HexColor(controller.cursosUi.color2).withOpacity(0.5)
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                borderRadius: BorderRadius.all(Radius.circular(16))
+                            ),
+                            width: 65,
+                            height: 65,
+                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                          ),
+                          Padding(padding: EdgeInsets.only(left: 8)),
+                          Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("APLICA/REFLEXIONA",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14,
+                                      letterSpacing: 0.8,
+                                      color: AppTheme.darkerText,
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Desarrollo",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.darkerText,
+                                      ))
+                                ],
+                              )
+                          ),
+                          Container(
+                            margin: EdgeInsets.all(1),
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                                border: Border.all(
+                                    color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
+                                    width: 2
+                                ),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: true
+                                    ? Icon(
+                                  Icons.check_outlined,
+                                  size: 25.0,
+                                  color: HexColor(controller.cursosUi.color1),
+                                )
+                                    : Icon(
+                                  Icons.check_box_outline_blank,
+                                  size: 20.0,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () =>  {
+                      showActivdadDocente(context)
+                    },
+                    child: Container(
+                      height: 90,
+                      margin: EdgeInsets.only(top: 8,left: 0, right: 0, bottom: 20),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                              width: 2
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                borderRadius: BorderRadius.all(Radius.circular(16))
+                            ),
+                            width: 65,
+                            height: 65,
+                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                          ),
+                          Padding(padding: EdgeInsets.only(left: 8)),
+                          Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("INSTRUMENTO DE EVALUACIÓN",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14,
+                                      letterSpacing: 0.8,
+                                      color: AppTheme.darkerText,
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Desarrollo",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.darkerText,
+                                      ))
+                                ],
+                              )
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: false
+                                    ? Icon(
+                                  Icons.check_outlined,
+                                  size: 25.0,
+                                  color: HexColor(controller.cursosUi.color1),
+                                )
+                                    : Container(width: 25, height: 25,),
+                              ),
+                            ),
+
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () =>  {
+                      showActivdadDocente(context)
+                    },
+                    child: Container(
+                      height: 90,
+                      margin: EdgeInsets.only(top: 8,left: 0, right: 0, bottom: 20),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                              width: 2
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                            decoration: BoxDecoration(
+                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
+                                borderRadius: BorderRadius.all(Radius.circular(16))
+                            ),
+                            width: 65,
+                            height: 65,
+                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
+                          ),
+                          Padding(padding: EdgeInsets.only(left: 8)),
+                          Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("EVALUACIÓN",
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14,
+                                      letterSpacing: 0.8,
+                                      color: AppTheme.darkerText,
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Cierre",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.darkerText,
+                                      ))
+                                ],
+                              )
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16, right: 16),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: false
+                                    ? Icon(
+                                  Icons.check_outlined,
+                                  size: 25.0,
+                                  color: HexColor(controller.cursosUi.color1),
+                                )
+                                    : Container(width: 25, height: 25,),
+                              ),
+                            ),
+
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ])
             ),
-          ),
         ),
         SliverList(
             delegate: SliverChildListDelegate(

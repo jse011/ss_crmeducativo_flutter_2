@@ -34,7 +34,8 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
         (SQL.delete(SQL.relUnidadEvento)..where((tbl) => tbl.unidadaprendizajeId.isIn(unidadEventoIdList) )).go();
         (SQL.delete(SQL.unidadEvento)..where((tbl) => tbl.unidadAprendizajeId.isIn(unidadEventoIdList) )).go();
         var queryDeleteSesion = SQL.delete(SQL.sesionEvento)..where((tbl) => tbl.unidadAprendizajeId.isIn(unidadEventoIdList));
-        queryDeleteSesion.where((tbl) => tbl.rolId.equals(rolId));
+        if(rolId>0) queryDeleteSesion.where((tbl) => tbl.rolId.equals(rolId));
+
         queryDeleteSesion.go();
 
         if(unidadSesion.containsKey("unidadAprendizaje")){
@@ -69,7 +70,11 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
     ]);
     query.where(SQL.unidadEvento.silaboEventoId.equals(silaboEventoId));
     query.where(SQL.relUnidadEvento.tipoid.equals(calendarioTipoId));
-    query.orderBy([OrderingTerm(expression: SQL.unidadEvento.nroUnidad, mode: OrderingMode.desc),OrderingTerm(expression: SQL.sesionEvento.fechaEjecucion, mode: OrderingMode.desc) ]);
+    query.orderBy([
+      OrderingTerm(expression: SQL.unidadEvento.nroUnidad, mode: OrderingMode.desc),
+      OrderingTerm(expression: SQL.sesionEvento.fechaEjecucion, mode: OrderingMode.desc),
+      OrderingTerm(expression: SQL.sesionEvento.rolId, mode: OrderingMode.desc)
+    ]);
 
     List<UnidadUi> unidadEventoUiList = [];
     for(var row in await query.get()){
@@ -100,7 +105,18 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
         sesionUi.fechaEjecucionFin = (sesionEvento.fechaEjecucionFin??0) > 943938000000? DomainTools.f_fecha_letras(DateTime.fromMillisecondsSinceEpoch(sesionEvento.fechaEjecucionFin??0)):null;
         sesionUi.sesionAprendizajePadreId = sesionEvento.parentSesionId;
         sesionUi.estadoEjecucionId = sesionEvento.estadoEjecucionId;
-        if(sesionEvento.rolId == rolId)unidadUi.sesionUiList?.add(sesionUi);
+        sesionUi.unidadAprendizajeId = unidadUi.unidadAprendizajeId;
+        sesionUi.rolId = sesionEvento.rolId;
+        if(sesionEvento.rolId == 6){
+          unidadUi.sesionUiList?.add(sesionUi);
+        }else if(sesionEvento.rolId == 4){
+
+          SesionUi? sesionAlumnoUi = unidadUi.sesionUiList?.firstWhereOrNull((element) => element.sesionAprendizajePadreId == sesionUi.sesionAprendizajeId);
+          print("sesionAlumnoUi ${sesionAlumnoUi?.sesionAprendizajePadreId}");
+          if(sesionAlumnoUi==null)unidadUi.sesionUiList?.add(sesionUi);
+        }else{
+          unidadUi.sesionUiList?.add(sesionUi);
+        }
       }
 
     }

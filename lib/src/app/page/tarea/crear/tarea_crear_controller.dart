@@ -59,6 +59,13 @@ class TareaCrearController extends Controller{
       presenter.saveTareaOnMessage = (bool offline){
 
       };
+      _tituloTarea = tareaUi?.titulo;
+      _instruccionesTarea = tareaUi?.instrucciones;
+      _horaTarea = tareaUi?.horaTarea;
+      _fechaTarea = tareaUi?.fechaEntregaTime;
+      _tareaRecursoList = tareaUi?.recursos??[];
+      print("_tareaRecursoList: ${tareaUi?.recursos}");
+      refreshUI();
   }
 
   List<int> getPercentPartsV2(int? totalPeso, int? cantidad) {
@@ -149,11 +156,11 @@ class TareaCrearController extends Controller{
   }
 
   Future<bool> onClickPublicarTarea() async{
-    return guardarTarea(false);
+    return guardarTarea(true);
   }
 
   Future<bool> onClickGuardarTarea() async {
-    return guardarTarea(true);
+    return guardarTarea(false);
   }
 
   Future<bool> guardarTarea(bool publicar) async{
@@ -198,7 +205,25 @@ class TareaCrearController extends Controller{
 
     }else{
 
-      return true;
+      tareaUi?.titulo = tituloTarea;
+      tareaUi?.instrucciones = instruccionesTarea;
+      if(!(tareaUi?.publicado??false)) tareaUi?.publicado = publicar;
+      tareaUi?.fechaEntregaTime = fechaTarea;
+      tareaUi?.horaTarea = horaTarea;
+      tareaUi?.recursos = tareaRecursoList;
+      _progress = true;
+      refreshUI();
+      bool respuesta = false;
+      if(tareaUi!=null){
+        respuesta = await presenter.saveTareaDocente(tareaUi!);
+        if(!respuesta)_mensaje = "Error al guardar";
+      }else{
+        _mensaje = "Error desconocido";
+      }
+
+      _progress = false;
+      refreshUI();
+      return respuesta;
     }
 
 

@@ -7,6 +7,9 @@ class AppIcon {
   static const String ic_curso_tarea = "assets/icons/pack1/001-backpack.svg";
   static const String ic_curso_evaluacion = "assets/icons/pack1/016-notebook.svg";
   static const String ic_curso_grupo = "assets/icons/pack1/006-whistle.svg";
+  static const String ic_curso_nota_final = "assets/icons/pack1/020-diploma.svg";
+  static const String ic_curso_agenda = "assets/icons/pack1/010-notebook.svg";
+
   //static const String ic_curso_exam = "assets/icons/ic_documento.svg";
   //https://www.flaticon.es/packs/project-management-50
   //https://www.flaticon.es/packs/smartphone-technology-6

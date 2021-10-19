@@ -42,7 +42,7 @@ class MoorRubroRepository extends RubroRepository{
   static const int ESTADO_ANCLADA=313, ESTADO_EVALUADO=314, ESTADO_CREADO =237, ESTADO_ACTUALIZADO = 239, ESTADO_ELIMINADO = 280;
 
   @override
-  void saveDatosCrearRubros(Map<String, dynamic> crearRubro, int silaboEventoId, int calendarioPeriodoId) async {
+  Future<void> saveDatosCrearRubros(Map<String, dynamic> crearRubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeId) async {
     AppDataBase SQL = AppDataBase();
     int anioAcademicoId = 0;
     int  empleadoId = 0;
@@ -52,9 +52,16 @@ class MoorRubroRepository extends RubroRepository{
       if(crearRubro.containsKey("sessionAprendizajeCriterios")||crearRubro.containsKey("unidadAprendizajeCriterios")){
         //&& t.calendarioPeriodoId.equals(calendarioPeriodoId)
         //batch.deleteWhere(SQL.criterio, (Criterio t) => t.silaboEventoId.equals(silaboEventoId));
-        var query = SQL.delete(SQL.criterio)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
-        query.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
-        query.go();
+        if(sesionAprendizajeId>0){
+          var query = SQL.delete(SQL.criterio)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
+          query.go();
+        }else{
+          var query = SQL.delete(SQL.criterio)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
+          query.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
+          query.where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
+          query.go();
+        }
+
       }
 
       if(crearRubro.containsKey("sessionAprendizajeCriterios")){
@@ -91,17 +98,31 @@ class MoorRubroRepository extends RubroRepository{
   }
 
   @override
-  void saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId) async {
+  Future<void> saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId) async {
     AppDataBase SQL = AppDataBase();
-    print("saveDatosRubrosEval");
+    print("saveDatosRubrosEval ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumnoId}");
     await SQL.batch((batch) async {
 
       if(rubro.containsKey("rubroEvaluaciones")){
-
-        var queryRubro = SQL.selectOnly(SQL.rubroEvaluacionProceso)
-          ..addColumns([SQL.rubroEvaluacionProceso.rubroEvalProcesoId]);
-        queryRubro.where(SQL.rubroEvaluacionProceso.silaboEventoId.equals(silaboEventoId));
-        queryRubro.where(SQL.rubroEvaluacionProceso.calendarioPeriodoId.equals(calendarioPeriodoId));
+        var queryRubro;
+        if(sesionAprendizajeDocenteId>0&&sesionAprendizajeAlumnoId>0){
+          queryRubro = SQL.selectOnly(SQL.rubroEvaluacionProceso)
+            ..addColumns([SQL.rubroEvaluacionProceso.rubroEvalProcesoId]);
+          queryRubro.where(SQL.rubroEvaluacionProceso.sesionAprendizajeId.isIn([sesionAprendizajeAlumnoId, sesionAprendizajeDocenteId]));
+        }else if(sesionAprendizajeDocenteId>0){
+          queryRubro = SQL.selectOnly(SQL.rubroEvaluacionProceso)
+            ..addColumns([SQL.rubroEvaluacionProceso.rubroEvalProcesoId]);
+          queryRubro.where(SQL.rubroEvaluacionProceso.sesionAprendizajeId.equals(sesionAprendizajeDocenteId));
+        }else if(sesionAprendizajeAlumnoId>0){
+          queryRubro = SQL.selectOnly(SQL.rubroEvaluacionProceso)
+            ..addColumns([SQL.rubroEvaluacionProceso.rubroEvalProcesoId]);
+          queryRubro.where(SQL.rubroEvaluacionProceso.sesionAprendizajeId.equals(sesionAprendizajeAlumnoId));
+        }else{
+          queryRubro = SQL.selectOnly(SQL.rubroEvaluacionProceso)
+            ..addColumns([SQL.rubroEvaluacionProceso.rubroEvalProcesoId]);
+          queryRubro.where(SQL.rubroEvaluacionProceso.silaboEventoId.equals(silaboEventoId));
+          queryRubro.where(SQL.rubroEvaluacionProceso.calendarioPeriodoId.equals(calendarioPeriodoId));
+        }
         //queryRubro.where(SQL.rubroEvaluacionProceso.syncFlag.isNotIn([EstadoSync.FLAG_UPDATED, EstadoSync.FLAG_ADDED])); El servidor devuelve los rubros que solo estan en el celular
 
         var queryEval = SQL.selectOnly(SQL.evaluacionProceso)..addColumns([SQL.evaluacionProceso.evaluacionProcesoId]);
@@ -530,11 +551,14 @@ class MoorRubroRepository extends RubroRepository{
     List<RubricaEvaluacionUi> rubricaEvalProcesoUiList = [];
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await query.get();
     for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in  rubroEvalProcesoList){
-      rubricaIdList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
+
       RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
+
       if(origenRubroUi == OrigenRubroUi.TODOS){
+        rubricaIdList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
         rubricaEvalProcesoUiList.add(rubricaEvaluacionUi);
       }else if(origenRubroUi == rubricaEvaluacionUi.origenRubroUi){
+        rubricaIdList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
         rubricaEvalProcesoUiList.add(rubricaEvaluacionUi);
       }
     }
@@ -654,6 +678,7 @@ class MoorRubroRepository extends RubroRepository{
     sesionUi.nroSesion = row.read(SQL.criterio.nroSesion);
     sesionUi.titulo = row.read(SQL.criterio.tituloSesion);
     sesionUi.proposito = row.read(SQL.criterio.propositoSesion);
+    sesionUi.unidadAprendizajeId = unidadUi.unidadAprendizajeId;
     sesionUi.rubricaEvaluacionUiList = [];
     if((sesionUi.sesionAprendizajeId??0)>0){
       unidadUi.sesionUiList?.add(sesionUi);
@@ -1224,6 +1249,67 @@ class MoorRubroRepository extends RubroRepository{
           fechaAccion: Value(DateTime.now()),
           syncFlag: Value(EstadoSync.FLAG_UPDATED),
         ));
+  }
+
+  @override
+  Future<List<RubricaEvaluacionUi>> getRubroEvaluacionSesionList(int? silaboEventoId, int? calendarioPeriodoId,  int sesionAprendizajeDocenteId, int sesionAprendizajeAlumonId) async{
+    //print("getRubroEvaluacionSesionList ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumonId}");
+    AppDataBase SQL = AppDataBase();
+    var query = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
+    query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
+    query.where((tbl) => tbl.sesionAprendizajeId.isIn([sesionAprendizajeDocenteId, sesionAprendizajeAlumonId]));
+    query.where((tbl) => tbl.sesionAprendizajeId.isNotIn([0]));
+    query.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
+    //query.where((tbl) => tbl.tipoFormulaId.isNull());
+    query.where((tbl) => tbl.tipoFormulaId.equals(0));
+    query.where((tbl) => tbl.estadoId.isNotIn([ESTADO_ELIMINADO]));
+    query.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
+
+
+    List<String> rubricaIdList =[];
+    List<RubricaEvaluacionUi> rubricaEvalProcesoUiList = [];
+    List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await query.get();
+    print("rubricaEvalProcesoUiList: ${rubroEvalProcesoList}");
+    for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in  rubroEvalProcesoList){
+      rubricaIdList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
+      RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
+      rubricaEvalProcesoUiList.add(rubricaEvaluacionUi);
+    }
+
+    var queryEval = SQL.select(SQL.evaluacionProceso).join([
+      innerJoin(SQL.rubroEvaluacionProceso, SQL.evaluacionProceso.rubroEvalProcesoId.equalsExp(SQL.rubroEvaluacionProceso.rubroEvalProcesoId))
+    ]);
+    queryEval.where(SQL.rubroEvaluacionProceso.silaboEventoId.equals(silaboEventoId));
+    queryEval.where(SQL.rubroEvaluacionProceso.calendarioPeriodoId.equals(calendarioPeriodoId));
+
+    for(var row in await queryEval.get()){
+      EvaluacionProcesoData evalRubroEvalProceso = row.readTable(SQL.evaluacionProceso);
+      for(RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvalProcesoUiList){
+        if(rubricaEvaluacionUi.rubricaId == evalRubroEvalProceso.rubroEvalProcesoId){
+          rubricaEvaluacionUi.cantEvaluaciones = (rubricaEvaluacionUi.cantEvaluaciones??0) + 1;
+          if((evalRubroEvalProceso.publicado??0) == 1){
+            rubricaEvaluacionUi.cantEvalPublicadas = (rubricaEvaluacionUi.cantEvalPublicadas??0) + 1;
+          }
+        }
+      }
+    }
+    //#region Agregar la cantidad de rubros Asociados
+    var queryRubroDetalle = SQL.select(SQL.rubroEvalRNPFormula).join([
+      innerJoin(SQL.rubroEvaluacionProceso, SQL.rubroEvalRNPFormula.rubroEvaluacionSecId.equalsExp(SQL.rubroEvaluacionProceso.rubroEvalProcesoId))
+    ]);
+    queryRubroDetalle.where(SQL.rubroEvalRNPFormula.rubroEvaluacionPrimId.isIn(rubricaIdList));
+    queryRubroDetalle.where(SQL.rubroEvaluacionProceso.estadoId.isNotIn([ESTADO_ELIMINADO]));
+
+    for(var row in await queryRubroDetalle.get()){
+      RubroEvalRNPFormulaData rubroEvalRNPFormulaData = row.readTable(SQL.rubroEvalRNPFormula);
+      for(RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvalProcesoUiList){
+        if(rubroEvalRNPFormulaData.rubroEvaluacionPrimId == rubricaEvaluacionUi.rubricaId){
+          rubricaEvaluacionUi.cantidadRubroDetalle =  (rubricaEvaluacionUi.cantidadRubroDetalle??0) + 1;
+        }
+      }
+    }
+
+    return rubricaEvalProcesoUiList;
   }
 
 }

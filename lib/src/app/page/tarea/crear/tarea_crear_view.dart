@@ -144,12 +144,15 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
     );
 
     super.initState();
+    _tiuloTareacontroller.text = widget.tareaUi?.titulo??"";
+    _Instrucionescontroller.text = widget.tareaUi?.instrucciones??"";
+    _Horacontroller.text = widget.tareaUi?.horaTarea??"";
 
   }
 
 
   @override
-  Widget get view =>   ControlledWidgetBuilder<TareaCrearController>(
+  Widget get view => ControlledWidgetBuilder<TareaCrearController>(
       builder: (context, controller) {
 
         if(controller.mensaje!=null&&controller.mensaje!.isNotEmpty){
@@ -244,21 +247,23 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_tarea, height: 32 +  6 - 10 * topBarOpacity , width: 35 +  6 - 10 * topBarOpacity ,),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          'Tarea',
-                                          textAlign: TextAlign.left,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16 + 6 - 6 * topBarOpacity,
-                                            letterSpacing: 1.2,
-                                            color: AppTheme.darkerText,
-                                          ),
-                                        ),
+                                      //SvgPicture.asset(AppIcon.ic_curso_tarea, height: 32 +  6 - 10 * topBarOpacity , width: 35 +  6 - 10 * topBarOpacity ,),
+                                      Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Crear Tarea',
+                                              textAlign: TextAlign.left,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontFamily: AppTheme.fontTTNormsMedium,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16 + 6 - 6 * topBarOpacity,
+                                                letterSpacing: 1.2,
+                                                color: AppTheme.darkerText,
+                                              ),
+                                            ),
+                                          )
                                       ),
                                     ],
                                   ),
@@ -294,7 +299,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                         ),
                                       ),
                                     ),
-                                    Padding(padding: EdgeInsets.all(4)),
+                                    Padding(padding: EdgeInsets.all(6)),
                                     Material(
                                       color: HexColor(controller.cursosUi?.color1),
                                       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -358,7 +363,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                     MediaQuery.of(context).padding.top +
                     0,
               ),
-              child:  AnimatedBuilder(
+              child: AnimatedBuilder(
                 animation: animationController,
                 builder: (BuildContext? context, Widget? child) {
                   return FadeTransition(
@@ -829,6 +834,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                                           ],
                                                         ),
                                                       ),
+                                                      !(tareaRecursoUi.success??false)&&(tareaRecursoUi.progress??0)>0?
                                                       Column(
                                                         children: [
                                                           Expanded(child: Container()),
@@ -840,7 +846,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                                             color: HexColor(controller.cursosUi?.color2),
                                                           )
                                                         ],
-                                                      )
+                                                      ):Container()
                                                     ],
                                                   ),
                                                 ),
@@ -849,6 +855,9 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                           );
                                         }
                                     ),
+                                    Container(
+                                      padding: EdgeInsets.only(bottom: 100),
+                                    )
                                   ])
                               ),
                             ]
@@ -965,12 +974,12 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            width: 50,
-                            height: 50,
+                            width: 45,
+                            height: 45,
                             child: Icon(Ionicons.close, size: 35, color: AppTheme.white,),
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: AppTheme.colorAccent),
+                                color: HexColor(controller.cursosUi?.color1)),
                           ),
                           Padding(padding: EdgeInsets.all(8)),
                           Expanded(
@@ -1002,7 +1011,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                 onPressed: () {
                                   Navigator.of(context).pop(false);
                                 },
-                                child: Text('Cancelar'),
+                                child: Text('Cancelar', style: TextStyle(color: HexColor(controller.cursosUi?.color1), fontSize: 13),),
                                 style: OutlinedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -1016,14 +1025,19 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                               Navigator.of(context).pop(true);
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: AppTheme.red,
+                              primary: HexColor(controller.cursosUi?.color1),
                               onPrimary: Colors.white,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            child: Text('Salir sin guardar'),
+                            child: Text('Salir sin guardar',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 13
+                              ),
+                            ),
                           )),
                         ],
                       )

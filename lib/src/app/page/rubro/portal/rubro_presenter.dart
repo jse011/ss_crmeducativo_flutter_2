@@ -5,17 +5,19 @@ import 'package:ss_crmeducativo_2/src/domain/entities/origen_rubro_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/resultado_respository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_alumno_curso.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/update_calendario_periodo.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_calendario_periodo.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_competencia_rubro_eval.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_resultados.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_datos_crear_rubros.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_rubro_evaluacion_list.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_tipo_nota_resultado.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_unidad_rubro_eval.dart';
 
 class RubroPresenter extends Presenter{
-  UpdateCalendarioPerido _getCalendarioPerido;
+  GetCalendarioPerido _getCalendarioPerido;
   late Function getCalendarioPeridoOnComplete, getCalendarioPeridoOnError;
   UpdateDatosCrearRubro _getDatosCrearRubro;
   late Function updateDatosCrearRubroOnNext, updateDatosCrearRubroOnError;
@@ -31,13 +33,17 @@ class RubroPresenter extends Presenter{
   GetTipoNotaResultado _getTipoNotaResultado;
   late Function getTipoNotaResultadoOnNext, getTipoNotaResultadoEvalOnError;
 
-  RubroPresenter(CalendarioPeriodoRepository calendarioPeriodoRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, RubroRepository rubroRepo) :
-                          _getCalendarioPerido = new UpdateCalendarioPerido(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo),
+  GetResultados _getResultados;
+  late Function getResultadosOnComplete, getResultadosOnError;
+
+  RubroPresenter(CalendarioPeriodoRepository calendarioPeriodoRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, RubroRepository rubroRepo, ResultadoRepository resultadoRepo) :
+                          _getCalendarioPerido = new GetCalendarioPerido(configuracionRepo, calendarioPeriodoRepo),
                           _getDatosCrearRubro = new UpdateDatosCrearRubro(httpDatosRepo, configuracionRepo, rubroRepo),
                           _getRubroEvaluacion = GetRubroEvaluacionList(rubroRepo),
                           _getUnidadRubroEval = GetUnidadRubroEval(rubroRepo),
                           _getCompetenciaRubroEval = GetCompetenciaRubroEval(rubroRepo, configuracionRepo),
-                          _getTipoNotaResultado = GetTipoNotaResultado(rubroRepo);
+                          _getTipoNotaResultado = GetTipoNotaResultado(rubroRepo),
+                          _getResultados = GetResultados(httpDatosRepo, configuracionRepo, resultadoRepo);
 
   void getCalendarioPerido(CursosUi? cursosUi){
     _getCalendarioPerido.execute(_GetCalendarioPeriodoCase(this), GetCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
@@ -55,8 +61,8 @@ class RubroPresenter extends Presenter{
   }
 
   void onActualizarCurso(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi cursosUi) {
-    _getRubroEvaluacion.dispose();
-    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0));
+    _getDatosCrearRubro.dispose();
+    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, null));
   }
 
   void onGetRubricaList(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, OrigenRubroUi? origenRubroUi){
@@ -75,7 +81,13 @@ class RubroPresenter extends Presenter{
   }
 
   void onGetTipoNotaResultado(CursosUi? cursosUi){
+    _getTipoNotaResultado.dispose();
     _getTipoNotaResultado.execute(GetTipoNotaResultadoCase(this), GetTipoNotaResultadoParms(cursosUi?.silaboEventoId));
+  }
+
+  void getResultados(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
+    _getResultados.dispose();
+    _getResultados.execute(_GetResultadosCase(this), GetResultadosParams(cursosUi, calendarioPeriodoUI?.id));
   }
 
 }
@@ -100,7 +112,7 @@ class _GetCalendarioPeriodoCase extends Observer<GetCalendarioPeridoResponse>{
   void onNext(GetCalendarioPeridoResponse? response) {
     print("getCalendarioPeridoOnComplete");
     assert(presenter.getCalendarioPeridoOnComplete!=null);
-    presenter.getCalendarioPeridoOnComplete(response?.calendarioPeriodoList, response?.calendarioPeriodoUI, response?.errorServidor, response?.offlineServidor);
+    presenter.getCalendarioPeridoOnComplete(response?.calendarioPeriodoList, response?.calendarioPeriodoUI);
   }
 
 }
@@ -221,6 +233,31 @@ class GetTipoNotaResultadoCase extends Observer<GetTipoNotaResultadoResponse>{
   void onNext(GetTipoNotaResultadoResponse? response) {
     assert(presenter.getTipoNotaResultadoOnNext!=null);
     presenter.getTipoNotaResultadoOnNext(response?.tipoEvaluacionUi);
+  }
+
+}
+
+class _GetResultadosCase extends Observer<GetResultadosResponse>{
+  RubroPresenter presenter;
+
+  _GetResultadosCase(this.presenter);
+
+  @override
+  void onComplete() {
+
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.getResultadosOnError!=null);
+    presenter.getResultadosOnError(e);
+  }
+
+  @override
+  void onNext(GetResultadosResponse? response) {
+    print("getResultadosOnComplete");
+    assert(presenter.getResultadosOnComplete!=null);
+    presenter.getResultadosOnComplete(response?.matrizResultadoUi, response?.offlineServidor, response?.errorServidor);
   }
 
 }

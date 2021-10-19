@@ -2237,3 +2237,133 @@ Map<String, dynamic> _$TareaRecursoDidacticoSerialToJson(
       'fechaAccion': instance.fechaAccion,
       'fechaCreacion': instance.fechaCreacion,
     };
+
+ResultadoAlumnoSerial _$ResultadoAlumnoSerialFromJson(
+    Map<String, dynamic> json) {
+  return ResultadoAlumnoSerial(
+    personaId: json['personaId'] as int?,
+    apellidoPaterno: json['apellidoPaterno'] as String?,
+    apellidoMaterno: json['apellidoMaterno'] as String?,
+    nombres: json['nombres'] as String?,
+    foto: json['foto'] as String?,
+    vigencia: json['vigencia'] as bool?,
+  );
+}
+
+Map<String, dynamic> _$ResultadoAlumnoSerialToJson(
+        ResultadoAlumnoSerial instance) =>
+    <String, dynamic>{
+      'personaId': instance.personaId,
+      'apellidoPaterno': instance.apellidoPaterno,
+      'apellidoMaterno': instance.apellidoMaterno,
+      'nombres': instance.nombres,
+      'foto': instance.foto,
+      'vigencia': instance.vigencia,
+    };
+
+ResultadoCapacidadSerial _$ResultadoCapacidadSerialFromJson(
+    Map<String, dynamic> json) {
+  return ResultadoCapacidadSerial(
+    rubroEvalResultadoId: json['rubroEvalResultadoId'] as int?,
+    titulo: json['titulo'] as String?,
+    tipoNotaId: json['tipoNotaId'] as String?,
+    tipoId: json['tipoId'] as int?,
+    valorMinimo: json['valorMinimo'] as int?,
+    valorMaximo: json['valorMaximo'] as int?,
+    orden: json['orden'] as int?,
+    orden2: json['orden2'] as int?,
+    competencia: json['competencia'] as String?,
+    parentId: json['parentId'] as int?,
+    competenciaId: json['competenciaId'] as String?,
+    evaluado: json['evaluado'] as bool?,
+    intervalo: json['intervalo'] as bool?,
+    rubroEvaluacionPrinId: json['rubroEvaluacionPrinId'] as int?,
+    rFEditable: json['rFEditable'] as bool?,
+    notaDup: json['notaDup'] as bool?,
+  );
+}
+
+Map<String, dynamic> _$ResultadoCapacidadSerialToJson(
+        ResultadoCapacidadSerial instance) =>
+    <String, dynamic>{
+      'rubroEvalResultadoId': instance.rubroEvalResultadoId,
+      'titulo': instance.titulo,
+      'tipoNotaId': instance.tipoNotaId,
+      'tipoId': instance.tipoId,
+      'valorMinimo': instance.valorMinimo,
+      'valorMaximo': instance.valorMaximo,
+      'orden': instance.orden,
+      'orden2': instance.orden2,
+      'competencia': instance.competencia,
+      'parentId': instance.parentId,
+      'competenciaId': instance.competenciaId,
+      'evaluado': instance.evaluado,
+      'intervalo': instance.intervalo,
+      'rubroEvaluacionPrinId': instance.rubroEvaluacionPrinId,
+      'rFEditable': instance.rFEditable,
+      'notaDup': instance.notaDup,
+    };
+
+ResultadoCompetenciaSerial _$ResultadoCompetenciaSerialFromJson(
+    Map<String, dynamic> json) {
+  return ResultadoCompetenciaSerial(
+    titulo: json['titulo'] as String?,
+    tipoId: json['tipoId'] as int?,
+    competencia: json['competencia'] as String?,
+    competenciaId: json['competenciaId'] as int?,
+    notaDup: json['notaDup'] as bool?,
+    rubroEvalResultadoId: json['rubroEvalResultadoId'] as int?,
+    rubroFormal: json['rubroFormal'] as int?,
+  );
+}
+
+Map<String, dynamic> _$ResultadoCompetenciaSerialToJson(
+        ResultadoCompetenciaSerial instance) =>
+    <String, dynamic>{
+      'titulo': instance.titulo,
+      'tipoId': instance.tipoId,
+      'competencia': instance.competencia,
+      'competenciaId': instance.competenciaId,
+      'notaDup': instance.notaDup,
+      'rubroEvalResultadoId': instance.rubroEvalResultadoId,
+      'rubroFormal': instance.rubroFormal,
+    };
+
+ResultadoEvaluacionSerial _$ResultadoEvaluacionSerialFromJson(
+    Map<String, dynamic> json) {
+  return ResultadoEvaluacionSerial(
+    evaluacionResultadoId: json['evaluacionResultadoId'] as int?,
+    alumnoId: json['alumnoId'] as int?,
+    rubroEvalResultadoId: json['rubroEvalResultadoId'] as int?,
+    nota: (json['nota'] as num?)?.toDouble(),
+    valorTipoNotaId: json['valorTipoNotaId'] as String?,
+    tituloNota: json['tituloNota'] as String?,
+    tipoId: json['tipoId'] as String?,
+    orden: json['orden'] as int?,
+    orden2: json['orden2'] as int?,
+    evaluado: json['evaluado'] as bool?,
+    rFEditable: json['rFEditable'] as bool?,
+    color: json['color'] as String?,
+    notaDup: json['notaDup'] as bool?,
+    conclusionDescriptiva: json['conclusionDescriptiva'] as String?,
+  );
+}
+
+Map<String, dynamic> _$ResultadoEvaluacionSerialToJson(
+        ResultadoEvaluacionSerial instance) =>
+    <String, dynamic>{
+      'evaluacionResultadoId': instance.evaluacionResultadoId,
+      'alumnoId': instance.alumnoId,
+      'rubroEvalResultadoId': instance.rubroEvalResultadoId,
+      'nota': instance.nota,
+      'valorTipoNotaId': instance.valorTipoNotaId,
+      'tituloNota': instance.tituloNota,
+      'tipoId': instance.tipoId,
+      'orden': instance.orden,
+      'orden2': instance.orden2,
+      'evaluado': instance.evaluado,
+      'rFEditable': instance.rFEditable,
+      'color': instance.color,
+      'notaDup': instance.notaDup,
+      'conclusionDescriptiva': instance.conclusionDescriptiva,
+    };

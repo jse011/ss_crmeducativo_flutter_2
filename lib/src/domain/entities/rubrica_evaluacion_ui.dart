@@ -32,7 +32,8 @@ class RubricaEvaluacionUi{
   int? desempenioIcdId;
   CriterioUi? criterioUi;
   String? tituloRubroCabecera;//POr ahora solo trae cunado se listan los rubros por competencia
-  String? rubricaIdRubroCabecera;//POr ahora solo trae cunado se listan los rubros por competencia
+  String? rubricaIdRubroCabecera;
+  int? position;//POr ahora solo trae cunado se listan los rubros por competencia
 
 
 }
