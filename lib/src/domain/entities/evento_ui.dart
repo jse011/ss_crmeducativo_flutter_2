@@ -1,3 +1,6 @@
+import 'package:ss_crmeducativo_2/src/domain/entities/evento_adjunto_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evento_lista_envio_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_eventoUi.dart';
 
 class EventoUi {
@@ -6,7 +9,8 @@ class EventoUi {
   String? rolEmisor;
   String? fotoEntidad;
   String? nombreEntidad;
-  DateTime? fecha;
+  DateTime? fecha;//Fecha con hora
+  DateTime? fechaEvento;//Fecha sin hora
   String? nombreFecha;
   String? titulo;
 
@@ -15,7 +19,18 @@ class EventoUi {
   TipoEventoUi? tipoEventoUi;
   int? cantLike;
   bool? externo;
-
+  List<EventoAdjuntoUi>? eventoAdjuntoUiList;
+  List<EventoAdjuntoUi>? eventoAdjuntoUiEncuestaList;
+  List<EventoAdjuntoUi>? eventoAdjuntoUiDownloadList;
+  List<EventoAdjuntoUi>? eventoAdjuntoUiPreviewList;
+  String? nombreFechaPublicacion;
+  DateTime? fechaPublicacion;
+  bool? publicado;
+  String? horaEvento;
+  int? cargaCursoId;
+  EventosListaEnvioUi? listaEnvioUi;
+  DateTime? fecaCreacion;
+  int? estadoId;
   DateTime getFecha() {
     return this.fecha??DateTime(1900);
   }

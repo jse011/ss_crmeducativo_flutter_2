@@ -22,7 +22,7 @@ class Login extends UseCase<LoginResponse,LoginParams>{
     }
 
     try {
-      Map<String, dynamic>? loginRest = null;
+      Map<String, dynamic>? loginRest;
       if(params!=null&&params.usuario!=null&&params.usuario.isNotEmpty
           && params.password!=null&&params.password.isNotEmpty){
         loginRest = await this.repository.getUsuarioExterno(1, params.usuario, params.password, "", "");
@@ -36,7 +36,7 @@ class Login extends UseCase<LoginResponse,LoginParams>{
           && params.dni!=null&&params.dni.isNotEmpty){
         loginRest = await this.repository.getUsuarioExterno(3, params.usuario, params.password, params.correo, params.dni);
       }
-      LoginUi? loginUi = null;
+      LoginUi? loginUi;
       bool errorServidor = loginRest==null;
       if(!errorServidor){
         try{

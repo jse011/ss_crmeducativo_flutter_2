@@ -1,6 +1,5 @@
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
-import 'package:path/path.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 
 class DomainTools {
@@ -351,15 +350,6 @@ class DomainTools {
     RegExp regex = RegExp(r"([.]*0)(?!.*\d)");
     return n != null ? n.toString().replaceAll(regex, "") : null;
 
-  }
-
-  static String? getYoutubeVideoId(String? url) {
-    RegExp regExp = new RegExp(
-      r'.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*',
-      caseSensitive: false,
-      multiLine: false,
-    );
-    return url!=null?regExp.firstMatch(url)?.group(1):""; // <- This is the fix;
   }
 
    static String? getDocumentId(String docIDfull) {

@@ -43,8 +43,43 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
 
       List<CompetenciaUi> competenciaUiList = await rubroRepository.getRubroCompetencia(params?.silaboEventoId, params?.calendarioPeriodoUI?.id, params?.cargaCursoId);
       for(CompetenciaUi competenciaUi in competenciaUiList){
+        List<CapacidadUi> capacidadUiList = [];
+        for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
+          if((capacidadUi.evaluable??false)){
+            capacidadUiList.add(capacidadUi);
+          }
+        }
+        capacidadUiList.sort((o1, o2){
+          return (o1.rubroResultadoId??0).compareTo((o2.rubroResultadoId??0));
+        });
+        competenciaUi.capacidadUiList = capacidadUiList;
+      }
+
+      alumnoCursoList.sort((o1, o2){
+        return (o1.apellidos??"").compareTo((o2.apellidos??""));
+      });
+
+      competenciaUiList.sort((o1, o2){
+        return (o1.competenciaId??0).compareTo((o2.competenciaId??0));
+      });
+
+
+      for(CompetenciaUi competenciaUi in competenciaUiList){
         for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
           int totalpeso = 0;
+          capacidadUi.rubricaEvalUiList?.sort((o1, o2){
+
+            int value1 = (o2.fechaCreacion??DateTime(1995)).compareTo(o1.fechaCreacion??DateTime(1995));
+            if(value1 == 0){
+              int value2 = (o1.tituloRubroCabecera??"").compareTo(o2.tituloRubroCabecera??"");
+              if(value2 == 0){
+                return (o1.titulo??"").compareTo(o2.titulo??"");
+              }else{
+                return value2;
+              }
+            }
+            return 1;
+          });
 
           for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
             rubricaEvaluacionUi.ningunaEvalCalificada = CalcularEvaluacionResultados.ningunaEvalCalificada(rubricaEvaluacionUi);

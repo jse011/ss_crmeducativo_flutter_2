@@ -14,6 +14,7 @@ class Calendario extends Table {
   IntColumn get  cargaCursoId=> integer().nullable()();
   IntColumn get  estadoPublicaciN=> integer().nullable()();
   IntColumn get  estadoPublicacion=> integer().nullable()();
+  TextColumn get  nFoto=> text().nullable()();
   IntColumn get  rolId=> integer().nullable()();
   IntColumn get  usuarioCreacionId=> integer().nullable()();
   IntColumn get  usuarioCreadorId=> integer().nullable()();

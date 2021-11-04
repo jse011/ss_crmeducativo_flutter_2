@@ -60,7 +60,7 @@ class UpdateCalendarioPerido extends UseCase<GetCalendarioPeridoResponse, GetCal
   }
 
   Future<void> getCalendarioPerido(StreamController<GetCalendarioPeridoResponse> controller,int anioAcademicoId, int programaEducativoId, int cargaCursoId,bool errorServidor, bool offlineServidor) async{
-    CalendarioPeriodoUI? calendarioPeriodoUI = null;
+    CalendarioPeriodoUI? calendarioPeriodoUI;
 
     final List<CalendarioPeriodoUI> calendarioPeriodoList = await repository.getCalendarioPerios(programaEducativoId, cargaCursoId, anioAcademicoId);
 

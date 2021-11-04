@@ -112,12 +112,17 @@ class _StickyHeadersTableState extends State<StickyHeadersTableV2> {
 
   @override
   Widget build(BuildContext context) {
-    /*SchedulerBinding.instance?.addPostFrameCallback((_) {
-      widget.scrollControllers._horizontalTitleController
-          .jumpTo(widget.initialScrollOffsetX);
-      widget.scrollControllers._verticalTitleController
-          .jumpTo(widget.initialScrollOffsetY);
-    });*/
+
+    SchedulerBinding.instance?.addPostFrameCallback((_) {
+      try{
+        widget.scrollControllers._horizontalTitleController
+            .jumpTo(widget.initialScrollOffsetX);
+        widget.scrollControllers._verticalTitleController
+            .jumpTo(widget.initialScrollOffsetY);
+      }catch(e){
+
+      }
+    });
     return Column(
       children: <Widget>[
         Row(

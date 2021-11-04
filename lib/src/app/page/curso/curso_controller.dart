@@ -1,14 +1,13 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/curso/curso_presenter.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class CursoController extends Controller{
   CursoPresenter cursoPresenter;
-  CursosUi? _cursosUi = null;
+  CursosUi? _cursosUi;
   CursosUi? get cursos => _cursosUi;
-  String? _fechaHoy = null;
+  String? _fechaHoy;
   String? get fechaHoy => _fechaHoy;
   bool _progress = true;
   bool get progress => _progress;
@@ -42,7 +41,7 @@ class CursoController extends Controller{
   @override
   void onInitState() {
     cursoPresenter.getCalendarioPerido(_cursosUi);
-    super.onInitState();
+
   }
 
   void getFecha() {

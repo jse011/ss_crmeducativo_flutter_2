@@ -2,6 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/example/main.dart';
 import 'package:ss_crmeducativo_2/src/app/page/curso/curso_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/agenda/agenda_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/crear_agenda/crear_agenda_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_info_complejo_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_info_simple_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/home/home_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/login/login_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_view.dart';
@@ -23,6 +27,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dar
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evento_adjunto_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -44,6 +50,11 @@ class AppRouter {
   static final String TAREA_PORTAL = 'Curso/Tarea/Portal';
   static final String TAREA_CREAR = 'Curso/Tarea/Crear';
   static final String RESULTADO = 'Curso/Resultado';
+  static final String EVENTO_INFO_SIMPLE = 'Evento/InfoSimple';
+  static final String EVENTO_INFO_COMPLEJO = 'Evento/InfoComplejo';
+  static final String CREAR_EVENTO = 'Evento/CrearEvento';
+  static final String AGENDA_PORTAL = 'Evento/Agenda';
+
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     LOGIN: (BuildContext context) => LoginView(),
@@ -187,7 +198,43 @@ class AppRouter {
           return ResultadoView(cursosUi, calendarioPeriodoUI);
         },
       );
+    }else if(settings.name == EVENTO_INFO_SIMPLE){
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          EventoUi eventoUi = arguments['eventoUi'];
+          EventoAdjuntoUi? eventoAdjuntoUi = arguments['eventoAdjuntoUi'];
+          return EventoInfoSimpleView(eventoUi, eventoAdjuntoUi);
+        },
+      );
+    }else if(settings.name == EVENTO_INFO_COMPLEJO){
+      EventoUi? eventoUi = settings.arguments as EventoUi;
+      return MaterialPageRoute(
+        builder: (context) {
+          return EventoInfoComplejoView(eventoUi);
+        },
+      );
+    }else if(settings.name == CREAR_EVENTO){
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          EventoUi? eventoUi = arguments['eventoUi'];
+          CursosUi? cursosUi = arguments['cursosUi'];
+          return CrearAgendaView(eventoUi, cursosUi);
+        },
+      );
+    }else if(settings.name == AGENDA_PORTAL){
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi? cursosUi = arguments['cursosUi'];
+          return AgendaView(cursosUi);
+        },
+      );
     }
+
+
+
   }
 
   static void createRouteHomeRemoveAll(BuildContext context) {
@@ -303,6 +350,39 @@ class AppRouter {
         arguments: {'cursoUi': cursosUi,'calendarioPeriodoUI': calendarioPeriodoUI}
     );
   }
+
+  static Future<dynamic> createEventoInfoSimpleRouter(BuildContext context, EventoUi? eventoUi, EventoAdjuntoUi? eventoAdjuntoUi) {
+    return Navigator.pushNamed(context,
+        EVENTO_INFO_SIMPLE,
+        arguments: {'eventoUi': eventoUi,'eventoAdjuntoUi': eventoAdjuntoUi}
+    );
+  }
+
+  static Future<dynamic> createEventoInfoComplejoRouter(BuildContext context, EventoUi? eventoUi) {
+    return Navigator.pushNamed(context,
+        EVENTO_INFO_COMPLEJO,
+        arguments: eventoUi
+    );
+  }
+
+  static Future<dynamic> createCrearEventoRouter(BuildContext context, EventoUi? eventoUi, CursosUi? cursosUi) {
+    return Navigator.pushNamed(context,
+        CREAR_EVENTO,
+        arguments: {'eventoUi': eventoUi , 'cursosUi': cursosUi
+    }
+    );
+  }
+
+
+  static Future<dynamic> showAgendaPortalView(BuildContext context, CursosUi? cursosUi) {
+    return Navigator.pushNamed(context,
+        AGENDA_PORTAL,
+        arguments: {'cursosUi': cursosUi
+        }
+    );
+  }
+
+
 
 }
 

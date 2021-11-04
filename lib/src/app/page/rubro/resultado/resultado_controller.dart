@@ -28,7 +28,7 @@ class ResultadoController extends Controller{
   List<dynamic> get columns => _columns;
   List<List<dynamic>> _cells = [];
   List<List<dynamic>> get cells => _cells;
-  bool _precision = false;
+  bool _precision = true;
   bool get precision => _precision;
 
   ResultadoController(this.cursosUi, this._calendarioPeriodoUI, ConfiguracionRepository configuracionRepo, CalendarioPeriodoRepository calendarioPeriodoRepo, ResultadoRepository resultadoRepo, HttpDatosRepository httpDatosRepo):

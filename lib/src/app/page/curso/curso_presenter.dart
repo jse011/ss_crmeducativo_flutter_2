@@ -3,9 +3,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/get_anio_academico.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_curso.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/get_cursos.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_calendario_periodo.dart';
 
 class CursoPresenter extends Presenter {

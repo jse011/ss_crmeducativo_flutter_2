@@ -1,15 +1,6 @@
-import 'package:moor/src/runtime/data_class.dart';
+
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/calendario_lista_usuario.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/lista_usuario_detalle.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/relaciones_persona.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/usuario_evento.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/calendario_periodo_carga_curso.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/archivo_rubro.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_alumno_archivo.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_recurso_didactico.dart';
-import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_unidad.dart';
 
 class SerializableConvert{
   static EntidadData converSerializeEntidad(Map<String,dynamic> model){
@@ -27,7 +18,7 @@ class SerializableConvert{
         estadoId: serial.entidadId
     );
   }
-  static List<Insertable<EntidadData>> converListSerializeEntidad(model) {
+  static List<EntidadData> converListSerializeEntidad(model) {
     List<EntidadData> items = [];
     Iterable l = model;
     for(var item in l){
@@ -820,6 +811,8 @@ class SerializableConvert{
         competenciaNombre: serial.competenciaNombre,
         competenciaDescripcion: serial.competenciaDescripcion,
         competenciaTipoId: serial.competenciaTipoId,
+        rubroEvalResultadoId: serial.rubroEvalResultadoId,
+        evaluable: serial.evaluable,
         superCompetenciaId: serial.superCompetenciaId,
         superCompetenciaNombre: serial.superCompetenciaNombre,
         superCompetenciaDescripcion: serial.superCompetenciaDescripcion,
@@ -1051,7 +1044,12 @@ class SerializableConvert{
       ocupacion: serial.ocupacion,
       numDoc: serial.numDoc,
       genero: serial.genero,
-      foto: serial.foto
+      foto: serial.foto,
+      programaId: serial.programaId,
+      programaNombre: serial.programaNombre,
+      cargaAcademicaId: serial.cargaAcademicaId,
+      idEmpleadoTutor: serial.idEmpleadoTutor
+
     );
   }
 
@@ -1092,7 +1090,8 @@ class SerializableConvert{
         getSTime: serial.getSTime,
         usuarioAccionId: serial.usuarioAccionId,
         usuarioCreacionId: serial.usuarioCreacionId,
-        usuarioCreadorId: serial.usuarioCreadorId
+        usuarioCreadorId: serial.usuarioCreadorId,
+        nFoto: serial.nFoto
     );
   }
 
@@ -1153,7 +1152,8 @@ class SerializableConvert{
         usuarioCreadorId: serial.usuarioCreadorId,
         usuarioCreacionId: serial.usuarioCreacionId,
         nombreEntidad: serial.nombreEntidad,
-        fotoEntidad: serial.fotoEntidad
+        fotoEntidad: serial.fotoEntidad,
+        fechaPublicacion: serial.fechaPublicacion
     );
   }
 
@@ -1334,6 +1334,26 @@ class SerializableConvert{
     Iterable l = model;
     for(var item in l){
       items.add(converSerializeListaUsuarioDetalle(item));
+    }
+    return items;
+  }
+
+  static EventoAdjuntoData converSerializeEventoAdjunto(Map<String,dynamic> model){
+    EventoAdjuntoSerial serial = EventoAdjuntoSerial.fromJson(model);
+    return EventoAdjuntoData(
+       eventoAdjuntoId: serial.eventoAdjuntoId??"",
+        driveId: serial.driveId,
+        titulo: serial.titulo,
+        eventoId: serial.eventoId,
+        tipoId: serial.tipoId
+    );
+  }
+
+  static List<EventoAdjuntoData> converListSerializeEventoAjunto(dynamic model){
+    List<EventoAdjuntoData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeEventoAdjunto(item));
     }
     return items;
   }

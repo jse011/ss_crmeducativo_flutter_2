@@ -74,6 +74,10 @@ class GetResultados extends UseCase<GetResultadosResponse, GetResultadosParams> 
            return 1;
          });
 
+        matrizResultadoUi.personaUiList?.sort((o1, o2){
+          return (o1.apellidos??"").compareTo((o2.apellidos??""));
+        });
+
          for(ResultadoCompetenciaUi competenciaUi in matrizResultadoUi.competenciaUiList??[]){
            competenciaUi.resulCapacidadUiList = [];
            for(ResultadoCapacidadUi capacidadUi in matrizResultadoUi.capacidadUiList??[]){

@@ -22,6 +22,7 @@ class FancyShimmerImage extends StatelessWidget {
     this.shimmerBackColor,
     this.errorWidget,
     this.boxDecoration,
+    this.imageBuilder
   });
 
   final String imageUrl;
@@ -35,9 +36,11 @@ class FancyShimmerImage extends StatelessWidget {
   final Color? shimmerBackColor;
   final Widget? errorWidget;
   final BoxDecoration? boxDecoration;
+  final ImageWidgetBuilder? imageBuilder;
 
   @override
   Widget build(BuildContext context) {
+
     return CachedNetworkImage(
       imageUrl: imageUrl,
       fit: boxFit,
@@ -59,6 +62,7 @@ class FancyShimmerImage extends StatelessWidget {
             width: width,
             height: height,
           ),
+      imageBuilder: imageBuilder,
     );
   }
 }

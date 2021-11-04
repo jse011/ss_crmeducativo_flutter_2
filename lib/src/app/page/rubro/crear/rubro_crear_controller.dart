@@ -185,8 +185,8 @@ class RubroCrearController extends Controller{
   List<int> getPercentPartsV2(int? totalPeso, int? cantidad) {
     if (cantidad == null||cantidad == 0) return [];
     List<int> percentParts = [];
-
-    int subtotalPeso =  ((totalPeso??0)/cantidad).toInt();
+    //int subtotalPeso =  ((totalPeso??0)/cantidad).toInt();
+    int subtotalPeso =  ((totalPeso??0)~/cantidad);
     int diferencia = (totalPeso??0) - (subtotalPeso * cantidad);
 
     for (int i = 0; i < cantidad; i++) {

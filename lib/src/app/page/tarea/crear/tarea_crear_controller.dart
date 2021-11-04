@@ -53,6 +53,9 @@ class TareaCrearController extends Controller{
 
       presenter.getCalendarioPeridoOnSucces = (bool success, TareaRecusoUi? tareaRecusoUi){
         tareaRecusoUi?.success = success;
+        if(!success){
+          _mensaje = "Error al subir el archivo";
+        }
         refreshUI();
       };
 
@@ -232,6 +235,13 @@ class TareaCrearController extends Controller{
 
   void successMsg() {
     _mensaje = null;
+  }
+
+  void refreshTareaRecursoUi(TareaRecusoUi tareaRecursoUi)async {
+    tareaRecursoUi.progress = null;
+    tareaRecursoUi.success = null;
+    HttpStream? httpStream = await presenter.uploadTareaRecurso(tareaRecursoUi, cursosUi);
+    mapRecurso[tareaRecursoUi] = httpStream;
   }
 
 }

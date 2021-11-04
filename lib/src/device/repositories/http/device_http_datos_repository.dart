@@ -62,7 +62,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load agenda 0');
+      throw Exception('Failed to load crear_agenda 0');
     }
   }
 
@@ -94,7 +94,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load agenda 0');
+      throw Exception('Failed to load crear_agenda 0');
     }
   }
 
@@ -198,7 +198,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load agenda 0');
+      throw Exception('Failed to load crear_agenda 0');
     }
 
   }
@@ -226,7 +226,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load agenda 0');
+      throw Exception('Failed to load crear_agenda 0');
     }
 
   }
@@ -252,7 +252,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.
-      throw Exception('Failed to load agenda 0');
+      throw Exception('Failed to load crear_agenda 0');
     }
   }
 
@@ -444,7 +444,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
 
     Dio dio = new Dio();
     dio.post(
-      urlServidorLocal,
+      Uri2.validate(urlServidorLocal),
       data: formData,
       cancelToken: token,
       onSendProgress: (received, total){
@@ -578,6 +578,112 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     }
   }
 
+  @override
+  Future<HttpStream?> uploadFileAgendaDocente(String urlServidorLocal, String nombre, File file, HttpProgressListen progressListen, HttpSuccess httpSuccessListen) async {
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_UsuarioId"] = 0;
+    print("nombre ${nombre}");
+    print("nombre ${file.path}");
+    var formData = FormData.fromMap({
+      'body': getBody("uploadFileAgendaDocente", parameters),
+      'file': await MultipartFile.fromFile(file.path, filename: nombre),
+    });
+    Dio dio = new Dio();
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: formData,
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+          print("${progress}%");
+          progressListen.call(progress);
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(true, body["Value"]);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, null);
+          print("Response null ${response.data}");
+        }
+      }
+    });
+
+    return dioCancellation;
+  }
+
+  @override
+  Future<bool?> saveEventoDocente(String urlServidorLocal, Map<String, dynamic> data)async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vobj_Eventos"] = data["evento"];
+    parameters["vobj_Calendario"] = data["calendario"];
+    parameters["vlst_EventoPersona"] = data["eventoPersonas"];
+    parameters["vlst_EventoAdjunto"] = data["eventoAdjuntos"];
+
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("saveEventoFlutter", parameters))
+        .timeout(Duration(seconds: 30), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<bool?> changeEventoEstadoDocente(String urlServidorLocal, String? eventoId, int? estadoId, bool? publicado, int? usuarioId) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    Map<String, dynamic> evento = Map<String, dynamic>();
+
+    evento["eventoId"] = eventoId;
+    evento["estadoId"] = estadoId;
+    evento["estadoPublicacion"] = publicado;
+    evento["usuarioAccionId"] = usuarioId;
+
+
+    parameters["vobj_Eventos"] = evento;
+
+
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("changeEventoEstadoFlutter", parameters))
+        .timeout(Duration(seconds: 15), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
 
 }
 
@@ -609,4 +715,16 @@ class Uri2{
     }
 
    }
+
+  static String validate(String url){
+    if (kReleaseMode) {
+      return url;
+    } else {
+      // Will be tree-shaked on release builds.
+      url = url.replaceAll("CRMMovil", "CRMMovil2");
+      return url;
+    }
+
+  }
+
 }

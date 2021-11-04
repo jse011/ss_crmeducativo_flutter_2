@@ -14,7 +14,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
-import 'package:ss_crmeducativo_2/libs/flutter_smart_text_view/smart_text_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -1376,6 +1375,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
         return AppImagen.archivo_drive;
       case TipoRecursosUi.TIPO_RECURSO:
         return AppImagen.archivo_recurso;
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return AppImagen.archivo_recurso;
     }
   }
 
@@ -1402,6 +1403,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
       case TipoRecursosUi.TIPO_VINCULO_DRIVE:
         return "Drive";
       case TipoRecursosUi.TIPO_RECURSO:
+        return "Recurso";
+      case TipoRecursosUi.TIPO_ENCUESTA:
         return "Recurso";
     }
   }

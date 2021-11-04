@@ -14,8 +14,8 @@ class GetValorTipoNotaPresicion {
       limiteInferior ++;
     }
 
-    int? removeNotaInferior = null;
-    int? removeNotaSuperior = null;
+    int? removeNotaInferior;
+    int? removeNotaSuperior;
 
     if(!(valorTipoNotaUi?.incluidoLInferior??false)){
     removeNotaInferior = notaCircularUis[0];

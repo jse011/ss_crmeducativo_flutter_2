@@ -411,7 +411,7 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
     return SingleChildScrollView(
       child: StickyHeadersTableNotExpandedCustom(
           cellDimensions: CellDimensions.variableColumnWidth(
-              stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 90),
+              stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 94),
               stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 150),
               contentCellHeight: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 70),
               columnWidths: tableTipoNotacolumnWidths
@@ -551,7 +551,12 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
           },
           rowsTitleBuilder: (i) {
             RubricaEvaluacionUi rubricaEvaluacionUi = controller.rubricaEvaluacionList[i];
+            bool rubrica =  (rubricaEvaluacionUi.tituloRubroCabecera??"").isNotEmpty;
 
+            if(rubricaEvaluacionUi.cantidadRubroDetalle == 1){
+              rubrica = false;
+            }
+            print("cantidad ${rubricaEvaluacionUi.cantidadRubroDetalle}");
             return InkWell(
               onTap: (){
 
@@ -568,7 +573,7 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          child: Text((rubricaEvaluacionUi.tituloRubroCabecera??rubricaEvaluacionUi.titulo?.trim()??""),
+                          child: Text(("${rubricaEvaluacionUi.titulo??""}".trim()),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis ,
                             style: TextStyle(
@@ -577,10 +582,25 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                               color: AppTheme.black
                             ),),
                         ),
+                       if(rubrica)
+                        Container(
+                          padding: EdgeInsets.only(
+                              top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2)
+                          ),
+                          child: Text("- ${rubricaEvaluacionUi.tituloRubroCabecera??""}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis ,
+                            style: TextStyle(
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 7),
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.greyDarken1,
+                                //fontStyle: FontStyle.italic
+                            ),),
+                        ),
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.only(
-                                top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 6)
+                                top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, rubrica?4:6)
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,

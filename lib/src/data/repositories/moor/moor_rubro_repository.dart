@@ -291,7 +291,7 @@ class MoorRubroRepository extends RubroRepository{
         competenciaUiList.add(competenciaUi);
       }
 
-      CapacidadUi? capacidadUi = competenciaUi.capacidadUiList?.firstWhereOrNull((element) => element.capacidadId == criterioData.competenciaId);
+      CapacidadUi? capacidadUi = competenciaUi.capacidadUiList?.firstWhereOrNull((element) => element.capacidadId == criterioData.competenciaId && competenciaUi?.competenciaId == element.competenciaId);
       if(capacidadUi==null){
         capacidadUi = CapacidadUi();
         capacidadUi.criterioUiList = [];
@@ -301,6 +301,8 @@ class MoorRubroRepository extends RubroRepository{
         capacidadUi.tipoId = criterioData.competenciaTipoId;
         capacidadUi.competenciaId = criterioData.superCompetenciaId;
         capacidadUi.competenciaUi = competenciaUi;
+        capacidadUi.rubroResultadoId = criterioData.rubroEvalResultadoId;
+        capacidadUi.evaluable = criterioData.evaluable;
         competenciaUi.capacidadUiList?.add(capacidadUi);
       }
 
@@ -726,9 +728,12 @@ class MoorRubroRepository extends RubroRepository{
     queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.equals(0));
     //queryRubro.where((tbl) => tbl.sesionAprendizajeId.isNotNull());
     queryRubro.where(SQL.rubroEvaluacionProceso.estadoId.isNotIn([ESTADO_ELIMINADO]));
+
     queryRubro.orderBy([OrderingTerm.desc(SQL.rubroEvaluacionProceso.fechaCreacion)]);
+
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = [];
     Map<String,RubroEvaluacionProcesoData?> rubroPadresMap = Map();
+    Map<String,int> rubroPadresCountMap = Map();
     List<String> rubroEvalProcesoIdList = [];
     List<String> rubroTipoNotaIdList = [];
     for(var row in await queryRubro.get()){//Puede venir repetida
@@ -742,6 +747,7 @@ class MoorRubroRepository extends RubroRepository{
       RubroEvaluacionProcesoData? itemPadre = row.readTableOrNull(rubroPadre);
       if(itemPadre?.tiporubroid == TIPO_RUBRO_BIMENSIONAL){//evitar agregar rubro formulas
         rubroPadresMap[item.rubroEvalProcesoId] = itemPadre;
+        rubroPadresCountMap[itemPadre?.rubroEvalProcesoId??""] = (rubroPadresCountMap[itemPadre?.rubroEvalProcesoId]??0)+1;
       }
     }
 
@@ -780,8 +786,11 @@ class MoorRubroRepository extends RubroRepository{
             RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
             rubricaEvaluacionUi.tituloRubroCabecera = rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.titulo;
             rubricaEvaluacionUi.rubricaIdRubroCabecera = rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.rubroEvalProcesoId;
+            rubricaEvaluacionUi.cantidadRubroDetalle = rubroPadresCountMap[rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.rubroEvalProcesoId??""];
             print("tituloRubroCabecera: ${rubricaEvaluacionUi.tituloRubroCabecera}");
             print("rubricaIdRubroCabecera: ${rubricaEvaluacionUi.rubricaIdRubroCabecera}");
+            print("cantidadRubroDetalle: ${rubricaEvaluacionUi.cantidadRubroDetalle}");
+            print("cantidadRubroDetalle: ${rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.rubroEvalProcesoId}");
             rubricaEvaluacionUi.evaluacionUiList = [];
             TipoNotaUi? tipoNotaUi = tipoNotaUiList.firstWhereOrNull((element)=> element.tipoNotaId == rubricaEvaluacionUi.tipoNotaId);
             rubricaEvaluacionUi.tipoNotaUi = tipoNotaUi;

@@ -9,7 +9,9 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_youtube_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 
 
@@ -118,6 +120,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
 
   @override
   Future<void> saveInformacionTarea(String? tareaId, Map<String, dynamic> unidadTarea) async{
+    // ignore: non_constant_identifier_names
     AppDataBase SQL = AppDataBase();
     await SQL.batch((batch) async {
       // functions in a batch don't have to be awaited - just
@@ -196,8 +199,8 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           break;
         case UnidadTareaRepository.TIPO_RECURSO_VINCULO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
-          String? idYoutube = DomainTools.getYoutubeVideoId(url);
-          String? idDrive = DomainTools.getYoutubeVideoId(url);
+          String? idYoutube = YouTubeUrlParser.getYoutubeVideoId(url);
+          String? idDrive = DriveUrlParser.getDocumentId(url);
           if((idYoutube??"").isNotEmpty){
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
           }else if((idDrive??"").isNotEmpty){
@@ -258,8 +261,8 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
             tareaAlumnoArchivoUi.tipoRecurso = DomainTools.getType(tareaAlumnoArchivoData.path);
 
           }else{
-            String? idYoutube = DomainTools.getYoutubeVideoId(tareaAlumnoArchivoData.path);
-            String? idDrive = DomainTools.getYoutubeVideoId(tareaAlumnoArchivoData.path);
+            String? idYoutube = YouTubeUrlParser.getYoutubeVideoId(tareaAlumnoArchivoData.path);
+            String? idDrive = DriveUrlParser.getDocumentId(tareaAlumnoArchivoData.path);
             if((idYoutube??"").isNotEmpty){
               tareaAlumnoArchivoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
             }else if((idDrive??"").isNotEmpty){
@@ -350,6 +353,9 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
         return UnidadTareaRepository.TIPO_RECURSO_VINCULO;
       case TipoRecursosUi.TIPO_RECURSO:
         return UnidadTareaRepository.TIPO_RECURSO_MATERIALES;
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return UnidadTareaRepository.TIPO_RECURSO_MATERIALES;
+        break;
     }
   }
 

@@ -15,5 +15,6 @@ class CapacidadUi{
   bool? toogle;
   int? rubroResultadoId;
   int? rubroResultadoPrincipalId;
+  bool? evaluable;
 
 }

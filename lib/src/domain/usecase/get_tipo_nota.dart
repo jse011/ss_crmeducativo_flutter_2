@@ -18,7 +18,7 @@ class GetTipoNota extends UseCase<GetTipoNotaResponse, GetTipoNotaParms>{
     try{
       int programaEducativoId = await configuracionRepository.getSessionProgramaEducativoId();
 
-      TipoNotaUi? tipoNotaUi = null;
+      TipoNotaUi? tipoNotaUi;
       List<TipoNotaUi> tipoNotaUiList = await repository.getGetTipoNota(programaEducativoId);
       if(tipoNotaUiList.isNotEmpty)tipoNotaUi = tipoNotaUiList[0];
       controller.add(GetTipoNotaResponse(tipoNotaUiList,tipoNotaUi));

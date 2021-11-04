@@ -9,4 +9,5 @@ class PersonaUi{
   String? telefono;
   bool? contratoVigente;
   bool? soloApareceEnElCurso;
+  PersonaUi? apoderadoUi;
 }

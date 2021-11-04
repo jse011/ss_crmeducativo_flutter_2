@@ -19,7 +19,7 @@ class UpdateEvaluacionCapacidad {
     RubricaEvaluacionUi? rubricaEvaluacionUiCabeceraUi =  await repository.getRubroEvaluacion(rubricaEvaluacionUiDetalle?.rubricaIdRubroCabecera??"");
 
 
-    EvaluacionTransformadaUi? evaluacionUiDetalle = null;
+    EvaluacionTransformadaUi? evaluacionUiDetalle;
     for(EvaluacionTransformadaUi evaluacionUi in rubricaEvaluacionUiDetalle?.evaluacionTransformadaUiList??[]){
       if(evaluacionUi.alumnoId == personaUi?.personaId){
         evaluacionUiDetalle = evaluacionUi;

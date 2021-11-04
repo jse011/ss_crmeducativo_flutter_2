@@ -36,7 +36,7 @@ class EvaluacionIndicadorController extends Controller{
   bool get showDialog => _showDialog;
   bool _modificado = false;
   RubricaEvaluacionUi? rubricaEvaluacionUiCebecera;
-  RubricaEvaluacionUi? rubricaEvaluacionUiDetalle = null;
+  RubricaEvaluacionUi? rubricaEvaluacionUiDetalle;
 
   EvaluacionIndicadorController(this.rubroEvaluacionId, this.cursosUi, this.calendarioPeriodoUI, rubroRepo, configuracionRepo, httpDatosRepo): presenter = EvaluacionIndicadorPresenter(rubroRepo, configuracionRepo, httpDatosRepo);
 
@@ -57,9 +57,8 @@ class EvaluacionIndicadorController extends Controller{
 
   @override
   void onInitState() {
-    super.onInitState();
-
     presenter.getRubroEvaluacion(rubroEvaluacionId, cursosUi);
+
   }
 
   void initTable(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubricaEvaluacionUiCebecera){

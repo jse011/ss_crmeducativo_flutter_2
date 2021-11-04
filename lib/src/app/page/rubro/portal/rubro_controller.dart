@@ -70,8 +70,19 @@ class RubroController extends Controller{
   List<List<dynamic>> get cellsResultado => _cellsResultado;
   bool _precisionResultado = false;
   bool get precisionResultado => _precisionResultado;
+  bool _listarResultado = true;
   bool _progressResultado = true;
   bool get progressResultado => _progressResultado;
+  double _scrollResultadoX = 0;
+  double get scrollResultadoX => _scrollResultadoX;
+  double _scrollResultadoY = 0;
+  double get scrollResultadoY => _scrollResultadoY;
+
+  double _scrollRubroProcesoX = 0;
+  double get scrollRubroProcesoX => _scrollRubroProcesoX;
+
+  double _scrollRubroProcesoY = 0;
+  double get scrollRubroProcesoY => _scrollRubroProcesoY;
 
   RubroController(this.cursosUi, calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
       :this.presenter = RubroPresenter(calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
@@ -130,7 +141,7 @@ class RubroController extends Controller{
       }
       _rubricaEvaluacionUiList?.addAll(rubricaEvalUiList);
 
-      if(_seletedItem==0 )_progress = false;//ocultar el progress cuando se esta en el tab rubro
+      if(_seletedItem==0||_seletedItem==2)_progress = false;//ocultar el progress cuando se esta en el tab rubro
 
       print("_seletedItem: ${_seletedItem}");
       refreshUI();
@@ -138,7 +149,7 @@ class RubroController extends Controller{
 
     presenter.getRubroEvaluacionOnError = (e){
       _rubricaEvaluacionUiList = [];
-      if(_seletedItem==0 )_progress = false;//ocultar el progress cuando se esta en el tab rubro
+      if(_seletedItem==0||_seletedItem==2)_progress = false;//ocultar el progress cuando se esta en el tab rubro
       print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
@@ -165,7 +176,7 @@ class RubroController extends Controller{
           count_sesion ++;
         }
       }
-      if(_seletedItem==0)_progress = false;
+      if(_seletedItem==0||_seletedItem==2)_progress = false;
       print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
@@ -173,7 +184,7 @@ class RubroController extends Controller{
     presenter.getUnidadRubroEvalOnError = (e){
       _unidadUiList = [];
       _sesionItemsMap.clear();
-      if(_seletedItem==0)_progress = false;
+      if(_seletedItem==0||_seletedItem==2)_progress = false;
       print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
@@ -277,7 +288,7 @@ class RubroController extends Controller{
         _cellListList.add(cellList);
       }
 
-      if(_seletedItem==1)_progress = false;//ocultar el progress cuando se esta en el tab competencia
+      if(_seletedItem==1||_seletedItem==2)_progress = false;//ocultar el progress cuando se esta en el tab competencia
      print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
@@ -287,7 +298,7 @@ class RubroController extends Controller{
       _rowList2 = [];
       _columnList2.clear();
       _cellListList.clear();
-      if(_seletedItem==1)_progress = false;//ocultar el progress cuando se esta en el tab competencia
+      if(_seletedItem==1||_seletedItem==2)_progress = false;//ocultar el progress cuando se esta en el tab competencia
       print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
@@ -341,6 +352,10 @@ class RubroController extends Controller{
       presenter.getResultados(cursosUi, calendarioPeriodoUI);
     }
 
+    _scrollResultadoX = 0;
+    _scrollResultadoY = 0;
+    _scrollRubroProcesoX = 0;
+    _scrollRubroProcesoY = 0;
     refreshUI();
 
     presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
@@ -441,8 +456,9 @@ class RubroController extends Controller{
   }
 
   void onChangeTab(int index) {
-    if(_seletedItem != index && index == 2){
+    if(_seletedItem != index && index == 2 && _listarResultado){
       _progressResultado = true;
+      _listarResultado = false;
       presenter.getResultados(cursosUi, calendarioPeriodoUI);
     }
     _seletedItem = index;
@@ -500,6 +516,16 @@ class RubroController extends Controller{
       sesionUi.toogle2 =  unidadUi.toogle;
     }
     refreshUI();
+  }
+
+  void scrollResultado(double x, double y) {
+    _scrollResultadoX = x;
+    _scrollResultadoY = y;
+  }
+
+  void scrollRubroProceso(double x, double y) {
+    _scrollRubroProcesoX = x;
+    _scrollRubroProcesoY = y;
   }
   
 }

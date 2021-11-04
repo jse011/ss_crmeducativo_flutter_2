@@ -68,7 +68,8 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
   RubroViewState(cursosUi) : super(RubroController(cursosUi, MoorCalendarioPeriodoRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorRubroRepository(), MoorResultadoRepository()));
 
   late Animation<double> topBarAnimation;
-  late final ScrollControllers scrollControllers = ScrollControllers();
+  late final ScrollControllers scrollControllersProceso = ScrollControllers();
+  late final ScrollControllers scrollControllersResultado = ScrollControllers();
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
@@ -764,7 +765,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                   children: [
                     tabRubroGeneral(controller),
                     //progress(tabRubroSesiones3(controller, count)),
-                    controller.seletedItem==1?progress(tabRubCompetencia(controller)):Container(child: Center(child: CircularProgressIndicator(),),),
+                    tabRubCompetencia(controller),//:Container(child: Center(child: CircularProgressIndicator(),),),
                     Padding(padding: EdgeInsets.only(top: 14),
                       child:  TableResultado(
                         calendarioPeriodoUI: controller.calendarioPeriodoUI,
@@ -774,7 +775,13 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         datosOffline: controller.datosOfflineResultado,
                         cursosUi: controller.cursosUi,
                         precision: controller.precisionResultado,
-                        scrollControllers: scrollControllers,
+                        scrollControllers: scrollControllersProceso,
+                        scrollOffsetX: controller.scrollResultadoX,
+                        scrollOffsetY: controller.scrollResultadoY,
+                        onEndScrolling: (x, y) {
+                          print("x ${x}, y ${y}");
+                          controller.scrollResultado(x,y);
+                        },
                       ),
                     )
                   ],
@@ -1007,13 +1014,19 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
       return Padding(
         padding: const EdgeInsets.only(left: 8, right: 0, top: 16),
         child:  StickyHeadersTableV2(
-          scrollControllers: scrollControllers,
+          scrollControllers: scrollControllersResultado,
           cellDimensions: CellDimensions.variableColumnWidth(
               stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 120),
               stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 50),
               contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 35),
               columnWidths: tablecolumnWidths
           ),
+          initialScrollOffsetX: controller.scrollRubroProcesoX,
+          initialScrollOffsetY: controller.scrollRubroProcesoY,
+          onEndScrolling: (x, y) {
+            print("x ${x}, y ${y}");
+            controller.scrollRubroProceso(x,y);
+          },
           columnsLength: controller.columnList2.length,
           rowsLength: controller.rowList2.length,
           columnsTitleBuilder: (i) {

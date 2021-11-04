@@ -26,15 +26,20 @@ class TableResultado extends StatefulWidget{
   CursosUi? cursosUi;
   bool? precision;
   ScrollControllers? scrollControllers;
+  double? scrollOffsetX;
+  double? scrollOffsetY;
+  late Function(double x, double y)? onEndScrolling;
 
   TableResultado({this.calendarioPeriodoUI, required this.rows, required this.columns, required this.cells,
-    this.datosOffline, this.cursosUi, this.precision, this.scrollControllers});
+    this.datosOffline, this.cursosUi, this.precision, this.scrollControllers, this.scrollOffsetX, this.scrollOffsetY, this.onEndScrolling});
 
   @override
   _TableResultadoState createState() => _TableResultadoState();
 }
 
 class _TableResultadoState extends State<TableResultado>{
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -90,6 +95,13 @@ class _TableResultadoState extends State<TableResultado>{
         padding: const EdgeInsets.only(left: 8, right: 0, top: 16),
         child:  StickyHeadersTableV2(
           scrollControllers: widget.scrollControllers??ScrollControllers(),
+          initialScrollOffsetX: widget.scrollOffsetX??0,
+          initialScrollOffsetY: widget.scrollOffsetY??0,
+          onEndScrolling: (scrollOffsetX, scrollOffsetY) {
+            widget.scrollOffsetX = scrollOffsetX;
+            widget.scrollOffsetY = scrollOffsetY;
+            widget.onEndScrolling?.call(scrollOffsetX, scrollOffsetY);
+          },
           cellDimensions: CellDimensions.variableColumnWidth(
               stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 120),
               stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 50),
@@ -496,13 +508,24 @@ class _TableResultadoState extends State<TableResultado>{
         return Center(
           child: Container(
             padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4),),
-            child: Text("${ resultadoEvaluacionUi?.tituloNota??"-"}",
-                style: TextStyle(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("${ resultadoEvaluacionUi?.tituloNota??"-"}",
+                    style: TextStyle(
+                      fontFamily: AppTheme.fontTTNormsMedium,
+                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    )),
+                Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
                   fontFamily: AppTheme.fontTTNormsMedium,
                   fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
                   fontWeight: FontWeight.w700,
                   color: color,
-                )),
+                ),)
+              ],
+            ),
           ),
         );
       case TipoNotaTiposUi.SELECTOR_NUMERICO:

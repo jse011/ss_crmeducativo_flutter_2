@@ -21,11 +21,12 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
   Future<Stream<GetEvaluacionCaseResponse?>> buildUseCaseStream(GetEventoAgendaParams? params) async{
     final controller = StreamController<GetEvaluacionCaseResponse>();
     try {
-
-      List<TipoEventoUi> tiposUiList = await agendaRepository.getTiposEvento();
-      print("tipoEventoUiList size: " + tiposUiList.length.toString());
-      for(TipoEventoUi tipoEventoUi in tiposUiList)tipoEventoUi.disable = false;
-      controller.add(GetEvaluacionCaseResponse(tiposUiList, null, false, false));
+      if(params?.traerTipos??false){
+        List<TipoEventoUi> tiposUiList = await agendaRepository.getTiposEvento();
+        print("tipoEventoUiList size: " + tiposUiList.length.toString());
+        for(TipoEventoUi tipoEventoUi in tiposUiList)tipoEventoUi.disable = false;
+        controller.add(GetEvaluacionCaseResponse(tiposUiList, null, false, false));
+      }
 
       int georeferenciaId =  await configuracionRepository.getGeoreferenciaId();
       int usuarioId = await configuracionRepository.getSessionUsuarioId();
@@ -48,6 +49,20 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
         for(TipoEventoUi tipoEventoUi in tiposUiList)tipoEventoUi.disable = false;
         List<EventoUi> eventoUIList = await agendaRepository.getEventosAgenda(usuarioId, georeferenciaId,params?.tipoEventoId??0);
 
+
+        eventoUIList.sort((o1, o2){
+
+          DateTime? date1 = (o1.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA)? o1.fecaCreacion : o1.fechaPublicacion;
+          if((date1?.year??0)<2000) date1= o1.fechaPublicacion;
+
+          DateTime? date2 = (o2.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA)? o2.fecaCreacion : o2.fechaPublicacion;
+          if((date2?.year??0)<2000) date2= o2.fechaPublicacion;
+
+          return date2?.compareTo(date1??DateTime(1995))??0;
+
+        });
+
+
         for(var eventosUi in eventoUIList){
           DateTime fechaEntrega =  eventosUi.fecha??DateTime(1950);
           if(fechaEntrega.millisecondsSinceEpoch>912402000000){
@@ -65,8 +80,20 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
           }else{
             eventosUi.nombreFecha = "";
           }
+
+          if((eventosUi.fechaEvento?.millisecondsSinceEpoch??0)<=912402000000){
+            eventosUi.fechaEvento = null;
+          }
+
+          if((eventosUi.fechaPublicacion?.millisecondsSinceEpoch??0)>912402000000){
+            eventosUi.nombreFechaPublicacion = DomainTools.f_fecha_letras(eventosUi.fechaPublicacion);
+          }
+
         }
-        print("eventoUIList jse size: " + eventoUIList.length.toString());
+
+
+
+
         controller.add(GetEvaluacionCaseResponse(tiposUiList, eventoUIList, errorServidor, offlineServidor));
         controller.close();
       }
@@ -91,8 +118,8 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
 
 class GetEventoAgendaParams {
   int? tipoEventoId;
-
-  GetEventoAgendaParams(this.tipoEventoId);
+  bool? traerTipos;
+  GetEventoAgendaParams(this.tipoEventoId, this.traerTipos);
 }
 
 class GetEvaluacionCaseResponse {

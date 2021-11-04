@@ -343,4 +343,28 @@ class ColumnCountProvider{
     }
   }
 
+  static double aspectRatioForWidthButtonPortalAgenda(BuildContext? context, double pixcel ) {
+    // 16 = x 6 / 13
+    // 13 = (16 / 6) * X
+    // 13 / (16 / 6) = X
+    double widthPx = context?.widthPx??0;
+    if (widthPx >= 1010) {
+      return (pixcel) / 1;
+    }else if (widthPx >= 900) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 720) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 600) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 480) {
+      return (pixcel) / 1;
+    }  else if (widthPx >= 360) {
+      return (pixcel) / 1.15;
+    }else if (widthPx >= 320) {
+      return (pixcel) / 1.2;
+    } else {
+      return (pixcel) / 1.2;
+    }
+  }
+
 }

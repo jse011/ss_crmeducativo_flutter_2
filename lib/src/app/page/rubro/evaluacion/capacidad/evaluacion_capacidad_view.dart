@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +8,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:lottie/lottie.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_controller.dart';
@@ -32,7 +29,6 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_trasnformada_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_porcentaje_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_total_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
@@ -43,8 +39,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class EvaluacionCapacidadView extends View{
-  EvaluacionCapacidadUi? evaluacionCapacidadUi;
-  CursosUi? cursosUi;
+  final EvaluacionCapacidadUi? evaluacionCapacidadUi;
+  final CursosUi? cursosUi;
 
   EvaluacionCapacidadView(this.evaluacionCapacidadUi, this.cursosUi);
 
@@ -367,8 +363,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                     child:  IconButton(
                                       icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
                                       onPressed: () async{
-                                        bool?  se_a_modicado = await controller.onSave();
-                                        if(se_a_modicado){
+                                        bool?  seamodicado = await controller.onSave();
+                                        if(seamodicado){
                                           Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
                                         }else{
                                           Navigator.of(context).pop(true);
@@ -761,7 +757,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           cellDimensions: CellDimensions.variableColumnWidth(
               stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
               stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 125),
-              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70),
+              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 74),
               columnWidths: tableTipoNotacolumnWidths
           ),
           //cellAlignments: CellAlignments.,
@@ -857,6 +853,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           rowsTitleBuilder: (i) {
             RubricaEvaluacionUi rubricaEvaluacionUi = controller.rubricaEvaluacionList[i];
 
+            bool rubrica =  (rubricaEvaluacionUi.tituloRubroCabecera??"").isNotEmpty;
             return InkWell(
               onTap: (){
 
@@ -873,17 +870,32 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          child: Text((rubricaEvaluacionUi.tituloRubroCabecera??rubricaEvaluacionUi.titulo?.trim()??""),
+                          child: Text(("${rubricaEvaluacionUi.titulo??""}".trim()),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis ,
                             style: TextStyle(
                                 fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
                                 fontWeight: FontWeight.w700),),
                         ),
+                        if(rubrica)
+                          Container(
+                            padding: EdgeInsets.only(
+                                top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2)
+                            ),
+                            child: Text("- ${rubricaEvaluacionUi.tituloRubroCabecera??""}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis ,
+                              style: TextStyle(
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 7),
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.greyDarken1,
+                                //fontStyle: FontStyle.italic
+                              ),),
+                          ),
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.only(
-                                top: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 6)
+                                top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, rubrica?4:6)
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1173,7 +1185,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   }
 
   Widget _getTipoNotaDetalle(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, EvaluacionCapacidadController controller, int positionX, int positionY) {
-    Widget? widget = null;
+    Widget? widget;
     Color color_fondo;
     Color? color_texto;
     Color color_borde;
@@ -1268,7 +1280,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
       case TipoNotaTiposUi.VALOR_ASISTENCIA:
       case TipoNotaTiposUi.VALOR_NUMERICO:
       case TipoNotaTiposUi.SELECTOR_NUMERICO:
-        double? nota = null;
+        double? nota;
         if(evaluacionRubricaValorTipoNotaUi.toggle??false)nota = evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.nota;
         else nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico??0;
         widget = Center(
@@ -1396,7 +1408,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   }
 
   Widget _getTipoNotaCabecera(ValorTipoNotaUi? valorTipoNotaUi,EvaluacionCapacidadController controller, int position) {
-    Widget? nota = null;
+    Widget? nota;
     Color color_fondo;
     Color? color_texto;
     if(position == 0){

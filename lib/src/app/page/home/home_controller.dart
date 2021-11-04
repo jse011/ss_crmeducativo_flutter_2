@@ -99,8 +99,8 @@ class HomeController extends Controller{
     refreshUI(); // Refreshes the UI manually
   }
 
-  void onClickCerrarCession() {
-   // homePresenter.cerrarCesion();
+  Future<bool> onClickCerrarCession() {
+   return homePresenter.cerrarCesion();
   }
 
   @override

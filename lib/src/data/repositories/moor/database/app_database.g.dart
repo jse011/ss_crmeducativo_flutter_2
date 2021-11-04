@@ -123,12 +123,8 @@ class SessionUserData extends DataClass implements Insertable<SessionUserData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      userId.hashCode,
-      $mrjc(
-          anioAcademicoId.hashCode,
-          $mrjc(programaEducativoId.hashCode,
-              $mrjc(urlServerLocal.hashCode, complete.hashCode)))));
+  int get hashCode => Object.hash(
+      userId, anioAcademicoId, programaEducativoId, urlServerLocal, complete);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -430,12 +426,8 @@ class UsuarioRolGeoreferenciaData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      usuarioRolGeoreferenciaId.hashCode,
-      $mrjc(
-          usuarioId.hashCode,
-          $mrjc(rolId.hashCode,
-              $mrjc(geoReferenciaId.hashCode, entidadId.hashCode)))));
+  int get hashCode => Object.hash(
+      usuarioRolGeoreferenciaId, usuarioId, rolId, geoReferenciaId, entidadId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -708,8 +700,7 @@ class RolData extends DataClass implements Insertable<RolData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(rolId.hashCode,
-      $mrjc(nombre.hashCode, $mrjc(parentId.hashCode, estado.hashCode))));
+  int get hashCode => Object.hash(rolId, nombre, parentId, estado);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -975,12 +966,8 @@ class GeoreferenciaData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      georeferenciaId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(entidadId.hashCode,
-              $mrjc(geoAlias.hashCode, estadoId.hashCode)))));
+  int get hashCode =>
+      Object.hash(georeferenciaId, nombre, entidadId, geoAlias, estadoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1334,24 +1321,8 @@ class EntidadData extends DataClass implements Insertable<EntidadData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      entidadId.hashCode,
-      $mrjc(
-          tipoId.hashCode,
-          $mrjc(
-              parentId.hashCode,
-              $mrjc(
-                  nombre.hashCode,
-                  $mrjc(
-                      ruc.hashCode,
-                      $mrjc(
-                          site.hashCode,
-                          $mrjc(
-                              telefono.hashCode,
-                              $mrjc(
-                                  correo.hashCode,
-                                  $mrjc(foto.hashCode,
-                                      estadoId.hashCode))))))))));
+  int get hashCode => Object.hash(entidadId, tipoId, parentId, nombre, ruc,
+      site, telefono, correo, foto, estadoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1903,38 +1874,23 @@ class PersonaData extends DataClass implements Insertable<PersonaData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      personaId.hashCode,
-      $mrjc(
-          nombres.hashCode,
-          $mrjc(
-              apellidoPaterno.hashCode,
-              $mrjc(
-                  apellidoMaterno.hashCode,
-                  $mrjc(
-                      celular.hashCode,
-                      $mrjc(
-                          telefono.hashCode,
-                          $mrjc(
-                              foto.hashCode,
-                              $mrjc(
-                                  fechaNac.hashCode,
-                                  $mrjc(
-                                      genero.hashCode,
-                                      $mrjc(
-                                          estadoCivil.hashCode,
-                                          $mrjc(
-                                              numDoc.hashCode,
-                                              $mrjc(
-                                                  ocupacion.hashCode,
-                                                  $mrjc(
-                                                      estadoId.hashCode,
-                                                      $mrjc(
-                                                          correo.hashCode,
-                                                          $mrjc(
-                                                              direccion
-                                                                  .hashCode,
-                                                              path.hashCode))))))))))))))));
+  int get hashCode => Object.hash(
+      personaId,
+      nombres,
+      apellidoPaterno,
+      apellidoMaterno,
+      celular,
+      telefono,
+      foto,
+      fechaNac,
+      genero,
+      estadoCivil,
+      numDoc,
+      ocupacion,
+      estadoId,
+      correo,
+      direccion,
+      path);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2474,12 +2430,8 @@ class EmpleadoData extends DataClass implements Insertable<EmpleadoData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      empleadoId.hashCode,
-      $mrjc(
-          personaId.hashCode,
-          $mrjc(linkURL.hashCode,
-              $mrjc(estado.hashCode, $mrjc(tipoId.hashCode, web.hashCode))))));
+  int get hashCode =>
+      Object.hash(empleadoId, personaId, linkURL, estado, tipoId, web);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2862,24 +2814,17 @@ class AnioAcademicoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      idAnioAcademico.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              fechaInicio.hashCode,
-              $mrjc(
-                  fechaFin.hashCode,
-                  $mrjc(
-                      denominacion.hashCode,
-                      $mrjc(
-                          georeferenciaId.hashCode,
-                          $mrjc(
-                              organigramaId.hashCode,
-                              $mrjc(
-                                  estadoId.hashCode,
-                                  $mrjc(tipoId.hashCode,
-                                      toogle.hashCode))))))))));
+  int get hashCode => Object.hash(
+      idAnioAcademico,
+      nombre,
+      fechaInicio,
+      fechaFin,
+      denominacion,
+      georeferenciaId,
+      organigramaId,
+      estadoId,
+      tipoId,
+      toogle);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3292,12 +3237,7 @@ class ParametroConfiguracionData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          concepto.hashCode,
-          $mrjc(
-              parametro.hashCode, $mrjc(entidadId.hashCode, orden.hashCode)))));
+  int get hashCode => Object.hash(id, concepto, parametro, entidadId, orden);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3582,10 +3522,8 @@ class AulaData extends DataClass implements Insertable<AulaData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      aulaId.hashCode,
-      $mrjc(descripcion.hashCode,
-          $mrjc(numero.hashCode, $mrjc(capacidad.hashCode, estado.hashCode)))));
+  int get hashCode =>
+      Object.hash(aulaId, descripcion, numero, capacidad, estado);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3994,32 +3932,20 @@ class CargaAcademicaData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      cargaAcademicaId.hashCode,
-      $mrjc(
-          seccionId.hashCode,
-          $mrjc(
-              periodoId.hashCode,
-              $mrjc(
-                  aulaId.hashCode,
-                  $mrjc(
-                      idPlanEstudio.hashCode,
-                      $mrjc(
-                          idPlanEstudioVersion.hashCode,
-                          $mrjc(
-                              idAnioAcademico.hashCode,
-                              $mrjc(
-                                  idEmpleadoTutor.hashCode,
-                                  $mrjc(
-                                      estadoId.hashCode,
-                                      $mrjc(
-                                          idPeriodoAcad.hashCode,
-                                          $mrjc(
-                                              idGrupo.hashCode,
-                                              $mrjc(
-                                                  capacidadVacante.hashCode,
-                                                  capacidadVacanteD
-                                                      .hashCode)))))))))))));
+  int get hashCode => Object.hash(
+      cargaAcademicaId,
+      seccionId,
+      periodoId,
+      aulaId,
+      idPlanEstudio,
+      idPlanEstudioVersion,
+      idAnioAcademico,
+      idEmpleadoTutor,
+      estadoId,
+      idPeriodoAcad,
+      idGrupo,
+      capacidadVacante,
+      capacidadVacanteD);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4491,10 +4417,8 @@ class CargaCursoDocenteData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      cargaCursoDocenteId.hashCode,
-      $mrjc(cargaCursoId.hashCode,
-          $mrjc(docenteId.hashCode, responsable.hashCode))));
+  int get hashCode =>
+      Object.hash(cargaCursoDocenteId, cargaCursoId, docenteId, responsable);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4732,8 +4656,7 @@ class CargaCursoDocenteDetData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(cargaCursoDocenteId.hashCode, alumnoId.hashCode));
+  int get hashCode => Object.hash(cargaCursoDocenteId, alumnoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -5231,49 +5154,31 @@ class CargaCursoData extends DataClass implements Insertable<CargaCursoData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      cargaCursoId.hashCode,
-      $mrjc(
-          planCursoId.hashCode,
-          $mrjc(
-              empleadoId.hashCode,
-              $mrjc(
-                  cargaAcademicaId.hashCode,
-                  $mrjc(
-                      complejo.hashCode,
-                      $mrjc(
-                          evaluable.hashCode,
-                          $mrjc(
-                              idempleado.hashCode,
-                              $mrjc(
-                                  idTipoHora.hashCode,
-                                  $mrjc(
-                                      descripcion.hashCode,
-                                      $mrjc(
-                                          fechaInicio.hashCode,
-                                          $mrjc(
-                                              fechafin.hashCode,
-                                              $mrjc(
-                                                  modo.hashCode,
-                                                  $mrjc(
-                                                      estado.hashCode,
-                                                      $mrjc(
-                                                          anioAcademicoId
-                                                              .hashCode,
-                                                          $mrjc(
-                                                              aulaId.hashCode,
-                                                              $mrjc(
-                                                                  grupoId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      idPlanEstudio
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          idPlanEstudioVersion
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              CapacidadVacanteP.hashCode,
-                                                                              $mrjc(CapacidadVacanteD.hashCode, $mrjc(nombreDocente.hashCode, $mrjc(personaIdDocente.hashCode, fotoDocente.hashCode)))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        cargaCursoId,
+        planCursoId,
+        empleadoId,
+        cargaAcademicaId,
+        complejo,
+        evaluable,
+        idempleado,
+        idTipoHora,
+        descripcion,
+        fechaInicio,
+        fechafin,
+        modo,
+        estado,
+        anioAcademicoId,
+        aulaId,
+        grupoId,
+        idPlanEstudio,
+        idPlanEstudioVersion,
+        CapacidadVacanteP,
+        CapacidadVacanteD,
+        nombreDocente,
+        personaIdDocente,
+        fotoDocente
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -6225,49 +6130,29 @@ class Curso extends DataClass implements Insertable<Curso> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      cursoId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              estadoId.hashCode,
-              $mrjc(
-                  descripcion.hashCode,
-                  $mrjc(
-                      cursoAlias.hashCode,
-                      $mrjc(
-                          entidadId.hashCode,
-                          $mrjc(
-                              nivelAcadId.hashCode,
-                              $mrjc(
-                                  tipoCursoId.hashCode,
-                                  $mrjc(
-                                      tipoConceptoId.hashCode,
-                                      $mrjc(
-                                          color.hashCode,
-                                          $mrjc(
-                                              creditos.hashCode,
-                                              $mrjc(
-                                                  totalHP.hashCode,
-                                                  $mrjc(
-                                                      totalHT.hashCode,
-                                                      $mrjc(
-                                                          notaAprobatoria
-                                                              .hashCode,
-                                                          $mrjc(
-                                                              sumilla.hashCode,
-                                                              $mrjc(
-                                                                  superId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      idServicioLaboratorio
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          horasLaboratorio
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              tipoSubcurso.hashCode,
-                                                                              $mrjc(foto.hashCode, codigo.hashCode)))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        cursoId,
+        nombre,
+        estadoId,
+        descripcion,
+        cursoAlias,
+        entidadId,
+        nivelAcadId,
+        tipoCursoId,
+        tipoConceptoId,
+        color,
+        creditos,
+        totalHP,
+        totalHT,
+        notaAprobatoria,
+        sumilla,
+        superId,
+        idServicioLaboratorio,
+        horasLaboratorio,
+        tipoSubcurso,
+        foto,
+        codigo
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -6977,20 +6862,8 @@ class ParametrosDisenioData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      parametroDisenioId.hashCode,
-      $mrjc(
-          objeto.hashCode,
-          $mrjc(
-              concepto.hashCode,
-              $mrjc(
-                  nombre.hashCode,
-                  $mrjc(
-                      path.hashCode,
-                      $mrjc(
-                          color1.hashCode,
-                          $mrjc(color2.hashCode,
-                              $mrjc(color3.hashCode, estado.hashCode)))))))));
+  int get hashCode => Object.hash(parametroDisenioId, objeto, concepto, nombre,
+      path, color1, color2, color3, estado);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -7351,8 +7224,7 @@ class NivelAcademicoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(nivelAcadId.hashCode,
-      $mrjc(nombre.hashCode, $mrjc(activo.hashCode, entidadId.hashCode))));
+  int get hashCode => Object.hash(nivelAcadId, nombre, activo, entidadId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -7829,48 +7701,26 @@ class Periodo extends DataClass implements Insertable<Periodo> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      periodoId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              estadoId.hashCode,
-              $mrjc(
-                  aliasPeriodo.hashCode,
-                  $mrjc(
-                      fecComienzo.hashCode,
-                      $mrjc(
-                          fecTermino.hashCode,
-                          $mrjc(
-                              tipoId.hashCode,
-                              $mrjc(
-                                  superId.hashCode,
-                                  $mrjc(
-                                      geoReferenciaId.hashCode,
-                                      $mrjc(
-                                          organigramaId.hashCode,
-                                          $mrjc(
-                                              entidadId.hashCode,
-                                              $mrjc(
-                                                  activo.hashCode,
-                                                  $mrjc(
-                                                      cicloId.hashCode,
-                                                      $mrjc(
-                                                          docenteId.hashCode,
-                                                          $mrjc(
-                                                              gruponombre
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  grupoId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      nivelAcademico
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          nivelAcademicoId
-                                                                              .hashCode,
-                                                                          tutorId
-                                                                              .hashCode)))))))))))))))))));
+  int get hashCode => Object.hash(
+      periodoId,
+      nombre,
+      estadoId,
+      aliasPeriodo,
+      fecComienzo,
+      fecTermino,
+      tipoId,
+      superId,
+      geoReferenciaId,
+      organigramaId,
+      entidadId,
+      activo,
+      cicloId,
+      docenteId,
+      gruponombre,
+      grupoId,
+      nivelAcademico,
+      nivelAcademicoId,
+      tutorId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -8463,10 +8313,8 @@ class PlanCurso extends DataClass implements Insertable<PlanCurso> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      planCursoId.hashCode,
-      $mrjc(cursoId.hashCode,
-          $mrjc(periodoId.hashCode, planEstudiosId.hashCode))));
+  int get hashCode =>
+      Object.hash(planCursoId, cursoId, periodoId, planEstudiosId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -8768,18 +8616,8 @@ class PlanEstudioData extends DataClass implements Insertable<PlanEstudioData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      planEstudiosId.hashCode,
-      $mrjc(
-          programaEduId.hashCode,
-          $mrjc(
-              nombrePlan.hashCode,
-              $mrjc(
-                  aliasPlan.hashCode,
-                  $mrjc(
-                      estadoId.hashCode,
-                      $mrjc(nroResolucion.hashCode,
-                          fechaResolucion.hashCode)))))));
+  int get hashCode => Object.hash(planEstudiosId, programaEduId, nombrePlan,
+      aliasPlan, estadoId, nroResolucion, fechaResolucion);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9216,26 +9054,18 @@ class ProgramasEducativoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      programaEduId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              nroCiclos.hashCode,
-              $mrjc(
-                  nivelAcadId.hashCode,
-                  $mrjc(
-                      tipoEvaluacionId.hashCode,
-                      $mrjc(
-                          estadoId.hashCode,
-                          $mrjc(
-                              entidadId.hashCode,
-                              $mrjc(
-                                  tipoInformeSiagieId.hashCode,
-                                  $mrjc(
-                                      toogle.hashCode,
-                                      $mrjc(tipoProgramaId.hashCode,
-                                          tipoMatriculaId.hashCode)))))))))));
+  int get hashCode => Object.hash(
+      programaEduId,
+      nombre,
+      nroCiclos,
+      nivelAcadId,
+      tipoEvaluacionId,
+      estadoId,
+      entidadId,
+      tipoInformeSiagieId,
+      toogle,
+      tipoProgramaId,
+      tipoMatriculaId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -9672,12 +9502,8 @@ class SeccionData extends DataClass implements Insertable<SeccionData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      seccionId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(descripcion.hashCode,
-              $mrjc(estado.hashCode, georeferenciaId.hashCode)))));
+  int get hashCode =>
+      Object.hash(seccionId, nombre, descripcion, estado, georeferenciaId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -10121,37 +9947,22 @@ class SilaboEventoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      silaboEventoId.hashCode,
-      $mrjc(
-          titulo.hashCode,
-          $mrjc(
-              descripcionGeneral.hashCode,
-              $mrjc(
-                  planCursoId.hashCode,
-                  $mrjc(
-                      entidadId.hashCode,
-                      $mrjc(
-                          docenteId.hashCode,
-                          $mrjc(
-                              seccionId.hashCode,
-                              $mrjc(
-                                  estadoId.hashCode,
-                                  $mrjc(
-                                      anioAcademicoId.hashCode,
-                                      $mrjc(
-                                          georeferenciaId.hashCode,
-                                          $mrjc(
-                                              silaboBaseId.hashCode,
-                                              $mrjc(
-                                                  cargaCursoId.hashCode,
-                                                  $mrjc(
-                                                      parametroDisenioId
-                                                          .hashCode,
-                                                      $mrjc(
-                                                          fechaInicio.hashCode,
-                                                          fechaFin
-                                                              .hashCode)))))))))))))));
+  int get hashCode => Object.hash(
+      silaboEventoId,
+      titulo,
+      descripcionGeneral,
+      planCursoId,
+      entidadId,
+      docenteId,
+      seccionId,
+      estadoId,
+      anioAcademicoId,
+      georeferenciaId,
+      silaboBaseId,
+      cargaCursoId,
+      parametroDisenioId,
+      fechaInicio,
+      fechaFin);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -10728,18 +10539,8 @@ class CalendarioPeriodoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      calendarioPeriodoId.hashCode,
-      $mrjc(
-          fechaInicio.hashCode,
-          $mrjc(
-              fechaFin.hashCode,
-              $mrjc(
-                  calendarioAcademicoId.hashCode,
-                  $mrjc(
-                      tipoId.hashCode,
-                      $mrjc(estadoId.hashCode,
-                          $mrjc(habilitado.hashCode, diazPlazo.hashCode))))))));
+  int get hashCode => Object.hash(calendarioPeriodoId, fechaInicio, fechaFin,
+      calendarioAcademicoId, tipoId, estadoId, habilitado, diazPlazo);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -11123,14 +10924,8 @@ class Tipo extends DataClass implements Insertable<Tipo> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tipoId.hashCode,
-      $mrjc(
-          objeto.hashCode,
-          $mrjc(
-              concepto.hashCode,
-              $mrjc(nombre.hashCode,
-                  $mrjc(codigo.hashCode, parentId.hashCode))))));
+  int get hashCode =>
+      Object.hash(tipoId, objeto, concepto, nombre, codigo, parentId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -11398,8 +11193,7 @@ class HoraData extends DataClass implements Insertable<HoraData> {
   }
 
   @override
-  int get hashCode => $mrjf(
-      $mrjc(idHora.hashCode, $mrjc(horaInicio.hashCode, horaFin.hashCode)));
+  int get hashCode => Object.hash(idHora, horaInicio, horaFin);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -11709,22 +11503,16 @@ class HorarioProgramaData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      idHorarioPrograma.hashCode,
-      $mrjc(
-          idHorario.hashCode,
-          $mrjc(
-              activo.hashCode,
-              $mrjc(
-                  idProgramaEducativo.hashCode,
-                  $mrjc(
-                      idAnioAcademico.hashCode,
-                      $mrjc(
-                          idUsuarioActualizacion.hashCode,
-                          $mrjc(
-                              idUsuarioCreacion.hashCode,
-                              $mrjc(fechaCreacion.hashCode,
-                                  fechaActualizacion.hashCode)))))))));
+  int get hashCode => Object.hash(
+      idHorarioPrograma,
+      idHorario,
+      activo,
+      idProgramaEducativo,
+      idAnioAcademico,
+      idUsuarioActualizacion,
+      idUsuarioCreacion,
+      fechaCreacion,
+      fechaActualizacion);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -12090,8 +11878,7 @@ class HorarioHoraData extends DataClass implements Insertable<HorarioHoraData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      idHorarioHora.hashCode, $mrjc(horaId.hashCode, detalleHoraId.hashCode)));
+  int get hashCode => Object.hash(idHorarioHora, horaId, detalleHoraId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -12377,16 +12164,8 @@ class DetalleHorarioData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      idDetalleHorario.hashCode,
-      $mrjc(
-          idTipoHora.hashCode,
-          $mrjc(
-              idTipoTurno.hashCode,
-              $mrjc(
-                  horaInicio.hashCode,
-                  $mrjc(horaFin.hashCode,
-                      $mrjc(idHorarioDia.hashCode, timeChange.hashCode)))))));
+  int get hashCode => Object.hash(idDetalleHorario, idTipoHora, idTipoTurno,
+      horaInicio, horaFin, idHorarioDia, timeChange);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -12708,8 +12487,7 @@ class DiaData extends DataClass implements Insertable<DiaData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(diaId.hashCode,
-      $mrjc(nombre.hashCode, $mrjc(estado.hashCode, alias_.hashCode))));
+  int get hashCode => Object.hash(diaId, nombre, estado, alias_);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -12938,8 +12716,7 @@ class HorarioDiaData extends DataClass implements Insertable<HorarioDiaData> {
   }
 
   @override
-  int get hashCode => $mrjf(
-      $mrjc(idHorarioDia.hashCode, $mrjc(idHorario.hashCode, idDia.hashCode)));
+  int get hashCode => Object.hash(idHorarioDia, idHorario, idDia);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -13154,8 +12931,8 @@ class CursosDetHorarioData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(idCursosDetHorario.hashCode,
-      $mrjc(idDetHorario.hashCode, idCargaCurso.hashCode)));
+  int get hashCode =>
+      Object.hash(idCursosDetHorario, idDetHorario, idCargaCurso);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -13484,24 +13261,17 @@ class HorarioData extends DataClass implements Insertable<HorarioData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      idHorario.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              descripcion.hashCode,
-              $mrjc(
-                  fecCreacion.hashCode,
-                  $mrjc(
-                      fecActualizacion.hashCode,
-                      $mrjc(
-                          estado.hashCode,
-                          $mrjc(
-                              idUsuario.hashCode,
-                              $mrjc(
-                                  entidadId.hashCode,
-                                  $mrjc(georeferenciaId.hashCode,
-                                      organigramaId.hashCode))))))))));
+  int get hashCode => Object.hash(
+      idHorario,
+      nombre,
+      descripcion,
+      fecCreacion,
+      fecActualizacion,
+      estado,
+      idUsuario,
+      entidadId,
+      georeferenciaId,
+      organigramaId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -13901,10 +13671,8 @@ class CalendarioAcademicoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      calendarioAcademicoId.hashCode,
-      $mrjc(programaEduId.hashCode,
-          $mrjc(idAnioAcademico.hashCode, estadoId.hashCode))));
+  int get hashCode => Object.hash(
+      calendarioAcademicoId, programaEduId, idAnioAcademico, estadoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -14198,14 +13966,8 @@ class UsuarioData extends DataClass implements Insertable<UsuarioData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      usuarioId.hashCode,
-      $mrjc(
-          personaId.hashCode,
-          $mrjc(
-              usuario.hashCode,
-              $mrjc(password.hashCode,
-                  $mrjc(estado.hashCode, habilitarAcceso.hashCode))))));
+  int get hashCode => Object.hash(
+      usuarioId, personaId, usuario, password, estado, habilitarAcceso);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -14469,7 +14231,7 @@ class WebConfig extends DataClass implements Insertable<WebConfig> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(nombre.hashCode, content.hashCode));
+  int get hashCode => Object.hash(nombre, content);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -14601,6 +14363,8 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
   final String? superCompetenciaNombre;
   final String? superCompetenciaDescripcion;
   final int? superCompetenciaTipoId;
+  final int? rubroEvalResultadoId;
+  final bool? evaluable;
 
   /// <summary>
   /// Tabla DesempenioIcd Desempenio Icd
@@ -14651,6 +14415,8 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
       this.superCompetenciaNombre,
       this.superCompetenciaDescripcion,
       this.superCompetenciaTipoId,
+      this.rubroEvalResultadoId,
+      this.evaluable,
       required this.desempenioIcdId,
       this.DesempenioDescripcion,
       this.peso,
@@ -14713,6 +14479,10 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           data['${effectivePrefix}super_competencia_descripcion']),
       superCompetenciaTipoId: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}super_competencia_tipo_id']),
+      rubroEvalResultadoId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}rubro_eval_resultado_id']),
+      evaluable: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}evaluable']),
       desempenioIcdId: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}desempenio_icd_id'])!,
       DesempenioDescripcion: const StringType().mapFromDatabaseResponse(
@@ -14812,6 +14582,12 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
     }
     if (!nullToAbsent || superCompetenciaTipoId != null) {
       map['super_competencia_tipo_id'] = Variable<int?>(superCompetenciaTipoId);
+    }
+    if (!nullToAbsent || rubroEvalResultadoId != null) {
+      map['rubro_eval_resultado_id'] = Variable<int?>(rubroEvalResultadoId);
+    }
+    if (!nullToAbsent || evaluable != null) {
+      map['evaluable'] = Variable<bool?>(evaluable);
     }
     map['desempenio_icd_id'] = Variable<int>(desempenioIcdId);
     if (!nullToAbsent || DesempenioDescripcion != null) {
@@ -14933,6 +14709,12 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
       superCompetenciaTipoId: superCompetenciaTipoId == null && nullToAbsent
           ? const Value.absent()
           : Value(superCompetenciaTipoId),
+      rubroEvalResultadoId: rubroEvalResultadoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rubroEvalResultadoId),
+      evaluable: evaluable == null && nullToAbsent
+          ? const Value.absent()
+          : Value(evaluable),
       desempenioIcdId: Value(desempenioIcdId),
       DesempenioDescripcion: DesempenioDescripcion == null && nullToAbsent
           ? const Value.absent()
@@ -15024,6 +14806,9 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           serializer.fromJson<String?>(json['superCompetenciaDescripcion']),
       superCompetenciaTipoId:
           serializer.fromJson<int?>(json['superCompetenciaTipoId']),
+      rubroEvalResultadoId:
+          serializer.fromJson<int?>(json['rubroEvalResultadoId']),
+      evaluable: serializer.fromJson<bool?>(json['evaluable']),
       desempenioIcdId: serializer.fromJson<int>(json['desempenioIcdId']),
       DesempenioDescripcion:
           serializer.fromJson<String?>(json['DesempenioDescripcion']),
@@ -15085,6 +14870,8 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
       'superCompetenciaDescripcion':
           serializer.toJson<String?>(superCompetenciaDescripcion),
       'superCompetenciaTipoId': serializer.toJson<int?>(superCompetenciaTipoId),
+      'rubroEvalResultadoId': serializer.toJson<int?>(rubroEvalResultadoId),
+      'evaluable': serializer.toJson<bool?>(evaluable),
       'desempenioIcdId': serializer.toJson<int>(desempenioIcdId),
       'DesempenioDescripcion':
           serializer.toJson<String?>(DesempenioDescripcion),
@@ -15136,6 +14923,8 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           String? superCompetenciaNombre,
           String? superCompetenciaDescripcion,
           int? superCompetenciaTipoId,
+          int? rubroEvalResultadoId,
+          bool? evaluable,
           int? desempenioIcdId,
           String? DesempenioDescripcion,
           int? peso,
@@ -15182,6 +14971,8 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
             superCompetenciaDescripcion ?? this.superCompetenciaDescripcion,
         superCompetenciaTipoId:
             superCompetenciaTipoId ?? this.superCompetenciaTipoId,
+        rubroEvalResultadoId: rubroEvalResultadoId ?? this.rubroEvalResultadoId,
+        evaluable: evaluable ?? this.evaluable,
         desempenioIcdId: desempenioIcdId ?? this.desempenioIcdId,
         DesempenioDescripcion:
             DesempenioDescripcion ?? this.DesempenioDescripcion,
@@ -15234,6 +15025,8 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           ..write('superCompetenciaNombre: $superCompetenciaNombre, ')
           ..write('superCompetenciaDescripcion: $superCompetenciaDescripcion, ')
           ..write('superCompetenciaTipoId: $superCompetenciaTipoId, ')
+          ..write('rubroEvalResultadoId: $rubroEvalResultadoId, ')
+          ..write('evaluable: $evaluable, ')
           ..write('desempenioIcdId: $desempenioIcdId, ')
           ..write('DesempenioDescripcion: $DesempenioDescripcion, ')
           ..write('peso: $peso, ')
@@ -15262,51 +15055,50 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      sesionAprendizajeId.hashCode,
-      $mrjc(
-          unidadAprendiajeId.hashCode,
-          $mrjc(
-              silaboEventoId.hashCode,
-              $mrjc(
-                  sesionAprendizajePadreId.hashCode,
-                  $mrjc(
-                      tituloSesion.hashCode,
-                      $mrjc(
-                          rolIdSesion.hashCode,
-                          $mrjc(
-                              nroSesion.hashCode,
-                              $mrjc(
-                                  propositoSesion.hashCode,
-                                  $mrjc(
-                                      tituloUnidad.hashCode,
-                                      $mrjc(
-                                          nroUnidad.hashCode,
-                                          $mrjc(
-                                              competenciaId.hashCode,
-                                              $mrjc(
-                                                  competenciaNombre.hashCode,
-                                                  $mrjc(
-                                                      competenciaDescripcion
-                                                          .hashCode,
-                                                      $mrjc(
-                                                          competenciaTipoId
-                                                              .hashCode,
-                                                          $mrjc(
-                                                              superCompetenciaId
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  superCompetenciaNombre
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      superCompetenciaDescripcion
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          superCompetenciaTipoId
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              desempenioIcdId.hashCode,
-                                                                              $mrjc(DesempenioDescripcion.hashCode, $mrjc(peso.hashCode, $mrjc(codigo.hashCode, $mrjc(tipoId.hashCode, $mrjc(url.hashCode, $mrjc(desempenioId.hashCode, $mrjc(desempenioIcdDescripcion.hashCode, $mrjc(icdId.hashCode, $mrjc(icdTitulo.hashCode, $mrjc(icdDescripcion.hashCode, $mrjc(icdAlias.hashCode, $mrjc(campoTematicoId.hashCode, $mrjc(campoTematicoTitulo.hashCode, $mrjc(campoTematicoDescripcion.hashCode, $mrjc(campoTematicoEstado.hashCode, $mrjc(campoTematicoParentId.hashCode, $mrjc(campoTematicoParentTitulo.hashCode, $mrjc(campoTematicoParentDescripcion.hashCode, $mrjc(campoTematicoParentEstado.hashCode, $mrjc(campoTematicoParentParentId.hashCode, calendarioPeriodoId.hashCode))))))))))))))))))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        sesionAprendizajeId,
+        unidadAprendiajeId,
+        silaboEventoId,
+        sesionAprendizajePadreId,
+        tituloSesion,
+        rolIdSesion,
+        nroSesion,
+        propositoSesion,
+        tituloUnidad,
+        nroUnidad,
+        competenciaId,
+        competenciaNombre,
+        competenciaDescripcion,
+        competenciaTipoId,
+        superCompetenciaId,
+        superCompetenciaNombre,
+        superCompetenciaDescripcion,
+        superCompetenciaTipoId,
+        rubroEvalResultadoId,
+        evaluable,
+        desempenioIcdId,
+        DesempenioDescripcion,
+        peso,
+        codigo,
+        tipoId,
+        url,
+        desempenioId,
+        desempenioIcdDescripcion,
+        icdId,
+        icdTitulo,
+        icdDescripcion,
+        icdAlias,
+        campoTematicoId,
+        campoTematicoTitulo,
+        campoTematicoDescripcion,
+        campoTematicoEstado,
+        campoTematicoParentId,
+        campoTematicoParentTitulo,
+        campoTematicoParentDescripcion,
+        campoTematicoParentEstado,
+        campoTematicoParentParentId,
+        calendarioPeriodoId
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -15330,6 +15122,8 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           other.superCompetenciaDescripcion ==
               this.superCompetenciaDescripcion &&
           other.superCompetenciaTipoId == this.superCompetenciaTipoId &&
+          other.rubroEvalResultadoId == this.rubroEvalResultadoId &&
+          other.evaluable == this.evaluable &&
           other.desempenioIcdId == this.desempenioIcdId &&
           other.DesempenioDescripcion == this.DesempenioDescripcion &&
           other.peso == this.peso &&
@@ -15375,6 +15169,8 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
   final Value<String?> superCompetenciaNombre;
   final Value<String?> superCompetenciaDescripcion;
   final Value<int?> superCompetenciaTipoId;
+  final Value<int?> rubroEvalResultadoId;
+  final Value<bool?> evaluable;
   final Value<int> desempenioIcdId;
   final Value<String?> DesempenioDescripcion;
   final Value<int?> peso;
@@ -15416,6 +15212,8 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
     this.superCompetenciaNombre = const Value.absent(),
     this.superCompetenciaDescripcion = const Value.absent(),
     this.superCompetenciaTipoId = const Value.absent(),
+    this.rubroEvalResultadoId = const Value.absent(),
+    this.evaluable = const Value.absent(),
     this.desempenioIcdId = const Value.absent(),
     this.DesempenioDescripcion = const Value.absent(),
     this.peso = const Value.absent(),
@@ -15458,6 +15256,8 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
     this.superCompetenciaNombre = const Value.absent(),
     this.superCompetenciaDescripcion = const Value.absent(),
     this.superCompetenciaTipoId = const Value.absent(),
+    this.rubroEvalResultadoId = const Value.absent(),
+    this.evaluable = const Value.absent(),
     required int desempenioIcdId,
     this.DesempenioDescripcion = const Value.absent(),
     this.peso = const Value.absent(),
@@ -15505,6 +15305,8 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
     Expression<String?>? superCompetenciaNombre,
     Expression<String?>? superCompetenciaDescripcion,
     Expression<int?>? superCompetenciaTipoId,
+    Expression<int?>? rubroEvalResultadoId,
+    Expression<bool?>? evaluable,
     Expression<int>? desempenioIcdId,
     Expression<String?>? DesempenioDescripcion,
     Expression<int?>? peso,
@@ -15555,6 +15357,9 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
         'super_competencia_descripcion': superCompetenciaDescripcion,
       if (superCompetenciaTipoId != null)
         'super_competencia_tipo_id': superCompetenciaTipoId,
+      if (rubroEvalResultadoId != null)
+        'rubro_eval_resultado_id': rubroEvalResultadoId,
+      if (evaluable != null) 'evaluable': evaluable,
       if (desempenioIcdId != null) 'desempenio_icd_id': desempenioIcdId,
       if (DesempenioDescripcion != null)
         'desempenio_descripcion': DesempenioDescripcion,
@@ -15610,6 +15415,8 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
       Value<String?>? superCompetenciaNombre,
       Value<String?>? superCompetenciaDescripcion,
       Value<int?>? superCompetenciaTipoId,
+      Value<int?>? rubroEvalResultadoId,
+      Value<bool?>? evaluable,
       Value<int>? desempenioIcdId,
       Value<String?>? DesempenioDescripcion,
       Value<int?>? peso,
@@ -15656,6 +15463,8 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
           superCompetenciaDescripcion ?? this.superCompetenciaDescripcion,
       superCompetenciaTipoId:
           superCompetenciaTipoId ?? this.superCompetenciaTipoId,
+      rubroEvalResultadoId: rubroEvalResultadoId ?? this.rubroEvalResultadoId,
+      evaluable: evaluable ?? this.evaluable,
       desempenioIcdId: desempenioIcdId ?? this.desempenioIcdId,
       DesempenioDescripcion:
           DesempenioDescripcion ?? this.DesempenioDescripcion,
@@ -15750,6 +15559,13 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
     if (superCompetenciaTipoId.present) {
       map['super_competencia_tipo_id'] =
           Variable<int?>(superCompetenciaTipoId.value);
+    }
+    if (rubroEvalResultadoId.present) {
+      map['rubro_eval_resultado_id'] =
+          Variable<int?>(rubroEvalResultadoId.value);
+    }
+    if (evaluable.present) {
+      map['evaluable'] = Variable<bool?>(evaluable.value);
     }
     if (desempenioIcdId.present) {
       map['desempenio_icd_id'] = Variable<int>(desempenioIcdId.value);
@@ -15850,6 +15666,8 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
           ..write('superCompetenciaNombre: $superCompetenciaNombre, ')
           ..write('superCompetenciaDescripcion: $superCompetenciaDescripcion, ')
           ..write('superCompetenciaTipoId: $superCompetenciaTipoId, ')
+          ..write('rubroEvalResultadoId: $rubroEvalResultadoId, ')
+          ..write('evaluable: $evaluable, ')
           ..write('desempenioIcdId: $desempenioIcdId, ')
           ..write('DesempenioDescripcion: $DesempenioDescripcion, ')
           ..write('peso: $peso, ')
@@ -15972,6 +15790,17 @@ class $CriterioTable extends Criterio
   late final GeneratedColumn<int?> superCompetenciaTipoId =
       GeneratedColumn<int?>('super_competencia_tipo_id', aliasedName, true,
           typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _rubroEvalResultadoIdMeta =
+      const VerificationMeta('rubroEvalResultadoId');
+  late final GeneratedColumn<int?> rubroEvalResultadoId = GeneratedColumn<int?>(
+      'rubro_eval_resultado_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _evaluableMeta = const VerificationMeta('evaluable');
+  late final GeneratedColumn<bool?> evaluable = GeneratedColumn<bool?>(
+      'evaluable', aliasedName, true,
+      typeName: 'INTEGER',
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (evaluable IN (0, 1))');
   final VerificationMeta _desempenioIcdIdMeta =
       const VerificationMeta('desempenioIcdId');
   late final GeneratedColumn<int?> desempenioIcdId = GeneratedColumn<int?>(
@@ -16098,6 +15927,8 @@ class $CriterioTable extends Criterio
         superCompetenciaNombre,
         superCompetenciaDescripcion,
         superCompetenciaTipoId,
+        rubroEvalResultadoId,
+        evaluable,
         desempenioIcdId,
         DesempenioDescripcion,
         peso,
@@ -16243,6 +16074,16 @@ class $CriterioTable extends Criterio
           _superCompetenciaTipoIdMeta,
           superCompetenciaTipoId.isAcceptableOrUnknown(
               data['super_competencia_tipo_id']!, _superCompetenciaTipoIdMeta));
+    }
+    if (data.containsKey('rubro_eval_resultado_id')) {
+      context.handle(
+          _rubroEvalResultadoIdMeta,
+          rubroEvalResultadoId.isAcceptableOrUnknown(
+              data['rubro_eval_resultado_id']!, _rubroEvalResultadoIdMeta));
+    }
+    if (data.containsKey('evaluable')) {
+      context.handle(_evaluableMeta,
+          evaluable.isAcceptableOrUnknown(data['evaluable']!, _evaluableMeta));
     }
     if (data.containsKey('desempenio_icd_id')) {
       context.handle(
@@ -16476,8 +16317,7 @@ class TipoEvaluacionRubroData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tipoEvaluacionId.hashCode, $mrjc(nombre.hashCode, estado.hashCode)));
+  int get hashCode => Object.hash(tipoEvaluacionId, nombre, estado);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -16742,14 +16582,8 @@ class TiposRubroData extends DataClass implements Insertable<TiposRubroData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tipoId.hashCode,
-      $mrjc(
-          objeto.hashCode,
-          $mrjc(
-              concepto.hashCode,
-              $mrjc(nombre.hashCode,
-                  $mrjc(codigo.hashCode, parentId.hashCode))))));
+  int get hashCode =>
+      Object.hash(tipoId, objeto, concepto, nombre, codigo, parentId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -17325,49 +17159,31 @@ class TipoNotaRubroData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tipoNotaId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              tipoId.hashCode,
-              $mrjc(
-                  tiponombre.hashCode,
-                  $mrjc(
-                      valorDefecto.hashCode,
-                      $mrjc(
-                          longitudPaso.hashCode,
-                          $mrjc(
-                              intervalo.hashCode,
-                              $mrjc(
-                                  estatico.hashCode,
-                                  $mrjc(
-                                      entidadId.hashCode,
-                                      $mrjc(
-                                          georeferenciaId.hashCode,
-                                          $mrjc(
-                                              organigramaId.hashCode,
-                                              $mrjc(
-                                                  estadoId.hashCode,
-                                                  $mrjc(
-                                                      tipoFuenteId.hashCode,
-                                                      $mrjc(
-                                                          valorMinimo.hashCode,
-                                                          $mrjc(
-                                                              valorMaximo
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  escalaEvaluacionId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      escalanombre
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          escalavalorMinimo
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              escalavalorMaximo.hashCode,
-                                                                              $mrjc(escalaestado.hashCode, $mrjc(escaladefecto.hashCode, $mrjc(escalaentidadId.hashCode, programaEducativoId.hashCode)))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        tipoNotaId,
+        nombre,
+        tipoId,
+        tiponombre,
+        valorDefecto,
+        longitudPaso,
+        intervalo,
+        estatico,
+        entidadId,
+        georeferenciaId,
+        organigramaId,
+        estadoId,
+        tipoFuenteId,
+        valorMinimo,
+        valorMaximo,
+        escalaEvaluacionId,
+        escalanombre,
+        escalavalorMinimo,
+        escalavalorMaximo,
+        escalaestado,
+        escaladefecto,
+        escalaentidadId,
+        programaEducativoId
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -18362,51 +18178,31 @@ class ValorTipoNotaRubroData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      valorTipoNotaId.hashCode,
-      $mrjc(
-          tipoNotaId.hashCode,
-          $mrjc(
-              titulo.hashCode,
-              $mrjc(
-                  alias.hashCode,
-                  $mrjc(
-                      limiteInferior.hashCode,
-                      $mrjc(
-                          limiteSuperior.hashCode,
-                          $mrjc(
-                              valorNumerico.hashCode,
-                              $mrjc(
-                                  icono.hashCode,
-                                  $mrjc(
-                                      estadoId.hashCode,
-                                      $mrjc(
-                                          incluidoLInferior.hashCode,
-                                          $mrjc(
-                                              incluidoLSuperior.hashCode,
-                                              $mrjc(
-                                                  tipoId.hashCode,
-                                                  $mrjc(
-                                                      usuarioCreacionId
-                                                          .hashCode,
-                                                      $mrjc(
-                                                          usuarioCreadorId
-                                                              .hashCode,
-                                                          $mrjc(
-                                                              fechaCreacion
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  usuarioAccionId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      fechaAccion
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          fechaEnvio
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              fechaEntrega.hashCode,
-                                                                              $mrjc(fechaRecibido.hashCode, $mrjc(fechaVisto.hashCode, $mrjc(fechaRespuesta.hashCode, getSTime.hashCode)))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        valorTipoNotaId,
+        tipoNotaId,
+        titulo,
+        alias,
+        limiteInferior,
+        limiteSuperior,
+        valorNumerico,
+        icono,
+        estadoId,
+        incluidoLInferior,
+        incluidoLSuperior,
+        tipoId,
+        usuarioCreacionId,
+        usuarioCreadorId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        fechaEnvio,
+        fechaEntrega,
+        fechaRecibido,
+        fechaVisto,
+        fechaRespuesta,
+        getSTime
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -19725,50 +19521,52 @@ class RubroEvaluacionProcesoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      syncFlag.hashCode,
-      $mrjc(
-          timestampFlag.hashCode,
-          $mrjc(
-              usuarioCreacionId.hashCode,
-              $mrjc(
-                  fechaCreacion.hashCode,
-                  $mrjc(
-                      usuarioAccionId.hashCode,
-                      $mrjc(
-                          fechaAccion.hashCode,
-                          $mrjc(
-                              rubroEvalProcesoId.hashCode,
-                              $mrjc(
-                                  titulo.hashCode,
-                                  $mrjc(
-                                      subtitulo.hashCode,
-                                      $mrjc(
-                                          colorFondo.hashCode,
-                                          $mrjc(
-                                              mColorFondo.hashCode,
-                                              $mrjc(
-                                                  valorDefecto.hashCode,
-                                                  $mrjc(
-                                                      competenciaId.hashCode,
-                                                      $mrjc(
-                                                          calendarioPeriodoId
-                                                              .hashCode,
-                                                          $mrjc(
-                                                              anchoColumna
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  ocultarColumna
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      tipoFormulaId
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          silaboEventoId
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              tipoRedondeoId.hashCode,
-                                                                              $mrjc(valorRedondeoId.hashCode, $mrjc(rubroEvalResultadoId.hashCode, $mrjc(tipoNotaId.hashCode, $mrjc(sesionAprendizajeId.hashCode, $mrjc(desempenioIcdId.hashCode, $mrjc(campoTematicoId.hashCode, $mrjc(tipoEvaluacionId.hashCode, $mrjc(estadoId.hashCode, $mrjc(tipoEscalaEvaluacionId.hashCode, $mrjc(tipoColorRubroProceso.hashCode, $mrjc(tiporubroid.hashCode, $mrjc(formaEvaluacionId.hashCode, $mrjc(countIndicador.hashCode, $mrjc(rubroFormal.hashCode, $mrjc(msje.hashCode, $mrjc(promedio.hashCode, $mrjc(desviacionEstandar.hashCode, $mrjc(unidadAprendizajeId.hashCode, $mrjc(estrategiaEvaluacionId.hashCode, $mrjc(tareaId.hashCode, $mrjc(resultadoTipoNotaId.hashCode, $mrjc(instrumentoEvalId.hashCode, $mrjc(error_guardar.hashCode, $mrjc(peso.hashCode, preguntaId.hashCode))))))))))))))))))))))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        syncFlag,
+        timestampFlag,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        rubroEvalProcesoId,
+        titulo,
+        subtitulo,
+        colorFondo,
+        mColorFondo,
+        valorDefecto,
+        competenciaId,
+        calendarioPeriodoId,
+        anchoColumna,
+        ocultarColumna,
+        tipoFormulaId,
+        silaboEventoId,
+        tipoRedondeoId,
+        valorRedondeoId,
+        rubroEvalResultadoId,
+        tipoNotaId,
+        sesionAprendizajeId,
+        desempenioIcdId,
+        campoTematicoId,
+        tipoEvaluacionId,
+        estadoId,
+        tipoEscalaEvaluacionId,
+        tipoColorRubroProceso,
+        tiporubroid,
+        formaEvaluacionId,
+        countIndicador,
+        rubroFormal,
+        msje,
+        promedio,
+        desviacionEstandar,
+        unidadAprendizajeId,
+        estrategiaEvaluacionId,
+        tareaId,
+        resultadoTipoNotaId,
+        instrumentoEvalId,
+        error_guardar,
+        peso,
+        preguntaId
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -21113,28 +20911,19 @@ class ArchivoRubroData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      syncFlag.hashCode,
-      $mrjc(
-          timestampFlag.hashCode,
-          $mrjc(
-              usuarioCreacionId.hashCode,
-              $mrjc(
-                  fechaCreacion.hashCode,
-                  $mrjc(
-                      usuarioAccionId.hashCode,
-                      $mrjc(
-                          fechaAccion.hashCode,
-                          $mrjc(
-                              archivoRubroId.hashCode,
-                              $mrjc(
-                                  url.hashCode,
-                                  $mrjc(
-                                      tipoArchivoId.hashCode,
-                                      $mrjc(
-                                          evaluacionProcesoId.hashCode,
-                                          $mrjc(localpath.hashCode,
-                                              delete.hashCode))))))))))));
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      archivoRubroId,
+      url,
+      tipoArchivoId,
+      evaluacionProcesoId,
+      localpath,
+      delete);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -21724,32 +21513,20 @@ class EquipoEvaluacionData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      syncFlag.hashCode,
-      $mrjc(
-          timestampFlag.hashCode,
-          $mrjc(
-              usuarioCreacionId.hashCode,
-              $mrjc(
-                  fechaCreacion.hashCode,
-                  $mrjc(
-                      usuarioAccionId.hashCode,
-                      $mrjc(
-                          fechaAccion.hashCode,
-                          $mrjc(
-                              equipoEvaluacionProcesoId.hashCode,
-                              $mrjc(
-                                  rubroEvalProcesoId.hashCode,
-                                  $mrjc(
-                                      sesionAprendizajeId.hashCode,
-                                      $mrjc(
-                                          equipoId.hashCode,
-                                          $mrjc(
-                                              nota.hashCode,
-                                              $mrjc(
-                                                  escala.hashCode,
-                                                  valorTipoNotaId
-                                                      .hashCode)))))))))))));
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      equipoEvaluacionProcesoId,
+      rubroEvalProcesoId,
+      sesionAprendizajeId,
+      equipoId,
+      nota,
+      escala,
+      valorTipoNotaId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -22530,48 +22307,32 @@ class EvaluacionProcesoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      syncFlag.hashCode,
-      $mrjc(
-          timestampFlag.hashCode,
-          $mrjc(
-              usuarioCreacionId.hashCode,
-              $mrjc(
-                  fechaCreacion.hashCode,
-                  $mrjc(
-                      usuarioAccionId.hashCode,
-                      $mrjc(
-                          fechaAccion.hashCode,
-                          $mrjc(
-                              evaluacionProcesoId.hashCode,
-                              $mrjc(
-                                  evaluacionResultadoId.hashCode,
-                                  $mrjc(
-                                      nota.hashCode,
-                                      $mrjc(
-                                          escala.hashCode,
-                                          $mrjc(
-                                              rubroEvalProcesoId.hashCode,
-                                              $mrjc(
-                                                  sesionAprendizajeId.hashCode,
-                                                  $mrjc(
-                                                      valorTipoNotaId.hashCode,
-                                                      $mrjc(
-                                                          equipoId.hashCode,
-                                                          $mrjc(
-                                                              alumnoId.hashCode,
-                                                              $mrjc(
-                                                                  nombres
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      apellidoPaterno
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          apellidoMaterno
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              foto.hashCode,
-                                                                              $mrjc(calendarioPeriodoId.hashCode, $mrjc(formulaSinc.hashCode, $mrjc(msje.hashCode, $mrjc(publicado.hashCode, visto.hashCode))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        syncFlag,
+        timestampFlag,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        evaluacionProcesoId,
+        evaluacionResultadoId,
+        nota,
+        escala,
+        rubroEvalProcesoId,
+        sesionAprendizajeId,
+        valorTipoNotaId,
+        equipoId,
+        alumnoId,
+        nombres,
+        apellidoPaterno,
+        apellidoMaterno,
+        foto,
+        calendarioPeriodoId,
+        formulaSinc,
+        msje,
+        publicado,
+        visto
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -23361,20 +23122,15 @@ class RubroCampotematicoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      syncFlag.hashCode,
-      $mrjc(
-          timestampFlag.hashCode,
-          $mrjc(
-              usuarioCreacionId.hashCode,
-              $mrjc(
-                  fechaCreacion.hashCode,
-                  $mrjc(
-                      usuarioAccionId.hashCode,
-                      $mrjc(
-                          fechaAccion.hashCode,
-                          $mrjc(rubroEvalProcesoId.hashCode,
-                              campoTematicoId.hashCode))))))));
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      rubroEvalProcesoId,
+      campoTematicoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -23853,26 +23609,18 @@ class RubroComentarioData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      syncFlag.hashCode,
-      $mrjc(
-          timestampFlag.hashCode,
-          $mrjc(
-              usuarioCreacionId.hashCode,
-              $mrjc(
-                  fechaCreacion.hashCode,
-                  $mrjc(
-                      usuarioAccionId.hashCode,
-                      $mrjc(
-                          fechaAccion.hashCode,
-                          $mrjc(
-                              evaluacionProcesoComentarioId.hashCode,
-                              $mrjc(
-                                  evaluacionProcesoId.hashCode,
-                                  $mrjc(
-                                      comentarioId.hashCode,
-                                      $mrjc(descripcion.hashCode,
-                                          delete.hashCode)))))))))));
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      evaluacionProcesoComentarioId,
+      evaluacionProcesoId,
+      comentarioId,
+      descripcion,
+      delete);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -24407,24 +24155,17 @@ class RubroEvalRNPFormulaData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      syncFlag.hashCode,
-      $mrjc(
-          timestampFlag.hashCode,
-          $mrjc(
-              usuarioCreacionId.hashCode,
-              $mrjc(
-                  fechaCreacion.hashCode,
-                  $mrjc(
-                      usuarioAccionId.hashCode,
-                      $mrjc(
-                          fechaAccion.hashCode,
-                          $mrjc(
-                              rubroFormulaId.hashCode,
-                              $mrjc(
-                                  rubroEvaluacionPrimId.hashCode,
-                                  $mrjc(rubroEvaluacionSecId.hashCode,
-                                      peso.hashCode))))))))));
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      rubroFormulaId,
+      rubroEvaluacionPrimId,
+      rubroEvaluacionSecId,
+      peso);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -24771,6 +24512,10 @@ class ContactoDocenteData extends DataClass
   final int? contratoEstadoId;
   final bool? contratoVigente;
   final int? relacionId;
+  final int? programaId;
+  final String? programaNombre;
+  final int? cargaAcademicaId;
+  final int? idEmpleadoTutor;
   ContactoDocenteData(
       {required this.personaId,
       this.nombres,
@@ -24801,7 +24546,11 @@ class ContactoDocenteData extends DataClass
       this.aulaNombre,
       this.contratoEstadoId,
       this.contratoVigente,
-      this.relacionId});
+      this.relacionId,
+      this.programaId,
+      this.programaNombre,
+      this.cargaAcademicaId,
+      this.idEmpleadoTutor});
   factory ContactoDocenteData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
@@ -24867,6 +24616,14 @@ class ContactoDocenteData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}contrato_vigente']),
       relacionId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}relacion_id']),
+      programaId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}programa_id']),
+      programaNombre: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}programa_nombre']),
+      cargaAcademicaId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}carga_academica_id']),
+      idEmpleadoTutor: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id_empleado_tutor']),
     );
   }
   @override
@@ -24956,6 +24713,18 @@ class ContactoDocenteData extends DataClass
     if (!nullToAbsent || relacionId != null) {
       map['relacion_id'] = Variable<int?>(relacionId);
     }
+    if (!nullToAbsent || programaId != null) {
+      map['programa_id'] = Variable<int?>(programaId);
+    }
+    if (!nullToAbsent || programaNombre != null) {
+      map['programa_nombre'] = Variable<String?>(programaNombre);
+    }
+    if (!nullToAbsent || cargaAcademicaId != null) {
+      map['carga_academica_id'] = Variable<int?>(cargaAcademicaId);
+    }
+    if (!nullToAbsent || idEmpleadoTutor != null) {
+      map['id_empleado_tutor'] = Variable<int?>(idEmpleadoTutor);
+    }
     return map;
   }
 
@@ -25039,6 +24808,18 @@ class ContactoDocenteData extends DataClass
       relacionId: relacionId == null && nullToAbsent
           ? const Value.absent()
           : Value(relacionId),
+      programaId: programaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(programaId),
+      programaNombre: programaNombre == null && nullToAbsent
+          ? const Value.absent()
+          : Value(programaNombre),
+      cargaAcademicaId: cargaAcademicaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cargaAcademicaId),
+      idEmpleadoTutor: idEmpleadoTutor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(idEmpleadoTutor),
     );
   }
 
@@ -25076,6 +24857,10 @@ class ContactoDocenteData extends DataClass
       contratoEstadoId: serializer.fromJson<int?>(json['contratoEstadoId']),
       contratoVigente: serializer.fromJson<bool?>(json['contratoVigente']),
       relacionId: serializer.fromJson<int?>(json['relacionId']),
+      programaId: serializer.fromJson<int?>(json['programaId']),
+      programaNombre: serializer.fromJson<String?>(json['programaNombre']),
+      cargaAcademicaId: serializer.fromJson<int?>(json['cargaAcademicaId']),
+      idEmpleadoTutor: serializer.fromJson<int?>(json['idEmpleadoTutor']),
     );
   }
   @override
@@ -25112,6 +24897,10 @@ class ContactoDocenteData extends DataClass
       'contratoEstadoId': serializer.toJson<int?>(contratoEstadoId),
       'contratoVigente': serializer.toJson<bool?>(contratoVigente),
       'relacionId': serializer.toJson<int?>(relacionId),
+      'programaId': serializer.toJson<int?>(programaId),
+      'programaNombre': serializer.toJson<String?>(programaNombre),
+      'cargaAcademicaId': serializer.toJson<int?>(cargaAcademicaId),
+      'idEmpleadoTutor': serializer.toJson<int?>(idEmpleadoTutor),
     };
   }
 
@@ -25145,7 +24934,11 @@ class ContactoDocenteData extends DataClass
           String? aulaNombre,
           int? contratoEstadoId,
           bool? contratoVigente,
-          int? relacionId}) =>
+          int? relacionId,
+          int? programaId,
+          String? programaNombre,
+          int? cargaAcademicaId,
+          int? idEmpleadoTutor}) =>
       ContactoDocenteData(
         personaId: personaId ?? this.personaId,
         nombres: nombres ?? this.nombres,
@@ -25177,6 +24970,10 @@ class ContactoDocenteData extends DataClass
         contratoEstadoId: contratoEstadoId ?? this.contratoEstadoId,
         contratoVigente: contratoVigente ?? this.contratoVigente,
         relacionId: relacionId ?? this.relacionId,
+        programaId: programaId ?? this.programaId,
+        programaNombre: programaNombre ?? this.programaNombre,
+        cargaAcademicaId: cargaAcademicaId ?? this.cargaAcademicaId,
+        idEmpleadoTutor: idEmpleadoTutor ?? this.idEmpleadoTutor,
       );
   @override
   String toString() {
@@ -25210,54 +25007,52 @@ class ContactoDocenteData extends DataClass
           ..write('aulaNombre: $aulaNombre, ')
           ..write('contratoEstadoId: $contratoEstadoId, ')
           ..write('contratoVigente: $contratoVigente, ')
-          ..write('relacionId: $relacionId')
+          ..write('relacionId: $relacionId, ')
+          ..write('programaId: $programaId, ')
+          ..write('programaNombre: $programaNombre, ')
+          ..write('cargaAcademicaId: $cargaAcademicaId, ')
+          ..write('idEmpleadoTutor: $idEmpleadoTutor')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      personaId.hashCode,
-      $mrjc(
-          nombres.hashCode,
-          $mrjc(
-              apellidoPaterno.hashCode,
-              $mrjc(
-                  apellidoMaterno.hashCode,
-                  $mrjc(
-                      ocupacion.hashCode,
-                      $mrjc(
-                          estadoId.hashCode,
-                          $mrjc(
-                              telefono.hashCode,
-                              $mrjc(
-                                  celular.hashCode,
-                                  $mrjc(
-                                      fechaNac.hashCode,
-                                      $mrjc(
-                                          correo.hashCode,
-                                          $mrjc(
-                                              genero.hashCode,
-                                              $mrjc(
-                                                  estadoCivil.hashCode,
-                                                  $mrjc(
-                                                      numDoc.hashCode,
-                                                      $mrjc(
-                                                          foto.hashCode,
-                                                          $mrjc(
-                                                              nombreTipo
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  tipo.hashCode,
-                                                                  $mrjc(
-                                                                      hijoRelacionId
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          relacion
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              cargaCursoId.hashCode,
-                                                                              $mrjc(cursoId.hashCode, $mrjc(cursoNombre.hashCode, $mrjc(periodoId.hashCode, $mrjc(periodoNombre.hashCode, $mrjc(grupoId.hashCode, $mrjc(grupoNombre.hashCode, $mrjc(aulaId.hashCode, $mrjc(aulaNombre.hashCode, $mrjc(contratoEstadoId.hashCode, $mrjc(contratoVigente.hashCode, relacionId.hashCode))))))))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        personaId,
+        nombres,
+        apellidoPaterno,
+        apellidoMaterno,
+        ocupacion,
+        estadoId,
+        telefono,
+        celular,
+        fechaNac,
+        correo,
+        genero,
+        estadoCivil,
+        numDoc,
+        foto,
+        nombreTipo,
+        tipo,
+        hijoRelacionId,
+        relacion,
+        cargaCursoId,
+        cursoId,
+        cursoNombre,
+        periodoId,
+        periodoNombre,
+        grupoId,
+        grupoNombre,
+        aulaId,
+        aulaNombre,
+        contratoEstadoId,
+        contratoVigente,
+        relacionId,
+        programaId,
+        programaNombre,
+        cargaAcademicaId,
+        idEmpleadoTutor
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -25291,7 +25086,11 @@ class ContactoDocenteData extends DataClass
           other.aulaNombre == this.aulaNombre &&
           other.contratoEstadoId == this.contratoEstadoId &&
           other.contratoVigente == this.contratoVigente &&
-          other.relacionId == this.relacionId);
+          other.relacionId == this.relacionId &&
+          other.programaId == this.programaId &&
+          other.programaNombre == this.programaNombre &&
+          other.cargaAcademicaId == this.cargaAcademicaId &&
+          other.idEmpleadoTutor == this.idEmpleadoTutor);
 }
 
 class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
@@ -25325,6 +25124,10 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
   final Value<int?> contratoEstadoId;
   final Value<bool?> contratoVigente;
   final Value<int?> relacionId;
+  final Value<int?> programaId;
+  final Value<String?> programaNombre;
+  final Value<int?> cargaAcademicaId;
+  final Value<int?> idEmpleadoTutor;
   const ContactoDocenteCompanion({
     this.personaId = const Value.absent(),
     this.nombres = const Value.absent(),
@@ -25356,6 +25159,10 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
     this.contratoEstadoId = const Value.absent(),
     this.contratoVigente = const Value.absent(),
     this.relacionId = const Value.absent(),
+    this.programaId = const Value.absent(),
+    this.programaNombre = const Value.absent(),
+    this.cargaAcademicaId = const Value.absent(),
+    this.idEmpleadoTutor = const Value.absent(),
   });
   ContactoDocenteCompanion.insert({
     required int personaId,
@@ -25388,6 +25195,10 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
     this.contratoEstadoId = const Value.absent(),
     this.contratoVigente = const Value.absent(),
     this.relacionId = const Value.absent(),
+    this.programaId = const Value.absent(),
+    this.programaNombre = const Value.absent(),
+    this.cargaAcademicaId = const Value.absent(),
+    this.idEmpleadoTutor = const Value.absent(),
   })  : personaId = Value(personaId),
         tipo = Value(tipo),
         cargaCursoId = Value(cargaCursoId);
@@ -25422,6 +25233,10 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
     Expression<int?>? contratoEstadoId,
     Expression<bool?>? contratoVigente,
     Expression<int?>? relacionId,
+    Expression<int?>? programaId,
+    Expression<String?>? programaNombre,
+    Expression<int?>? cargaAcademicaId,
+    Expression<int?>? idEmpleadoTutor,
   }) {
     return RawValuesInsertable({
       if (personaId != null) 'persona_id': personaId,
@@ -25454,6 +25269,10 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
       if (contratoEstadoId != null) 'contrato_estado_id': contratoEstadoId,
       if (contratoVigente != null) 'contrato_vigente': contratoVigente,
       if (relacionId != null) 'relacion_id': relacionId,
+      if (programaId != null) 'programa_id': programaId,
+      if (programaNombre != null) 'programa_nombre': programaNombre,
+      if (cargaAcademicaId != null) 'carga_academica_id': cargaAcademicaId,
+      if (idEmpleadoTutor != null) 'id_empleado_tutor': idEmpleadoTutor,
     });
   }
 
@@ -25487,7 +25306,11 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
       Value<String?>? aulaNombre,
       Value<int?>? contratoEstadoId,
       Value<bool?>? contratoVigente,
-      Value<int?>? relacionId}) {
+      Value<int?>? relacionId,
+      Value<int?>? programaId,
+      Value<String?>? programaNombre,
+      Value<int?>? cargaAcademicaId,
+      Value<int?>? idEmpleadoTutor}) {
     return ContactoDocenteCompanion(
       personaId: personaId ?? this.personaId,
       nombres: nombres ?? this.nombres,
@@ -25519,6 +25342,10 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
       contratoEstadoId: contratoEstadoId ?? this.contratoEstadoId,
       contratoVigente: contratoVigente ?? this.contratoVigente,
       relacionId: relacionId ?? this.relacionId,
+      programaId: programaId ?? this.programaId,
+      programaNombre: programaNombre ?? this.programaNombre,
+      cargaAcademicaId: cargaAcademicaId ?? this.cargaAcademicaId,
+      idEmpleadoTutor: idEmpleadoTutor ?? this.idEmpleadoTutor,
     );
   }
 
@@ -25615,6 +25442,18 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
     if (relacionId.present) {
       map['relacion_id'] = Variable<int?>(relacionId.value);
     }
+    if (programaId.present) {
+      map['programa_id'] = Variable<int?>(programaId.value);
+    }
+    if (programaNombre.present) {
+      map['programa_nombre'] = Variable<String?>(programaNombre.value);
+    }
+    if (cargaAcademicaId.present) {
+      map['carga_academica_id'] = Variable<int?>(cargaAcademicaId.value);
+    }
+    if (idEmpleadoTutor.present) {
+      map['id_empleado_tutor'] = Variable<int?>(idEmpleadoTutor.value);
+    }
     return map;
   }
 
@@ -25650,7 +25489,11 @@ class ContactoDocenteCompanion extends UpdateCompanion<ContactoDocenteData> {
           ..write('aulaNombre: $aulaNombre, ')
           ..write('contratoEstadoId: $contratoEstadoId, ')
           ..write('contratoVigente: $contratoVigente, ')
-          ..write('relacionId: $relacionId')
+          ..write('relacionId: $relacionId, ')
+          ..write('programaId: $programaId, ')
+          ..write('programaNombre: $programaNombre, ')
+          ..write('cargaAcademicaId: $cargaAcademicaId, ')
+          ..write('idEmpleadoTutor: $idEmpleadoTutor')
           ..write(')'))
         .toString();
   }
@@ -25793,6 +25636,25 @@ class $ContactoDocenteTable extends ContactoDocente
   late final GeneratedColumn<int?> relacionId = GeneratedColumn<int?>(
       'relacion_id', aliasedName, true,
       typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _programaIdMeta = const VerificationMeta('programaId');
+  late final GeneratedColumn<int?> programaId = GeneratedColumn<int?>(
+      'programa_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _programaNombreMeta =
+      const VerificationMeta('programaNombre');
+  late final GeneratedColumn<String?> programaNombre = GeneratedColumn<String?>(
+      'programa_nombre', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _cargaAcademicaIdMeta =
+      const VerificationMeta('cargaAcademicaId');
+  late final GeneratedColumn<int?> cargaAcademicaId = GeneratedColumn<int?>(
+      'carga_academica_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _idEmpleadoTutorMeta =
+      const VerificationMeta('idEmpleadoTutor');
+  late final GeneratedColumn<int?> idEmpleadoTutor = GeneratedColumn<int?>(
+      'id_empleado_tutor', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         personaId,
@@ -25824,7 +25686,11 @@ class $ContactoDocenteTable extends ContactoDocente
         aulaNombre,
         contratoEstadoId,
         contratoVigente,
-        relacionId
+        relacionId,
+        programaId,
+        programaNombre,
+        cargaAcademicaId,
+        idEmpleadoTutor
       ];
   @override
   String get aliasedName => _alias ?? 'contacto_docente';
@@ -25988,6 +25854,30 @@ class $ContactoDocenteTable extends ContactoDocente
           relacionId.isAcceptableOrUnknown(
               data['relacion_id']!, _relacionIdMeta));
     }
+    if (data.containsKey('programa_id')) {
+      context.handle(
+          _programaIdMeta,
+          programaId.isAcceptableOrUnknown(
+              data['programa_id']!, _programaIdMeta));
+    }
+    if (data.containsKey('programa_nombre')) {
+      context.handle(
+          _programaNombreMeta,
+          programaNombre.isAcceptableOrUnknown(
+              data['programa_nombre']!, _programaNombreMeta));
+    }
+    if (data.containsKey('carga_academica_id')) {
+      context.handle(
+          _cargaAcademicaIdMeta,
+          cargaAcademicaId.isAcceptableOrUnknown(
+              data['carga_academica_id']!, _cargaAcademicaIdMeta));
+    }
+    if (data.containsKey('id_empleado_tutor')) {
+      context.handle(
+          _idEmpleadoTutorMeta,
+          idEmpleadoTutor.isAcceptableOrUnknown(
+              data['id_empleado_tutor']!, _idEmpleadoTutorMeta));
+    }
     return context;
   }
 
@@ -26109,10 +25999,8 @@ class CriterioRubroEvaluacionData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      criteriosEvaluacionId.hashCode,
-      $mrjc(rubroEvalProcesoId.hashCode,
-          $mrjc(valorTipoNotaId.hashCode, descripcion.hashCode))));
+  int get hashCode => Object.hash(
+      criteriosEvaluacionId, rubroEvalProcesoId, valorTipoNotaId, descripcion);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -26299,6 +26187,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
   final int? cargaCursoId;
   final int? estadoPublicaciN;
   final int? estadoPublicacion;
+  final String? nFoto;
   final int? rolId;
   final int? usuarioCreacionId;
   final int? usuarioCreadorId;
@@ -26325,6 +26214,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
       this.cargaCursoId,
       this.estadoPublicaciN,
       this.estadoPublicacion,
+      this.nFoto,
       this.rolId,
       this.usuarioCreacionId,
       this.usuarioCreadorId,
@@ -26368,6 +26258,8 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
           data['${effectivePrefix}estado_publicaci_n']),
       estadoPublicacion: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}estado_publicacion']),
+      nFoto: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}n_foto']),
       rolId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}rol_id']),
       usuarioCreacionId: const IntType().mapFromDatabaseResponse(
@@ -26433,6 +26325,9 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
     }
     if (!nullToAbsent || estadoPublicacion != null) {
       map['estado_publicacion'] = Variable<int?>(estadoPublicacion);
+    }
+    if (!nullToAbsent || nFoto != null) {
+      map['n_foto'] = Variable<String?>(nFoto);
     }
     if (!nullToAbsent || rolId != null) {
       map['rol_id'] = Variable<int?>(rolId);
@@ -26509,6 +26404,8 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
       estadoPublicacion: estadoPublicacion == null && nullToAbsent
           ? const Value.absent()
           : Value(estadoPublicacion),
+      nFoto:
+          nFoto == null && nullToAbsent ? const Value.absent() : Value(nFoto),
       rolId:
           rolId == null && nullToAbsent ? const Value.absent() : Value(rolId),
       usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
@@ -26564,6 +26461,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
       cargaCursoId: serializer.fromJson<int?>(json['cargaCursoId']),
       estadoPublicaciN: serializer.fromJson<int?>(json['estadoPublicaciN']),
       estadoPublicacion: serializer.fromJson<int?>(json['estadoPublicacion']),
+      nFoto: serializer.fromJson<String?>(json['nFoto']),
       rolId: serializer.fromJson<int?>(json['rolId']),
       usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
       usuarioCreadorId: serializer.fromJson<int?>(json['usuarioCreadorId']),
@@ -26595,6 +26493,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
       'cargaCursoId': serializer.toJson<int?>(cargaCursoId),
       'estadoPublicaciN': serializer.toJson<int?>(estadoPublicaciN),
       'estadoPublicacion': serializer.toJson<int?>(estadoPublicacion),
+      'nFoto': serializer.toJson<String?>(nFoto),
       'rolId': serializer.toJson<int?>(rolId),
       'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
       'usuarioCreadorId': serializer.toJson<int?>(usuarioCreadorId),
@@ -26624,6 +26523,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
           int? cargaCursoId,
           int? estadoPublicaciN,
           int? estadoPublicacion,
+          String? nFoto,
           int? rolId,
           int? usuarioCreacionId,
           int? usuarioCreadorId,
@@ -26650,6 +26550,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
         cargaCursoId: cargaCursoId ?? this.cargaCursoId,
         estadoPublicaciN: estadoPublicaciN ?? this.estadoPublicaciN,
         estadoPublicacion: estadoPublicacion ?? this.estadoPublicacion,
+        nFoto: nFoto ?? this.nFoto,
         rolId: rolId ?? this.rolId,
         usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
         usuarioCreadorId: usuarioCreadorId ?? this.usuarioCreadorId,
@@ -26679,6 +26580,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
           ..write('cargaCursoId: $cargaCursoId, ')
           ..write('estadoPublicaciN: $estadoPublicaciN, ')
           ..write('estadoPublicacion: $estadoPublicacion, ')
+          ..write('nFoto: $nFoto, ')
           ..write('rolId: $rolId, ')
           ..write('usuarioCreacionId: $usuarioCreacionId, ')
           ..write('usuarioCreadorId: $usuarioCreadorId, ')
@@ -26696,50 +26598,34 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      calendarioId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              descripcion.hashCode,
-              $mrjc(
-                  estado.hashCode,
-                  $mrjc(
-                      entidadId.hashCode,
-                      $mrjc(
-                          georeferenciaId.hashCode,
-                          $mrjc(
-                              nUsuario.hashCode,
-                              $mrjc(
-                                  cargo.hashCode,
-                                  $mrjc(
-                                      usuarioId.hashCode,
-                                      $mrjc(
-                                          cargaAcademicaId.hashCode,
-                                          $mrjc(
-                                              cargaCursoId.hashCode,
-                                              $mrjc(
-                                                  estadoPublicaciN.hashCode,
-                                                  $mrjc(
-                                                      estadoPublicacion
-                                                          .hashCode,
-                                                      $mrjc(
-                                                          rolId.hashCode,
-                                                          $mrjc(
-                                                              usuarioCreacionId
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  usuarioCreadorId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      fechaCreacion
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          usuarioAccionId
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              fechaAccion.hashCode,
-                                                                              $mrjc(fechaEnvio.hashCode, $mrjc(fechaEntrega.hashCode, $mrjc(fechaRecibido.hashCode, $mrjc(fechaVisto.hashCode, $mrjc(fechaRespuesta.hashCode, getSTime.hashCode)))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        calendarioId,
+        nombre,
+        descripcion,
+        estado,
+        entidadId,
+        georeferenciaId,
+        nUsuario,
+        cargo,
+        usuarioId,
+        cargaAcademicaId,
+        cargaCursoId,
+        estadoPublicaciN,
+        estadoPublicacion,
+        nFoto,
+        rolId,
+        usuarioCreacionId,
+        usuarioCreadorId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        fechaEnvio,
+        fechaEntrega,
+        fechaRecibido,
+        fechaVisto,
+        fechaRespuesta,
+        getSTime
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -26757,6 +26643,7 @@ class CalendarioData extends DataClass implements Insertable<CalendarioData> {
           other.cargaCursoId == this.cargaCursoId &&
           other.estadoPublicaciN == this.estadoPublicaciN &&
           other.estadoPublicacion == this.estadoPublicacion &&
+          other.nFoto == this.nFoto &&
           other.rolId == this.rolId &&
           other.usuarioCreacionId == this.usuarioCreacionId &&
           other.usuarioCreadorId == this.usuarioCreadorId &&
@@ -26785,6 +26672,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
   final Value<int?> cargaCursoId;
   final Value<int?> estadoPublicaciN;
   final Value<int?> estadoPublicacion;
+  final Value<String?> nFoto;
   final Value<int?> rolId;
   final Value<int?> usuarioCreacionId;
   final Value<int?> usuarioCreadorId;
@@ -26811,6 +26699,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
     this.cargaCursoId = const Value.absent(),
     this.estadoPublicaciN = const Value.absent(),
     this.estadoPublicacion = const Value.absent(),
+    this.nFoto = const Value.absent(),
     this.rolId = const Value.absent(),
     this.usuarioCreacionId = const Value.absent(),
     this.usuarioCreadorId = const Value.absent(),
@@ -26838,6 +26727,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
     this.cargaCursoId = const Value.absent(),
     this.estadoPublicaciN = const Value.absent(),
     this.estadoPublicacion = const Value.absent(),
+    this.nFoto = const Value.absent(),
     this.rolId = const Value.absent(),
     this.usuarioCreacionId = const Value.absent(),
     this.usuarioCreadorId = const Value.absent(),
@@ -26865,6 +26755,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
     Expression<int?>? cargaCursoId,
     Expression<int?>? estadoPublicaciN,
     Expression<int?>? estadoPublicacion,
+    Expression<String?>? nFoto,
     Expression<int?>? rolId,
     Expression<int?>? usuarioCreacionId,
     Expression<int?>? usuarioCreadorId,
@@ -26892,6 +26783,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
       if (cargaCursoId != null) 'carga_curso_id': cargaCursoId,
       if (estadoPublicaciN != null) 'estado_publicaci_n': estadoPublicaciN,
       if (estadoPublicacion != null) 'estado_publicacion': estadoPublicacion,
+      if (nFoto != null) 'n_foto': nFoto,
       if (rolId != null) 'rol_id': rolId,
       if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
       if (usuarioCreadorId != null) 'usuario_creador_id': usuarioCreadorId,
@@ -26921,6 +26813,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
       Value<int?>? cargaCursoId,
       Value<int?>? estadoPublicaciN,
       Value<int?>? estadoPublicacion,
+      Value<String?>? nFoto,
       Value<int?>? rolId,
       Value<int?>? usuarioCreacionId,
       Value<int?>? usuarioCreadorId,
@@ -26947,6 +26840,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
       cargaCursoId: cargaCursoId ?? this.cargaCursoId,
       estadoPublicaciN: estadoPublicaciN ?? this.estadoPublicaciN,
       estadoPublicacion: estadoPublicacion ?? this.estadoPublicacion,
+      nFoto: nFoto ?? this.nFoto,
       rolId: rolId ?? this.rolId,
       usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
       usuarioCreadorId: usuarioCreadorId ?? this.usuarioCreadorId,
@@ -27004,6 +26898,9 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
     if (estadoPublicacion.present) {
       map['estado_publicacion'] = Variable<int?>(estadoPublicacion.value);
     }
+    if (nFoto.present) {
+      map['n_foto'] = Variable<String?>(nFoto.value);
+    }
     if (rolId.present) {
       map['rol_id'] = Variable<int?>(rolId.value);
     }
@@ -27059,6 +26956,7 @@ class CalendarioCompanion extends UpdateCompanion<CalendarioData> {
           ..write('cargaCursoId: $cargaCursoId, ')
           ..write('estadoPublicaciN: $estadoPublicaciN, ')
           ..write('estadoPublicacion: $estadoPublicacion, ')
+          ..write('nFoto: $nFoto, ')
           ..write('rolId: $rolId, ')
           ..write('usuarioCreacionId: $usuarioCreacionId, ')
           ..write('usuarioCreadorId: $usuarioCreadorId, ')
@@ -27140,6 +27038,10 @@ class $CalendarioTable extends Calendario
   late final GeneratedColumn<int?> estadoPublicacion = GeneratedColumn<int?>(
       'estado_publicacion', aliasedName, true,
       typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _nFotoMeta = const VerificationMeta('nFoto');
+  late final GeneratedColumn<String?> nFoto = GeneratedColumn<String?>(
+      'n_foto', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
   final VerificationMeta _rolIdMeta = const VerificationMeta('rolId');
   late final GeneratedColumn<int?> rolId = GeneratedColumn<int?>(
       'rol_id', aliasedName, true,
@@ -27211,6 +27113,7 @@ class $CalendarioTable extends Calendario
         cargaCursoId,
         estadoPublicaciN,
         estadoPublicacion,
+        nFoto,
         rolId,
         usuarioCreacionId,
         usuarioCreadorId,
@@ -27300,6 +27203,10 @@ class $CalendarioTable extends Calendario
           _estadoPublicacionMeta,
           estadoPublicacion.isAcceptableOrUnknown(
               data['estado_publicacion']!, _estadoPublicacionMeta));
+    }
+    if (data.containsKey('n_foto')) {
+      context.handle(
+          _nFotoMeta, nFoto.isAcceptableOrUnknown(data['n_foto']!, _nFotoMeta));
     }
     if (data.containsKey('rol_id')) {
       context.handle(
@@ -27451,8 +27358,7 @@ class CalendarioListaUsuarioData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(calendarioId.hashCode, listaUsuarioId.hashCode));
+  int get hashCode => Object.hash(calendarioId, listaUsuarioId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -27608,6 +27514,7 @@ class EventoData extends DataClass implements Insertable<EventoData> {
   final bool? like;
   final String? nombreEntidad;
   final String? fotoEntidad;
+  final int? fechaPublicacion;
   EventoData(
       {required this.eventoId,
       this.titulo,
@@ -27640,7 +27547,8 @@ class EventoData extends DataClass implements Insertable<EventoData> {
       this.likeCount,
       this.like,
       this.nombreEntidad,
-      this.fotoEntidad});
+      this.fotoEntidad,
+      this.fechaPublicacion});
   factory EventoData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -27709,6 +27617,8 @@ class EventoData extends DataClass implements Insertable<EventoData> {
           .mapFromDatabaseResponse(data['${effectivePrefix}nombre_entidad']),
       fotoEntidad: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}foto_entidad']),
+      fechaPublicacion: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_publicacion']),
     );
   }
   @override
@@ -27808,6 +27718,9 @@ class EventoData extends DataClass implements Insertable<EventoData> {
     if (!nullToAbsent || fotoEntidad != null) {
       map['foto_entidad'] = Variable<String?>(fotoEntidad);
     }
+    if (!nullToAbsent || fechaPublicacion != null) {
+      map['fecha_publicacion'] = Variable<int?>(fechaPublicacion);
+    }
     return map;
   }
 
@@ -27902,6 +27815,9 @@ class EventoData extends DataClass implements Insertable<EventoData> {
       fotoEntidad: fotoEntidad == null && nullToAbsent
           ? const Value.absent()
           : Value(fotoEntidad),
+      fechaPublicacion: fechaPublicacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaPublicacion),
     );
   }
 
@@ -27942,6 +27858,7 @@ class EventoData extends DataClass implements Insertable<EventoData> {
       like: serializer.fromJson<bool?>(json['like']),
       nombreEntidad: serializer.fromJson<String?>(json['nombreEntidad']),
       fotoEntidad: serializer.fromJson<String?>(json['fotoEntidad']),
+      fechaPublicacion: serializer.fromJson<int?>(json['fechaPublicacion']),
     );
   }
   @override
@@ -27980,6 +27897,7 @@ class EventoData extends DataClass implements Insertable<EventoData> {
       'like': serializer.toJson<bool?>(like),
       'nombreEntidad': serializer.toJson<String?>(nombreEntidad),
       'fotoEntidad': serializer.toJson<String?>(fotoEntidad),
+      'fechaPublicacion': serializer.toJson<int?>(fechaPublicacion),
     };
   }
 
@@ -28015,7 +27933,8 @@ class EventoData extends DataClass implements Insertable<EventoData> {
           int? likeCount,
           bool? like,
           String? nombreEntidad,
-          String? fotoEntidad}) =>
+          String? fotoEntidad,
+          int? fechaPublicacion}) =>
       EventoData(
         eventoId: eventoId ?? this.eventoId,
         titulo: titulo ?? this.titulo,
@@ -28049,6 +27968,7 @@ class EventoData extends DataClass implements Insertable<EventoData> {
         like: like ?? this.like,
         nombreEntidad: nombreEntidad ?? this.nombreEntidad,
         fotoEntidad: fotoEntidad ?? this.fotoEntidad,
+        fechaPublicacion: fechaPublicacion ?? this.fechaPublicacion,
       );
   @override
   String toString() {
@@ -28084,55 +28004,48 @@ class EventoData extends DataClass implements Insertable<EventoData> {
           ..write('likeCount: $likeCount, ')
           ..write('like: $like, ')
           ..write('nombreEntidad: $nombreEntidad, ')
-          ..write('fotoEntidad: $fotoEntidad')
+          ..write('fotoEntidad: $fotoEntidad, ')
+          ..write('fechaPublicacion: $fechaPublicacion')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      eventoId.hashCode,
-      $mrjc(
-          titulo.hashCode,
-          $mrjc(
-              descripcion.hashCode,
-              $mrjc(
-                  calendarioId.hashCode,
-                  $mrjc(
-                      tipoEventoId.hashCode,
-                      $mrjc(
-                          estadoId.hashCode,
-                          $mrjc(
-                              estadoPublicacion.hashCode,
-                              $mrjc(
-                                  entidadId.hashCode,
-                                  $mrjc(
-                                      georeferenciaId.hashCode,
-                                      $mrjc(
-                                          fechaEvento.hashCode,
-                                          $mrjc(
-                                              horaEvento.hashCode,
-                                              $mrjc(
-                                                  envioPersonalizado.hashCode,
-                                                  $mrjc(
-                                                      getSTime.hashCode,
-                                                      $mrjc(
-                                                          syncFlag.hashCode,
-                                                          $mrjc(
-                                                              usuarioReceptorId
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  eventoHijoId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      key
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          usuarioCreacionId
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              usuarioCreadorId.hashCode,
-                                                                              $mrjc(fechaCreacion.hashCode, $mrjc(usuarioAccionId.hashCode, $mrjc(fechaAccion.hashCode, $mrjc(fechaEnvio.hashCode, $mrjc(fechaEntrega.hashCode, $mrjc(fechaRecibido.hashCode, $mrjc(fechaVisto.hashCode, $mrjc(fechaRespuesta.hashCode, $mrjc(pathImagen.hashCode, $mrjc(likeCount.hashCode, $mrjc(like.hashCode, $mrjc(nombreEntidad.hashCode, fotoEntidad.hashCode))))))))))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        eventoId,
+        titulo,
+        descripcion,
+        calendarioId,
+        tipoEventoId,
+        estadoId,
+        estadoPublicacion,
+        entidadId,
+        georeferenciaId,
+        fechaEvento,
+        horaEvento,
+        envioPersonalizado,
+        getSTime,
+        syncFlag,
+        usuarioReceptorId,
+        eventoHijoId,
+        key,
+        usuarioCreacionId,
+        usuarioCreadorId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        fechaEnvio,
+        fechaEntrega,
+        fechaRecibido,
+        fechaVisto,
+        fechaRespuesta,
+        pathImagen,
+        likeCount,
+        like,
+        nombreEntidad,
+        fotoEntidad,
+        fechaPublicacion
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -28168,7 +28081,8 @@ class EventoData extends DataClass implements Insertable<EventoData> {
           other.likeCount == this.likeCount &&
           other.like == this.like &&
           other.nombreEntidad == this.nombreEntidad &&
-          other.fotoEntidad == this.fotoEntidad);
+          other.fotoEntidad == this.fotoEntidad &&
+          other.fechaPublicacion == this.fechaPublicacion);
 }
 
 class EventoCompanion extends UpdateCompanion<EventoData> {
@@ -28204,6 +28118,7 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
   final Value<bool?> like;
   final Value<String?> nombreEntidad;
   final Value<String?> fotoEntidad;
+  final Value<int?> fechaPublicacion;
   const EventoCompanion({
     this.eventoId = const Value.absent(),
     this.titulo = const Value.absent(),
@@ -28237,6 +28152,7 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
     this.like = const Value.absent(),
     this.nombreEntidad = const Value.absent(),
     this.fotoEntidad = const Value.absent(),
+    this.fechaPublicacion = const Value.absent(),
   });
   EventoCompanion.insert({
     required String eventoId,
@@ -28271,6 +28187,7 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
     this.like = const Value.absent(),
     this.nombreEntidad = const Value.absent(),
     this.fotoEntidad = const Value.absent(),
+    this.fechaPublicacion = const Value.absent(),
   }) : eventoId = Value(eventoId);
   static Insertable<EventoData> custom({
     Expression<String>? eventoId,
@@ -28305,6 +28222,7 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
     Expression<bool?>? like,
     Expression<String?>? nombreEntidad,
     Expression<String?>? fotoEntidad,
+    Expression<int?>? fechaPublicacion,
   }) {
     return RawValuesInsertable({
       if (eventoId != null) 'evento_id': eventoId,
@@ -28339,6 +28257,7 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
       if (like != null) 'like': like,
       if (nombreEntidad != null) 'nombre_entidad': nombreEntidad,
       if (fotoEntidad != null) 'foto_entidad': fotoEntidad,
+      if (fechaPublicacion != null) 'fecha_publicacion': fechaPublicacion,
     });
   }
 
@@ -28374,7 +28293,8 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
       Value<int?>? likeCount,
       Value<bool?>? like,
       Value<String?>? nombreEntidad,
-      Value<String?>? fotoEntidad}) {
+      Value<String?>? fotoEntidad,
+      Value<int?>? fechaPublicacion}) {
     return EventoCompanion(
       eventoId: eventoId ?? this.eventoId,
       titulo: titulo ?? this.titulo,
@@ -28408,6 +28328,7 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
       like: like ?? this.like,
       nombreEntidad: nombreEntidad ?? this.nombreEntidad,
       fotoEntidad: fotoEntidad ?? this.fotoEntidad,
+      fechaPublicacion: fechaPublicacion ?? this.fechaPublicacion,
     );
   }
 
@@ -28510,6 +28431,9 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
     if (fotoEntidad.present) {
       map['foto_entidad'] = Variable<String?>(fotoEntidad.value);
     }
+    if (fechaPublicacion.present) {
+      map['fecha_publicacion'] = Variable<int?>(fechaPublicacion.value);
+    }
     return map;
   }
 
@@ -28547,7 +28471,8 @@ class EventoCompanion extends UpdateCompanion<EventoData> {
           ..write('likeCount: $likeCount, ')
           ..write('like: $like, ')
           ..write('nombreEntidad: $nombreEntidad, ')
-          ..write('fotoEntidad: $fotoEntidad')
+          ..write('fotoEntidad: $fotoEntidad, ')
+          ..write('fechaPublicacion: $fechaPublicacion')
           ..write(')'))
         .toString();
   }
@@ -28710,6 +28635,11 @@ class $EventoTable extends Evento with TableInfo<$EventoTable, EventoData> {
   late final GeneratedColumn<String?> fotoEntidad = GeneratedColumn<String?>(
       'foto_entidad', aliasedName, true,
       typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _fechaPublicacionMeta =
+      const VerificationMeta('fechaPublicacion');
+  late final GeneratedColumn<int?> fechaPublicacion = GeneratedColumn<int?>(
+      'fecha_publicacion', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         eventoId,
@@ -28743,7 +28673,8 @@ class $EventoTable extends Evento with TableInfo<$EventoTable, EventoData> {
         likeCount,
         like,
         nombreEntidad,
-        fotoEntidad
+        fotoEntidad,
+        fechaPublicacion
       ];
   @override
   String get aliasedName => _alias ?? 'evento';
@@ -28930,11 +28861,17 @@ class $EventoTable extends Evento with TableInfo<$EventoTable, EventoData> {
           fotoEntidad.isAcceptableOrUnknown(
               data['foto_entidad']!, _fotoEntidadMeta));
     }
+    if (data.containsKey('fecha_publicacion')) {
+      context.handle(
+          _fechaPublicacionMeta,
+          fechaPublicacion.isAcceptableOrUnknown(
+              data['fecha_publicacion']!, _fechaPublicacionMeta));
+    }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {eventoId};
   @override
   EventoData map(Map<String, dynamic> data, {String? tablePrefix}) {
     return EventoData.fromData(data, _db,
@@ -29254,45 +29191,25 @@ class EventoPersonaData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      eventoPersonaId.hashCode,
-      $mrjc(
-          eventoId.hashCode,
-          $mrjc(
-              personaId.hashCode,
-              $mrjc(
-                  estado.hashCode,
-                  $mrjc(
-                      rolId.hashCode,
-                      $mrjc(
-                          apoderadoId.hashCode,
-                          $mrjc(
-                              key.hashCode,
-                              $mrjc(
-                                  usuarioCreacionId.hashCode,
-                                  $mrjc(
-                                      usuarioCreadorId.hashCode,
-                                      $mrjc(
-                                          fechaCreacion.hashCode,
-                                          $mrjc(
-                                              usuarioAccionId.hashCode,
-                                              $mrjc(
-                                                  fechaAccion.hashCode,
-                                                  $mrjc(
-                                                      fechaEnvio.hashCode,
-                                                      $mrjc(
-                                                          fechaEntrega.hashCode,
-                                                          $mrjc(
-                                                              fechaRecibido
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  fechaVisto
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      fechaRespuesta
-                                                                          .hashCode,
-                                                                      getSTime
-                                                                          .hashCode))))))))))))))))));
+  int get hashCode => Object.hash(
+      eventoPersonaId,
+      eventoId,
+      personaId,
+      estado,
+      rolId,
+      apoderadoId,
+      key,
+      usuarioCreacionId,
+      usuarioCreadorId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      fechaEnvio,
+      fechaEntrega,
+      fechaRecibido,
+      fechaVisto,
+      fechaRespuesta,
+      getSTime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -29843,7 +29760,7 @@ class ListaUsuarioDetalleData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(listaUsuarioId.hashCode, usuarioId.hashCode));
+  int get hashCode => Object.hash(listaUsuarioId, usuarioId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -30270,45 +30187,25 @@ class ListaUsuario extends DataClass implements Insertable<ListaUsuario> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      listaUsuarioId.hashCode,
-      $mrjc(
-          nombre.hashCode,
-          $mrjc(
-              descripcion.hashCode,
-              $mrjc(
-                  entidadId.hashCode,
-                  $mrjc(
-                      georeferenciaId.hashCode,
-                      $mrjc(
-                          organigramaId.hashCode,
-                          $mrjc(
-                              estado.hashCode,
-                              $mrjc(
-                                  usuarioCreacionId.hashCode,
-                                  $mrjc(
-                                      usuarioCreadorId.hashCode,
-                                      $mrjc(
-                                          fechaCreacion.hashCode,
-                                          $mrjc(
-                                              usuarioAccionId.hashCode,
-                                              $mrjc(
-                                                  fechaAccion.hashCode,
-                                                  $mrjc(
-                                                      fechaEnvio.hashCode,
-                                                      $mrjc(
-                                                          fechaEntrega.hashCode,
-                                                          $mrjc(
-                                                              fechaRecibido
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  fechaVisto
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      fechaRespuesta
-                                                                          .hashCode,
-                                                                      getSTime
-                                                                          .hashCode))))))))))))))))));
+  int get hashCode => Object.hash(
+      listaUsuarioId,
+      nombre,
+      descripcion,
+      entidadId,
+      georeferenciaId,
+      organigramaId,
+      estado,
+      usuarioCreacionId,
+      usuarioCreadorId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      fechaEnvio,
+      fechaEntrega,
+      fechaRecibido,
+      fechaVisto,
+      fechaRespuesta,
+      getSTime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -31060,36 +30957,22 @@ class PersonaEventoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      personaId.hashCode,
-      $mrjc(
-          nombres.hashCode,
-          $mrjc(
-              apellidoPaterno.hashCode,
-              $mrjc(
-                  apellidoMaterno.hashCode,
-                  $mrjc(
-                      celular.hashCode,
-                      $mrjc(
-                          telefono.hashCode,
-                          $mrjc(
-                              foto.hashCode,
-                              $mrjc(
-                                  fechaNac.hashCode,
-                                  $mrjc(
-                                      genero.hashCode,
-                                      $mrjc(
-                                          estadoCivil.hashCode,
-                                          $mrjc(
-                                              numDoc.hashCode,
-                                              $mrjc(
-                                                  ocupacion.hashCode,
-                                                  $mrjc(
-                                                      estadoId.hashCode,
-                                                      $mrjc(
-                                                          correo.hashCode,
-                                                          empleadoId
-                                                              .hashCode)))))))))))))));
+  int get hashCode => Object.hash(
+      personaId,
+      nombres,
+      apellidoPaterno,
+      apellidoMaterno,
+      celular,
+      telefono,
+      foto,
+      fechaNac,
+      genero,
+      estadoCivil,
+      numDoc,
+      ocupacion,
+      estadoId,
+      correo,
+      empleadoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -31600,12 +31483,8 @@ class RelacionesEventoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      idRelacion.hashCode,
-      $mrjc(
-          personaPrincipalId.hashCode,
-          $mrjc(personaVinculadaId.hashCode,
-              $mrjc(tipoId.hashCode, activo.hashCode)))));
+  int get hashCode => Object.hash(
+      idRelacion, personaPrincipalId, personaVinculadaId, tipoId, activo);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -31930,16 +31809,8 @@ class TipoEventoData extends DataClass implements Insertable<TipoEventoData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tipoId.hashCode,
-      $mrjc(
-          objeto.hashCode,
-          $mrjc(
-              concepto.hashCode,
-              $mrjc(
-                  nombre.hashCode,
-                  $mrjc(codigo.hashCode,
-                      $mrjc(estado.hashCode, parentId.hashCode)))))));
+  int get hashCode =>
+      Object.hash(tipoId, objeto, concepto, nombre, codigo, estado, parentId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -32265,12 +32136,8 @@ class UsuarioEventoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      usuarioId.hashCode,
-      $mrjc(
-          personaId.hashCode,
-          $mrjc(estado.hashCode,
-              $mrjc(entidadId.hashCode, georeferenciaId.hashCode)))));
+  int get hashCode =>
+      Object.hash(usuarioId, personaId, estado, entidadId, georeferenciaId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -32677,29 +32544,19 @@ class UnidadEventoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      unidadAprendizajeId.hashCode,
-      $mrjc(
-          nroUnidad.hashCode,
-          $mrjc(
-              titulo.hashCode,
-              $mrjc(
-                  situacionSignificativa.hashCode,
-                  $mrjc(
-                      nroSemanas.hashCode,
-                      $mrjc(
-                          nroHoras.hashCode,
-                          $mrjc(
-                              nroSesiones.hashCode,
-                              $mrjc(
-                                  estadoId.hashCode,
-                                  $mrjc(
-                                      silaboEventoId.hashCode,
-                                      $mrjc(
-                                          situacionSignificativaComplementaria
-                                              .hashCode,
-                                          $mrjc(desafio.hashCode,
-                                              reto.hashCode))))))))))));
+  int get hashCode => Object.hash(
+      unidadAprendizajeId,
+      nroUnidad,
+      titulo,
+      situacionSignificativa,
+      nroSemanas,
+      nroHoras,
+      nroSesiones,
+      estadoId,
+      silaboEventoId,
+      situacionSignificativaComplementaria,
+      desafio,
+      reto);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -33438,51 +33295,31 @@ class SesionEventoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      sesionAprendizajeId.hashCode,
-      $mrjc(
-          unidadAprendizajeId.hashCode,
-          $mrjc(
-              titulo.hashCode,
-              $mrjc(
-                  proposito.hashCode,
-                  $mrjc(
-                      horas.hashCode,
-                      $mrjc(
-                          contenido.hashCode,
-                          $mrjc(
-                              usuarioCreacionId.hashCode,
-                              $mrjc(
-                                  fechaCreacion.hashCode,
-                                  $mrjc(
-                                      usuarioAccionId.hashCode,
-                                      $mrjc(
-                                          fechaAccion.hashCode,
-                                          $mrjc(
-                                              estadoId.hashCode,
-                                              $mrjc(
-                                                  fechaEjecucion.hashCode,
-                                                  $mrjc(
-                                                      fechaReprogramacion
-                                                          .hashCode,
-                                                      $mrjc(
-                                                          fechaPublicacion
-                                                              .hashCode,
-                                                          $mrjc(
-                                                              nroSesion
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  rolId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      estadoEjecucionId
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          fechaRealizada
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              fechaEjecucionFin.hashCode,
-                                                                              $mrjc(estadoEvaluacion.hashCode, $mrjc(evaluados.hashCode, $mrjc(docenteid.hashCode, parentSesionId.hashCode)))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        sesionAprendizajeId,
+        unidadAprendizajeId,
+        titulo,
+        proposito,
+        horas,
+        contenido,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        estadoId,
+        fechaEjecucion,
+        fechaReprogramacion,
+        fechaPublicacion,
+        nroSesion,
+        rolId,
+        estadoEjecucionId,
+        fechaRealizada,
+        fechaEjecucionFin,
+        estadoEvaluacion,
+        evaluados,
+        docenteid,
+        parentSesionId
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -34149,8 +33986,7 @@ class RelUnidadEventoData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(unidadaprendizajeId.hashCode, tipoid.hashCode));
+  int get hashCode => Object.hash(unidadaprendizajeId, tipoid);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -34333,8 +34169,7 @@ class RubroUpdateServidorData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(calendarioId.hashCode, silaboEventoId.hashCode));
+  int get hashCode => Object.hash(calendarioId, silaboEventoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -34660,26 +34495,18 @@ class CalendarioPeriodoCargaCursoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      calendarioPeriodoId.hashCode,
-      $mrjc(
-          fechaInicio.hashCode,
-          $mrjc(
-              fechaFin.hashCode,
-              $mrjc(
-                  calendarioAcademicoId.hashCode,
-                  $mrjc(
-                      tipoId.hashCode,
-                      $mrjc(
-                          estadoId.hashCode,
-                          $mrjc(
-                              selecionado.hashCode,
-                              $mrjc(
-                                  diazPlazo.hashCode,
-                                  $mrjc(
-                                      nombre.hashCode,
-                                      $mrjc(habilitado.hashCode,
-                                          cargaCursoId.hashCode)))))))))));
+  int get hashCode => Object.hash(
+      calendarioPeriodoId,
+      fechaInicio,
+      fechaFin,
+      calendarioAcademicoId,
+      tipoId,
+      estadoId,
+      selecionado,
+      diazPlazo,
+      nombre,
+      habilitado,
+      cargaCursoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -35410,49 +35237,32 @@ class TipoNotaResultadoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      silaboEventoId.hashCode,
-      $mrjc(
-          tipoNotaId.hashCode,
-          $mrjc(
-              nombre.hashCode,
-              $mrjc(
-                  tipoId.hashCode,
-                  $mrjc(
-                      tiponombre.hashCode,
-                      $mrjc(
-                          valorDefecto.hashCode,
-                          $mrjc(
-                              longitudPaso.hashCode,
-                              $mrjc(
-                                  intervalo.hashCode,
-                                  $mrjc(
-                                      estatico.hashCode,
-                                      $mrjc(
-                                          entidadId.hashCode,
-                                          $mrjc(
-                                              georeferenciaId.hashCode,
-                                              $mrjc(
-                                                  organigramaId.hashCode,
-                                                  $mrjc(
-                                                      estadoId.hashCode,
-                                                      $mrjc(
-                                                          tipoFuenteId.hashCode,
-                                                          $mrjc(
-                                                              valorMinimo
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  valorMaximo
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      escalaEvaluacionId
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          escalanombre
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              escalavalorMinimo.hashCode,
-                                                                              $mrjc(escalavalorMaximo.hashCode, $mrjc(escalaestado.hashCode, $mrjc(escaladefecto.hashCode, $mrjc(escalaentidadId.hashCode, programaEducativoId.hashCode))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        silaboEventoId,
+        tipoNotaId,
+        nombre,
+        tipoId,
+        tiponombre,
+        valorDefecto,
+        longitudPaso,
+        intervalo,
+        estatico,
+        entidadId,
+        georeferenciaId,
+        organigramaId,
+        estadoId,
+        tipoFuenteId,
+        valorMinimo,
+        valorMaximo,
+        escalaEvaluacionId,
+        escalanombre,
+        escalavalorMinimo,
+        escalavalorMaximo,
+        escalaestado,
+        escaladefecto,
+        escalaentidadId,
+        programaEducativoId
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -36487,50 +36297,32 @@ class ValorTipoNotaResultadoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      silaboEventoId.hashCode,
-      $mrjc(
-          valorTipoNotaId.hashCode,
-          $mrjc(
-              tipoNotaId.hashCode,
-              $mrjc(
-                  titulo.hashCode,
-                  $mrjc(
-                      alias.hashCode,
-                      $mrjc(
-                          limiteInferior.hashCode,
-                          $mrjc(
-                              limiteSuperior.hashCode,
-                              $mrjc(
-                                  valorNumerico.hashCode,
-                                  $mrjc(
-                                      icono.hashCode,
-                                      $mrjc(
-                                          estadoId.hashCode,
-                                          $mrjc(
-                                              incluidoLInferior.hashCode,
-                                              $mrjc(
-                                                  incluidoLSuperior.hashCode,
-                                                  $mrjc(
-                                                      tipoId.hashCode,
-                                                      $mrjc(
-                                                          usuarioCreacionId
-                                                              .hashCode,
-                                                          $mrjc(
-                                                              usuarioCreadorId
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  fechaCreacion
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      usuarioAccionId
-                                                                          .hashCode,
-                                                                      $mrjc(
-                                                                          fechaAccion
-                                                                              .hashCode,
-                                                                          $mrjc(
-                                                                              fechaEnvio.hashCode,
-                                                                              $mrjc(fechaEntrega.hashCode, $mrjc(fechaRecibido.hashCode, $mrjc(fechaVisto.hashCode, $mrjc(fechaRespuesta.hashCode, getSTime.hashCode))))))))))))))))))))))));
+  int get hashCode => Object.hashAll([
+        silaboEventoId,
+        valorTipoNotaId,
+        tipoNotaId,
+        titulo,
+        alias,
+        limiteInferior,
+        limiteSuperior,
+        valorNumerico,
+        icono,
+        estadoId,
+        incluidoLInferior,
+        incluidoLSuperior,
+        tipoId,
+        usuarioCreacionId,
+        usuarioCreadorId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        fechaEnvio,
+        fechaEntrega,
+        fechaRecibido,
+        fechaVisto,
+        fechaRespuesta,
+        getSTime
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -37480,45 +37272,25 @@ class TareaData extends DataClass implements Insertable<TareaData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tareaId.hashCode,
-      $mrjc(
-          titulo.hashCode,
-          $mrjc(
-              instrucciones.hashCode,
-              $mrjc(
-                  numero.hashCode,
-                  $mrjc(
-                      fechaCreacion.hashCode,
-                      $mrjc(
-                          fechaEntrega.hashCode,
-                          $mrjc(
-                              horaEntrega.hashCode,
-                              $mrjc(
-                                  sesionNombre.hashCode,
-                                  $mrjc(
-                                      sesionAprendizajeId.hashCode,
-                                      $mrjc(
-                                          datosUsuarioCreador.hashCode,
-                                          $mrjc(
-                                              rubroEvalProcesoId.hashCode,
-                                              $mrjc(
-                                                  desempenioIcdId.hashCode,
-                                                  $mrjc(
-                                                      competenciaId.hashCode,
-                                                      $mrjc(
-                                                          tipoNotaId.hashCode,
-                                                          $mrjc(
-                                                              unidadAprendizajeId
-                                                                  .hashCode,
-                                                              $mrjc(
-                                                                  calendarioPeriodoId
-                                                                      .hashCode,
-                                                                  $mrjc(
-                                                                      silaboEventoId
-                                                                          .hashCode,
-                                                                      estadoId
-                                                                          .hashCode))))))))))))))))));
+  int get hashCode => Object.hash(
+      tareaId,
+      titulo,
+      instrucciones,
+      numero,
+      fechaCreacion,
+      fechaEntrega,
+      horaEntrega,
+      sesionNombre,
+      sesionAprendizajeId,
+      datosUsuarioCreador,
+      rubroEvalProcesoId,
+      desempenioIcdId,
+      competenciaId,
+      tipoNotaId,
+      unidadAprendizajeId,
+      calendarioPeriodoId,
+      silaboEventoId,
+      estadoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -38132,12 +37904,8 @@ class TareaUnidadData extends DataClass implements Insertable<TareaUnidadData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      unidadAprendizajeId.hashCode,
-      $mrjc(
-          titulo.hashCode,
-          $mrjc(nroUnidad.hashCode,
-              $mrjc(calendarioPeriodoId.hashCode, silaboEventoId.hashCode)))));
+  int get hashCode => Object.hash(unidadAprendizajeId, titulo, nroUnidad,
+      calendarioPeriodoId, silaboEventoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -38465,18 +38233,8 @@ class TareaAlumnoData extends DataClass implements Insertable<TareaAlumnoData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tareaId.hashCode,
-      $mrjc(
-          alumnoId.hashCode,
-          $mrjc(
-              entregado.hashCode,
-              $mrjc(
-                  fechaEntrega.hashCode,
-                  $mrjc(
-                      valorTipoNotaId.hashCode,
-                      $mrjc(silaboEventoId.hashCode,
-                          fechaServidor.hashCode)))))));
+  int get hashCode => Object.hash(tareaId, alumnoId, entregado, fechaEntrega,
+      valorTipoNotaId, silaboEventoId, fechaServidor);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -38842,14 +38600,8 @@ class TareaAlumnoArchivoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      tareaId.hashCode,
-      $mrjc(
-          alumnoId.hashCode,
-          $mrjc(
-              repositorio.hashCode,
-              $mrjc(nombre.hashCode,
-                  $mrjc(path.hashCode, tareaAlumnoArchivoId.hashCode))))));
+  int get hashCode => Object.hash(
+      tareaId, alumnoId, repositorio, nombre, path, tareaAlumnoArchivoId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -39256,26 +39008,18 @@ class TareaRecursoDidacticoData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      recursoDidacticoId.hashCode,
-      $mrjc(
-          titulo.hashCode,
-          $mrjc(
-              descripcion.hashCode,
-              $mrjc(
-                  tipoId.hashCode,
-                  $mrjc(
-                      silaboEventoId.hashCode,
-                      $mrjc(
-                          estado.hashCode,
-                          $mrjc(
-                              planCursoId.hashCode,
-                              $mrjc(
-                                  url.hashCode,
-                                  $mrjc(
-                                      driveId.hashCode,
-                                      $mrjc(tareaId.hashCode,
-                                          fechaCreacion.hashCode)))))))))));
+  int get hashCode => Object.hash(
+      recursoDidacticoId,
+      titulo,
+      descripcion,
+      tipoId,
+      silaboEventoId,
+      estado,
+      planCursoId,
+      url,
+      driveId,
+      tareaId,
+      fechaCreacion);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -39598,6 +39342,297 @@ class $TareaRecursoDidacticoTable extends TareaRecursoDidactico
   }
 }
 
+class EventoAdjuntoData extends DataClass
+    implements Insertable<EventoAdjuntoData> {
+  final String eventoAdjuntoId;
+  final String? eventoId;
+  final String? titulo;
+  final int? tipoId;
+  final String? driveId;
+  EventoAdjuntoData(
+      {required this.eventoAdjuntoId,
+      this.eventoId,
+      this.titulo,
+      this.tipoId,
+      this.driveId});
+  factory EventoAdjuntoData.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return EventoAdjuntoData(
+      eventoAdjuntoId: const StringType().mapFromDatabaseResponse(
+          data['${effectivePrefix}evento_adjunto_id'])!,
+      eventoId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}evento_id']),
+      titulo: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}titulo']),
+      tipoId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}tipo_id']),
+      driveId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}drive_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['evento_adjunto_id'] = Variable<String>(eventoAdjuntoId);
+    if (!nullToAbsent || eventoId != null) {
+      map['evento_id'] = Variable<String?>(eventoId);
+    }
+    if (!nullToAbsent || titulo != null) {
+      map['titulo'] = Variable<String?>(titulo);
+    }
+    if (!nullToAbsent || tipoId != null) {
+      map['tipo_id'] = Variable<int?>(tipoId);
+    }
+    if (!nullToAbsent || driveId != null) {
+      map['drive_id'] = Variable<String?>(driveId);
+    }
+    return map;
+  }
+
+  EventoAdjuntoCompanion toCompanion(bool nullToAbsent) {
+    return EventoAdjuntoCompanion(
+      eventoAdjuntoId: Value(eventoAdjuntoId),
+      eventoId: eventoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(eventoId),
+      titulo:
+          titulo == null && nullToAbsent ? const Value.absent() : Value(titulo),
+      tipoId:
+          tipoId == null && nullToAbsent ? const Value.absent() : Value(tipoId),
+      driveId: driveId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(driveId),
+    );
+  }
+
+  factory EventoAdjuntoData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return EventoAdjuntoData(
+      eventoAdjuntoId: serializer.fromJson<String>(json['eventoAdjuntoId']),
+      eventoId: serializer.fromJson<String?>(json['eventoId']),
+      titulo: serializer.fromJson<String?>(json['titulo']),
+      tipoId: serializer.fromJson<int?>(json['tipoId']),
+      driveId: serializer.fromJson<String?>(json['driveId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'eventoAdjuntoId': serializer.toJson<String>(eventoAdjuntoId),
+      'eventoId': serializer.toJson<String?>(eventoId),
+      'titulo': serializer.toJson<String?>(titulo),
+      'tipoId': serializer.toJson<int?>(tipoId),
+      'driveId': serializer.toJson<String?>(driveId),
+    };
+  }
+
+  EventoAdjuntoData copyWith(
+          {String? eventoAdjuntoId,
+          String? eventoId,
+          String? titulo,
+          int? tipoId,
+          String? driveId}) =>
+      EventoAdjuntoData(
+        eventoAdjuntoId: eventoAdjuntoId ?? this.eventoAdjuntoId,
+        eventoId: eventoId ?? this.eventoId,
+        titulo: titulo ?? this.titulo,
+        tipoId: tipoId ?? this.tipoId,
+        driveId: driveId ?? this.driveId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('EventoAdjuntoData(')
+          ..write('eventoAdjuntoId: $eventoAdjuntoId, ')
+          ..write('eventoId: $eventoId, ')
+          ..write('titulo: $titulo, ')
+          ..write('tipoId: $tipoId, ')
+          ..write('driveId: $driveId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(eventoAdjuntoId, eventoId, titulo, tipoId, driveId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is EventoAdjuntoData &&
+          other.eventoAdjuntoId == this.eventoAdjuntoId &&
+          other.eventoId == this.eventoId &&
+          other.titulo == this.titulo &&
+          other.tipoId == this.tipoId &&
+          other.driveId == this.driveId);
+}
+
+class EventoAdjuntoCompanion extends UpdateCompanion<EventoAdjuntoData> {
+  final Value<String> eventoAdjuntoId;
+  final Value<String?> eventoId;
+  final Value<String?> titulo;
+  final Value<int?> tipoId;
+  final Value<String?> driveId;
+  const EventoAdjuntoCompanion({
+    this.eventoAdjuntoId = const Value.absent(),
+    this.eventoId = const Value.absent(),
+    this.titulo = const Value.absent(),
+    this.tipoId = const Value.absent(),
+    this.driveId = const Value.absent(),
+  });
+  EventoAdjuntoCompanion.insert({
+    required String eventoAdjuntoId,
+    this.eventoId = const Value.absent(),
+    this.titulo = const Value.absent(),
+    this.tipoId = const Value.absent(),
+    this.driveId = const Value.absent(),
+  }) : eventoAdjuntoId = Value(eventoAdjuntoId);
+  static Insertable<EventoAdjuntoData> custom({
+    Expression<String>? eventoAdjuntoId,
+    Expression<String?>? eventoId,
+    Expression<String?>? titulo,
+    Expression<int?>? tipoId,
+    Expression<String?>? driveId,
+  }) {
+    return RawValuesInsertable({
+      if (eventoAdjuntoId != null) 'evento_adjunto_id': eventoAdjuntoId,
+      if (eventoId != null) 'evento_id': eventoId,
+      if (titulo != null) 'titulo': titulo,
+      if (tipoId != null) 'tipo_id': tipoId,
+      if (driveId != null) 'drive_id': driveId,
+    });
+  }
+
+  EventoAdjuntoCompanion copyWith(
+      {Value<String>? eventoAdjuntoId,
+      Value<String?>? eventoId,
+      Value<String?>? titulo,
+      Value<int?>? tipoId,
+      Value<String?>? driveId}) {
+    return EventoAdjuntoCompanion(
+      eventoAdjuntoId: eventoAdjuntoId ?? this.eventoAdjuntoId,
+      eventoId: eventoId ?? this.eventoId,
+      titulo: titulo ?? this.titulo,
+      tipoId: tipoId ?? this.tipoId,
+      driveId: driveId ?? this.driveId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (eventoAdjuntoId.present) {
+      map['evento_adjunto_id'] = Variable<String>(eventoAdjuntoId.value);
+    }
+    if (eventoId.present) {
+      map['evento_id'] = Variable<String?>(eventoId.value);
+    }
+    if (titulo.present) {
+      map['titulo'] = Variable<String?>(titulo.value);
+    }
+    if (tipoId.present) {
+      map['tipo_id'] = Variable<int?>(tipoId.value);
+    }
+    if (driveId.present) {
+      map['drive_id'] = Variable<String?>(driveId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('EventoAdjuntoCompanion(')
+          ..write('eventoAdjuntoId: $eventoAdjuntoId, ')
+          ..write('eventoId: $eventoId, ')
+          ..write('titulo: $titulo, ')
+          ..write('tipoId: $tipoId, ')
+          ..write('driveId: $driveId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $EventoAdjuntoTable extends EventoAdjunto
+    with TableInfo<$EventoAdjuntoTable, EventoAdjuntoData> {
+  final GeneratedDatabase _db;
+  final String? _alias;
+  $EventoAdjuntoTable(this._db, [this._alias]);
+  final VerificationMeta _eventoAdjuntoIdMeta =
+      const VerificationMeta('eventoAdjuntoId');
+  late final GeneratedColumn<String?> eventoAdjuntoId =
+      GeneratedColumn<String?>('evento_adjunto_id', aliasedName, false,
+          typeName: 'TEXT', requiredDuringInsert: true);
+  final VerificationMeta _eventoIdMeta = const VerificationMeta('eventoId');
+  late final GeneratedColumn<String?> eventoId = GeneratedColumn<String?>(
+      'evento_id', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _tituloMeta = const VerificationMeta('titulo');
+  late final GeneratedColumn<String?> titulo = GeneratedColumn<String?>(
+      'titulo', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  final VerificationMeta _tipoIdMeta = const VerificationMeta('tipoId');
+  late final GeneratedColumn<int?> tipoId = GeneratedColumn<int?>(
+      'tipo_id', aliasedName, true,
+      typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _driveIdMeta = const VerificationMeta('driveId');
+  late final GeneratedColumn<String?> driveId = GeneratedColumn<String?>(
+      'drive_id', aliasedName, true,
+      typeName: 'TEXT', requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [eventoAdjuntoId, eventoId, titulo, tipoId, driveId];
+  @override
+  String get aliasedName => _alias ?? 'evento_adjunto';
+  @override
+  String get actualTableName => 'evento_adjunto';
+  @override
+  VerificationContext validateIntegrity(Insertable<EventoAdjuntoData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('evento_adjunto_id')) {
+      context.handle(
+          _eventoAdjuntoIdMeta,
+          eventoAdjuntoId.isAcceptableOrUnknown(
+              data['evento_adjunto_id']!, _eventoAdjuntoIdMeta));
+    } else if (isInserting) {
+      context.missing(_eventoAdjuntoIdMeta);
+    }
+    if (data.containsKey('evento_id')) {
+      context.handle(_eventoIdMeta,
+          eventoId.isAcceptableOrUnknown(data['evento_id']!, _eventoIdMeta));
+    }
+    if (data.containsKey('titulo')) {
+      context.handle(_tituloMeta,
+          titulo.isAcceptableOrUnknown(data['titulo']!, _tituloMeta));
+    }
+    if (data.containsKey('tipo_id')) {
+      context.handle(_tipoIdMeta,
+          tipoId.isAcceptableOrUnknown(data['tipo_id']!, _tipoIdMeta));
+    }
+    if (data.containsKey('drive_id')) {
+      context.handle(_driveIdMeta,
+          driveId.isAcceptableOrUnknown(data['drive_id']!, _driveIdMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {eventoAdjuntoId};
+  @override
+  EventoAdjuntoData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return EventoAdjuntoData.fromData(data, _db,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $EventoAdjuntoTable createAlias(String alias) {
+    return $EventoAdjuntoTable(_db, alias);
+  }
+}
+
 abstract class _$AppDataBase extends GeneratedDatabase {
   _$AppDataBase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $SessionUserTable sessionUser = $SessionUserTable(this);
@@ -39702,6 +39737,7 @@ abstract class _$AppDataBase extends GeneratedDatabase {
       $TareaAlumnoArchivoTable(this);
   late final $TareaRecursoDidacticoTable tareaRecursoDidactico =
       $TareaRecursoDidacticoTable(this);
+  late final $EventoAdjuntoTable eventoAdjunto = $EventoAdjuntoTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
@@ -39777,6 +39813,7 @@ abstract class _$AppDataBase extends GeneratedDatabase {
         tareaUnidad,
         tareaAlumno,
         tareaAlumnoArchivo,
-        tareaRecursoDidactico
+        tareaRecursoDidactico,
+        eventoAdjunto
       ];
 }

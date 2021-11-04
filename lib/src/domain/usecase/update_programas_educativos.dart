@@ -18,10 +18,10 @@ class UpdateProgramasEducativos extends UseCase<GetProgramasEducativosResponse, 
     final controller = StreamController<GetProgramasEducativosResponse>();
     logger.severe('getProgramaEducativo int');
     try {
-      int usuarioId = await repository.getSessionUsuarioId();
+      //int usuarioId = await repository.getSessionUsuarioId();
       int empleadoId = await repository.getSessionEmpleadoId();
       int anioAcademicoIdSelect = await repository.getSessionAnioAcademicoId();
-      String urlServidorLocal = await repository.getSessionUsuarioUrlServidor();
+      //String urlServidorLocal = await repository.getSessionUsuarioUrlServidor();
       print("getProgramaEducativo datos principales webconfig 1");
 
       Future<void> executeDatos() async {
@@ -32,7 +32,7 @@ class UpdateProgramasEducativos extends UseCase<GetProgramasEducativosResponse, 
           String urlServidorLocal = await repository
               .getSessionUsuarioUrlServidor();
 
-          Map<String, dynamic>? anioAcedemico = await await httpDatosRepo.getDatosAnioAcademico(urlServidorLocal, empleadoId, anioAcademicoIdSelect);
+          Map<String, dynamic>? anioAcedemico = await httpDatosRepo.getDatosAnioAcademico(urlServidorLocal, empleadoId, anioAcademicoIdSelect);
 
           errorServidor = anioAcedemico == null;
 
@@ -49,7 +49,7 @@ class UpdateProgramasEducativos extends UseCase<GetProgramasEducativosResponse, 
           print("getProgramaEducativo datos principales webconfig 3");
         }
 
-        ProgramaEducativoUi? programaEducativoUiSelected = null;
+        ProgramaEducativoUi? programaEducativoUiSelected;
         int programaEducativoId = await repository
             .getSessionProgramaEducativoId();
         List<ProgramaEducativoUi> programaEducativoUiList = await repository.getListProgramaEducativo(empleadoId, anioAcademicoIdSelect);

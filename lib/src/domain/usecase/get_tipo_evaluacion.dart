@@ -13,7 +13,7 @@ class GetTipoEvaluacion extends UseCase<GetTipoEvaluacionResponse, GetTipoEvalua
   Future<Stream<GetTipoEvaluacionResponse?>> buildUseCaseStream(GetTipoEvaluacionParms? params) async{
     final controller = StreamController<GetTipoEvaluacionResponse>();
     try{
-      TipoEvaluacionUi? tipoEvaluacionUi = null;
+      TipoEvaluacionUi? tipoEvaluacionUi;
       List<TipoEvaluacionUi> tipoEvaluacionUiList = await repository.getGetTipoEvaluacion();
       if(tipoEvaluacionUiList.isNotEmpty)tipoEvaluacionUi = tipoEvaluacionUiList[0];
       controller.add(GetTipoEvaluacionResponse(tipoEvaluacionUiList,tipoEvaluacionUi));

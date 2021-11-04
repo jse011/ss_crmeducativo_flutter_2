@@ -252,7 +252,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                           child: Padding(
                                             padding: EdgeInsets.all(8.0),
                                             child: Text(
-                                              'Crear Tarea',
+                                              'Tarea',
                                               textAlign: TextAlign.left,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
@@ -781,7 +781,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                                           width: 1,
                                                           color: HexColor(controller.cursosUi?.color1)
                                                       ),
-                                                      color: AppTheme.white
+                                                      color: tareaRecursoUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
                                                   ),
                                                   margin: EdgeInsets.only(bottom: 8),
                                                   width: 450,
@@ -821,7 +821,16 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                                                 ],
                                                               ),
                                                             ),
-
+                                                            tareaRecursoUi.success == false?
+                                                            InkWell(
+                                                              onTap: (){
+                                                                controller.refreshTareaRecursoUi(tareaRecursoUi);
+                                                              },
+                                                              child: Container(
+                                                                margin: EdgeInsets.only(right: 16),
+                                                                child: Icon(Icons.refresh),
+                                                              ),
+                                                            ):Container(),
                                                             InkWell(
                                                               onTap: (){
                                                                 controller.removeTareaRecurso(tareaRecursoUi);
@@ -834,7 +843,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                                           ],
                                                         ),
                                                       ),
-                                                      !(tareaRecursoUi.success??false)&&(tareaRecursoUi.progress??0)>0?
+                                                      !(tareaRecursoUi.success != null)&&(tareaRecursoUi.progress??0)>0?
                                                       Column(
                                                         children: [
                                                           Expanded(child: Container()),
@@ -895,6 +904,8 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
         return AppImagen.archivo_drive;
       case TipoRecursosUi.TIPO_RECURSO:
         return AppImagen.archivo_recurso;
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return AppImagen.archivo_recurso;
     }
   }
 
@@ -922,6 +933,9 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
         return "Drive";
       case TipoRecursosUi.TIPO_RECURSO:
         return "Recurso";
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return "Recurso";
+        break;
     }
   }
 

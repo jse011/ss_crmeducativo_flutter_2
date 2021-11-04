@@ -5,6 +5,7 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/aula.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/carga_cursos.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/serializable_convert.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/anio_acemico_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evento_lista_envio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
@@ -90,6 +91,35 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     }catch(e){
       throw Exception(e);
     }
+  }
+
+  @override
+  Future<int> getSessionEntidadId() async{
+    AppDataBase SQL = AppDataBase();
+    SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
+    AnioAcademicoData? academicoData = await (SQL.selectSingle(SQL.anioAcademico)..where((tbl) => tbl.idAnioAcademico.equals(sessionUserData?.anioAcademicoId) )).getSingleOrNull();
+
+
+    var query = await SQL.selectSingle(SQL.usuarioRolGeoreferencia)..where((tbl) => tbl.usuarioId.equals(sessionUserData?.userId));
+    query.where((tbl) => tbl.geoReferenciaId.equals(academicoData?.georeferenciaId));
+    UsuarioRolGeoreferenciaData? usuarioRolGeoreferenciaData = await query.getSingleOrNull();
+
+    GeoreferenciaData georeferenciaData =  await (SQL.selectSingle(SQL.georeferencia)..where((tbl) => tbl.georeferenciaId.equals(usuarioRolGeoreferenciaData?.geoReferenciaId))).getSingle();
+
+    return georeferenciaData!=null?georeferenciaData.entidadId??0:0;
+  }
+
+  @override
+  Future<int> getSessionGeoreferenciaId()async {
+    AppDataBase SQL = AppDataBase();
+    SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
+    AnioAcademicoData? academicoData = await (SQL.selectSingle(SQL.anioAcademico)..where((tbl) => tbl.idAnioAcademico.equals(sessionUserData?.anioAcademicoId) )).getSingleOrNull();
+
+
+    var query = await SQL.selectSingle(SQL.usuarioRolGeoreferencia)..where((tbl) => tbl.usuarioId.equals(sessionUserData?.userId));
+    query.where((tbl) => tbl.geoReferenciaId.equals(academicoData?.georeferenciaId));
+    UsuarioRolGeoreferenciaData? usuarioRolGeoreferenciaData = await query.getSingleOrNull();
+    return usuarioRolGeoreferenciaData!=null?usuarioRolGeoreferenciaData.geoReferenciaId??0:0;
   }
 
   @override
@@ -438,7 +468,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
     AppDataBase SQL = AppDataBase();
     int usuarioId = await getSessionUsuarioId();
-    var query =  await SQL.select(SQL.persona).join([
+    var query =  SQL.select(SQL.persona).join([
       innerJoin(SQL.usuario, SQL.usuario.personaId.equalsExp(SQL.persona.personaId))
     ]);
 
@@ -526,6 +556,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
   @override
   Future<List<ProgramaEducativoUi>> getListProgramaEducativo(int empleadoId, int anioAcademicoId) async{
+
     AppDataBase SQL = AppDataBase();
     List<ProgramaEducativoUi> programaEduactivosUIs = [];
     List<CargaCursoData> cargaCursosList = [];
@@ -854,5 +885,22 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     }
     return contactoUiList;
   }
+
+  @override
+  Future<bool> cerrrarSession() async{
+    AppDataBase SQL = AppDataBase();
+    try{
+      for (final table in SQL.allTables) {
+        await SQL.delete(table).go();
+      }
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+
+
+
 
 }

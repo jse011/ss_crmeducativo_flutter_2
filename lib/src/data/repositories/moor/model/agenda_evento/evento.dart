@@ -34,5 +34,10 @@ class Evento extends Table{
   BoolColumn get like => boolean().nullable()();
   TextColumn get nombreEntidad=> text().nullable()();
   TextColumn get fotoEntidad=> text().nullable()();
+  IntColumn get fechaPublicacion => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {eventoId};
+
 
 }

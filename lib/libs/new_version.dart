@@ -73,7 +73,7 @@ class NewVersion {
     this.dialogText,
     this.dialogTitle: 'Update Available',
     this.dialogTextBuilder,
-  }) : assert(context != null);
+  });
 
   /// This checks the version status, then displays a platform-specific alert
   /// with buttons to dismiss the update alert, or go to the app store.
@@ -103,9 +103,6 @@ class NewVersion {
         break;
       default:
         print('This target platform is not yet supported by this package.');
-    }
-    if (versionStatus == null) {
-      return null;
     }
     versionStatus.canUpdate = versionStatus.storeVersion != versionStatus.localVersion;
     return versionStatus;

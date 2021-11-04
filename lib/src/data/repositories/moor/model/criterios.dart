@@ -25,7 +25,8 @@ IntColumn get superCompetenciaId => integer().nullable()();
 TextColumn get superCompetenciaNombre => text().nullable()();
 TextColumn get superCompetenciaDescripcion => text().nullable()();
 IntColumn get superCompetenciaTipoId => integer().nullable()();
-
+IntColumn get rubroEvalResultadoId => integer().nullable()();
+BoolColumn get evaluable => boolean().nullable()();
 
 /// <summary>
 /// Tabla DesempenioIcd Desempenio Icd

@@ -4,7 +4,6 @@ export 'cell_alignments.dart';
 export 'cell_dimensions.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 import 'cell_alignments.dart';
 import 'cell_dimensions.dart';

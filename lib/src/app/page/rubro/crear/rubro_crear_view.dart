@@ -10,11 +10,8 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:lottie/lottie.dart';
-import 'package:ss_crmeducativo_2/libs/sticky-headers-table/example/main.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_controller.dart';
-import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
@@ -39,15 +36,13 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 
 class RubroCrearView extends View{
-  CursosUi cursosUi;
-  RubricaEvaluacionUi? rubroUi;
-  CalendarioPeriodoUI? calendarioPeriodoUI;
-  SesionUi? sesionUi;
+  final CursosUi cursosUi;
+  final RubricaEvaluacionUi? rubroUi;
+  final CalendarioPeriodoUI? calendarioPeriodoUI;
+  final SesionUi? sesionUi;
 
   RubroCrearView(this.cursosUi, this.calendarioPeriodoUI, this.rubroUi, this.sesionUi);
 
@@ -225,7 +220,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      'Crear evaluación',
+                                      'Evaluación',
                                       textAlign: TextAlign.left,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -2041,8 +2036,8 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
 }
 
 class ItemCompetencia extends StatefulWidget{
-  CompetenciaUi? competenciaUi;
-  Color? color;
+  final CompetenciaUi? competenciaUi;
+  final Color? color;
 
   ItemCompetencia({this.competenciaUi, this.color});
 

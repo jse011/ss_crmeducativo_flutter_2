@@ -1,6 +1,7 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/cerrar_session.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_usuario.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_contacto_docente.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/validar_usuario.dart';
@@ -12,10 +13,12 @@ class HomePresenter extends Presenter{
   ValidarUsuario _validarUsuario;
   late Function cerrarCesionOnError, cerrarCesionOnComplete;
   UpdateContactoDocente _updateContactoDocente;
+  CerrarSession _cerrarSession;
 
   HomePresenter(ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo)
       :  _validarUsuario = ValidarUsuario(configuracionRepo), getSessionUsuario = new GetSessionUsuarioCase(configuracionRepo),
-        _updateContactoDocente = UpdateContactoDocente(configuracionRepo, httpDatosRepo);
+        _updateContactoDocente = UpdateContactoDocente(configuracionRepo, httpDatosRepo),
+        _cerrarSession = CerrarSession(configuracionRepo);
 
   @override
   void dispose() {
@@ -35,6 +38,10 @@ class HomePresenter extends Presenter{
 
   void updateContactoDocente(){
     _updateContactoDocente.execute(_UpdateContactoDocenteCase(this), UpdateContactoDocenteParams());
+  }
+
+  Future<bool> cerrarCesion() {
+    return _cerrarSession.execute();
   }
 
 

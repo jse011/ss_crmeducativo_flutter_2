@@ -52,6 +52,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
   late final ScrollControllers crollControllers = ScrollControllers();
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
+
   @override
   void initState() {
     animationController = AnimationController(

@@ -15,6 +15,14 @@ class BottomNavigationView extends StatefulWidget {
 }
 
 class TabIconData {
+
+  AnimationController? animationController = null;
+
+  String imagePath;
+  String selectedImagePath;
+  bool isSelected;
+  int index;
+
   TabIconData({
     this.imagePath = '',
     this.index = 0,
@@ -23,43 +31,7 @@ class TabIconData {
     this.animationController,
   });
 
-  String imagePath;
-  String selectedImagePath;
-  bool isSelected;
-  int index;
 
-  AnimationController? animationController;
-
-  static List<TabIconData> tabIconsList = <TabIconData>[
-    TabIconData(
-      imagePath: 'assets/tab/tab_5.png',
-      selectedImagePath: 'assets/tab/tab_5s.png',
-      index: 0,
-      isSelected: true,
-      animationController: null,
-    ),
-    TabIconData(
-      imagePath: 'assets/tab/tab_2.png',
-      selectedImagePath: 'assets/tab/tab_2s.png',
-      index: 1,
-      isSelected: false,
-      animationController: null,
-    ),
-    TabIconData(
-      imagePath: 'assets/tab/tab_3.png',
-      selectedImagePath: 'assets/tab/tab_3s.png',
-      index: 2,
-      isSelected: false,
-      animationController: null,
-    ),
-    TabIconData(
-      imagePath: 'assets/tab/tab_4.png',
-      selectedImagePath: 'assets/tab/tab_4s.png',
-      index: 3,
-      isSelected: false,
-      animationController: null,
-    ),
-  ];
 }
 
 abstract class TabItemView extends State<BottomNavigationView>{
@@ -71,7 +43,7 @@ abstract class TabItemView extends State<BottomNavigationView>{
 class _BottomNavigationViewState extends State<BottomNavigationView>
     with TickerProviderStateMixin {
   AnimationController? animationController;
-  List<TabIconData> tabIconsList = TabIconData.tabIconsList;
+  List<TabIconData> tabIconsList = [];
 
   Widget tabBody = Container(
     color: AppTheme.background,
@@ -79,10 +51,35 @@ class _BottomNavigationViewState extends State<BottomNavigationView>
 
   @override
   void initState() {
-    tabIconsList.forEach((TabIconData tab) {
-      tab.isSelected = false;
-    });
-    tabIconsList[0].isSelected = true;
+    tabIconsList.clear();
+    tabIconsList.add(TabIconData(
+      imagePath: 'assets/tab/tab_5.png',
+      selectedImagePath: 'assets/tab/tab_5s.png',
+      index: 0,
+      isSelected: true,
+      animationController: animationController,
+    ));
+    tabIconsList.add(TabIconData(
+      imagePath: 'assets/tab/tab_2.png',
+      selectedImagePath: 'assets/tab/tab_2s.png',
+      index: 1,
+      isSelected: false,
+      animationController: animationController,
+    ));
+    tabIconsList.add(TabIconData(
+      imagePath: 'assets/tab/tab_doc_4.png',
+      selectedImagePath: 'assets/tab/tab_doc_4s.png',
+      index: 2,
+      isSelected: false,
+      animationController: animationController,
+    ));
+    tabIconsList.add(TabIconData(
+      imagePath: 'assets/tab/tab_3.png',
+      selectedImagePath: 'assets/tab/tab_3s.png',
+      index: 3,
+      isSelected: false,
+      animationController: animationController,
+    ));
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);

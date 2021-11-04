@@ -155,7 +155,7 @@ class _FDottedLineState extends State<FDottedLine> {
             childHeight = tempHeight;
           });
         }
-      } catch (e, stack) {}
+      } catch (e) {}
     });
   }
 
@@ -226,12 +226,12 @@ class _DottedLinePainter extends CustomPainter {
         0,
         size.width,
         size.height,
-        topLeft: Radius.circular(corner != null ? corner.leftTopCorner : 0.0),
-        topRight: Radius.circular(corner != null ? corner.rightTopCorner : 0.0),
+        topLeft: Radius.circular(corner.leftTopCorner),
+        topRight: Radius.circular(corner.rightTopCorner),
         bottomLeft:
-            Radius.circular(corner != null ? corner.leftBottomCorner : 0.0),
+            Radius.circular( corner.leftBottomCorner),
         bottomRight:
-            Radius.circular(corner != null ? corner.rightBottomCorner : 0.0),
+            Radius.circular(corner.rightBottomCorner),
       ));
 
       Path draw = buildDashPath(path, dottedLength, space);

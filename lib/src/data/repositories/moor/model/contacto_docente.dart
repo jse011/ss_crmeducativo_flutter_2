@@ -32,6 +32,11 @@ class ContactoDocente extends Table{
   BoolColumn get contratoVigente => boolean().nullable()();
   IntColumn get relacionId => integer().nullable()();
 
+  IntColumn get programaId => integer().nullable()();
+  TextColumn get programaNombre => text().nullable()();
+  IntColumn get cargaAcademicaId => integer().nullable()();
+  IntColumn get idEmpleadoTutor => integer().nullable()();
+
   @override
   Set<Column> get primaryKey => {personaId, tipo, cargaCursoId};
 
