@@ -98,14 +98,18 @@ class MoorRubroRepository extends RubroRepository{
   }
 
   @override
-  Future<void> saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId) async {
+  Future<void> saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId, String? rubroEvalTareaId) async {
     AppDataBase SQL = AppDataBase();
     print("saveDatosRubrosEval ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumnoId}");
     await SQL.batch((batch) async {
 
       if(rubro.containsKey("rubroEvaluaciones")){
         var queryRubro;
-        if(sesionAprendizajeDocenteId>0&&sesionAprendizajeAlumnoId>0){
+        if((rubroEvalTareaId??"").isNotEmpty){
+          queryRubro = SQL.selectOnly(SQL.rubroEvaluacionProceso)
+            ..addColumns([SQL.rubroEvaluacionProceso.rubroEvalProcesoId]);
+          queryRubro.where(SQL.rubroEvaluacionProceso.rubroEvalProcesoId.equals(rubroEvalTareaId));
+        } else if(sesionAprendizajeDocenteId>0&&sesionAprendizajeAlumnoId>0){
           queryRubro = SQL.selectOnly(SQL.rubroEvaluacionProceso)
             ..addColumns([SQL.rubroEvaluacionProceso.rubroEvalProcesoId]);
           queryRubro.where(SQL.rubroEvaluacionProceso.sesionAprendizajeId.isIn([sesionAprendizajeAlumnoId, sesionAprendizajeDocenteId]));

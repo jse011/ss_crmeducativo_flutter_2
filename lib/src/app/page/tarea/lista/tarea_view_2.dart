@@ -336,7 +336,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                               dynamic o = unidadItemList[index];
                                               if(o is TareaUi){
                                                 return ItemTarea(color1: HexColor(controller.cursosUi.color1), tareaUi: o, onTap: () async{
-                                                  dynamic? result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI);
+                                                  dynamic? result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI, null);
                                                   if(result is int) controller.refrescarListTarea(unidadUi);
                                                 });
                                               }else{

@@ -12,7 +12,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 abstract class RubroRepository{
   Future<void> saveDatosCrearRubros(Map<String, dynamic> crearRubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId);
 
-  Future<void> saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumonId);
+  Future<void> saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumonId, String? rubroEvaltareaId);
 
   Future<List<FormaEvaluacionUi>> getGetFormaEvaluacion();
 

@@ -195,9 +195,13 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_PDF;
           break;
         case UnidadTareaRepository.TIPO_RECURSO_VIDEO:
-          tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VIDEO;
-          break;
         case UnidadTareaRepository.TIPO_RECURSO_VINCULO:
+
+          if(item.tipoId == UnidadTareaRepository.TIPO_RECURSO_VINCULO && (tareaRecusoUi.driveId??"").isNotEmpty){
+            tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VIDEO;
+            break;
+          }
+
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
           String? idYoutube = YouTubeUrlParser.getYoutubeVideoId(url);
           String? idDrive = DriveUrlParser.getDocumentId(url);
@@ -205,6 +209,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
           }else if((idDrive??"").isNotEmpty){
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_DRIVE;
+            tareaRecusoUi.driveId = idDrive;
           }else{
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
           }

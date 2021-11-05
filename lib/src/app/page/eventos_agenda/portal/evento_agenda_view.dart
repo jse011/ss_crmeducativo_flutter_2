@@ -563,7 +563,8 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                     delegate: SliverChildBuilderDelegate(
                                             (BuildContext context, int index){
                                           EventoUi eventoUi = controller.eventoUiList[index];
-                                          return ItemEventoView(eventoUi, tipoEditar: controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA,onClickMoreEventoAdjuntoDowload:(eventoUi) {
+                                          return ItemEventoView(eventoUi, tipoEditar: controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA,
+                                            onClickMoreEventoAdjuntoDowload:(eventoUi) {
                                             controller.onClickMoreEventoAdjuntoDowload(eventoUi);
                                           }, onClickPreview: (eventoUi, eventoAdjuntoUi) async{
                                             if((eventoUi?.eventoAdjuntoUiPreviewList??[]).isNotEmpty&&(eventoUi?.eventoAdjuntoUiPreviewList??[]).length>1){

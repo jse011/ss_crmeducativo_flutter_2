@@ -15,12 +15,15 @@ import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_control
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_imagen.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_url_launcher.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_repositoy.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_archivo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_ui.dart';
@@ -28,16 +31,18 @@ import 'dart:math';
 
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart'; // for max function
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PortalTareaView extends View{
   CursosUi? cursosUi;
   TareaUi? tareaUi;
+  SesionUi? sesionUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
   PortalTareaView(this.cursosUi, this.tareaUi, this.calendarioPeriodoUI);
 
   @override
-  _PortalTareaViewState createState() => _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI);
+  _PortalTareaViewState createState() => _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi);
 
 }
 
@@ -49,7 +54,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView, PortalTareaContro
   late bool isExpandedSlidingSheet = false;
   late AnimationController animationController;
   late SheetController _sheetController = SheetController();
-  _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI) : super(PortalTareaController(cursosUi, tareaUi, calendarioPeriodoUI, DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorConfiguracionRepository()));
+  _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi) : super(PortalTareaController(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi, DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorConfiguracionRepository(), MoorRubroRepository()));
 
   @override
   void initState() {
@@ -1008,38 +1013,42 @@ class _PortalTareaViewState extends ViewState<PortalTareaView, PortalTareaContro
                                     return Stack(
                                       children: [
                                         Center(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                                border:  Border.all(
-                                                    width: 1,
-                                                    color: HexColor(controller.cursosUi?.color1)
-                                                ),
-                                                color: AppTheme.white
-                                            ),
-                                            margin: EdgeInsets.only(bottom: 8),
-                                            width: 450,
-                                            height: 50,
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  margin: EdgeInsets.only(right: 16),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.only(
-                                                      bottomLeft: Radius.circular(8),
-                                                      topLeft: Radius.circular(8),
-                                                    ), // use instead of BorderRadius.all(Radius.circular(20))
-                                                    color: AppTheme.greyLighten2,
+                                          child: InkWell(
+                                            onTap: () async {
+                                              await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                                  border:  Border.all(
+                                                      width: 1,
+                                                      color: HexColor(controller.cursosUi?.color1)
                                                   ),
-                                                  width: 50,
-                                                  child: Center(
-                                                    child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
-                                                      height: 30.0,
-                                                      fit: BoxFit.cover,
+                                                  color: AppTheme.white
+                                              ),
+                                              margin: EdgeInsets.only(bottom: 8),
+                                              width: 450,
+                                              height: 50,
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    margin: EdgeInsets.only(right: 16),
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.only(
+                                                        bottomLeft: Radius.circular(8),
+                                                        topLeft: Radius.circular(8),
+                                                      ), // use instead of BorderRadius.all(Radius.circular(20))
+                                                      color: AppTheme.greyLighten2,
+                                                    ),
+                                                    width: 50,
+                                                    child: Center(
+                                                      child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
+                                                        height: 30.0,
+                                                        fit: BoxFit.cover,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Expanded(
+                                                  Expanded(
                                                     child: Column(
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1047,12 +1056,13 @@ class _PortalTareaViewState extends ViewState<PortalTareaView, PortalTareaContro
                                                         Text("${tareaRecursoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
                                                         Padding(padding: EdgeInsets.all(2)),
                                                         tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
-                                                          Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url: tareaRecursoUi.descripcion}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 10)):
-                                                          Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
+                                                        Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url: tareaRecursoUi.descripcion}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 10)):
+                                                        Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
                                                       ],
                                                     ),
-                                                )
-                                              ],
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),

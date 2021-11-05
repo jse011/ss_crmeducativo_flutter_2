@@ -141,7 +141,8 @@ class AppRouter {
           CursosUi? cursosUi = arguments['cursoUi'];
           TareaUi? tareaUi = arguments['tareaUi'];
           CalendarioPeriodoUI? calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
-          return PortalTareaView2(cursosUi, tareaUi, calendarioPeriodoUI);
+          SesionUi? sesionUi = arguments["sesionUi"];
+          return PortalTareaView2(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi);
         },
       );
     }else if(settings.name == EVALUACION_CAPACIDAD){
@@ -329,10 +330,10 @@ class AppRouter {
     );
   }
 
-  static Future<dynamic> createRouteTareaPortalRouter(BuildContext context, CursosUi? cursosUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
+  static Future<dynamic> createRouteTareaPortalRouter(BuildContext context, CursosUi? cursosUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI, SesionUi? sesionUi) async{
     return await Navigator.pushNamed(context,
         TAREA_PORTAL,
-        arguments:  {'cursoUi': cursosUi, 'tareaUi':tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI }
+        arguments:  {'cursoUi': cursosUi, 'tareaUi':tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI, 'sesionUi': sesionUi }
     );
   }
 

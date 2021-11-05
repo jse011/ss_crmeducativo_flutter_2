@@ -12,21 +12,27 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/widgets/image_shimmer_widget.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
+import 'package:ss_crmeducativo_2/src/app/page/tarea/multimedia/tarea_multimedia_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_imagen.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_url_launcher.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_repositoy.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_archivo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_ui.dart';
@@ -34,16 +40,20 @@ import 'dart:math';
 
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart'; // for max function
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_youtube_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PortalTareaView2 extends View{
   CursosUi? cursosUi;
   TareaUi? tareaUi;
+  SesionUi? sesionUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
-  PortalTareaView2(this.cursosUi, this.tareaUi, this.calendarioPeriodoUI);
+
+  PortalTareaView2(this.cursosUi, this.tareaUi, this.calendarioPeriodoUI, this.sesionUi);
 
   @override
-  _PortalTareaViewState createState() => _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI);
+  _PortalTareaViewState createState() => _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi);
 
 }
 
@@ -54,7 +64,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
   late double topBarOpacity = 0.0;
   late bool isExpandedSlidingSheet = false;
   late AnimationController animationController;
-  _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI) : super(PortalTareaController(cursosUi, tareaUi, calendarioPeriodoUI, DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorConfiguracionRepository()));
+  _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi) : super(PortalTareaController(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi,DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorConfiguracionRepository(), MoorRubroRepository()));
 
   @override
   void initState() {
@@ -604,51 +614,87 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                     return Stack(
                                                       children: [
                                                         Center(
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                                                border:  Border.all(
-                                                                    width: 1,
-                                                                    color: HexColor(controller.cursosUi?.color1)
-                                                                ),
-                                                                color: AppTheme.white
-                                                            ),
-                                                            margin: EdgeInsets.only(bottom: 8),
-                                                            width: 450,
-                                                            height: 50,
-                                                            child: Row(
-                                                              children: [
-                                                                Container(
-                                                                  margin: EdgeInsets.only(right: 16),
-                                                                  decoration: BoxDecoration(
-                                                                    borderRadius: BorderRadius.only(
-                                                                      bottomLeft: Radius.circular(8),
-                                                                      topLeft: Radius.circular(8),
-                                                                    ), // use instead of BorderRadius.all(Radius.circular(20))
-                                                                    color: AppTheme.greyLighten2,
+                                                          child: InkWell(
+                                                            onTap: () async {
+
+                                                              switch(tareaRecursoUi.tipoRecurso){
+                                                                case TipoRecursosUi.TIPO_DOCUMENTO:
+                                                                case TipoRecursosUi.TIPO_IMAGEN:
+                                                                case TipoRecursosUi.TIPO_AUDIO:
+                                                                case TipoRecursosUi.TIPO_HOJA_CALCULO:
+                                                                case TipoRecursosUi.TIPO_DIAPOSITIVA:
+                                                                case TipoRecursosUi.TIPO_PDF:
+                                                                case TipoRecursosUi.TIPO_VINCULO:
+                                                                  await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                                  break;
+                                                                case TipoRecursosUi.TIPO_ENCUESTA:
+                                                                  await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+                                                                  break;
+                                                                case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+                                                                  //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+                                                                  await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                                  break;
+                                                                case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+                                                                  print("youtube: ${tareaRecursoUi.url}");
+                                                                  TareaMultimediaView.showDialog(context, YouTubeUrlParser.getYoutubeVideoId(tareaRecursoUi.url), TareaMultimediaTipoArchivo.YOUTUBE);
+                                                                  break;
+                                                                case TipoRecursosUi.TIPO_RECURSO:
+                                                                  //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+
+                                                                  break;
+                                                                default:
+                                                                  await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                                  break;
+                                                              }
+
+
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                                                  border:  Border.all(
+                                                                      width: 1,
+                                                                      color: HexColor(controller.cursosUi?.color1)
                                                                   ),
-                                                                  width: 50,
-                                                                  child: Center(
-                                                                    child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
-                                                                      height: 30.0,
-                                                                      fit: BoxFit.cover,
+                                                                  color: AppTheme.white
+                                                              ),
+                                                              margin: EdgeInsets.only(bottom: 8),
+                                                              width: 450,
+                                                              height: 50,
+                                                              child: Row(
+                                                                children: [
+                                                                  Container(
+                                                                    margin: EdgeInsets.only(right: 16),
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.only(
+                                                                        bottomLeft: Radius.circular(8),
+                                                                        topLeft: Radius.circular(8),
+                                                                      ), // use instead of BorderRadius.all(Radius.circular(20))
+                                                                      color: AppTheme.greyLighten2,
+                                                                    ),
+                                                                    width: 50,
+                                                                    child: Center(
+                                                                      child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
+                                                                        height: 30.0,
+                                                                        fit: BoxFit.cover,
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                                Expanded(
-                                                                  child: Column(
-                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      Text("${tareaRecursoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
-                                                                      Padding(padding: EdgeInsets.all(2)),
-                                                                      tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
-                                                                      Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url: tareaRecursoUi.descripcion}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 10)):
-                                                                      Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
-                                                                    ],
-                                                                  ),
-                                                                )
-                                                              ],
+                                                                  Expanded(
+                                                                    child: Column(
+                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      children: [
+                                                                        Text("${tareaRecursoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
+                                                                        Padding(padding: EdgeInsets.all(2)),
+                                                                        tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
+                                                                        Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url: tareaRecursoUi.descripcion}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 10)):
+                                                                        Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
+                                                                      ],
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -842,12 +888,93 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                           right: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,24)),
                                       sliver: SliverList(
                                           delegate: SliverChildListDelegate([
+                                            controller.progressRubro?
                                             Container(
                                               margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,24)),
                                               child:  Row(
                                                 mainAxisAlignment: MainAxisAlignment.start,
                                                 children: [
-                                                  InkWell(
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isEmpty)
+                                                  SizedBox(
+                                                    child: Shimmer.fromColors(
+                                                      baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                      highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                      child: Container(
+                                                        height: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context, 30),
+                                                        width: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,110),
+                                                        padding: EdgeInsets.only(
+                                                            left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16) ,
+                                                            right: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16),
+                                                            top: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8),
+                                                            bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8)),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,6))),
+                                                            color: HexColor(controller.cursosUi?.color2)
+                                                        ),
+                                                        alignment: Alignment.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isEmpty)
+                                                  Padding(padding: EdgeInsets.only(
+                                                      left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16)
+                                                  )),
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isNotEmpty)
+                                                  SizedBox(
+                                                    child: Shimmer.fromColors(
+                                                      baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                      highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                      child: Container(
+                                                        height: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context, 30),
+                                                        width: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,110),
+                                                        padding: EdgeInsets.only(
+                                                            left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16) ,
+                                                            right: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16),
+                                                            top: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8),
+                                                            bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8)),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,6))),
+                                                            color: HexColor(controller.cursosUi?.color2)
+                                                        ),
+                                                        alignment: Alignment.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isNotEmpty)
+                                                  Padding(padding: EdgeInsets.only(
+                                                      left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16)
+                                                  )),
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isNotEmpty)
+                                                  SizedBox(
+                                                    child: Shimmer.fromColors(
+                                                      baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                      highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                      child: Container(
+                                                        height: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context, 30),
+                                                        width: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,110),
+                                                        padding: EdgeInsets.only(
+                                                            left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16) ,
+                                                            right: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16),
+                                                            top: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8),
+                                                            bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8)),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,6))),
+                                                            color: HexColor(controller.cursosUi?.color2)
+                                                        ),
+                                                        alignment: Alignment.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ):
+                                            Container(
+                                              margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,24)),
+                                              child:  Row(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isEmpty)
+                                                    InkWell(
                                                     //onTap: ()=> controller.onClicPrecision(),
                                                     child: Container(
                                                       padding: EdgeInsets.only(
@@ -881,9 +1008,11 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                       ),
                                                     ),
                                                   ),
-                                                  Padding(padding: EdgeInsets.only(
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isEmpty)
+                                                    Padding(padding: EdgeInsets.only(
                                                       left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16)
                                                   )),
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isNotEmpty)
                                                     InkWell(
                                                       //onTap: ()=> controller.onClicPrecision(),
                                                       child: Container(
@@ -918,11 +1047,12 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                         ),
                                                       ),
                                                     ),
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isNotEmpty)
                                                   Padding(padding: EdgeInsets.only(
                                                       left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16)
                                                   )),
-                                                  true?
-                                                  InkWell(
+                                                  if((controller.tareaUi?.rubroEvalProcesoId??"").isNotEmpty)
+                                                    InkWell(
                                                     //onTap: ()=> controller.onClicPrecision(),
                                                     child: Container(
                                                       padding: EdgeInsets.only(
@@ -956,7 +1086,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                         ],
                                                       ),
                                                     ),
-                                                  ):Container(),
+                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -969,7 +1099,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                       child: Container(
                                                         child: Column(
                                                           children: [
-                                                            Text("20", style: TextStyle(color: HexColor(controller.cursosUi?.color1), fontSize: 20, fontWeight: FontWeight.w500),),
+                                                            Text("${controller.alumnoEval}", style: TextStyle(color: HexColor(controller.cursosUi?.color1), fontSize: 20, fontWeight: FontWeight.w500),),
                                                             Text("Evaluados", style: TextStyle(color: AppTheme.greyDarken1, fontSize: 10))
                                                           ],
                                                         ),
@@ -984,7 +1114,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                       child: Container(
                                                         child: Column(
                                                           children: [
-                                                            Text("0", style: TextStyle(color: HexColor(controller.cursosUi?.color1), fontSize: 20, fontWeight: FontWeight.w500),),
+                                                            Text("${controller.alumnoSinEval}", style: TextStyle(color: HexColor(controller.cursosUi?.color1), fontSize: 20, fontWeight: FontWeight.w500),),
                                                             Text("Sin evaluar", style: TextStyle(color: AppTheme.greyDarken1, fontSize: 10))
                                                           ],
                                                         ),
@@ -1408,5 +1538,6 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
         return "Recurso";
     }
   }
+
 
 }

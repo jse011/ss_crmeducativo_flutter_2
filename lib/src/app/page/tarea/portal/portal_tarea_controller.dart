@@ -4,23 +4,30 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
 
 class PortalTareaController extends Controller{
 
   CursosUi? cursosUi;
   TareaUi? tareaUi;
+  SesionUi? sesionUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
   PortalTareaPresenter presenter;
   List<TareaRecusoUi> _tareaRecursoUiList = [];
   List<TareaRecusoUi> get tareaRecursoUiList => _tareaRecursoUiList;
   List<TareaAlumnoUi> _tareaAlumnoUiList = [];
   List<TareaAlumnoUi> get tareaAlumnoUiList => _tareaAlumnoUiList;
+  int _alumnoEval = 0;
+  int get alumnoEval => _alumnoEval;
+  int _alumnoSinEval = 0;
+  int get alumnoSinEval => _alumnoSinEval;
   bool _toogleGeneral = true;
   bool get toogleGeneral => _toogleGeneral;
   bool _progress = false;
@@ -28,8 +35,12 @@ class PortalTareaController extends Controller{
   bool _showDialogEliminar = false;
   bool get showDialogEliminar => _showDialogEliminar;
   bool _cambiosTarea = false;
-  PortalTareaController(this.cursosUi, this.tareaUi, this.calendarioPeriodoUI, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, ConfiguracionRepository configuracionRepo):
-        presenter = PortalTareaPresenter(httpDatosRepo, unidadTareaRepo, configuracionRepo);
+
+  bool _progressRubro = false;
+  bool get progressRubro => _progressRubro;
+
+  PortalTareaController(this.cursosUi, this.tareaUi, this.calendarioPeriodoUI, this.sesionUi, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo):
+        presenter = PortalTareaPresenter(httpDatosRepo, unidadTareaRepo, configuracionRepo, rubroRepo);
 
   @override
   void initListeners() {
@@ -48,6 +59,7 @@ class PortalTareaController extends Controller{
       }
       tareaUi?.recursos = tareaRecusoUiList;
       _progress = false;
+      refreshCountEvaluados();
       refreshUI();
     };
 
@@ -58,6 +70,18 @@ class PortalTareaController extends Controller{
     presenter.eliminarTareaOnMessage = (bool offline){
 
     };
+
+    presenter.updateDatosCrearRubroOnNext = (bool? errorConexion, bool? errorServidor){
+      _progressRubro= false;
+      print("updateDatosCrearRubroOnNext");
+      refreshUI();
+    };
+
+    presenter.updateDatosCrearRubroOnError = (e){
+      print("updateDatosCrearRubroOnError");
+      _progressRubro= false;
+      refreshUI();
+    };
   }
 
   @override
@@ -66,6 +90,8 @@ class PortalTareaController extends Controller{
     _progress = true;
     refreshUI();
     presenter.getInformacionTarea(tareaUi, tareaUi?.rubroEvalProcesoId, cursosUi, tareaUi?.unidadAprendizajeId);
+    _progressRubro = true;
+    presenter.onActualizarRubro(calendarioPeriodoUI, cursosUi, sesionUi, tareaUi);
   }
 
   @override
@@ -88,6 +114,8 @@ class PortalTareaController extends Controller{
     }else{
       _toogleGeneral = false;
     }
+
+
 
 
     refreshUI();
@@ -150,5 +178,13 @@ class PortalTareaController extends Controller{
     return _cambiosTarea;
   }
 
+  refreshCountEvaluados(){
+    _alumnoEval=0;
+    _alumnoSinEval=0;
+    for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
+      if(tareaAlumnoUi.entregado??false)_alumnoEval++;
+      else _alumnoSinEval++;
+    }
+  }
 
 }

@@ -29,7 +29,6 @@ class HomeView extends View{
   _HomePageState createState() =>
       // inject dependencies inwards
       _HomePageState();
-
 }
 
 class _HomePageState extends ViewState<HomeView, HomeController> with TickerProviderStateMixin{
@@ -128,7 +127,6 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
                             ),
                             drawerIsOpen: (bool ) { },
                           ),
-                          if(controller.splash)SplashView(),
                         ]
                     );
                   }

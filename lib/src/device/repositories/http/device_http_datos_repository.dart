@@ -257,7 +257,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<Map<String, dynamic>?> getDatosRubroFlutter(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId, List<dynamic> rubrosNoEnviados) async{
+  Future<Map<String, dynamic>?> getDatosRubroFlutter(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId, String? tareaId,List<dynamic> rubrosNoEnviados) async{
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
     parameters["vint_SilaboEventoId"] = silaboEventoId;
@@ -265,6 +265,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["vint_SesionAprendizajeDocenteId"] = sesionAprendizajeDocenteId;
     parameters["vint_SesionAprendizajeAlumnoId"] = sesionAprendizajeAlumnoId;
+    parameters["vstr_tareaId"] = tareaId;
     parameters["vlst_RubroEvalEnvioSimple"] = rubrosNoEnviados;
     final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getDatosRubroFlutter",parameters))
         .timeout(Duration(seconds: 60), onTimeout: (){throw Exception('Failed to load getDatosRubroFlutter');});
