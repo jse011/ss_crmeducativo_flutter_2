@@ -283,7 +283,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
     return Container(
       //margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
       height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,65),
-      width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,70),
+      width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,82),
       decoration: BoxDecoration(
         color: color.withOpacity(tipo.toogle??false?1:0.5),
         borderRadius: BorderRadius.only(
@@ -321,8 +321,8 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                       imagepath,
                       semanticsLabel:"Eventos",
                       color: AppTheme.white,
-                      width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,28.0),
-                      height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,28.0),
+                      width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,20.0),
+                      height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,20.0),
                     ),
                   )
               ),
@@ -335,8 +335,9 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                     textAlign: TextAlign.center ,
                     style: TextStyle(
                         color: AppTheme.white,
-                        fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,10.0),
-                        fontWeight: FontWeight.w700)),
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,12.0),
+                        fontWeight: FontWeight.w900)),
               )
             ],
           ),
@@ -374,31 +375,29 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                     ),
                     Container(
                       padding: EdgeInsets.only(
-                          left: 58,
-                          right: 16,
+                          left: 0,
+                          right: 0,
                           top: 16 + 4.0 * topBarOpacity,
                           bottom: 12 - 8.0 * topBarOpacity),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Expanded(
-                            child: Container(
+                            child: Center(
                               child: Text(
                                 'Agenda digital',
                                 textAlign: TextAlign.left,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontFamily: AppTheme.fontName,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 18 + 10 - 6 * topBarOpacity,
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 16 + 10 - 4 * topBarOpacity,
                                   letterSpacing: 1.2,
                                   color: AppTheme.darkerText,
                                 ),
                               ),
                             ),
                           ),
-
-
                         ],
                       ),
                     )
@@ -445,7 +444,6 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                           flexibleSpace: FlexibleSpaceBar(
                             background: ControlledWidgetBuilder<EventoAgendaController2>(
                                 builder: (context, controller) {
-
                                   return Stack(
                                     children: [
                                       Center(

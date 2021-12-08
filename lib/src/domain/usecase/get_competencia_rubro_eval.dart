@@ -84,6 +84,21 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
           for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
             rubricaEvaluacionUi.ningunaEvalCalificada = CalcularEvaluacionResultados.ningunaEvalCalificada(rubricaEvaluacionUi);
 
+            int cantidadEvaluados = 0;
+            for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
+              if((rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_NUMERICO ||
+                  rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES) ){
+                  if(evaluacionUi.valorTipoNotaId != null){
+                    cantidadEvaluados++;
+                  }
+              }else {
+                if((evaluacionUi.nota??0) > 0){
+                  cantidadEvaluados++;
+                }
+              }
+              rubricaEvaluacionUi.cantiEvalCalificadas = cantidadEvaluados;
+    }
+
             int peso = CalcularEvaluacionResultados.getPesoRubro(rubricaEvaluacionUi);
             totalpeso = totalpeso + (peso < 0 ? 0 : peso);//los pesos en negativo se cuentan como 0;
 

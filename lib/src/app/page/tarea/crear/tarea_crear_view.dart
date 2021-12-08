@@ -41,6 +41,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tema_criterio_ui.dart';
@@ -50,6 +51,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
@@ -57,14 +60,15 @@ import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 class TareaCrearView extends View{
   CursosUi? cursosUi;
   TareaUi? tareaUi;
+  UsuarioUi? usuarioUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
-  int? unidadEventoId;
-  int? sesionAprendizajeId;
+  UnidadUi? unidadUi;
+  SesionUi? sesionUi;
 
-  TareaCrearView(this.cursosUi, this.calendarioPeriodoUI, this.tareaUi, this.unidadEventoId, this.sesionAprendizajeId);
+  TareaCrearView(this.usuarioUi,this.cursosUi, this.calendarioPeriodoUI, this.tareaUi, this.unidadUi, this.sesionUi);
 
   @override
-  TareaCrearViewState createState() => TareaCrearViewState(cursosUi, calendarioPeriodoUI, tareaUi, unidadEventoId, sesionAprendizajeId);
+  TareaCrearViewState createState() => TareaCrearViewState(usuarioUi, cursosUi, calendarioPeriodoUI, tareaUi, unidadUi, sesionUi);
 
 }
 class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController> with TickerProviderStateMixin{
@@ -77,8 +81,8 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
   final format = DateFormat("dd/MM/yyyy");
   final formatHour = DateFormat("hh:mm a");
 
-  TareaCrearViewState(cursosUi, calendarioPeriodoUI, tareaUi, unidadEventoId, sesionAprendizajeId) :
-        super(TareaCrearController(cursosUi, calendarioPeriodoUI, tareaUi, unidadEventoId, sesionAprendizajeId, DeviceHttpDatosRepositorio(), MoorConfiguracionRepository(), MoorUnidadTareaRepository()));
+  TareaCrearViewState(usuarioUi, cursosUi, calendarioPeriodoUI, tareaUi, unidadUi, sesionUi) :
+        super(TareaCrearController(usuarioUi, cursosUi, calendarioPeriodoUI, tareaUi, unidadUi, sesionUi, DeviceHttpDatosRepositorio(), MoorConfiguracionRepository(), MoorUnidadTareaRepository()));
   var _tiuloTareacontroller = TextEditingController();
   var _Instrucionescontroller = TextEditingController();
   var _Horacontroller = TextEditingController();

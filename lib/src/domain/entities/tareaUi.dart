@@ -13,4 +13,12 @@ class TareaUi{
   int? sesionAprendizajeId;
   String? horaTarea;
   List<TareaRecusoUi>? recursos;
+  int? nroSesion;
+  String? docente;
+  int? tipoPeriodoId;
+  int? silaboEventoId;
+  String? tipoNotaId;
+  int? competenciaId;
+  int? desempenioIcdId;
+  int? calendarioPeriodoId;
 }

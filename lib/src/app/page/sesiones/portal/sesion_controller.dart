@@ -3,21 +3,27 @@ import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_prese
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_presenter.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_unidad.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tema_criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_sesion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
 
 class SesionController extends Controller{
   SesionPresenter presenter;
+  UsuarioUi? usuarioUi;
   CursosUi cursosUi;
   SesionUi sesionUi;
+  UnidadUi unidadUi;
   CalendarioPeriodoUI calendarioPeriodoUI;
   bool _datosOffline =  false;
   bool get datosOffline =>  _datosOffline;
@@ -29,11 +35,13 @@ class SesionController extends Controller{
   List<dynamic> get rubricaEvaluacionUiList => _rubricaEvaluacionUiList;
   bool _progressEvaluacion =  true;
   bool get progressEvaluacion =>  _progressEvaluacion;
+  List<CompetenciaUi> _competenciaUiList = [];
+  List<CompetenciaUi> get competenciaUiList => _competenciaUiList;
+  List<TemaCriterioUi> _temaCriterioUiList = [];
+  List<TemaCriterioUi> get temaCriterioUiList => _temaCriterioUiList;
 
-  SesionController(this.cursosUi, this.sesionUi, this.calendarioPeriodoUI, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, RubroRepository rubroRepo):
-        presenter = SesionPresenter(configuracionRepo, httpDatosRepo, unidadTareaRepo, rubroRepo);
-
-
+  SesionController(this.usuarioUi, this.cursosUi, this.unidadUi, this.sesionUi, this.calendarioPeriodoUI, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, RubroRepository rubroRepo, UnidadSesionRepository unidadSesionRepo):
+        presenter = SesionPresenter(configuracionRepo, httpDatosRepo, unidadTareaRepo, rubroRepo, unidadSesionRepo);
 
   @override
   void initListeners() {
@@ -68,6 +76,7 @@ class SesionController extends Controller{
       _progress = true;
       print("updateDatosCrearRubroOnNext");
       presenter.onGetSesionRubroEval(cursosUi, calendarioPeriodoUI, sesionUi);
+      presenter.onGetCompetencias(sesionUi);
       refreshUI();
     };
 
@@ -99,6 +108,16 @@ class SesionController extends Controller{
       refreshUI();
     };
 
+    presenter.getAprendizajeOnNext = (bool? errorServidor, bool? offline, List<CompetenciaUi>? competenciaUiList,  List<TemaCriterioUi>? temaCriterioUiList){
+      _competenciaUiList = competenciaUiList??[];
+      _temaCriterioUiList = temaCriterioUiList??[];
+      refreshUI();
+    };
+    presenter.getAprendizajeOnError = (e){
+      _competenciaUiList = [];
+      _temaCriterioUiList = [];
+      refreshUI();
+    };
   }
 
   @override

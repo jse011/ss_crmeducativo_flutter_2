@@ -423,7 +423,20 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
           columnsTitleBuilder: (i) {
             //#region columnsTitleBuilder
             var obj = controller.tableColumns[i];
-              if(obj is String && obj == "peso_criterio"){
+            if(obj is String && obj == "promedio"){
+              return Stack(
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          right: BorderSide(color:  AppTheme.greyLighten2),
+                        ),
+                        color: HexColor(controller.cursosUi.color1),
+                      )
+                  ),
+                ],
+              );
+            }else if(obj is String && obj == "peso_criterio"){
               return Stack(
                 children: [
                   Container(
@@ -774,7 +787,54 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                   ),
                 ),
               );
-            }else
+            }else if(o is RubricaEvaluacionUi){
+              return InkWell(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Evaluados", style: TextStyle(
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                        color: AppTheme.greyDarken3,
+                      )),
+                      Padding(padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 2))),
+                      Text("${o.cantiEvalCalificadas??0} de ${o.evaluacionUiList?.length??0}", style: TextStyle(
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.5,
+                        color: AppTheme.greyDarken3,
+                      )),
+                      Padding(padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4))),
+                      Text("Media", style: TextStyle(
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                        color: AppTheme.greyDarken3,
+                      ),),
+                      Padding(padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 2))),
+                      Text("${o.mediaDesvicion??""}", style: TextStyle(
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.5,
+                        color: AppTheme.greyDarken3,
+                      )),
+
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: AppTheme.greyLighten2),
+                      right: BorderSide(color: AppTheme.greyLighten2),
+                      bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableCells.length-1) <= j ? 1:0)),
+                    ),
+                    color: ((o.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.ningunaEvalCalificada??false))?AppTheme.greyLighten5:AppTheme.red.withOpacity(0.1),
+                  ),
+                ),
+              );
+            } else
             return InkWell(
               child: Container(
 
@@ -798,9 +858,10 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                   )
               ),
               Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerRight,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text("Criterios evaluados",
                           style: TextStyle(

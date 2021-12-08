@@ -44,11 +44,11 @@ class ItemRubroState extends State<ItemRubro>{
         break;
     }
 
-    String origen2 = "";
+    Color origen2 = HexColor(widget.cursosUi.color2);
     if((widget.rubricaEvalProcesoUi.sesionAprendizajeId??0) > 0){
-      origen2 =  "Sesion";
+      origen2 = AppTheme.colorSesion;
     }else{
-      origen2 =  "Rúbrica";
+    //  origen2 =  "Rúbrica";
     }
     
     return InkWell(
@@ -57,7 +57,7 @@ class ItemRubroState extends State<ItemRubro>{
       },
       child:  Container(
         decoration: BoxDecoration(
-            color: HexColor(widget.cursosUi.color1??"#FEFAE2").withOpacity(0.05),
+            color: HexColor(widget.cursosUi.color2).withOpacity(0.2),
             borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
         ),
         child: Column(
@@ -77,28 +77,33 @@ class ItemRubroState extends State<ItemRubro>{
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          child: Text("${widget.rubricaEvalProcesoUi.position}. Rúbrica",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              style: TextStyle(
-                                fontFamily: AppTheme.fontTTNorms,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                                fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
-                                color: (widget.rubricaEvalProcesoUi.guardadoLocal??false)?AppTheme.red:AppTheme.darkerText,
-                              )),
+                        Row(
+                          children: [
+                            Container(
+                              child: Text("${widget.rubricaEvalProcesoUi.position}. Rúbrica",
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5,
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 13),
+                                    color: (widget.rubricaEvalProcesoUi.guardadoLocal??false)?AppTheme.red:AppTheme.darkerText,
+                                  )),
+                            ),
+                          ],
                         ),
                         Padding(
-                          padding: EdgeInsets.only(top: 4),
+                          padding: EdgeInsets.only(top: 2),
                           child: Text("Media: ${widget.rubricaEvalProcesoUi.mediaDesvicion}",
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 10),
+                                fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
                                 fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms,
                                 letterSpacing: 0.5,
-                                color: AppTheme.darkerText.withOpacity(0.6),
+                                color: AppTheme.greyDarken1,
                               )
 
                           ),
@@ -120,9 +125,20 @@ class ItemRubroState extends State<ItemRubro>{
                   ),
                   widget.calendarioPeriodoUI?.habilitado==1?Container():
                   Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8),)
+                      top: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),
+                      right: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),
+                      child: Icon(Icons.block,
+                        color: AppTheme.redLighten1.withOpacity(0.8),
+                        size: ColumnCountProvider.aspectRatioForWidthRubro(context, 25),
+                      )
+                  ),
+                  Positioned(
+                      bottom: ColumnCountProvider.aspectRatioForWidthRubro(context, 10),
+                      left: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
+                      child: Icon(Icons.grid_on,
+                        color: origen2,
+                        size: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
+                      ),
                   ),
                   _getListRubricaDetalle(widget.rubricaEvalProcesoUi),
                   Column(
@@ -132,7 +148,7 @@ class ItemRubroState extends State<ItemRubro>{
                       Padding(
                         padding: EdgeInsets.only(
                             left: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
-                            top: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
+                            top: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),
                             right: ColumnCountProvider.aspectRatioForWidthRubro(context, 12)),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,10 +159,11 @@ class ItemRubroState extends State<ItemRubro>{
                             ),
                             Padding(padding: EdgeInsets.only(left: 4)),
                             Expanded(
-                              child: Text(widget.rubricaEvalProcesoUi.efechaCreacion??"",
+                              child: Text(widget.rubricaEvalProcesoUi.fechaCreacion_??"",
                                   textAlign: TextAlign.start,
                                   maxLines: 1,
                                   style: TextStyle(
+                                    fontFamily: AppTheme.fontTTNorms,
                                     fontWeight: FontWeight.w700,
                                     fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 10),
                                     letterSpacing: 0.5,
@@ -171,7 +188,7 @@ class ItemRubroState extends State<ItemRubro>{
                         child: Padding(
                             padding: EdgeInsets.only(
                               left: ColumnCountProvider.aspectRatioForWidthRubro(context, 14),
-                              top: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),
+                              top: ColumnCountProvider.aspectRatioForWidthRubro(context, 4),
                               bottom: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),
                               right: ColumnCountProvider.aspectRatioForWidthRubro(context, 14),
                             ),
@@ -180,6 +197,7 @@ class ItemRubroState extends State<ItemRubro>{
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
+                                  fontFamily: AppTheme.fontTTNorms,
                                   fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
                                   letterSpacing: 0.5,
                                   color: AppTheme.darkerText,
@@ -201,18 +219,26 @@ class ItemRubroState extends State<ItemRubro>{
   }
 
   Widget _getListRubricaDetalle(RubricaEvaluacionUi rubricaEvaluacionUi){
+
+    Color color = HexColor(widget.cursosUi.color2);
+    if((widget.rubricaEvalProcesoUi.sesionAprendizajeId??0) > 0){
+      color = AppTheme.colorSesion;
+    }else{
+      //  origen2 =  "Rúbrica";
+    }
     return Positioned(
         bottom: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),
         right: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
         left: ColumnCountProvider.aspectRatioForWidthRubro(context, 12),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             if((rubricaEvaluacionUi.cantidadRubroDetalle??0) >= 0)
               Container(
                 height: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 width: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 decoration: new BoxDecoration(
-                  color: HexColor(widget.cursosUi.color2).withOpacity(0.7),
+                  color: color.withOpacity(0.7),
                   shape: BoxShape.circle,
                 ),
                 margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthRubro(context, 4)),
@@ -225,7 +251,7 @@ class ItemRubroState extends State<ItemRubro>{
                 height: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 width: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 decoration: new BoxDecoration(
-                  color: HexColor(widget.cursosUi.color2).withOpacity(0.7),
+                  color: color.withOpacity(0.7),
                   shape: BoxShape.circle,
                 ),
                 margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthRubro(context, 4)),
@@ -238,7 +264,7 @@ class ItemRubroState extends State<ItemRubro>{
                 height: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 width: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 decoration: new BoxDecoration(
-                  color: HexColor(widget.cursosUi.color2).withOpacity(0.7),
+                  color: color.withOpacity(0.7),
                   shape: BoxShape.circle,
                 ),
                 margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthRubro(context, 4)),
@@ -251,7 +277,7 @@ class ItemRubroState extends State<ItemRubro>{
                 height: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 width: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 decoration: new BoxDecoration(
-                  color: HexColor(widget.cursosUi.color2).withOpacity(0.7),
+                  color: color.withOpacity(0.7),
                   shape: BoxShape.circle,
                 ),
                 margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthRubro(context, 4)),
@@ -264,7 +290,7 @@ class ItemRubroState extends State<ItemRubro>{
                 height: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 width: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                 decoration: new BoxDecoration(
-                  color: HexColor(widget.cursosUi.color2).withOpacity(0.7),
+                  color: color.withOpacity(0.7),
                   shape: BoxShape.circle,
                 ),
                 margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthRubro(context, 4)),

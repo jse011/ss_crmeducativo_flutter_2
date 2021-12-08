@@ -20,9 +20,10 @@ class TareaCrearPresenter extends Presenter{
         super();
 
   Future<bool> saveTareaDocente(TareaUi tareaUi) async{
-
+    print("saveTareaDocente: ${tareaUi.silaboEventoId}");
     var response = await _saveTareaDocente.execute(tareaUi);
     saveTareaOnMessage(response.offline);
+
     return response.success??false;
   }
 

@@ -15,6 +15,8 @@ class TareaAlumno extends Table{
   TextColumn get  valorTipoNotaId => text().nullable()();
   IntColumn get  silaboEventoId => integer().nullable()();
   IntColumn get  fechaServidor => integer().nullable()();
+  RealColumn get nota => real().nullable()();
+  TextColumn get rubroEvalProcesoId => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {tareaId, alumnoId};

@@ -102,6 +102,7 @@ class RubroController extends Controller{
       //presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
       //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
       //presenter.onGetCompetenciaRubroEval(cursosUi, calendarioPeriodoUI);
+      print("Finish updateDatosCrearRubroOnNext");
       presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
     };
 
@@ -118,7 +119,7 @@ class RubroController extends Controller{
       _msgToast = (errorServidor??false)? "!Oops! Al parecer ocurrió un error involuntario.":null;
       _msgToast = (errorConexion??false)? "No hay Conexión a Internet...":null;
       //_showDialogModoOffline = errorConexion??false;
-
+      print("Finish updateDatosCrearRubroOnNext");
       onListarTabsRubroEvaluacion();
 
       refreshUI();

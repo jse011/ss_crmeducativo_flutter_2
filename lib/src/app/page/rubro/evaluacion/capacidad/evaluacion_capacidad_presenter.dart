@@ -43,7 +43,7 @@ class EvaluacionCapacidadPresenter extends Presenter {
     return _updateEvaluacion.execute(rubroEvaluacionUiDetalle, personaUi);
   }
 
-  Future<void> updateServer(List<String> rubroEvaluacionIdList) {
+  Future<void> updateServer(List<String?> rubroEvaluacionIdList) {
     return _updateServerEvaluacionCompetencia.execute(UpdateServerEvaluacionRubroParms(rubroEvaluacionIdList));
   }
 

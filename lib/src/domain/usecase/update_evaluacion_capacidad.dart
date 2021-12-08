@@ -27,7 +27,7 @@ class UpdateEvaluacionCapacidad {
     }
 
     for (RubricaEvaluacionUi item in rubricaEvaluacionUiCabeceraUi.rubrosDetalleList??[]) {
-      if(item.rubricaId == rubricaEvaluacionUiDetalle?.rubricaId){
+      if(item.rubroEvaluacionId == rubricaEvaluacionUiDetalle?.rubroEvaluacionId){
         for(EvaluacionUi evaluacionUi in item.evaluacionUiList??[]){
           if(evaluacionUi.alumnoId == personaUi?.personaId){
             print("modificado12: ${evaluacionUiDetalle?.evaluacionUiOriginal?.evaluacionId}");

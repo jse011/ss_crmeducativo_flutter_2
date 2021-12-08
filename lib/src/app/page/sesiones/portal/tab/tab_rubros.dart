@@ -132,20 +132,20 @@ class _TabRubrosState extends State<TabRubros>{
   void _evaluacionMultipleRetornar(BuildContext context, SesionController controller, RubricaEvaluacionUi rubricaEvaluacionUi) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    dynamic response = await AppRouter.createRouteEvaluacionMultiple(context, controller.calendarioPeriodoUI,controller.cursosUi, rubricaEvaluacionUi.rubricaId);
+    dynamic response = await AppRouter.createRouteEvaluacionMultiple(context, controller.calendarioPeriodoUI,controller.cursosUi, rubricaEvaluacionUi.rubroEvaluacionId);
     if(response is int) controller.respuestaEvaluacion();
   }
 
   void _evaluacionSimpleRetornar(BuildContext context, SesionController controller, RubricaEvaluacionUi rubricaEvaluacionUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
-    dynamic response = await AppRouter.createRouteEvaluacionSimple(context, controller.cursosUi, rubricaEvaluacionUi.rubricaId, calendarioPeriodoUI);
+    dynamic response = await AppRouter.createRouteEvaluacionSimple(context, controller.cursosUi, rubricaEvaluacionUi, calendarioPeriodoUI);
     if(response is int) controller.respuestaEvaluacion();
   }
 
   void _guardarRubroyRetornar(BuildContext context, SesionController controller) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    dynamic response = await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, controller.sesionUi, null);
-    if(response is int) controller.respuestaFormularioCrearRubro();
+    dynamic response = await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, controller.sesionUi, null,null, false);
+    if(response is String) controller.respuestaFormularioCrearRubro();
   }
 
 

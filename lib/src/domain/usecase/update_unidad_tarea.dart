@@ -6,7 +6,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_reposito
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
 
-class UpdateUnidadTarea extends UseCase<GetUnidadTareaResponse, GetUnidadTareaParams>{
+class UpdateUnidadTarea extends UseCase<UpdateUnidadTareaResponse, UpdateUnidadTareaParams>{
   ConfiguracionRepository configuracionRepository;
   UnidadTareaRepository  unidadTareaRepository;
   HttpDatosRepository httpRepository;
@@ -16,8 +16,8 @@ class UpdateUnidadTarea extends UseCase<GetUnidadTareaResponse, GetUnidadTareaPa
   this.httpRepository, this.configuracionRepository, this.unidadTareaRepository, );
 
   @override
-  Future<Stream<GetUnidadTareaResponse?>> buildUseCaseStream(GetUnidadTareaParams? params) async{
-    final controller = StreamController<GetUnidadTareaResponse>();
+  Future<Stream<UpdateUnidadTareaResponse?>> buildUseCaseStream(UpdateUnidadTareaParams? params) async{
+    final controller = StreamController<UpdateUnidadTareaResponse>();
     try {
 
       executeServidor() async{
@@ -35,9 +35,7 @@ class UpdateUnidadTarea extends UseCase<GetUnidadTareaResponse, GetUnidadTareaPa
           offlineServidor = true;
         }
 
-        List<UnidadUi> eventoUIList = await unidadTareaRepository.getUnidadTarea( params?.calendarioPeridoId??0,  params?.silaboEventoId??0);
-
-        controller.add(GetUnidadTareaResponse(errorServidor, offlineServidor, eventoUIList));
+        controller.add(UpdateUnidadTareaResponse(errorServidor, offlineServidor));
         controller.close();
       }
 
@@ -57,19 +55,18 @@ class UpdateUnidadTarea extends UseCase<GetUnidadTareaResponse, GetUnidadTareaPa
   }
 }
 
-class GetUnidadTareaParams {
+class UpdateUnidadTareaParams {
   int? calendarioPeridoId;
   int? silaboEventoId;
 
-  GetUnidadTareaParams(this.calendarioPeridoId, this.silaboEventoId);
+  UpdateUnidadTareaParams(this.calendarioPeridoId, this.silaboEventoId);
 
 }
 
-class GetUnidadTareaResponse {
+class UpdateUnidadTareaResponse {
   bool datosOffline;
   bool errorServidor;
-  List<UnidadUi> unidadUiList;
 
-  GetUnidadTareaResponse(
-      this.datosOffline, this.errorServidor, this.unidadUiList);
+  UpdateUnidadTareaResponse(
+      this.datosOffline, this.errorServidor);
 }

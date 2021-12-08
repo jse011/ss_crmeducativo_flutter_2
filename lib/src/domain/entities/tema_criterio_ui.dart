@@ -6,6 +6,7 @@ class TemaCriterioUi{
   TemaCriterioUi? parent;
   List<TemaCriterioUi>? temaCriterioUiList;
   bool? toogle;
+  int? desempenioIcdId;
 
   /*Solo copia los campos primitivos*/
   static copy(TemaCriterioUi copy){

@@ -1,3 +1,4 @@
+import 'package:ss_crmeducativo_2/src/domain/entities/TareaEvaluacionUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
@@ -12,9 +13,13 @@ abstract class UnidadTareaRepository {
   Future<void> saveInformacionTarea(String? tareaId, Map<String, dynamic> unidadSesion);
   Future<List<TareaRecusoUi>>getRecursosTarea(String? tareaId);
   Future<List<TareaAlumnoUi>> getTareaAlumnos(String? tareaId);
-  Map<String, dynamic> getTareaDosenteSerial(TareaUi tareaUi, int usuarioId);
+  Map<String, dynamic> getTareaDosenteSerial(TareaUi? tareaUi, int usuarioId);
   Future<void> saveSesionTarea(Map<String, dynamic> unidadTareaSesion, int calendarioPeriodoId, int silaboEventoId, int sesionAprendizajeId);
   Future<List<TareaUi>> getSesionTarea(int calendarioPeriodoId, int silaboEventoId, int sesionAprendizajeId);
   Future<void> saveEstadoTareaDocente(TareaUi? tareaUi, int estadoId);
+  Future<void> saveTareaDocenteSerial(Map<String, dynamic> data);
+  Future<void> saveDriveIdTareaAlumno(Map<String, dynamic> serial, String? tareaAlumnoArchivoId);
+  Future<String?> getDriveIdTareaAlumno(String? tareaAlumnoArchivoId);
+
 
 }

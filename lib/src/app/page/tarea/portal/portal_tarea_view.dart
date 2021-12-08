@@ -31,18 +31,22 @@ import 'dart:math';
 
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart'; // for max function
+import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PortalTareaView extends View{
   CursosUi? cursosUi;
   TareaUi? tareaUi;
+  UnidadUi? unidadUi;
   SesionUi? sesionUi;
+  UsuarioUi? usuarioUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
   PortalTareaView(this.cursosUi, this.tareaUi, this.calendarioPeriodoUI);
 
   @override
-  _PortalTareaViewState createState() => _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi);
+  _PortalTareaViewState createState() => _PortalTareaViewState(usuarioUi, cursosUi, tareaUi, calendarioPeriodoUI, unidadUi, sesionUi);
 
 }
 
@@ -54,7 +58,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView, PortalTareaContro
   late bool isExpandedSlidingSheet = false;
   late AnimationController animationController;
   late SheetController _sheetController = SheetController();
-  _PortalTareaViewState(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi) : super(PortalTareaController(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi, DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorConfiguracionRepository(), MoorRubroRepository()));
+  _PortalTareaViewState(usuarioUi, cursosUi, tareaUi, calendarioPeriodoUI, unidadUi, sesionUi) : super(PortalTareaController(usuarioUi, cursosUi, tareaUi, calendarioPeriodoUI, unidadUi, sesionUi, DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorConfiguracionRepository(), MoorRubroRepository()));
 
   @override
   void initState() {

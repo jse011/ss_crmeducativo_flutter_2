@@ -6,7 +6,9 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repo
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_sesion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_aprendizaje_sesion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_rubro_evaluacion_sesion_list.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_datos_crear_rubros.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_sesion_tarea.dart';
@@ -22,12 +24,14 @@ class SesionPresenter extends Presenter{
   GetRubroEvaluacionSesionList _getSesionRubroEval;
   late Function getSesionRubroEvalOnNext, getSesionRubroEvalOnError;
 
+  GetAprendizaje _getAprendizaje;
+  late Function getAprendizajeOnNext, getAprendizajeOnError;
 
-
-  SesionPresenter(ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, RubroRepository rubroRepo):
+  SesionPresenter(ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, RubroRepository rubroRepo, UnidadSesionRepository unidadSesionRepo):
         _getSesionTarea = UpdateSesionTarea(httpDatosRepo, configuracionRepo, unidadTareaRepo),
         _getDatosCrearRubro = UpdateDatosCrearRubro(httpDatosRepo, configuracionRepo, rubroRepo),
         _getSesionRubroEval = GetRubroEvaluacionSesionList(rubroRepo),
+        _getAprendizaje = GetAprendizaje(httpDatosRepo, configuracionRepo, unidadSesionRepo),
         super();
 
   @override
@@ -48,6 +52,10 @@ class SesionPresenter extends Presenter{
   void onGetSesionRubroEval(CursosUi cursosUi, CalendarioPeriodoUI calendarioPeriodoUI, SesionUi sesionUi) {
 
     _getSesionRubroEval.execute(_GetRubroEvaluacionCase(this), GetRubroEvaluacionSesionListParms(calendarioPeriodoUI.id, cursosUi.silaboEventoId, sesionUi.sesionAprendizajePadreId??0, sesionUi.sesionAprendizajeId??0));
+  }
+
+  void onGetCompetencias(SesionUi sesionUi) {
+    _getAprendizaje.execute(_GetAprendizajeCase(this), GetAprendizajeParams(sesionUi.sesionAprendizajeId));
   }
 
 
@@ -124,6 +132,30 @@ class _GetRubroEvaluacionCase extends Observer<GetRubroEvaluacionSesionListRespo
   void onNext(GetRubroEvaluacionSesionListResponse? response) {
     assert(presenter.getSesionRubroEvalOnNext!=null);
     presenter.getSesionRubroEvalOnNext(response?.rubricaEvaluacionList);
+  }
+
+}
+
+class _GetAprendizajeCase extends Observer<GetAprendizajeResponse>{
+  SesionPresenter presenter;
+
+  _GetAprendizajeCase(this.presenter);
+
+  @override
+  void onComplete() {
+
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.getAprendizajeOnError!=null);
+    presenter.getAprendizajeOnError(e);
+  }
+
+  @override
+  void onNext(GetAprendizajeResponse? response) {
+    assert(presenter.getAprendizajeOnNext!=null);
+    presenter.getAprendizajeOnNext(response?.errorServidor, response?.datosOffline, response?.competenciaUiList, response?.temaCriterioUiList);
   }
 
 }

@@ -134,6 +134,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
         return Stack(
           children: [
             Scaffold(
+              backgroundColor: AppTheme.background,
               extendBody: true,
               body: Stack(
                 children: [
@@ -170,7 +171,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                             // ignore: deprecated_member_use
                               icon: Container(),
                               // ignore: deprecated_member_use
-                              title: Text('Rúbrica')),
+                              title: Text('Rúbrica', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700),)),
                           /* BottomNavigationBarItem(
                       // ignore: deprecated_member_use
                         icon: Container(),
@@ -180,12 +181,12 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                             // ignore: deprecated_member_use
                               icon: Container(),
                               // ignore: deprecated_member_use
-                              title: Text('Registro')),
+                              title: Text('Registro', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))),
                           BottomNavigationBarItem(
                             // ignore: deprecated_member_use
                               icon: Container(),
                               // ignore: deprecated_member_use
-                              title: Text('Resultado')),
+                              title: Text('Resultado', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))),
                         ],
                         currentIndex: controller.seletedItem,
                         onTap: (index) {
@@ -840,7 +841,14 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                       color: Colors.transparent,
                                       child: Center(
                                         child: RotatedBox(quarterTurns: 1,
-                                            child: Text(controller.calendarioPeriodoList[index].nombre??"".toUpperCase(), style: TextStyle(color: controller.calendarioPeriodoList[index].selected??false ? (controller.cursosUi.color3!=null?HexColor(controller.cursosUi.color3):AppTheme.colorAccent): AppTheme.white, fontFamily: AppTheme.fontName, fontWeight: FontWeight.w700, fontSize: 10), )
+                                            child: Text(controller.calendarioPeriodoList[index].nombre??"".toUpperCase(),
+                                              style: TextStyle(
+                                                  color: controller.calendarioPeriodoList[index].selected??false ? (controller.cursosUi.color3!=null?HexColor(controller.cursosUi.color3):AppTheme.colorAccent): AppTheme.white,
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 10,
+                                              )
+                                            )
                                         ),
                                       ),
                                     ),
@@ -862,8 +870,8 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
   void _guardarRubroyRetornar(BuildContext context, RubroController controller, SesionUi? sesionUi) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    dynamic response = await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, sesionUi, null);
-    if(response is int) controller.respuestaFormularioCrearRubro();
+    dynamic response = await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, sesionUi, null,null, false);
+    if(response is String) controller.respuestaFormularioCrearRubro();
   }
 
   void _evaluacionCapacidadRetornar(BuildContext context, RubroController controller, EvaluacionCapacidadUi evaluacionCapacidadUi) async {
@@ -876,12 +884,12 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
   void _evaluacionMultipleRetornar(BuildContext context, RubroController controller, RubricaEvaluacionUi rubricaEvaluacionUi) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    dynamic response = await AppRouter.createRouteEvaluacionMultiple(context, controller.calendarioPeriodoUI,controller.cursosUi, rubricaEvaluacionUi.rubricaId);
+    dynamic response = await AppRouter.createRouteEvaluacionMultiple(context, controller.calendarioPeriodoUI,controller.cursosUi, rubricaEvaluacionUi.rubroEvaluacionId);
     if(response is int) controller.respuestaEvaluacion();
   }
 
   void _evaluacionSimpleRetornar(BuildContext context, RubroController controller, RubricaEvaluacionUi rubricaEvaluacionUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
-    dynamic response = await AppRouter.createRouteEvaluacionSimple(context, controller.cursosUi, rubricaEvaluacionUi.rubricaId, calendarioPeriodoUI);
+    dynamic response = await AppRouter.createRouteEvaluacionSimple(context, controller.cursosUi, rubricaEvaluacionUi, calendarioPeriodoUI);
     if(response is int) controller.respuestaEvaluacion();
   }
 
@@ -1546,6 +1554,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                           style: TextStyle(
                                               fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                                               fontWeight: FontWeight.w700,
+                                              fontFamily: AppTheme.fontTTNorms,
                                               letterSpacing: 0.5,
                                               color: AppTheme.white
                                           ),

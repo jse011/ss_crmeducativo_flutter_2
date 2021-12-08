@@ -5,9 +5,12 @@ import 'package:ss_crmeducativo_2/src/app/page/tarea/crear/tarea_crear_presenter
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:path/path.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
@@ -17,6 +20,7 @@ import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 class TareaCrearController extends Controller{
 
   TareaCrearPresenter presenter;
+  UsuarioUi? usuarioUi;
   CursosUi? cursosUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
   TareaUi? tareaUi;
@@ -35,12 +39,12 @@ class TareaCrearController extends Controller{
   bool _progress = false;
   bool get progress => _progress;
   String newTareaId = IdGenerator.generateId();
-  int? unidadEventoId;
-  int? sesionAprendizajeId;
+  UnidadUi? unidadUi;
+  SesionUi? sesionUi;
 
   Map<TareaRecusoUi, HttpStream?> mapRecurso = Map();
 
-  TareaCrearController(this.cursosUi, this.calendarioPeriodoUI, this.tareaUi, this.unidadEventoId, this.sesionAprendizajeId,
+  TareaCrearController(this.usuarioUi, this.cursosUi, this.calendarioPeriodoUI, this.tareaUi, this.unidadUi, this.sesionUi,
       HttpDatosRepository httpDatosRepo, ConfiguracionRepository configuracionRepo, UnidadTareaRepository unidadTareaRepo):
         presenter = new TareaCrearPresenter(httpDatosRepo, configuracionRepo, unidadTareaRepo);
 
@@ -186,20 +190,28 @@ class TareaCrearController extends Controller{
       return false;
     }
 
+    print("unidadUi ${unidadUi}");
+
     if(tareaUi==null){
         TareaUi tareaUi = TareaUi();
         tareaUi.tareaId = newTareaId;
         tareaUi.titulo = tituloTarea;
         tareaUi.instrucciones = instruccionesTarea;
         tareaUi.publicado = publicar;
-        tareaUi.unidadAprendizajeId = unidadEventoId;
-        tareaUi.sesionAprendizajeId = sesionAprendizajeId;
+        tareaUi.unidadAprendizajeId = unidadUi?.unidadAprendizajeId;
+        tareaUi.sesionAprendizajeId = sesionUi?.sesionAprendizajeId;
         tareaUi.fechaEntregaTime = fechaTarea;
         tareaUi.horaTarea = horaTarea;
         tareaUi.recursos = tareaRecursoList;
+
+        tareaUi.docente = usuarioUi?.nombre;
+        tareaUi.nroSesion = sesionUi?.nroSesion;
+        tareaUi.tipoPeriodoId = calendarioPeriodoUI?.tipoId;
+        tareaUi.silaboEventoId = unidadUi?.silaboEventoId;
+        tareaUi.calendarioPeriodoId = calendarioPeriodoUI?.id;
         _progress = true;
         refreshUI();
-
+        //bool respuesta =false;
         bool respuesta = await presenter.saveTareaDocente(tareaUi);
         if(!respuesta)_mensaje = "Error al guardar";
         _progress = false;
@@ -214,6 +226,11 @@ class TareaCrearController extends Controller{
       tareaUi?.fechaEntregaTime = fechaTarea;
       tareaUi?.horaTarea = horaTarea;
       tareaUi?.recursos = tareaRecursoList;
+
+      tareaUi?.docente = usuarioUi?.nombre;
+      tareaUi?.nroSesion = sesionUi?.nroSesion;
+      tareaUi?.tipoPeriodoId = calendarioPeriodoUI?.tipoId;
+      tareaUi?.silaboEventoId = unidadUi?.silaboEventoId;
       _progress = true;
       refreshUI();
       bool respuesta = false;

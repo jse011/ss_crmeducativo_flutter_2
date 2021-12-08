@@ -48,12 +48,14 @@ class DataConvert{
         instrumentoEvalId: data.instrumentoEvalId,
         preguntaId: data.preguntaId,
         peso: data.peso,
+        syncFlag: data.syncFlag,
+        
         error_guardar: data.error_guardar
     ).toJson());
 
   }
 
-  static List<dynamic> converListRubroEvaluacionProceso(List<RubroEvaluacionProcesoData> dataList){
+  static List<dynamic> converListRubroEvaluacionProceso(List<dynamic> dataList){
     List<dynamic> items = [];
     for(var item in dataList){
       items.add(converRubroEvaluacionProceso(item));
@@ -75,7 +77,7 @@ class DataConvert{
     ).toJson());
   }
 
-  static List<dynamic> converListSerializeRubroEvalRNPFormula(List<RubroEvalRNPFormulaData> dataList){
+  static List<dynamic> converListSerializeRubroEvalRNPFormula(List<dynamic> dataList){
     List<Map<String,dynamic>> items = [];
     for(var item in dataList){
       items.add(converRubroEvalRNPFormula(item));
@@ -111,7 +113,7 @@ class DataConvert{
     ).toJson());
   }
 
-  static List<dynamic> converListEvaluacionProceso(List<EvaluacionProcesoData> dataList){
+  static List<dynamic> converListEvaluacionProceso(List<dynamic> dataList){
     List<dynamic> items = [];
     for(var item in dataList){
       items.add(converEvaluacionProceso(item));
@@ -130,7 +132,7 @@ class DataConvert{
     ).toJson());
   }
 
-  static List<dynamic> converListRubroCampotematico( List<RubroCampotematicoData> dataList){
+  static List<dynamic> converListRubroCampotematico( List<dynamic> dataList){
     List<dynamic> items = [];
     for(var item in dataList){
       items.add(converRubroCampotematico(item));
@@ -152,7 +154,7 @@ class DataConvert{
     ).toJson());
   }
 
-  static List<dynamic> converListSerializeRubroComentario(List<RubroComentarioData> dataList){
+  static List<dynamic> converListSerializeRubroComentario(List<dynamic> dataList){
     List<dynamic> items = [];
     for(var item in dataList){
       items.add(converRubroComentario(item));
@@ -175,7 +177,7 @@ class DataConvert{
     ).toJson());
   }
 
-  static List<dynamic> converListSerializeArchivoRubro( List<ArchivoRubroData> dataList){
+  static List<dynamic> converListSerializeArchivoRubro( List<dynamic> dataList){
     List<dynamic> items = [];
     for(var item in dataList){
       items.add(converArchivoRubro(item));

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
@@ -16,56 +17,54 @@ class CrearServerRubroEvaluacion {
 
   CrearServerRubroEvaluacion(this.configuracionRepository, this.repository, this.httpDatosRepository);
 
-  Future<SaveRubroEvaluacionResponse> execute(SaveRubroEvaluacionParms params) async{
+  Future<HttpStream?> execute(SaveRubroEvaluacionParms params, UploadSuccessListen successListen) async{
     int usuarioId = await configuracionRepository.getSessionUsuarioId();
     String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
     int georeferenciaId = await configuracionRepository.getGeoreferenciaId();
-
+    print("SaveRubroEvaluacionResponse");
     bool? success = false;
+    bool errorServidor = false;
     bool offline = false;
-    try{
-      String? rubroEvaluacionId = await repository.saveRubroEvaluacion(params.titulo, params.formaEvaluacionId, params.tipoEvaluacionId, params.promedioLogroId, params.calendarioPeriodoId, params.silaboEventoId, params.cargaCursoId, params.sesionAprendizajeId, params.tareaId, usuarioId, params.criterioPesoUiList, params.criterioValorTipoNotaUiList, params.tipoNotaUi);
-      print("rubroEvaluacionId: " + (rubroEvaluacionId??"null"));
-      if(rubroEvaluacionId!=null){
-        Map<String, dynamic>? data = await repository.getRubroEvaluacionSerial(rubroEvaluacionId);
-        if(data!=null){
-          success = await httpDatosRepository.crearRubroEvaluacion(urlServidorLocal, params.calendarioPeriodoId??0, params.silaboEventoId??0, georeferenciaId, usuarioId, data);
-          if(success??false) await repository.cambiarEstadoActualizado(rubroEvaluacionId);
-        }
-      }
-    }catch(e){
-      offline = true;
+
+    Map<String, dynamic>? dataBD =  await repository.createRubroEvaluacionData(params.rubricaEvaluacionUi, usuarioId);
+    Map<String, dynamic>? dataSerial = await repository.getRubroEvaluacionSerial(dataBD);
+
+    if(dataSerial!=null){
+      return await httpDatosRepository.crearRubroEvaluacion2(urlServidorLocal, params.rubricaEvaluacionUi?.calendarioPeriodoId??0, params.rubricaEvaluacionUi?.silaboEventoId??0, georeferenciaId, usuarioId, dataSerial,
+              (success, sinConexion) async{
+            if(success==null){
+              successListen.call(SaveRubroEvaluacionResponse(dataBD, false, sinConexion, true, false));
+            }else if(success){
+              await repository.saveRubroEvaluacionData(dataBD);
+              await repository.cambiarEstadoActualizado(params.rubricaEvaluacionUi?.rubroEvaluacionId??"");
+              successListen.call(SaveRubroEvaluacionResponse(dataBD, true, sinConexion, false, false));
+            }else{
+              successListen.call(SaveRubroEvaluacionResponse(dataBD,false, sinConexion, false, false));
+            }
+          });
+
+    }else{
+      successListen.call(SaveRubroEvaluacionResponse(dataBD,false, false, false, true));
+      return null;
     }
-    return SaveRubroEvaluacionResponse(success, offline );
+
   }
 
 
 }
 
-class SaveRubroEvaluacionParms{
-  String? rubroEvaluacionId;
-  String? titulo;
-  int? formaEvaluacionId;
-  int? tipoEvaluacionId;
-  String? promedioLogroId;
-  int? calendarioPeriodoId;
-  int? silaboEventoId;
-  int? cargaCursoId;
-  int? sesionAprendizajeId;
-  String? tareaId;
-  List<CriterioPesoUi>? criterioPesoUiList;
-  List<CriterioValorTipoNotaUi>? criterioValorTipoNotaUiList;
-  TipoNotaUi? tipoNotaUi;
+typedef UploadSuccessListen = void Function(SaveRubroEvaluacionResponse response);
 
-  SaveRubroEvaluacionParms(this.rubroEvaluacionId, this.titulo,
-      this.formaEvaluacionId, this.tipoEvaluacionId, this.promedioLogroId,
-      this.calendarioPeriodoId, this.silaboEventoId, this.cargaCursoId,
-      this.sesionAprendizajeId, this.tareaId, this.criterioPesoUiList,
-      this.criterioValorTipoNotaUiList, this.tipoNotaUi);
+class SaveRubroEvaluacionParms{
+  RubricaEvaluacionUi? rubricaEvaluacionUi;
+  SaveRubroEvaluacionParms(this.rubricaEvaluacionUi);
 }
 
 class SaveRubroEvaluacionResponse{
-    bool? success;
+    bool success;
     bool offline;
-    SaveRubroEvaluacionResponse(this.success, this.offline);
+    bool errorServidor;
+    bool errorInterno;
+    Map<String, dynamic> dataBD;
+    SaveRubroEvaluacionResponse(this.dataBD, this.success, this.offline, this.errorServidor, this.errorInterno);
 }

@@ -15,4 +15,15 @@ class EvaluacionUi{
   RubricaEvaluacionUi? rubroEvaluacionUi;
   String? escala;
 
+   EvaluacionUi copyWithSimple({String? evaluacionId,String? rubroEvaluacionId,  int? alumnoId, String? valorTipoNotaId, double? nota}) {
+    EvaluacionUi item = new EvaluacionUi();
+    item.evaluacionId = evaluacionId??this.evaluacionId;
+    item.rubroEvaluacionId = rubroEvaluacionId??this.rubroEvaluacionId;
+    item.alumnoId = alumnoId??this.alumnoId;
+    item.valorTipoNotaId = valorTipoNotaId??this.valorTipoNotaId;
+    item.nota = nota??this.nota;
+
+    return item;
+  }
+
 }

@@ -1166,6 +1166,7 @@ RubroEvaluacionProcesoSerial _$RubroEvaluacionProcesoSerialFromJson(
       error_guardar: json['error_guardar'] as int?,
       peso: json['peso'] as int?,
       preguntaId: json['preguntaId'] as String?,
+      syncFlag: json['syncFlag'] as int?,
     );
 
 Map<String, dynamic> _$RubroEvaluacionProcesoSerialToJson(
@@ -1214,6 +1215,7 @@ Map<String, dynamic> _$RubroEvaluacionProcesoSerialToJson(
       'error_guardar': instance.error_guardar,
       'peso': instance.peso,
       'preguntaId': instance.preguntaId,
+      'syncFlag': instance.syncFlag,
     };
 
 EvaluacionProcesoSerial _$EvaluacionProcesoSerialFromJson(
@@ -2071,6 +2073,9 @@ TareaSerial _$TareaSerialFromJson(Map<String, dynamic> json) => TareaSerial(
       fechaAccion: json['fechaAccion'] as int?,
       usuarioAccionId: json['usuarioAccionId'] as int?,
       usuarioCreacionId: json['usuarioCreacionId'] as int?,
+      nroSesion: json['nroSesion'] as int?,
+      tipoPeriodoId: json['tipoPeriodoId'] as int?,
+      nroUnidad: json['nroUnidad'] as int?,
     );
 
 Map<String, dynamic> _$TareaSerialToJson(TareaSerial instance) =>
@@ -2097,6 +2102,9 @@ Map<String, dynamic> _$TareaSerialToJson(TareaSerial instance) =>
       'usuarioCreacionId': instance.usuarioCreacionId,
       'usuarioAccionId': instance.usuarioAccionId,
       'fechaAccion': instance.fechaAccion,
+      'nroSesion': instance.nroSesion,
+      'tipoPeriodoId': instance.tipoPeriodoId,
+      'nroUnidad': instance.nroUnidad,
     };
 
 TareaUnidadSerial _$TareaUnidadSerialFromJson(Map<String, dynamic> json) =>
@@ -2126,10 +2134,13 @@ TareaAlumnoSerial _$TareaAlumnoSerialFromJson(Map<String, dynamic> json) =>
       valorTipoNotaId: json['valorTipoNotaId'] as String?,
       silaboEventoId: json['silaboEventoId'] as int?,
       fechaServidor: json['fechaServidor'] as int?,
+      nota: (json['nota'] as num?)?.toDouble(),
+      rubroEvalProcesoId: json['rubroEvalProcesoId'] as String?,
     );
 
 Map<String, dynamic> _$TareaAlumnoSerialToJson(TareaAlumnoSerial instance) =>
     <String, dynamic>{
+      'rubroEvalProcesoId': instance.rubroEvalProcesoId,
       'tareaId': instance.tareaId,
       'alumnoId': instance.alumnoId,
       'entregado': instance.entregado,
@@ -2137,6 +2148,7 @@ Map<String, dynamic> _$TareaAlumnoSerialToJson(TareaAlumnoSerial instance) =>
       'valorTipoNotaId': instance.valorTipoNotaId,
       'silaboEventoId': instance.silaboEventoId,
       'fechaServidor': instance.fechaServidor,
+      'nota': instance.nota,
     };
 
 TareaAlumnoArchivoSerial _$TareaAlumnoArchivoSerialFromJson(
@@ -2199,6 +2211,26 @@ Map<String, dynamic> _$TareaRecursoDidacticoSerialToJson(
       'usuarioAccionId': instance.usuarioAccionId,
       'fechaAccion': instance.fechaAccion,
       'fechaCreacion': instance.fechaCreacion,
+    };
+
+TareaEvalDetalleSerial _$TareaEvalDetalleSerialFromJson(
+        Map<String, dynamic> json) =>
+    TareaEvalDetalleSerial(
+      desempenioIcdId: json['desempenioIcdId'] as int?,
+      alumnoId: json['alumnoId'] as int?,
+      valorTipoNotaId: json['valorTipoNotaId'] as String?,
+      tareaId: json['tareaId'] as String?,
+      nota: (json['nota'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$TareaEvalDetalleSerialToJson(
+        TareaEvalDetalleSerial instance) =>
+    <String, dynamic>{
+      'desempenioIcdId': instance.desempenioIcdId,
+      'tareaId': instance.tareaId,
+      'valorTipoNotaId': instance.valorTipoNotaId,
+      'alumnoId': instance.alumnoId,
+      'nota': instance.nota,
     };
 
 ResultadoAlumnoSerial _$ResultadoAlumnoSerialFromJson(
@@ -2325,4 +2357,115 @@ Map<String, dynamic> _$ResultadoEvaluacionSerialToJson(
       'color': instance.color,
       'notaDup': instance.notaDup,
       'conclusionDescriptiva': instance.conclusionDescriptiva,
+    };
+
+DriveSerial _$DriveSerialFromJson(Map<String, dynamic> json) => DriveSerial(
+      json['idDrive'] as String?,
+      json['url'] as String?,
+      json['msgError'] as String?,
+      json['thumbnail'] as String?,
+      json['nombre'] as String?,
+    );
+
+Map<String, dynamic> _$DriveSerialToJson(DriveSerial instance) =>
+    <String, dynamic>{
+      'idDrive': instance.idDrive,
+      'url': instance.url,
+      'msgError': instance.msgError,
+      'thumbnail': instance.thumbnail,
+      'nombre': instance.nombre,
+    };
+
+BESesionHoyDocenteSerial _$BESesionHoyDocenteSerialFromJson(
+        Map<String, dynamic> json) =>
+    BESesionHoyDocenteSerial(
+      sesionAprendizajeId: json['sesionAprendizajeId'] as int?,
+      unidadAprendizajeId: json['unidadAprendizajeId'] as int?,
+      titulo: json['titulo'] as String?,
+      horas: json['horas'] as int?,
+      contenido: json['contenido'] as String?,
+      estadoId: json['estadoId'] as int?,
+      fechaEjecucion: json['fechaEjecucion'] as int?,
+      fechaPublicacion: json['fechaPublicacion'] as String?,
+      nroSesion: json['nroSesion'] as int?,
+      rolId: json['rolId'] as int?,
+      proposito: json['proposito'] as String?,
+      estadoEjecucionId: json['estadoEjecucionId'] as int?,
+      fechaEjecucionFin: json['fechaEjecucionFin'] as int?,
+      parentSesionId: json['parentSesionId'] as int?,
+      nroUnidad: json['nroUnidad'] as int?,
+      tituloUnidad: json['tituloUnidad'] as String?,
+      situacionSignificativa: json['situacionSignificativa'] as String?,
+      silaboEventoId: json['silaboEventoId'] as int?,
+      situacionSignificativaComplementaria:
+          json['situacionSignificativaComplementaria'] as String?,
+      desafio: json['desafio'] as String?,
+      reto: json['reto'] as String?,
+      tipoPeriodoId: json['tipoPeriodoId'] as int?,
+      calendarioPeriodoId: json['calendarioPeriodoId'] as int?,
+      cursoNombre: json['cursoNombre'] as String?,
+      cursoId: json['cursoId'] as String?,
+      georeferenciaId: json['georeferenciaId'] as int?,
+      aulaId: json['aulaId'] as int?,
+      aulaNombre: json['aulaNombre'] as String?,
+      programaId: json['programaId'] as int?,
+      programaNombre: json['programaNombre'] as String?,
+      periodoId: json['periodoId'] as int?,
+      periodoNombre: json['periodoNombre'] as String?,
+      grupoId: json['grupoId'] as int?,
+      grupoNombre: json['grupoNombre'] as String?,
+      cargaCursoId: json['cargaCursoId'] as int?,
+      calendarioPerTipoId: json['calendarioPerTipoId'] as int?,
+      parametroDisenioId: json['parametroDisenioId'] as int?,
+      path: json['path'] as String?,
+      color3: json['color3'] as String?,
+      color2: json['color2'] as String?,
+      color1: json['color1'] as String?,
+    );
+
+Map<String, dynamic> _$BESesionHoyDocenteSerialToJson(
+        BESesionHoyDocenteSerial instance) =>
+    <String, dynamic>{
+      'sesionAprendizajeId': instance.sesionAprendizajeId,
+      'unidadAprendizajeId': instance.unidadAprendizajeId,
+      'titulo': instance.titulo,
+      'horas': instance.horas,
+      'contenido': instance.contenido,
+      'estadoId': instance.estadoId,
+      'fechaEjecucion': instance.fechaEjecucion,
+      'fechaPublicacion': instance.fechaPublicacion,
+      'nroSesion': instance.nroSesion,
+      'rolId': instance.rolId,
+      'proposito': instance.proposito,
+      'estadoEjecucionId': instance.estadoEjecucionId,
+      'fechaEjecucionFin': instance.fechaEjecucionFin,
+      'parentSesionId': instance.parentSesionId,
+      'nroUnidad': instance.nroUnidad,
+      'tituloUnidad': instance.tituloUnidad,
+      'situacionSignificativa': instance.situacionSignificativa,
+      'silaboEventoId': instance.silaboEventoId,
+      'situacionSignificativaComplementaria':
+          instance.situacionSignificativaComplementaria,
+      'desafio': instance.desafio,
+      'reto': instance.reto,
+      'tipoPeriodoId': instance.tipoPeriodoId,
+      'calendarioPeriodoId': instance.calendarioPeriodoId,
+      'cursoNombre': instance.cursoNombre,
+      'cursoId': instance.cursoId,
+      'georeferenciaId': instance.georeferenciaId,
+      'aulaId': instance.aulaId,
+      'aulaNombre': instance.aulaNombre,
+      'programaId': instance.programaId,
+      'programaNombre': instance.programaNombre,
+      'periodoId': instance.periodoId,
+      'periodoNombre': instance.periodoNombre,
+      'grupoId': instance.grupoId,
+      'grupoNombre': instance.grupoNombre,
+      'cargaCursoId': instance.cargaCursoId,
+      'calendarioPerTipoId': instance.calendarioPerTipoId,
+      'parametroDisenioId': instance.parametroDisenioId,
+      'path': instance.path,
+      'color3': instance.color3,
+      'color2': instance.color2,
+      'color1': instance.color1,
     };

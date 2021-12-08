@@ -38,9 +38,9 @@ class ColumnCountProvider{
     } else if (widthPx >= 480) {
       return (pixcel) / 1.35;
     } else if (widthPx >= 320) {
-      return (pixcel) / 1.15;
+      return (pixcel) / 1.25;
     } else {
-      return (pixcel) / 1.2;
+      return (pixcel) / 1.1;
     }
   }
 
@@ -177,15 +177,15 @@ class ColumnCountProvider{
     widthPx = widthPx - margin;
     widthPx = widthPx/column;*/
     if (widthPx >= 1010) {
-      return (pixcel) / 1.1;
+      return (pixcel) / 1.2;
     }else if (widthPx >= 900) {
       return (pixcel) / 1.2;
     } else if (widthPx >= 720) {
-      return (pixcel) / 1.25;
-    } else if (widthPx >= 600) {
       return (pixcel) / 1.15;
+    } else if (widthPx >= 600) {
+      return (pixcel) / 1.1;
     } else if (widthPx >= 480) {
-      return (pixcel) / 1.25;
+      return (pixcel) / 1.05;
     } else if (widthPx >= 320) {
       return (pixcel) / 1;
     } else {
@@ -319,7 +319,7 @@ class ColumnCountProvider{
     }
   }
 
-  static double aspectRatioForWidthButtonPortalTarea(BuildContext? context, double pixcel ) {
+  static double aspectRatioForWidthPortalTarea(BuildContext? context, double pixcel ) {
     // 16 = x 6 / 13
     // 13 = (16 / 6) * X
     // 13 / (16 / 6) = X
@@ -367,4 +367,109 @@ class ColumnCountProvider{
     }
   }
 
+  static double aspectRatioForWidthListaCurso(BuildContext? context, double pixcel ) {
+    // 16 = x 6 / 13
+    // 13 = (16 / 6) * X
+    // 13 / (16 / 6) = X
+    double widthPx = context?.widthPx??0;
+    if (widthPx >= 1010) {
+      return (pixcel) / 1;
+    }else if (widthPx >= 900) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 720) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 600) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 480) {
+      return (pixcel) / 1;
+    }  else if (widthPx >= 360) {
+      return (pixcel) / 1.15;
+    }else if (widthPx >= 320) {
+      return (pixcel) / 1.2;
+    } else {
+      return (pixcel) / 1.2;
+    }
+  }
+
+  static int columnsForWidthSesionHoy(BuildContext context) {
+    double widthPx = context.widthPx;
+    if (widthPx >= 900) {
+      return 3;
+    } else if (widthPx >= 720) {
+      return 3;
+    } else if (widthPx >= 600) {
+      return 3;
+    } else if (widthPx >= 480) {
+      return 3;
+    } else if (widthPx >= 320) {
+      return 2;
+    } else {
+      return 2;
+    }
+  }
+
+  static double aspectRatioForWidthSesionHoy(BuildContext context, double pixcel ) {
+    double widthPx = context.widthPx;
+    if (widthPx >= 1010) {
+      return (pixcel) * 1.05;
+    }else if (widthPx >= 900) {
+      return (pixcel) * 1.05;
+    } else if (widthPx >= 720) {
+      return (pixcel) * 1.05;
+    } else if (widthPx >= 600) {
+      return (pixcel) / 1.1;
+    } else if (widthPx >= 480) {
+      return (pixcel) / 1.05;
+    } else if (widthPx >= 320) {
+      return (pixcel) / 1;
+    } else {
+      return (pixcel) / 1.1;
+    }
+
+  }
+
+  static double aspectRatioForWidthContactos(BuildContext? context, double pixcel ) {
+    // 16 = x 6 / 13
+    // 13 = (16 / 6) * X
+    // 13 / (16 / 6) = X
+    double widthPx = context?.widthPx??0;
+    if (widthPx >= 1010) {
+      return (pixcel) / 1;
+    }else if (widthPx >= 900) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 720) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 600) {
+      return (pixcel) / 1;
+    } else if (widthPx >= 480) {
+      return (pixcel) / 1;
+    }  else if (widthPx >= 360) {
+      return (pixcel) / 1.15;
+    }else if (widthPx >= 320) {
+      return (pixcel) / 1.2;
+    } else {
+      return (pixcel) / 1.2;
+    }
+  }
+
+  static double aspectRatioForWidthEvaluacionRubrica(BuildContext? context, double pixcel ) {
+    double widthPx = context?.widthPx??0;
+    if (widthPx >= 1010) {
+      return (pixcel) * 1.5;
+    }else if (widthPx >= 900) {
+      return (pixcel) * 1.25;
+    } else if (widthPx >= 720) {
+      return (pixcel) * 1.25;
+    } else if (widthPx >= 600) {
+      return (pixcel) * 1.05;
+    } else if (widthPx >= 480) {
+      return (pixcel) * 1.05;
+    }  else if (widthPx >= 360) {
+      return (pixcel) / 1.05;
+    }else if (widthPx >= 320) {
+      return (pixcel) / 1.1;
+    } else {
+      return (pixcel) / 1.1;
+    }
+  }
 }

@@ -4,6 +4,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dar
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
@@ -11,6 +12,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repositor
 
 class TareaController extends Controller{
   CursosUi cursosUi;
+  UsuarioUi? usuarioUi;
   List<CalendarioPeriodoUI> _calendarioPeriodoList = [];
 
   CalendarioPeriodoUI? _calendarioPeriodoUI = null;
@@ -28,7 +30,7 @@ class TareaController extends Controller{
   List<CalendarioPeriodoUI> get calendarioPeriodoList => _calendarioPeriodoList;
   TareaPresenter _presenter;
 
-  TareaController(this.cursosUi, ConfiguracionRepository configuracionRepo, CalendarioPeriodoRepository calendarioPeriodoRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo):
+  TareaController(this.usuarioUi, this.cursosUi, ConfiguracionRepository configuracionRepo, CalendarioPeriodoRepository calendarioPeriodoRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo):
         _presenter = TareaPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadTareaRepo);
 
   @override
@@ -37,7 +39,7 @@ class TareaController extends Controller{
       _calendarioPeriodoList = calendarioPeridoList??[];
       _calendarioPeriodoUI = calendarioPeriodoUI;
       if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
-        _presenter.getUnidadTarea(cursosUi, _calendarioPeriodoUI);
+        _presenter.updateUnidadTarea(cursosUi, _calendarioPeriodoUI);
       }else{
         _progress = false;
       }
@@ -52,14 +54,28 @@ class TareaController extends Controller{
       refreshUI();
     };
 
-    _presenter.getUnidadTareaOnComplete = (List<UnidadUi>? unidadUiList, bool? datosOffline, bool? errorServidor){
+    _presenter.updateUnidadTareaOnComplete = (bool? datosOffline, bool? errorServidor){
       // conserver el toogle
       _datosOffline = datosOffline??false;
+
+       _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
+    };
+
+    _presenter.updateUnidadTareaOnError = (e){
+      //Si suscede un error inesperado al actualizar
+      _unidadUiList = [];
+      unidadItemsMap.clear();
+      _progress = false;
+      refreshUI();
+    };
+
+    _presenter.getUnidadTareaOnComplete = (List<UnidadUi>? unidadUiList){
+
       for(UnidadUi newUnidadUi in unidadUiList??[]){
         for(UnidadUi unidadUi in _unidadUiList){
-            if(newUnidadUi.unidadAprendizajeId == unidadUi.unidadAprendizajeId){
-              newUnidadUi.toogle = unidadUi.toogle;
-            }
+          if(newUnidadUi.unidadAprendizajeId == unidadUi.unidadAprendizajeId){
+            newUnidadUi.toogle = unidadUi.toogle;
+          }
         }
       }
       //
@@ -73,21 +89,20 @@ class TareaController extends Controller{
         unidadItemsMap[unidadUi] = [];
 
         //if(calendarioPeriodoUI?.habilitado==1)
-          unidadItemsMap[unidadUi]?.add("");
+        unidadItemsMap[unidadUi]?.add("");
+        print("tareaUiList: ${unidadUi.tareaUiList?.length}");
         int  count = 0;
         for(TareaUi tareaUi in unidadUi.tareaUiList??[]){
           tareaUi.position = unidadUi.tareaUiList!.length - count;
-          print("estadoId 2: ${tareaUi.titulo} ${tareaUi.fechaEntrega}");
+
           unidadItemsMap[unidadUi]?.add(tareaUi);
           count++;
         }
-
       }
-
       _progress = false;
       refreshUI();
-
     };
+
     _presenter.getUnidadTareaOnError = (e){
       _unidadUiList = [];
       unidadItemsMap.clear();
@@ -112,7 +127,7 @@ class TareaController extends Controller{
     _progress = true;
     refreshUI();
     if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
-      _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
+      _presenter.updateUnidadTarea(cursosUi, calendarioPeriodoUI);
     }else{
       _progress = false;
     }
@@ -130,13 +145,10 @@ class TareaController extends Controller{
   }
 
   void refrescarListTarea(UnidadUi unidadUi) {
+    print("refrescarListTarea ${unidadUi.titulo}");
     _progress = true;
+    _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
     refreshUI();
-    if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
-      _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
-    }else{
-      _progress = false;
-    }
   }
 
   @override

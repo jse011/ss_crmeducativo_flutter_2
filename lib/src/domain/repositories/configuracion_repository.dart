@@ -12,6 +12,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 abstract class ConfiguracionRepository{
+  static const int CONTACTO_DOCENTE = 3, CONTACTO_DIRECTIVO = 4, CONTACTO_ALUMNO = 1, CONTACTO_PADRE = 2, CONTACTO_APODERADO = 5;
+
   Future<bool> validarUsuario();
   Future<void> destroyBaseDatos();
   Future<LoginUi> saveDatosServidor(Map<String, dynamic> datosServidor);

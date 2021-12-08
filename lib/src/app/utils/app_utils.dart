@@ -27,6 +27,17 @@ class AppUtils {
     return new DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
   }
 
+  static indexAlfabetico(index){
+    if(index>24)index = 0;// falta validar numeros mayores a 24
+    var vobj_abc = [
+     "a","b","c","d","e","f","g","h","i",
+     "j","k","m","n","ñ","o","p","q",
+     "r","s","t","u","v","w","x","y","z",
+    ];
+
+    return vobj_abc[index];
+
+  }
 
 
 }

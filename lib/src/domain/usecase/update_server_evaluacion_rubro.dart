@@ -18,10 +18,13 @@ class UpdateServerEvaluacionRubro {
     bool? success = false;
     bool offline = false;
     try{
-      Map<String, dynamic>? data = await repository.getRubroEvaluacionSerial(params.rubroEvaluacionId??"");
+      Map<String, dynamic>? data = await repository.getRubroEvaluacionIdSerial(params.rubroEvaluacionId??"");
+      print("UpdateServerEvaluacionRubro: ${params.rubroEvaluacionId}");
       if(data!=null){
         success = await httpDatosRepository.updateEvaluacionRubroFlutter(urlServidorLocal, params.calendarioPeriodoId??0, params.silaboEventoId??0, georeferenciaId, usuarioId, data);
-        if(success??false) await repository.cambiarEstadoActualizado(params.rubroEvaluacionId??"");
+        if(success??false){
+          await repository.cambiarEstadoActualizado(params.rubroEvaluacionId??"");
+        }
       }
     }catch(e){
       offline = true;

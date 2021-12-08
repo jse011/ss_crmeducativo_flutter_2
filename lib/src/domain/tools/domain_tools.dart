@@ -241,6 +241,10 @@ class DomainTools {
     return fecha != null ? DateFormat("d MMM yyyy").format(fecha) : "";
   }
 
+  static String getFechaDiaMesAnhoSimple(DateTime? fecha) {
+    return fecha != null ? DateFormat("dd/MM/yyyy").format(fecha) : "";
+  }
+
   static int calcularEdad(DateTime? fecha) {
     DateTime hoy = DateTime.now();
     DateTime cumpleanos = fecha ?? DateTime(1900);

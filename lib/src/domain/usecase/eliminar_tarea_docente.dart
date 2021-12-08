@@ -19,11 +19,17 @@ class EliminarTareaDocente {
       int estadoId = UnidadTareaRepository.ESTADO_ELIMINADO;
       try{
         success = await _httpDatosRepository.saveEstadoTareaDocente(urlServidorLocal, tareaUi?.tareaId, estadoId, usuarioId);
+        if(success??false){
+          tareaUi?.publicado = !(tareaUi.publicado??false);
+          Map<String, dynamic> data =  repository.getTareaDosenteSerial(tareaUi, usuarioId);
+          await _httpDatosRepository.saveTareaDocenteFlutter(urlServidorLocal, data);
+        }
         await repository.saveEstadoTareaDocente(tareaUi, estadoId);
       }catch(e){
         offline = true;
       }
       return EliminarTareaDocenteResponse(success, offline );
+
     }
 }
 

@@ -51,7 +51,7 @@ class EvaluacionIndicadorMultiplePresenter extends Presenter {
   }
 
   Future<UpdateServerEvaluacionRubroResponse> updateServer(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, RubricaEvaluacionUi? rubricaEvaluacionUi) async{
-    return  _updateServerEvaluacionRubro.execute(UpdateServerEvaluacionRubroParms(rubricaEvaluacionUi?.rubricaId, calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
+    return  _updateServerEvaluacionRubro.execute(UpdateServerEvaluacionRubroParms(rubricaEvaluacionUi?.rubroEvaluacionId, calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
   }
 
   Future<void> deleteRubroEvaluacion(RubricaEvaluacionUi? rubricaEvaluacionUi) async{

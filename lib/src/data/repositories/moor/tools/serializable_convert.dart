@@ -1,6 +1,7 @@
 
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_eval_detalle.dart';
 
 class SerializableConvert{
   static EntidadData converSerializeEntidad(Map<String,dynamic> model){
@@ -1402,7 +1403,7 @@ class SerializableConvert{
         instrumentoEvalId: serial.instrumentoEvalId,
         preguntaId: serial.preguntaId,
         peso: serial.peso,
-        error_guardar:serial.error_guardar
+        error_guardar:serial.error_guardar,
     );
   }
 
@@ -1438,7 +1439,6 @@ class SerializableConvert{
         nota: serial.nota,
         sesionAprendizajeId: serial.sesionAprendizajeId,
         publicado: serial.publicado,
-        syncFlag: serial.syncFlag
 
     );
   }
@@ -1690,7 +1690,9 @@ class SerializableConvert{
       fechaEntrega: serial.fechaEntrega,
       silaboEventoId: serial.silaboEventoId,
       fechaServidor: serial.fechaServidor,
-      valorTipoNotaId: serial.valorTipoNotaId
+      valorTipoNotaId: serial.valorTipoNotaId,
+      nota: serial.nota,
+      rubroEvalProcesoId: serial.rubroEvalProcesoId
     );
   }
 
@@ -1714,7 +1716,7 @@ class SerializableConvert{
       tareaId: serial.tareaId,
       estado: serial.estado,
       planCursoId: serial.planCursoId,
-      silaboEventoId: serial.silaboEventoId
+      silaboEventoId: serial.silaboEventoId,
     );
   }
 
@@ -1735,7 +1737,7 @@ class SerializableConvert{
       nombre: serial.nombre,
       path: serial.path,
       repositorio: serial.repositorio,
-      tareaId: serial.tareaId
+      tareaId: serial.tareaId,
     );
   }
 
@@ -1748,5 +1750,25 @@ class SerializableConvert{
     return items;
   }
 
+
+  static TareaEvalDetalleData converSerializeTareaEvalDetalle(Map<String,dynamic> model){
+    TareaEvalDetalleSerial serial = TareaEvalDetalleSerial.fromJson(model);
+    return TareaEvalDetalleData(
+        desempenioIcdId: serial.desempenioIcdId??0,
+        tareaId: serial.tareaId??"",
+        alumnoId: serial.alumnoId??0,
+        valorTipoNotaId: serial.valorTipoNotaId,
+        nota: serial.nota
+    );
+  }
+
+  static List<TareaEvalDetalleData> converListSerializeTareaEvalDetalle(dynamic model){
+    List<TareaEvalDetalleData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeTareaEvalDetalle(item));
+    }
+    return items;
+  }
 }
 

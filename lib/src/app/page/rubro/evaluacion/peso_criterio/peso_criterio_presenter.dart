@@ -34,7 +34,7 @@ class PesoCriterioPresenter extends Presenter {
   }
 
 
-  Future<void> updateServer(List<String> rubroEvaluacionIdList) {
+  Future<void> updateServer(List<String?> rubroEvaluacionIdList) {
     return _updateServerEvaluacionCompetencia.execute(UpdateServerEvaluacionRubroParms(rubroEvaluacionIdList));
   }
 

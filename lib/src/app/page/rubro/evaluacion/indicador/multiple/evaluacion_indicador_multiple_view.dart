@@ -10,6 +10,7 @@ import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multiple/evaluacion_indicador_multiple_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
@@ -49,12 +50,18 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
   double? offset = 0.0;
   late final ScrollControllers scrollControllers = ScrollControllers();
 
+
   _EvaluacionIndicadorMultiplePortalState(rubroEvaluacionId, cursosUi,calendarioPeriodoUI) : super(EvaluacionIndicadorMultipleController(rubroEvaluacionId, cursosUi, calendarioPeriodoUI, MoorRubroRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
   late Animation<double> topBarAnimation;
   late final ScrollController scrollController = ScrollController();
   Function()? statetDialogPresion;
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
+
+  Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
+  late AnimationController _controller;
+  Duration _duration = Duration(milliseconds: 500);
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -96,11 +103,13 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
 
     );
     super.initState();
+    _controller = AnimationController(vsync: this, duration: _duration);
   }
 
   @override
   void dispose() {
     animationController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -109,28 +118,513 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
       builder: (context, controller) {
           return WillPopScope (
             onWillPop: () async {
-              if(!controller.tipoMatriz){
+              /*if(!controller.tipoMatriz){
                 controller.onClicVolverMatriz();
                 scrollController.jumpTo(offset??0.0);
                 return false;
               }else{
-                bool  se_a_modicado = await controller.onSave();
-                if(se_a_modicado){
-                  Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
-                  return false;
-                }else{
-                  return true;
-                }
+
+              }*/
+              bool  se_a_modicado = await controller.onSave();
+              if(se_a_modicado){
+                Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                return false;
+              }else{
+                return true;
               }
             },
             child: Container(
-              color: AppTheme.white,
+              color: AppTheme.background,
               child: Scaffold(
                 backgroundColor: Colors.transparent,
                 body: Stack(
                   children: <Widget>[
                     getMainTab(),
-                    getAppBarUI(),
+                    getAppBarUI(controller),
+                    SizedBox.expand(
+                      child: SlideTransition(
+                        position: _tween.animate(_controller),
+                        child: DraggableScrollableSheet(
+                          initialChildSize: 1,
+                          minChildSize: 0.5,
+                          expand: false,
+                          builder: (BuildContext context, ScrollController scrollController) {
+                            return Stack(
+                              children: [
+                                Container(
+                                  //height: MediaQuery.of(context).size.height,
+                                  decoration: new BoxDecoration(
+                                    color: AppTheme.white,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft:  Radius.circular(25.0),
+                                      topRight: Radius.circular(25.0),
+                                    ),
+                                  ),
+                                  child: Container(
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height: MediaQuery.of(context).size.height,
+                                            child: CustomScrollView(
+                                                controller: scrollController,
+                                                slivers: [
+                                                  SliverToBoxAdapter(
+                                                    child: Container(
+                                                      child: SingleChildScrollView(
+                                                        scrollDirection: Axis.horizontal,
+                                                        child: (){
+                                                          if(controller.personaUiSelected == null){
+                                                            return Container();
+                                                          }
+
+                                                          List<double> tablecolumnWidths = [];
+                                                          /*Calular el tamaño*/
+                                                          if(controller.alumnoCursoList.isNotEmpty){
+                                                            for(dynamic s in controller.mapColumnList[controller.alumnoCursoList[0]]??[]){
+                                                              if(s is ValorTipoNotaUi){
+                                                                tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45));
+                                                              } else if(s is RubricaEvaluacionUi){
+                                                                tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 85));
+                                                              } else if(s is EvaluacionUi){
+                                                                tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45));
+                                                              }else if(s is RubricaEvaluacionFormulaPesoUi){
+                                                                tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45));
+                                                              }else{
+                                                                tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50));
+                                                              }
+                                                            }
+                                                          }
+
+                                                          double width_pantalla = MediaQuery.of(context).size.width;
+                                                          double padding_left = ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 24);
+                                                          double padding_right = ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 24);
+                                                          double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 120);
+                                                          for(double column_px in tablecolumnWidths){
+                                                            width_table += column_px;
+                                                          }
+                                                          double width = 0;
+                                                          if(width_pantalla>width_table){
+                                                            width = width_pantalla;
+                                                          }else{
+                                                            width = width_table;
+                                                          }
+
+                                                          EvaluacionUi? evaluacionGeneralUi = controller.getEvaluacionGeneralPersona(controller.personaUiSelected);
+
+                                                          return Container(
+                                                            padding: EdgeInsets.only(
+                                                                top: MediaQuery.of(context).padding.top +
+                                                                    0,
+                                                                left: padding_left,
+                                                                right: padding_right
+                                                            ),
+                                                            width: width,
+                                                            child: Column(
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Padding(
+                                                                    padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))
+                                                                ),
+                                                                Container(
+                                                                  child: Row(
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    children: [
+                                                                      CachedNetworkImage(
+                                                                        placeholder: (context, url) => Container(
+                                                                          child: CircularProgressIndicator(),
+                                                                        ),
+                                                                        imageUrl: controller.personaUiSelected?.foto??"",
+                                                                        errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),),
+                                                                        imageBuilder: (context, imageProvider) =>
+                                                                            Container(
+                                                                                width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
+                                                                                height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
+                                                                                margin: EdgeInsets.only(
+                                                                                    right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                                                                    left: 0,
+                                                                                    top: 0,
+                                                                                    bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)
+                                                                                ),
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.all(
+                                                                                      Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45))
+                                                                                  ),
+                                                                                  image: DecorationImage(
+                                                                                    image: imageProvider,
+                                                                                    fit: BoxFit.cover,
+                                                                                  ),
+                                                                                )
+                                                                            ),
+                                                                      ),
+                                                                      Expanded(child: Column(
+                                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                                        children: [
+                                                                          Text("${controller.personaUiSelected?.apellidos}",
+                                                                            style: TextStyle(
+                                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 20),
+                                                                                fontWeight: FontWeight.w900
+                                                                            ),
+                                                                          ),
+                                                                          Text("${controller.personaUiSelected?.nombres}",
+                                                                            style: TextStyle(
+                                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                                fontWeight: FontWeight.w700
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      )),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Padding(padding: EdgeInsets.all(16)),
+                                                                Container(
+                                                                  child: Row(
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    children: [
+
+                                                                      Container(
+                                                                        width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                                        height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                                        margin: EdgeInsets.only(bottom: 4),
+                                                                        child: FDottedLine(
+                                                                          color: AppTheme.greyLighten1,
+                                                                          strokeWidth: 1.0,
+                                                                          dottedLength: 5.0,
+                                                                          space: 3.0,
+                                                                          corner: FDottedLineCorner.all(30.0),
+                                                                          child: Container(
+                                                                            color: AppTheme.greyLighten2,
+                                                                            child: (){
+                                                                              //#region Nota
+                                                                              Color color;
+                                                                              if (("B" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"") || "C" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??""))) {
+                                                                                color = AppTheme.redDarken4;
+                                                                              }else if (("AD" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"")) || "A" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"")) {
+                                                                                color = AppTheme.blueDarken4;
+                                                                              }else {
+                                                                                color = AppTheme.black;
+                                                                              }
+
+                                                                              switch(evaluacionGeneralUi?.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi) {
+                                                                                case TipoNotaTiposUi.SELECTOR_VALORES:
+                                                                                  return Container(
+                                                                                    child: Center(
+                                                                                      child: Text(evaluacionGeneralUi?.valorTipoNotaUi?.titulo ?? "",
+                                                                                          style: TextStyle(
+                                                                                              fontFamily: AppTheme.fontTTNorms,
+                                                                                              fontWeight: FontWeight.w700,
+                                                                                              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 20),
+                                                                                              color: color
+                                                                                          )),
+                                                                                    ),
+                                                                                  );
+                                                                                case TipoNotaTiposUi.SELECTOR_ICONOS:
+                                                                                  return Container(
+                                                                                    child: CachedNetworkImage(
+                                                                                      imageUrl: evaluacionGeneralUi?.valorTipoNotaUi?.icono ?? "",
+                                                                                      placeholder: (context, url) => Stack(
+                                                                                        children: [
+                                                                                          CircularProgressIndicator()
+                                                                                        ],
+                                                                                      ),
+                                                                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                                                                    ),
+                                                                                  );
+                                                                                case TipoNotaTiposUi.SELECTOR_NUMERICO:
+                                                                                case TipoNotaTiposUi.VALOR_NUMERICO:
+                                                                                case TipoNotaTiposUi.VALOR_ASISTENCIA:
+                                                                                  return Center(
+                                                                                    child: Text("${(evaluacionGeneralUi?.valorTipoNotaUi?.valorNumerico??0).toStringAsFixed(1)}", style: TextStyle(
+                                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                                        fontWeight: FontWeight.w700,
+                                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                                        color: AppTheme.textGrey),
+                                                                                    ),
+                                                                                  );
+                                                                                default:
+                                                                                  return Center(
+                                                                                    child: Text("", style: TextStyle(
+                                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                                        fontWeight: FontWeight.w700,
+                                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
+                                                                                        color: AppTheme.textGrey
+                                                                                    ),),
+                                                                                  );
+                                                                              }
+                                                                              //#endregion
+                                                                            }(),
+                                                                          ),
+
+                                                                        ),
+                                                                      ),
+                                                                      Padding(padding: EdgeInsets.all(8)),
+                                                                      Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))),
+                                                                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                                        ),
+                                                                        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+                                                                        child: Column(
+                                                                          children: [
+                                                                            Text("Nota", style: TextStyle(
+                                                                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                                fontWeight: FontWeight.w700,
+                                                                                color: HexColor(controller.cursosUi.color1)
+                                                                            )
+                                                                            ),
+                                                                            Text("${evaluacionGeneralUi?.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(fontSize: 14, fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700)),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      Padding(padding: EdgeInsets.all(8)),
+                                                                      (evaluacionGeneralUi?.valorTipoNotaUi?.alias??"").isNotEmpty?
+                                                                      Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))),
+                                                                          color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                                        ),
+                                                                        padding: EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+                                                                        child: Column(
+                                                                          children: [
+                                                                            Text("Logro",
+                                                                                style: TextStyle(
+                                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                                    fontWeight: FontWeight.w700,
+                                                                                    color: HexColor(controller.cursosUi.color1)
+                                                                                )
+                                                                            ),
+                                                                            Text("${evaluacionGeneralUi?.valorTipoNotaUi?.alias??""}", style: TextStyle(fontSize: 14, fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700)),
+                                                                          ],
+                                                                        ),
+                                                                      ):Container(),
+
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Padding(padding: EdgeInsets.all(10)),
+                                                                Center(
+                                                                  child: Container(
+                                                                    width: width_table,
+                                                                    child:  showTableRubroDetalle(controller, controller.personaUiSelected, tablecolumnWidths),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                    padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 28))
+                                                                ),
+                                                                Container(
+                                                                  width: width,
+                                                                  child: Text("Comentarios privados(Sólo lo ve el padre)",
+                                                                      style: TextStyle(
+                                                                          fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                                                          color: AppTheme.colorPrimary
+                                                                      )
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                    padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))
+                                                                ),
+                                                                Container(
+                                                                  width: width,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      CachedNetworkImage(
+                                                                        placeholder: (context, url) => Container(
+                                                                          child: CircularProgressIndicator(),
+                                                                        ),
+                                                                        imageUrl: controller.usuarioUi?.foto??"",
+                                                                        errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                                                                        imageBuilder: (context, imageProvider) =>
+                                                                            Container(
+                                                                                width: 40,
+                                                                                height: 40,
+                                                                                margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
+                                                                                decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                                                  image: DecorationImage(
+                                                                                    image: imageProvider,
+                                                                                    fit: BoxFit.cover,
+                                                                                  ),
+                                                                                )
+                                                                            ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        child: Row(
+                                                                          children: [
+                                                                            Expanded(
+                                                                              child: Container(
+                                                                                height: 65,
+                                                                                child: Row(
+                                                                                  children: <Widget>[
+                                                                                    Expanded(
+                                                                                      child: Container(
+                                                                                        decoration: BoxDecoration(
+                                                                                          color: AppTheme.greyLighten3,
+                                                                                          borderRadius: BorderRadius.circular(8.0),
+                                                                                          border: Border.all(color: AppTheme.greyLighten2),
+                                                                                        ),
+                                                                                        padding: EdgeInsets.all(8),
+                                                                                        child: Row(
+                                                                                          children: <Widget>[
+                                                                                            Expanded(
+                                                                                              child: TextField(
+                                                                                                maxLines: null,
+                                                                                                keyboardType: TextInputType.multiline,
+                                                                                                style: TextStyle(
+                                                                                                  fontSize: 12,
+
+                                                                                                ),
+                                                                                                decoration: InputDecoration(
+                                                                                                    isDense: true,
+                                                                                                    contentPadding: EdgeInsets.symmetric(vertical: 0),
+                                                                                                    hintText: "",
+                                                                                                    border: InputBorder.none),
+                                                                                              ),
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                              ),
+                                                                            ),
+
+                                                                            IconButton(
+                                                                              onPressed: () {
+                                                                                // You enter here what you want the button to do once the user interacts with it
+                                                                              },
+                                                                              icon: Icon(
+                                                                                Icons.send,
+                                                                                color: AppTheme.greyDarken1,
+                                                                              ),
+                                                                              iconSize: 20.0,
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                    padding: EdgeInsets.only(top: 16)
+                                                                ),
+                                                                Container(
+                                                                  width: width,
+                                                                  child: Text("Evidencias (Sólo lo ve el padre)",
+                                                                      style: TextStyle(
+                                                                          fontSize: 11,
+                                                                          color: AppTheme.colorPrimary
+                                                                      )
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                    padding: EdgeInsets.only(top: 8)
+                                                                ),
+                                                                Container(
+                                                                  width: width,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      FloatingActionButton(
+                                                                        heroTag: "btn_${controller.personaUiSelected?.personaId??""}",
+                                                                        onPressed: () {},
+                                                                        elevation: 0,
+                                                                        child: Icon(Icons.add,),
+                                                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
+
+                                                        }(),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ]),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                    right: 0,
+                                    left: 0,
+                                    child: Container(
+                                      color: AppTheme.white,
+                                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                      child: Row(
+                                        children: [
+                                          Expanded(child: Container()),
+                                          TextButton(
+                                            onPressed: () async{
+                                              await _controller.reverse();
+                                              controller.onClickFinalizarEvaluacion();
+                                            },
+                                            style: TextButton.styleFrom(
+                                              primary: HexColor(controller.cursosUi.color2),
+                                            ),
+                                            child: Text(
+                                              'Finalizar'.toUpperCase(),
+                                              style: TextStyle(
+                                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                                              ),
+                                            ),
+                                          ),
+                                          if(controller.atras)
+                                          TextButton(
+                                            onPressed: () {
+                                              controller.onClickAtrasEvaluacion();
+                                            },
+                                            style: TextButton.styleFrom(
+                                              primary: HexColor(controller.cursosUi.color2),
+                                            ),
+                                            child: Text(
+                                              'Atrás'.toUpperCase(),
+                                              style: TextStyle(
+                                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                                              ),
+                                            ),
+                                          ),
+                                          if(controller.siguiente)
+                                          TextButton(
+                                            onPressed: () {
+                                              controller.onClickSiguienteEvaluacion();
+                                            },
+                                            style: TextButton.styleFrom(
+                                              primary: HexColor(controller.cursosUi.color2),
+                                            ),
+                                            child: Text(
+                                              'Siguiente'.toUpperCase(),
+                                              style: TextStyle(
+                                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                )
+                              ],
+                            );
+                          },
+
+                        ),
+                      ),
+                    ),
                     if(controller.showDialog)
                       ArsProgressWidget(
                           blur: 2,
@@ -210,7 +704,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                       Expanded(child: ElevatedButton(
                                         onPressed: () async {
                                           await controller.onClickAceptarEliminar();
-                                          Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                                          Navigator.of(context).pop(-1);//si devuelve un entero se actualiza toda la lista. -1 si se elimino la rubrica
                                         },
                                         style: ElevatedButton.styleFrom(
                                           primary: Colors.red,
@@ -237,7 +731,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
       }
   );
 
-  Widget getAppBarUI() {
+  Widget getAppBarUI(EvaluacionIndicadorMultipleController controller) {
     return Column(
       children: <Widget>[
         AnimatedBuilder(
@@ -273,58 +767,105 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                             right: 8,
                             top: 16 - 8.0 * topBarOpacity,
                             bottom: 12 - 8.0 * topBarOpacity),
-                        child:   ControlledWidgetBuilder<EvaluacionIndicadorMultipleController>(
-                          builder: (context, controller) {
-                            return Stack(
-                              children: <Widget>[
-                                Positioned(
-                                    child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                      onPressed: () async {
-                                        if(!controller.tipoMatriz){
-                                          controller.onClicVolverMatriz();
-                                          scrollController.jumpTo(offset??0.0);
-                                        }else{
-                                          bool?  respuesta = await controller.onSave();
-                                          Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
-                                        }
-                                      },
-                                    )
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 54, right: 32),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 25 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
-                                      Padding(padding: EdgeInsets.only(left: 16)),
-                                      Expanded(
-                                          child: Container(
-                                            padding: EdgeInsets.only(top: 4),
+                        child: Stack(
+                          children: <Widget>[
+                            Positioned(
+                                child:  IconButton(
+                                  icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                                  onPressed: () async {
+                                    /*if(!controller.tipoMatriz){
+                                      controller.onClicVolverMatriz();
+                                      scrollController.jumpTo(offset??0.0);
+                                    }else{
+
+                                    }*/
+                                    bool?  respuesta = await controller.onSave();
+                                    Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                                  },
+                                )
+                            ),
+                            Container(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child:  Container(
+                                      margin: EdgeInsets.only(top: 0 + 8 * topBarOpacity, bottom: 8, left: 40, right: 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
+                                          Padding(padding: EdgeInsets.only(left: 4)),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 8),
                                             child: Text(
-                                              controller.rubroEvaluacionUi?.titulo??"",
+                                              'Evaluación',
+                                              textAlign: TextAlign.center,
                                               overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
                                               style: TextStyle(
                                                 fontFamily: AppTheme.fontTTNorms,
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 12 + 6 - 6 * topBarOpacity,
+                                                fontSize: 16 + 6 - 6 * topBarOpacity,
                                                 letterSpacing: 0.8,
                                                 color: AppTheme.darkerText,
                                               ),
                                             ),
                                           ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                ),
+                                  Container(
+                                      margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
+                                      child:InkWell(
+                                        //onTap: ()=> controller.onClicPrecision(),
+                                        child: Container(
+                                          width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 80 - 20 * topBarOpacity),
+                                          padding: EdgeInsets.only(
+                                              left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity) ,
+                                              right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity),
+                                              top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity),
+                                              bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8  - 2 * topBarOpacity)
+                                          ),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
+                                              color: HexColor(controller.cursosUi.color2)
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Icon(Ionicons.help_circle,
+                                                  color: AppTheme.white,
+                                                  size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 + 6 - 2 * topBarOpacity)
+                                              ),
+                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2))),
+                                              FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                child: Text("Ayuda",
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.w500,
+                                                      letterSpacing: 0.5,
+                                                      color:AppTheme.white,
+                                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity),
+                                                    )),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                  )
+                                ],
+                              ),
+                            ),
 
-                              ],
-                            );
-                          },
+
+                          ],
                         ),
-                      )
+                      ),
+
                     ],
                   ),
                 ),
@@ -343,144 +884,184 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           return Container(
             padding: EdgeInsets.only(
                 top: AppBar().preferredSize.height +
-                    MediaQuery.of(context).padding.top +
+                    //MediaQuery.of(context).padding.top +
                     0,
             ),
             child: CustomScrollView(
               controller: scrollController,
               slivers: [
                 SliverPadding(
-                  padding: EdgeInsets.only(left: 8, right: 8, bottom: 16),
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top + 16,
+                      left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)
+                  ),
                   sliver: SliverList(
                       delegate: SliverChildListDelegate(
                         [
                           Padding(
-                            padding: EdgeInsets.only( top: 8, left: 16, right: 16),
+                            padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
                             child: Column(
                               children: [
                                 Row(
                                   children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Container(),
-                                    ),
-                                    Expanded(
-                                        flex: 1,
-                                        child:  Container(
-                                          padding: EdgeInsets.all(8),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(Ionicons.help_circle, color: AppTheme.colorAccent, size: 20,),
-                                              Padding(padding: EdgeInsets.all(2),),
-                                              FittedBox(
-                                                fit: BoxFit.scaleDown,
-                                                child: Text("Ayuda",
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        letterSpacing: 0.5,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: AppTheme.colorPrimary,
-                                                        fontSize: 12
-                                                    )),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                    ),
-                                  ],
-                                ),
-                                Padding(padding: EdgeInsets.all(4)),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: ()=> controller.onClicPrecision(),
-                                        child: Container(
-                                          padding: EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                                              color: controller.precision?AppTheme.colorAccent:null
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(Ionicons.apps, color:controller.precision?AppTheme.white:AppTheme.colorAccent, size: 20, ),
-                                              Padding(padding: EdgeInsets.all(2),),
-                                              FittedBox(
-                                                fit: BoxFit.scaleDown,
-                                                child: Text("Precisión",
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        letterSpacing: 0.5,
-                                                        color:  controller.precision?AppTheme.white:AppTheme.colorPrimary,
-                                                        fontSize: 12
-                                                    )),
-                                              ),
-                                            ],
-                                          ),
+                                    InkWell(
+                                      onTap: ()=> controller.onClicPrecision(),
+                                      child: Container(
+                                        width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
+                                        padding: EdgeInsets.only(
+                                            left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                            right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                            top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                                            bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)
+                                        ),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
+                                            color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten2
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(Ionicons.apps ,
+                                                color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 9 + 6 - 2 * topBarOpacity)
+                                            ),
+                                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2))),
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text("Precisión",
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.w700,
+                                                      letterSpacing: 0.5,
+                                                      color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                      fontFamily: AppTheme.fontTTNorms,
+                                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity)
+                                                  )),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                        child:  Container(
-                                          padding: EdgeInsets.all(8),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(Ionicons.pencil, color: AppTheme.colorAccent, size: 20,),
-                                              Padding(padding: EdgeInsets.all(2),),
-                                              FittedBox(
-                                                fit: BoxFit.scaleDown,
-                                                child: Text("Modificar",
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        letterSpacing: 0.5,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: AppTheme.colorPrimary,
-                                                        fontSize: 12
-                                                    )),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                    ),
-                                    Expanded(
-                                        child: InkWell(
-                                          onTap: (){
-                                            controller.onClickEliminar();
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(8),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: [
-                                                Icon(Ionicons.trash, color: AppTheme.colorAccent, size: 20,),
-                                                Padding(padding: EdgeInsets.all(2),),
-                                                FittedBox(
-                                                  fit: BoxFit.scaleDown,
-                                                  child: Text("Eliminar",
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          letterSpacing: 0.5,
-                                                          color: AppTheme.colorPrimary,
-                                                          fontSize: 12
-                                                      )),
-                                                ),
-                                              ],
+                                    Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
+                                    InkWell(
+                                      //onTap: ()=> controller.onClicPrecision(),
+                                      child: Container(
+                                        width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
+                                        padding: EdgeInsets.only(
+                                            left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                            right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                            top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                                            bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)
+                                        ),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
+                                            color:HexColor(controller.cursosUi.color2)
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(Ionicons.pencil ,
+                                                color: AppTheme.white,
+                                                size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 9 + 6 - 2 * topBarOpacity)
                                             ),
-                                          ),
-                                        )
+                                            Padding(padding: EdgeInsets.all(2),),
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text("Modificar",
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    letterSpacing: 0.5,
+                                                    color: AppTheme.white,
+                                                    fontFamily: AppTheme.fontTTNorms,
+                                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity),
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
+                                    InkWell(
+                                      onTap: ()=> controller.onClickEliminar(),
+                                      child: Container(
+                                        width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 100),
+                                        padding: EdgeInsets.only(
+                                            left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                            right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                            top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                                            bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)
+                                        ),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
+                                            color: AppTheme.red
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(Ionicons.trash ,
+                                                color: AppTheme.white,
+                                                size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 9 + 6 - 2 * topBarOpacity)
+                                            ),
+                                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2)),),
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text("Eliminar",
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    letterSpacing: 0.5,
+                                                    color: AppTheme.white,
+                                                    fontFamily: AppTheme.fontTTNorms,
+                                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity),
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ],
-                                )
+                                ),
+                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16))),
+                                Container(
+                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                  color: HexColor(controller.cursosUi.color3).withOpacity(0.1),
+                                  width: double.infinity,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
+                                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 1.5),
+                                              letterSpacing: 0.3,
+                                              color: HexColor(controller.cursosUi.color1),
+                                            ),
+                                            children: [
+                                              TextSpan(text: 'EVALUA LA RÚBRICA '),
+                                              //TextSpan(text: "${(controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"").toUpperCase()}"),
+                                              TextSpan(text: '"${(controller.rubroEvaluacionUi?.titulo??"").toUpperCase()}"', style: TextStyle(fontWeight: FontWeight.w900)),
+
+                                            ]
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  height: 1,
+                                  color: HexColor(controller.cursosUi.color1),
+                                ),
                               ],
                             ),
                           ),
@@ -488,333 +1069,14 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                       )
                   ),
                 ),
-                controller.tipoMatriz?
-                SliverToBoxAdapter(
-                  child: showTableRubrica(controller),
-                ): SliverToBoxAdapter(
-                  child: Container(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: (){
-
-                        double width_pantalla = MediaQuery.of(context).size.width;
-                        double padding_left = 32;
-                        double padding_right = 32;
-                        double width_table = padding_left + padding_right + 25;
-                        for(double column_px in controller.tablecolumnWidths){
-                          width_table += column_px;
-                        }
-                        double width = 0;
-                        if(width_pantalla>width_table){
-                          width = width_pantalla;
-                        }else{
-                          width = width_table;
-                        }
-
-                        return Container(
-                          width: width,
-                          child: ListView.builder
-                            ( primary: false,
-                              shrinkWrap: true,
-                              itemCount: controller.alumnoCursoList.length,
-                              itemBuilder: (BuildContext ctxt, int index){
-                                PersonaUi personaUi = controller.alumnoCursoList[index];
-                                EvaluacionUi? evaluacionGeneralUi = controller.getEvaluacionGeneralPersona(personaUi);
-
-                                return Container(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: width,
-                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                        child:  Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            CachedNetworkImage(
-                                              placeholder: (context, url) => Container(
-                                                child: CircularProgressIndicator(),
-                                              ),
-                                              imageUrl: personaUi.foto??"",
-                                              errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                                              imageBuilder: (context, imageProvider) =>
-                                                  Container(
-                                                      width: 35,
-                                                      height: 35,
-                                                      margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                                                        image: DecorationImage(
-                                                          image: imageProvider,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      )
-                                                  ),
-                                            ),
-                                            Expanded(
-                                                child: Text((personaUi.nombreCompleto??"").toUpperCase(),
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontFamily: AppTheme.fontTTNorms,
-                                                      fontWeight: FontWeight.w800,
-                                                      fontSize: 12,
-                                                      letterSpacing: 0.8,
-                                                      color: AppTheme.darkerText,
-                                                    ))
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 8)
-                                      ),
-
-                                      Container(
-                                        width: width,
-                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Container(
-                                                  width: 55,
-                                                  height: 55,
-                                                  margin: EdgeInsets.only(bottom: 4),
-                                                  child: FDottedLine(
-                                                    color: AppTheme.greyLighten1,
-                                                    strokeWidth: 1.0,
-                                                    dottedLength: 5.0,
-                                                    space: 3.0,
-                                                    corner: FDottedLineCorner.all(30.0),
-                                                    child: Container(
-                                                      color: AppTheme.greyLighten2,
-                                                      child: (){
-                                                        //#region Nota
-                                                        Color color;
-                                                        if (("B" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"") || "C" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??""))) {
-                                                          color = AppTheme.redDarken4;
-                                                        }else if (("AD" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"")) || "A" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"")) {
-                                                          color = AppTheme.blueDarken4;
-                                                        }else {
-                                                          color = AppTheme.black;
-                                                        }
-
-                                                        switch(evaluacionGeneralUi?.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi) {
-                                                          case TipoNotaTiposUi.SELECTOR_VALORES:
-                                                            return Container(
-                                                              child: Center(
-                                                                child: Text(evaluacionGeneralUi?.valorTipoNotaUi?.titulo ?? "",
-                                                                    style: TextStyle(
-                                                                        fontFamily: AppTheme.fontTTNormsMedium,
-                                                                        fontSize: 22,
-                                                                        color: color
-                                                                    )),
-                                                              ),
-                                                            );
-                                                          case TipoNotaTiposUi.SELECTOR_ICONOS:
-                                                            return Container(
-                                                              child: CachedNetworkImage(
-                                                                imageUrl: evaluacionGeneralUi?.valorTipoNotaUi?.icono ?? "",
-                                                                placeholder: (context, url) => Stack(
-                                                                  children: [
-                                                                    CircularProgressIndicator()
-                                                                  ],
-                                                                ),
-                                                                errorWidget: (context, url, error) => Icon(Icons.error),
-                                                              ),
-                                                            );
-                                                          case TipoNotaTiposUi.SELECTOR_NUMERICO:
-                                                          case TipoNotaTiposUi.VALOR_NUMERICO:
-                                                          case TipoNotaTiposUi.VALOR_ASISTENCIA:
-                                                            return Center(
-                                                              child: Text("${(evaluacionGeneralUi?.valorTipoNotaUi?.valorNumerico??0).toStringAsFixed(1)}", style: TextStyle(
-                                                                  fontFamily: AppTheme.fontTTNormsMedium,
-                                                                  fontSize: 16,
-                                                                  color: AppTheme.textGrey),
-                                                              ),
-                                                            );
-                                                          default:
-                                                            return Center(
-                                                              child: Text("", style: TextStyle(
-                                                                  fontFamily: AppTheme.fontTTNormsMedium,
-                                                                  fontSize: 14,
-                                                                  color: AppTheme.textGrey
-                                                              ),),
-                                                            );
-                                                        }
-                                                        //#endregion
-                                                      }(),
-                                                    ),
-
-                                                  ),
-                                                ),
-                                                Text(evaluacionGeneralUi?.valorTipoNotaUi?.alias??"",
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.w800,
-                                                      fontSize: 14,
-                                                      color: AppTheme.darkerText,
-                                                    )
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(left: 8, right: 0),
-                                              height: 65,
-                                              width: 2,
-                                            ),
-                                            Container(
-                                              width: 75,
-                                              height: 60,
-                                              child: Center(
-                                                child: Text("${evaluacionGeneralUi?.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-                                                  fontFamily: AppTheme.fontTTNormsMedium,
-                                                  fontSize: 24,
-                                                  color: AppTheme.darkerText,
-                                                ),),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 16)
-                                        ),
-                                      Center(
-                                        child: Container(
-                                          width: width_table,
-                                          padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                          child:  showTableRubroDetalle(controller, personaUi),
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 28)
-                                      ),
-                                      Container(
-                                        width: width,
-                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                        child: Text("Comentarios privados(Sólo lo ve el padre)",
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: AppTheme.colorPrimary
-                                            )
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 8)
-                                      ),
-                                      Container(
-                                        width: width,
-                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                        child: Row(
-                                          children: [
-                                            CachedNetworkImage(
-                                              placeholder: (context, url) => Container(
-                                                child: CircularProgressIndicator(),
-                                              ),
-                                              imageUrl: controller.usuarioUi?.foto??"",
-                                              errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                                              imageBuilder: (context, imageProvider) =>
-                                                  Container(
-                                                      width: 50,
-                                                      height: 50,
-                                                      margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.all(Radius.circular(25)),
-                                                        image: DecorationImage(
-                                                          image: imageProvider,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      )
-                                                  ),
-                                            ),
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                      child:  Container(
-                                                        padding: EdgeInsets.only(left: 8, right: 8),
-                                                        decoration: BoxDecoration(
-                                                          color: AppTheme.greyLighten3,
-                                                          borderRadius: BorderRadius.circular(8.0),
-                                                          border: Border.all(color: AppTheme.greyLighten1),
-                                                        ),
-                                                        child: TextField(
-                                                          keyboardType: TextInputType.multiline,
-                                                          maxLines: null,
-                                                          decoration: InputDecoration(
-                                                              hintText: "",
-                                                              hintStyle: TextStyle( color: Colors.blueAccent),
-                                                              border: InputBorder.none),
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      )
-                                                  ),
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      // You enter here what you want the button to do once the user interacts with it
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.send,
-                                                      color: AppTheme.greyDarken1,
-                                                    ),
-                                                    iconSize: 20.0,
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 16)
-                                      ),
-                                      Container(
-                                        width: width,
-                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                        child: Text("Evidencias (Sólo lo ve el padre)",
-                                            style: TextStyle(
-                                                fontSize: 10,
-                                                color: AppTheme.colorPrimary
-                                            )
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 8)
-                                      ),
-                                      Container(
-                                        width: width,
-                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                        child: Row(
-                                          children: [
-                                            FloatingActionButton(
-                                              heroTag: "btn_${personaUi.personaId??""}",
-                                              onPressed: () {},
-                                              elevation: 0,
-                                              child: Icon(Icons.add,),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 48)
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                          ),
-                        );
-                      }(),
+                SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 24),
                     ),
-                  ),
-                ),
+                    sliver: SliverToBoxAdapter(
+                      child: showTableRubrica(controller),
+                    ),
+                )
               ],
             ),
           );
@@ -825,13 +1087,13 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
     List<double> tablecolumnWidths = [];
     for(dynamic s in controller.columnList2){
       if(s is ContactoUi){
-        tablecolumnWidths.add(95.0);
+        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 100));
       } else if(s is EvaluacionUi){
-        tablecolumnWidths.add(50);
+        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45));
       }else if(s is EvaluacionPublicadoUi){
-        tablecolumnWidths.add(40);
+        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35));
       }else{
-        tablecolumnWidths.add(70.0);
+        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 60));
       }
     }
     return FutureBuilder<bool>(
@@ -841,13 +1103,13 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           return const SizedBox();
         } else {
           return Padding(
-            padding: const EdgeInsets.only(left: 8, ),
+            padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
             child: SingleChildScrollView(
               child: StickyHeadersTableNotExpandedCustom(
                 cellDimensions: CellDimensions.variableColumnWidth(
-                    stickyLegendHeight:125,
-                    stickyLegendWidth: 65,
-                    contentCellHeight: 45,
+                    stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 125),
+                    stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 60),
+                    contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
                     columnWidths: tablecolumnWidths
                 ),
                 //cellAlignments: CellAlignments.,
@@ -860,42 +1122,71 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                     return Container(
                         constraints: BoxConstraints.expand(),
                         child: Center(
-                          child:  Text("Apellidos y\n Nombres", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppTheme.white ),),
-                        ),
-                        decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: AppTheme.lightBlueAccent4),
-                              right: BorderSide(color:AppTheme.lightBlueAccent4),
-                            ),
-                            color: AppTheme.lightBlueAccent4
-                        )
-                    );
-                  }else if(o is EvaluacionUi){
-                    return Container(
-                        constraints: BoxConstraints.expand(),
-                        padding: EdgeInsets.all(8),
-                        child: Center(
-                          child:  RotatedBox(
-                            quarterTurns: -1,
-                            child: Text("Nota Final", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600,color: AppTheme.darkText ),),
+                          child:  Text("Apellidos y\n Nombres",
+                            style: TextStyle(
+                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
+                                fontWeight: FontWeight.w600,
+                                fontFamily: AppTheme.fontTTNorms,
+                                color: AppTheme.white
+                            )
                           ),
                         ),
                         decoration: BoxDecoration(
                             border: Border(
-                              top: BorderSide(color: AppTheme.greyLighten2),
-                              right: BorderSide(color: AppTheme.greyLighten2),
+                              top: BorderSide(color: HexColor(controller.cursosUi.color1)),
+                              right: BorderSide(color: HexColor(controller.cursosUi.color1)),
                             ),
-                            color: AppTheme.greyLighten4
+                            color: HexColor(controller.cursosUi.color1)
                         )
+                    );
+                  }else if(o is EvaluacionUi){
+                    return ClipRRect(
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))),
+                      child: Container(
+                          constraints: BoxConstraints.expand(),
+                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                          child: Center(
+                            child:  RotatedBox(
+                              quarterTurns: -1,
+                              child: Text("Nota Final",
+                                  textAlign: TextAlign.center,
+                                  maxLines: 4,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      color: AppTheme.darkText
+                                  )
+                              ),
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color: AppTheme.greyLighten2),
+                              ),
+                              color: AppTheme.greyLighten4
+                          )
+                      ),
                     );
                   }else if(o is RubricaEvaluacionUi){
                     return Container(
                         constraints: BoxConstraints.expand(),
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
                         child: Center(
                           child:  RotatedBox(
                             quarterTurns: -1,
-                            child: Text(o.titulo??"", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color:  AppTheme.lightBlueAccent4 ),),
+                            child: Text(o.titulo??"",
+                              textAlign: TextAlign.center,
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w700,
+                              )
+                            ),
                           ),
                         ),
                         decoration: BoxDecoration(
@@ -910,8 +1201,6 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                     return InkWell(
                       onTap: (){
                         controller.onClicPublicadoAll(o);
-
-
                       },
                       child: Container(
                           constraints: BoxConstraints.expand(),
@@ -919,19 +1208,15 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                padding: EdgeInsets.only(top: 8),
-                                child: Icon(Ionicons.globe_outline, size: 30, color:o.publicado? AppTheme.colorAccent:AppTheme.grey ),
+                                padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                child: Icon(Ionicons.globe_outline,
+                                    size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 30),
+                                    color:o.publicado? AppTheme.colorAccent:AppTheme.grey
+                                ),
                               ),
 
                             ],
                           ),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(color: AppTheme.greyLighten2),
-                                right: BorderSide(color: AppTheme.greyLighten2),
-                              ),
-                              color: AppTheme.white
-                          )
                       ),
                     );
                   }else
@@ -944,14 +1229,19 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                         constraints: BoxConstraints.expand(),
                         child: Row(
                           children: [
-                            Padding(padding: EdgeInsets.all(4)),
+                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                             Expanded(
-                                child: Text((i+1).toString() + ".", style: TextStyle(color: AppTheme.darkText, fontSize: 12),)
+                                child: Text((i+1).toString() + ".",
+                                  style: TextStyle(
+                                      color: AppTheme.darkText,
+                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11)
+                                  )
+                                )
                             ),
                             Container(
-                              height: 30,
-                              width: 30,
-                              margin: EdgeInsets.only(right: 3),
+                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 28),
+                              width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 28),
+                              margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3)),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: AppTheme.greyLighten2,
@@ -962,11 +1252,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                   child: CircularProgressIndicator(),
                                 ),
                                 imageUrl: o.foto??"",
-                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),),
                                 imageBuilder: (context, imageProvider) =>
                                     Container(
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                                          borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 15))),
                                           image: DecorationImage(
                                             image: imageProvider,
                                             fit: BoxFit.cover,
@@ -976,7 +1266,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                               ):
                               Container(),
                             ),
-                            Padding(padding: EdgeInsets.all(1)),
+                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 1))),
                           ],
                         ),
                         decoration: BoxDecoration(
@@ -1001,8 +1291,27 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(o.apellidos??"", maxLines: 1, overflow: TextOverflow.ellipsis,  textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: AppTheme.black),),
-                            Text(o.nombres??"", maxLines: 1, textAlign: TextAlign.center,overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 10),),
+                            Text(o.apellidos??"",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.black
+                              )
+                            ),
+                            Text(o.nombres??"",
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w600,
+                              )
+                            ),
                           ],
                         ),
                         decoration: BoxDecoration(
@@ -1013,13 +1322,19 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                             color: _getColorAlumnoBloqueados(o, 0)
                         )
                     );
-                  }else if(o is EvaluacionUi && i == 1){
+                  }else if(o is EvaluacionUi && i == controller.columnList2.length-3){
                     return InkWell(
                       onTap: () {
                         if(o.personaUi?.contratoVigente??true){
-                          offset = scrollController.offset;
-                          scrollController.jumpTo(0.0);
+                          //offset = scrollController.offset;
+                          //scrollController.jumpTo(0.0);
+                          //showDialogEvaluacionAlumno(controller, o);
                           controller.onClicEvaluacionRubrica(o);
+                          //if (_controller.isDismissed){
+                            _controller.forward();
+                         // } else if (_controller.isCompleted){
+                           // _controller.reverse();
+                          //}
                         }else{
                           _showControNoVigente(context, o.personaUi);
                         }
@@ -1040,9 +1355,12 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                           ),
                           controller.calendarioPeriodoUI?.habilitado==1?Container():
                           Positioned(
-                              bottom: 4,
-                              right: 4,
-                              child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
+                              bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                              right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                              child: Icon(Icons.block,
+                                color: AppTheme.redLighten1.withOpacity(0.8),
+                                size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                              )
                           ),
                         ],
                       ),
@@ -1051,9 +1369,15 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                     return InkWell(
                       onTap: () {
                         if(o.personaUi?.contratoVigente??true){
-                          offset = scrollController.offset;
-                          scrollController.jumpTo(0.0);
+                          //offset = scrollController.offset;
+                          //scrollController.jumpTo(0.0);
+                          //showDialogEvaluacionAlumno(controller, o);
                           controller.onClicEvaluacionRubrica(o);
+                          //if (_controller.isDismissed){
+                            _controller.forward();
+                          //} else if (_controller.isCompleted){
+                           // _controller.reverse();
+                          //}
                         }else{
                           _showControNoVigente(context, o.personaUi);
                         }
@@ -1074,9 +1398,12 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                           ),
                           controller.calendarioPeriodoUI?.habilitado==1?Container():
                           Positioned(
-                              bottom: 4,
-                              right: 4,
-                              child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
+                              bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                              right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                              child: Icon(Icons.block,
+                                color: AppTheme.redLighten1.withOpacity(0.8),
+                                size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                              )
                           ),
                         ],
                       ),
@@ -1093,15 +1420,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                       },
                       child:  Container(
                         constraints: BoxConstraints.expand(),
-                        decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: AppTheme.greyLighten2),
-                              right: BorderSide(color:  AppTheme.greyLighten2),
-                            ),
-                            color: _getColorAlumnoBloqueados(o.evaluacionUi?.personaUi, 0)
-                        ),
                         child: Container(
-                          child: Icon(Ionicons.globe_outline, size: 30, color:o.publicado? AppTheme.colorAccent:AppTheme.grey ),
+                          child: Icon(Ionicons.globe_outline,
+                              size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 30),
+                              color:o.publicado? AppTheme.colorAccent:AppTheme.grey
+                          ),
                         ),
                       ),
                     );
@@ -1114,17 +1437,24 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                   children: [
                     Container(
                         decoration: BoxDecoration(
-                            color: AppTheme.lightBlueAccent4,
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(16))
+                            color: HexColor(controller.cursosUi.color1),
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)))
                         )
                     ),
                     Container(
                         child: Center(
-                          child: Text('N°', style: TextStyle(color: AppTheme.white, fontWeight: FontWeight.w700),),
+                          child: Text('N°',
+                            style: TextStyle(
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12)
+                            )
+                          ),
                         ),
                         decoration: BoxDecoration(
                           border: Border(
-                            right: BorderSide(color: AppTheme.lightBlueAccent4),
+                            right: BorderSide(color: HexColor(controller.cursosUi.color2)),
                           ),
                         )
                     ),
@@ -1141,15 +1471,14 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
 
   }
 
-  Widget showTableRubroDetalle(EvaluacionIndicadorMultipleController controller, PersonaUi personaUi) {
-
+  Widget showTableRubroDetalle(EvaluacionIndicadorMultipleController controller, PersonaUi? personaUi, List<double> tablecolumnWidths) {
     return SingleChildScrollView(
       child: StickyHeadersTableNotExpandedCustom(
         cellDimensions: CellDimensions.variableColumnWidth(
-            stickyLegendHeight:45,
-            stickyLegendWidth: 25,
-            contentCellHeight: 45,
-            columnWidths: controller.tablecolumnWidths
+            stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
+            stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 120),
+            contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 55),
+            columnWidths: tablecolumnWidths
         ),
         //cellAlignments: CellAlignments.,
         scrollControllers: ScrollControllers() ,
@@ -1160,11 +1489,19 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           if(o is EvaluacionUi){
             return Container(
                 constraints: BoxConstraints.expand(),
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
                 child: Center(
                   child:  RotatedBox(
                     quarterTurns: -1,
-                    child: Text(" ", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
+                    child: Text(" ",
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                          color: AppTheme.darkText
+                      )
+                    ),
                   ),
                 ),
                 decoration: BoxDecoration(
@@ -1181,7 +1518,12 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
               onLongPress: () =>  controller.onClicEvaluacionAll(o, personaUi),
               child: Stack(
                 children: [
-                  _getTipoNotaCabeceraV2(o, controller)
+                  ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(i == controller.mapColumnList[personaUi]!.length-1 - 0?8:0)
+                      ),
+                      child: _getTipoNotaCabeceraV2(o, controller)
+                  ),
                 ],
               ),
             );
@@ -1195,8 +1537,10 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 11,
-                        color:  AppTheme.white
+                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                        color:  AppTheme.white,
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -1214,12 +1558,17 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                 Container(
                     decoration: BoxDecoration(
                         color: AppTheme.greyLighten2.withOpacity(0.5),
-                        borderRadius: BorderRadius.only(topRight: Radius.circular(8))
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)))
                     )
                 ),
                 Container(
                     child: Center(
-                      child: Text('%', style: TextStyle(color: AppTheme.darkerText, fontSize: 14),),
+                      child: Text('%',
+                        style: TextStyle(
+                            color: AppTheme.darkerText,
+                            fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                        )
+                      ),
                     ),
                     decoration: BoxDecoration(
                       border: Border(
@@ -1234,10 +1583,26 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
             return Container();
         },
         rowsTitleBuilder: (i) {
+
+          RubricaEvaluacionUi rubricaEvaluacionUi = controller.mapRowList[personaUi]![i];
           return  Container(
               constraints: BoxConstraints.expand(),
+              padding: EdgeInsets.only(
+                  left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                  right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)
+              ),
               child: Center(
-                child: Text((i+1).toString() + ".", style: TextStyle(color: AppTheme.greyDarken1, fontSize: 12)),
+                  child: Text(rubricaEvaluacionUi.titulo??"",
+                    textAlign: TextAlign.start,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                        color:  AppTheme.colorAccent,
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontWeight: FontWeight.w600,
+                    ),
+                  )
               ),
               decoration: BoxDecoration(
                   border: Border(
@@ -1255,14 +1620,17 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           if(o is RubricaEvaluacionUi){
             return Container(
                 constraints: BoxConstraints.expand(),
-                padding: EdgeInsets.only(left: 4, right: 4),
+                padding: EdgeInsets.only(
+                    left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                    right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)
+                ),
                 child: Center(
                     child: Text(o.titulo??"",
                       textAlign: TextAlign.start,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: 10,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
                           color:  AppTheme.colorAccent,
                           height: 1.2
                       ),
@@ -1294,9 +1662,12 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                   _getTipoNotaV2(o, controller, controller.mapCellListList[personaUi]?.length,i, j),
                   controller.calendarioPeriodoUI?.habilitado==1?Container():
                   Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
+                      bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                      child: Icon(Icons.block,
+                          color: AppTheme.redLighten1.withOpacity(0.8),
+                        size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                      )
                   ),
                 ],
               ),
@@ -1320,9 +1691,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                   ),
                   controller.calendarioPeriodoUI?.habilitado==1?Container():
                   Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
+                      bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                      child: Icon(Icons.block,
+                          color: AppTheme.redLighten1.withOpacity(0.8),
+                        size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14))
                   ),
                 ],
               ),
@@ -1343,15 +1716,25 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                         color: AppTheme.white
                     ),
                     child: Center(
-                      child: Text("${(o.formula_peso).toStringAsFixed(0)}%", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14,color:  AppTheme.greyDarken1 ),
+                      child: Text("${(o.formula_peso).toStringAsFixed(0)}%",
+                        textAlign: TextAlign.center,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
+                            color:  AppTheme.greyDarken1
+                        ),
                       ),
                     ),
                   ),
                   controller.calendarioPeriodoUI?.habilitado==1?Container():
                   Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
+                      bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
+                      child: Icon(Icons.block,
+                        color: AppTheme.redLighten1.withOpacity(0.8),
+                        size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                      )
                   ),
                 ],
               ),
@@ -1363,13 +1746,20 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           children: [
             Container(
                 decoration: BoxDecoration(
-                    color: AppTheme.colorPrimary,
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8))
+                    color: HexColor(controller.cursosUi.color1),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)))
                 )
             ),
             Container(
                 child: Center(
-                  child: Text('N°', style: TextStyle(color: AppTheme.white, fontSize: 11),),
+                  child: Text('Criterios',
+                    style: TextStyle(
+                        color: AppTheme.white,
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontWeight: FontWeight.w700,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12)
+                    )
+                  ),
                 ),
                 decoration: BoxDecoration(
                   border: Border(
@@ -1428,8 +1818,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         return Center(
           child: Text(evaluacionUi?.valorTipoNotaUi?.titulo??"-",
               style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: 14,
+                  fontFamily: AppTheme.fontTTNorms,
+                  fontWeight: FontWeight.w600,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
                   color: color
               )),
         );
@@ -1450,8 +1841,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           return Center(
             child: Text("-",
                 style: TextStyle(
-                    fontFamily: AppTheme.fontTTNormsMedium,
-                    fontSize: 14,
+                    fontFamily: AppTheme.fontTTNorms,
+                    fontWeight: FontWeight.w600,
+                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
                     color: AppTheme.black
                 )),
           );
@@ -1470,8 +1862,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         }
         return Center(
           child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-              fontFamily: AppTheme.fontTTNormsMedium,
-              fontSize: 14
+              fontFamily: AppTheme.fontTTNorms,
+              fontWeight: FontWeight.w600,
+              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
           ),),
         );
     }
@@ -1490,7 +1883,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
     Color? color_texto;
     Color color_borde;
 
-    if(positionX == 1){
+    if(positionX == 0){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#1976d2");
         color_texto = AppTheme.white;
@@ -1500,7 +1893,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         color_texto = HexColor("#1976d2");
         color_borde = AppTheme.greyLighten2;
       }
-    }else if(positionX == 2){
+    }else if(positionX == 1){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#388e3c");
         color_texto = AppTheme.white;
@@ -1510,7 +1903,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         color_texto =  HexColor("#388e3c");
         color_borde = AppTheme.greyLighten2;
       }
-    }else if(positionX == 3){
+    }else if(positionX == 2){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#FF6D00");
         color_texto = AppTheme.white;
@@ -1520,7 +1913,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         color_texto =  HexColor("#FF6D00");
         color_borde = AppTheme.greyLighten2;
       }
-    }else if(positionX == 4){
+    }else if(positionX == 3){
       if(evaluacionRubricaValorTipoNotaUi.toggle??false){
         color_fondo = HexColor("#D32F2F");
         color_texto = AppTheme.white;
@@ -1552,9 +1945,10 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         widget = Center(
           child: Text(evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.titulo??"",
               style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: 14,
-                  color: color_texto
+                  fontFamily: AppTheme.fontTTNorms,
+                  fontWeight: FontWeight.w900,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                  color: color_texto?.withOpacity((evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.7)
               )),
         );
         break;
@@ -1592,11 +1986,12 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         }
         widget = Center(
           child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-              fontFamily: AppTheme.fontTTNormsMedium,
-              fontSize: 14,
+              fontFamily: AppTheme.fontTTNorms,
+              fontWeight: FontWeight.w900,
+              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
               color: color_texto
           ),),
-        );;
+        );
         break;
     }
 
@@ -1653,8 +2048,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           child: Center(
             child: Text(valorTipoNotaUi?.titulo ?? "",
                 style: TextStyle(
-                    fontFamily: AppTheme.fontTTNormsMedium,
-                    fontSize: 16,
+                    fontFamily: AppTheme.fontTTNorms,
+                    fontWeight: FontWeight.w900,
+                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
                     color: color_texto
                 )),
           ),
@@ -1662,8 +2058,12 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         break;
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         nota = Container(
-          width: ver_detalle?35:45,
-          height: ver_detalle?35:45,
+          width: ver_detalle?
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 23):
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35),
+          height: ver_detalle?
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 23):
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35),
           child: CachedNetworkImage(
             imageUrl: valorTipoNotaUi?.icono ?? "",
             placeholder: (context, url) => Stack(
@@ -1696,8 +2096,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
             Container(
               margin: EdgeInsets.only(top: 4),
               child: Text("${valorTipoNotaUi?.valorNumerico?.toStringAsFixed(1)??"-"}", style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: 12,
+                  fontFamily: AppTheme.fontTTNorms,
+                  fontWeight: FontWeight.w900,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
                   color: color_texto
               ),),
             )
@@ -1706,7 +2107,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
     );
   }
 
-  void showDialogPresicion(EvaluacionIndicadorMultipleController controller, EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position, PersonaUi personaUi) {
+  void showDialogPresicion(EvaluacionIndicadorMultipleController controller, EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position, PersonaUi? personaUi) {
 
     showModalBottomSheet(
         shape:  RoundedRectangleBorder(
@@ -2121,4 +2522,6 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                   ),
                 )
   * */
+
+
 }

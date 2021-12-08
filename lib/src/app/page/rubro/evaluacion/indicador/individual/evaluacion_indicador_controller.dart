@@ -16,6 +16,7 @@ import 'package:ss_crmeducativo_2/src/domain/tools/calcular_evaluacion_proceso.d
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
 
 class EvaluacionIndicadorController extends Controller{
+  int? position;
   String? rubroEvaluacionId;
   CursosUi? cursosUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
@@ -35,15 +36,18 @@ class EvaluacionIndicadorController extends Controller{
   bool _showDialog = false;
   bool get showDialog => _showDialog;
   bool _modificado = false;
-  RubricaEvaluacionUi? rubricaEvaluacionUiCebecera;
-  RubricaEvaluacionUi? rubricaEvaluacionUiDetalle;
+  RubricaEvaluacionUi? rubroEvaluacionUi;
+  RubricaEvaluacionUi? rubricaEvaluacionUiCebecera2;
 
-  EvaluacionIndicadorController(this.rubroEvaluacionId, this.cursosUi, this.calendarioPeriodoUI, rubroRepo, configuracionRepo, httpDatosRepo): presenter = EvaluacionIndicadorPresenter(rubroRepo, configuracionRepo, httpDatosRepo);
+  EvaluacionIndicadorController(RubricaEvaluacionUi? rubroEvaluacionUi, this.cursosUi, this.calendarioPeriodoUI, rubroRepo, configuracionRepo, httpDatosRepo)
+      : presenter = EvaluacionIndicadorPresenter(rubroRepo, configuracionRepo, httpDatosRepo),
+        this.position = rubroEvaluacionUi?.position,
+        this.rubroEvaluacionId = rubroEvaluacionUi?.rubroEvaluacionId;
 
   @override
   void initListeners() {
-    this.rubricaEvaluacionUiCebecera = null;
-    this.rubricaEvaluacionUiDetalle = null;
+    this.rubroEvaluacionUi = null;
+    this.rubricaEvaluacionUiCebecera2 = null;
 
     presenter.getRubroEvaluacionOnError = (e){
 
@@ -61,13 +65,13 @@ class EvaluacionIndicadorController extends Controller{
 
   }
 
-  void initTable(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubricaEvaluacionUiCebecera){
-    this.rubricaEvaluacionUiCebecera = rubricaEvaluacionUiCebecera;
+  void initTable(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubroEvaluacionUi){
+    this.rubroEvaluacionUi = rubroEvaluacionUi;
 
-    RubricaEvaluacionUi? rubroEvaluacionUi = rubricaEvaluacionUiCebecera;
-     if((rubricaEvaluacionUiCebecera?.rubrosDetalleList?.isNotEmpty??false)){
-       rubricaEvaluacionUiDetalle = rubricaEvaluacionUiCebecera?.rubrosDetalleList?[0];//Agregar el detalle
-       rubroEvaluacionUi = rubricaEvaluacionUiDetalle;
+     if((rubroEvaluacionUi?.rubrosDetalleList?.isNotEmpty??false)){
+       this.rubricaEvaluacionUiCebecera2 = rubroEvaluacionUi?.rubrosDetalleList?[0];//Agregar el detalle
+     }else{
+       this.rubricaEvaluacionUiCebecera2 = rubroEvaluacionUi;
      }
 
 
@@ -100,30 +104,30 @@ class EvaluacionIndicadorController extends Controller{
       if(row is PersonaUi){
 
         //Comprobar si la cabecera tiene tiene evaluacion
-        EvaluacionUi? evaluacionUiCabecera = this.rubricaEvaluacionUiCebecera?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
+        EvaluacionUi? evaluacionUiCabecera = this.rubricaEvaluacionUiCebecera2?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
         if(evaluacionUiCabecera==null){
           evaluacionUiCabecera = EvaluacionUi();
-          evaluacionUiCabecera.rubroEvaluacionUi = rubricaEvaluacionUiCebecera;
+          evaluacionUiCabecera.rubroEvaluacionUi = rubricaEvaluacionUiCebecera2;
           evaluacionUiCabecera.alumnoId = row.personaId;
           row.soloApareceEnElCurso = true;
-          this.rubricaEvaluacionUiCebecera?.evaluacionUiList?.add(evaluacionUiCabecera);
+          this.rubricaEvaluacionUiCebecera2?.evaluacionUiList?.add(evaluacionUiCabecera);
         }
 
-        EvaluacionUi? evaluacionUi = rubroEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
+        EvaluacionUi? evaluacionUi = rubricaEvaluacionUiCebecera2?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
         //Una evaluacion vasia significa que el alumno no tiene evaluacion
         if(evaluacionUi==null){
           evaluacionUi = EvaluacionUi();
           row.soloApareceEnElCurso = true;
-          evaluacionUi.rubroEvaluacionUi = rubroEvaluacionUi;
+          evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUiCebecera2;
           evaluacionUi.alumnoId = row.personaId;
           rubroEvaluacionUi?.evaluacionUiList?.add(evaluacionUi);
         }
         evaluacionUi.personaUi = row;//se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
 
 
-        if(rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+        if(rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
 
-          for (ValorTipoNotaUi valorTipoNotaUi in rubroEvaluacionUi?.tipoNotaUi?.valorTipoNotaList??[]) {
+          for (ValorTipoNotaUi valorTipoNotaUi in rubricaEvaluacionUiCebecera2?.tipoNotaUi?.valorTipoNotaList??[]) {
             EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi = EvaluacionRubricaValorTipoNotaUi();
             evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi = rubroEvaluacionUi;
             evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi =  valorTipoNotaUi;
@@ -141,8 +145,8 @@ class EvaluacionIndicadorController extends Controller{
         cellList.add("comentario");
 
       }else{
-        if(rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
-          for (ValorTipoNotaUi valorTipoNotaUi in rubroEvaluacionUi?.tipoNotaUi?.valorTipoNotaList??[]) {
+        if(rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+          for (ValorTipoNotaUi valorTipoNotaUi in rubricaEvaluacionUiCebecera2?.tipoNotaUi?.valorTipoNotaList??[]) {
             cellList.add("");//Espacio
           }
         }else {
@@ -185,7 +189,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi);
-    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
+    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
   }
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, double nota) {
@@ -208,7 +212,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi);
-    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
+    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
   }
 
   onClicPrecision() {
@@ -236,7 +240,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(null);
-    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera);
+    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera2);
   }
 
   String getRangoNota(ValorTipoNotaUi? valorTipoNotaUi){
@@ -264,7 +268,7 @@ class EvaluacionIndicadorController extends Controller{
       showTodosPublicados();
       refreshUI();
       _modificado = true;
-      presenter.updateEvaluacion(rubricaEvaluacionUiCebecera, evaluacionPublicadoUi.evaluacionUi?.alumnoId);
+      presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionPublicadoUi.evaluacionUi?.alumnoId);
   }
 
   void showTodosPublicados(){
@@ -297,7 +301,7 @@ class EvaluacionIndicadorController extends Controller{
     }
     refreshUI();
     _modificado = true;
-    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera);
+    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera2);
   }
 
   void onClickCancelarEliminar() {
@@ -307,6 +311,7 @@ class EvaluacionIndicadorController extends Controller{
 
   void onClickEliminar() {
     _showDialogEliminar = true;
+    print("rubroEvaluacionUi: ${rubricaEvaluacionUiCebecera2?.rubroEvaluacionId}");
     refreshUI();
   }
 
@@ -325,7 +330,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(null);
-    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera);
+    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera2);
   }
 
   onClikShowDialogClearEvaluacion() {
@@ -342,8 +347,8 @@ class EvaluacionIndicadorController extends Controller{
     _showDialogEliminar = false;
     _showDialog = true;
     refreshUI();
-    await presenter.deleteRubroEvaluacion(rubricaEvaluacionUiCebecera);
-    await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubricaEvaluacionUiCebecera);
+    await presenter.deleteRubroEvaluacion(rubroEvaluacionUi);
+    await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubroEvaluacionUi);
 
   }
 
@@ -351,7 +356,7 @@ class EvaluacionIndicadorController extends Controller{
     if(_modificado){
       _showDialog = true;
       refreshUI();
-      await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubricaEvaluacionUiCebecera);
+      await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubroEvaluacionUi);
     }
 
     return _modificado;
@@ -360,7 +365,9 @@ class EvaluacionIndicadorController extends Controller{
 
 
   void _actualizarCabecera(PersonaUi? personaUi) {
-    CalcularEvaluacionProceso.actualizarCabecera(rubricaEvaluacionUiCebecera, personaUi);
+    if(rubroEvaluacionUi?.rubrosDetalleList?.isNotEmpty??false){
+      CalcularEvaluacionProceso.actualizarCabecera(rubroEvaluacionUi, personaUi);
+    }
   }
 
 

@@ -4,9 +4,11 @@ import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dar
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 class SesionListaController extends Controller{
   SesionListaPresenter presenter;
+  UsuarioUi? usuarioUi;
   CursosUi cursosUi;
   List<CalendarioPeriodoUI> _calendarioPeriodoList = [];
 
@@ -25,7 +27,7 @@ class SesionListaController extends Controller{
   bool get datosOffline => _datosOffline;
 
 
-  SesionListaController(this.cursosUi, configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo):
+  SesionListaController(this.usuarioUi, this.cursosUi, configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo):
       presenter = SesionListaPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo);
 
   @override

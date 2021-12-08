@@ -18,21 +18,26 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_sesion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_repositoy.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 class SesionView extends View{
+  UsuarioUi? usuarioUi;
   CursosUi cursosUi;
   SesionUi sesionUi;
+  UnidadUi unidadUi;
   CalendarioPeriodoUI calendarioPeriodoUI;
-  SesionView(this.cursosUi, this.sesionUi, this.calendarioPeriodoUI);
+  SesionView(this.usuarioUi, this.cursosUi, this.unidadUi, this.sesionUi, this.calendarioPeriodoUI);
 
   @override
-  _CursoViewState createState() => _CursoViewState(cursosUi, sesionUi, calendarioPeriodoUI);
+  _CursoViewState createState() => _CursoViewState(usuarioUi, cursosUi, unidadUi, sesionUi, calendarioPeriodoUI);
 
 }
 
@@ -44,7 +49,7 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
   late AnimationController animationController;
 
 
-  _CursoViewState(cursoUi, sesionUi, calendarioPeriodoUI) : super(SesionController(cursoUi, sesionUi, calendarioPeriodoUI, MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorRubroRepository()));
+  _CursoViewState(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI) : super(SesionController(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI, MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorRubroRepository(), MoorUnidadSesionRepository()));
 
   @override
   void initState() {
@@ -165,7 +170,7 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
                                     )
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 16),
+                                  margin: const EdgeInsets.only(top: 0, bottom: 8, left: 8, right: 16),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,

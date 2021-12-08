@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -19,13 +20,15 @@ import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 class SesionListaView extends View{
-  CursosUi cursosUi;
-  SesionListaView(this.cursosUi);
+  CursosUi? cursosUi;
+  UsuarioUi? usuarioUi;
+  SesionListaView(this.cursosUi, this.usuarioUi);
 
   @override
-  _CursoListaViewState createState() => _CursoListaViewState(cursosUi);
+  _CursoListaViewState createState() => _CursoListaViewState(cursosUi, usuarioUi);
 
 }
 
@@ -37,7 +40,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
   late AnimationController animationController;
   Function()? statetDialogSesion;
 
-  _CursoListaViewState(cursoUi) : super(SesionListaController(cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadSesionRepository()));
+  _CursoListaViewState(cursoUi, usuarioUi) : super(SesionListaController(usuarioUi, cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadSesionRepository()));
 
   @override
   void initState() {
@@ -163,7 +166,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                     )
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
+                                  margin: EdgeInsets.only(top: 1, bottom: 8, left: 8, right: 8),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -172,7 +175,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                       Padding(
                                         padding: EdgeInsets.only(left: 12, top: 8),
                                         child: Text(
-                                          'Sesión',
+                                          'Sesiones',
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
@@ -230,7 +233,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                     right: 0//16
                 ),
                 child: Padding(
-                  padding: EdgeInsets.only(left: 24, right: 48),
+                  padding: EdgeInsets.only(left: 16, right: 40),
                   child: Stack(
                     children: [
                       controller.calendarioPeriodoUI==null||(controller.calendarioPeriodoUI??0)==0?
@@ -294,7 +297,9 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
 
                             return Container(
                                 margin: EdgeInsets.only(
-                                bottom: controller.unidadUiDocenteList.length == index + 1 ?70: 30,
+                                bottom: controller.unidadUiDocenteList.length == index + 1 ?
+                                ColumnCountProvider.aspectRatioForWidthSesion(context, 70):
+                                ColumnCountProvider.aspectRatioForWidthSesion(context, 30),
                                 ),
                               child: Column(
                                 children: [
@@ -302,22 +307,34 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                     child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Padding(
-                                            padding: EdgeInsets.only( top: 8, bottom: 20),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
+                                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                            ),
+                                            margin: EdgeInsets.only(
+                                                top: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+                                                bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 20)
+                                            ),
+                                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthSesion(context, 16)),
                                             child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
                                               style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
+                                                  fontWeight: FontWeight.w700,
                                                   fontFamily: AppTheme.fontTTNorms
                                               ),
                                             ),
                                           ),
                                           cant_sesiones > 0?
                                           GridView.builder(
+                                              padding: EdgeInsets.only(top: 0,
+                                                  left: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+                                                  right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16)
+                                              ),
                                               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                                 crossAxisCount: columnas,
-                                                mainAxisSpacing: 24.0,
-                                                crossAxisSpacing: 24.0,
+                                                mainAxisSpacing: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
+                                                crossAxisSpacing: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
                                               ),
                                               physics: NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
@@ -325,7 +342,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                               itemBuilder: (context, index){
                                                 dynamic o = unidadItemList[index];
                                                 if(o is SesionUi){
-                                                  return getViewItemSesion(o, controller);
+                                                  return getViewItemSesion(unidadUi, o, controller);
                                                 }else {
                                                   return InkWell(
                                                     onTap: () async{
@@ -401,23 +418,34 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                         ]),
                                   ),
                                   if(isVisibleVerMas)
-                                    InkWell(
-                                      onTap: (){
-                                        controller.onClickVerMas(unidadUi);
-                                      },
-                                      child: Container(
-                                        margin: EdgeInsets.only(top: 18),
-                                        padding: EdgeInsets.all(10),
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                            color: AppTheme.white,
-                                            borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
-                                        ),
-                                        child: Center(
-                                          child: Text("${toogle?"Ver solo las últimas sesiones":"Ver más sesiones"}", style: TextStyle(color: AppTheme.black, fontSize: 12, fontWeight: FontWeight.w500),),
+                                   Padding(
+                                       padding: EdgeInsets.only(
+                                         left: 8,
+                                         right: 16
+                                       ),
+                                      child:  InkWell(
+                                        onTap: (){
+                                          controller.onClickVerMas(unidadUi);
+                                        },
+                                        child: Container(
+                                          margin: EdgeInsets.only(top: 18),
+                                          padding: EdgeInsets.all(10),
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              color: AppTheme.white,
+                                              borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
+                                          ),
+                                          child: Center(
+                                            child: Text("${toogle?"Ver solo las últimas sesiones":"Ver más sesiones"}",
+                                              style: TextStyle(
+                                                  color: AppTheme.black,
+                                                  fontSize: 12,
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  fontWeight: FontWeight.w500)),
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                   )
                                 ],
                               ),
                             );
@@ -515,10 +543,10 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
     return true;
   }
 
-  Widget getViewItemSesion(SesionUi sesionUi, SesionListaController controller) {
+  Widget getViewItemSesion(UnidadUi unidadUi, SesionUi sesionUi, SesionListaController controller) {
     return InkWell(
       onTap: (){
-        AppRouter.createRouteSesionPortalRouter(context, controller.cursosUi, sesionUi, controller.calendarioPeriodoUI);
+        AppRouter.createRouteSesionPortalRouter(context, controller.usuarioUi, controller.cursosUi, unidadUi, sesionUi, controller.calendarioPeriodoUI);
       },
       child: Stack(
         children: [
@@ -534,8 +562,8 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                 Padding(
                   padding: EdgeInsets.only(
                       left: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
-                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
-                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
+                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
                       bottom: 0),
                   child: Row(
                     children: [
@@ -543,6 +571,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                           child: Text("Sesión ${sesionUi.nroSesion??0}",
                               style: TextStyle(
                                   color: AppTheme.black,
+                                  fontFamily: AppTheme.fontTTNorms,
                                   fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
                                   fontWeight: FontWeight.w600
                               )
@@ -550,6 +579,8 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                       ),
                       Text(sesionUi.horas??"",
                           style: TextStyle(
+                              fontFamily: AppTheme.fontTTNorms,
+                              fontWeight: FontWeight.w600,
                             color: HexColor(sesionUi.colorSesion),
                             fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10)
                           )
@@ -566,6 +597,8 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                   ),
                   child: Text(sesionUi.fechaEjecucion??"",
                       style: TextStyle(
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w600,
                         color: HexColor(sesionUi.colorSesion),
                         fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10)
                       )
@@ -579,7 +612,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                       bottom: 0
                   ),
                   child: Divider(
-                    height: ColumnCountProvider.aspectRatioForWidthSesion(context, 1),
+                    height: ColumnCountProvider.aspectRatioForWidthSesion(context, 2),
                     color: HexColor(sesionUi.colorSesion),
                   ),
                 ),
@@ -591,9 +624,12 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                       bottom: 0),
                   child: Center(
                     child: Text(sesionUi.titulo??"",
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
+                          fontFamily: AppTheme.fontTTNorms,
                           color: AppTheme.black,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 12)
+                          fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 11)
                       )
                     ),
                   ),
@@ -602,8 +638,8 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
             ),
           ),
           Positioned(
-            bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
-            right: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
+            bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+            right: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
             child: Material(
               color:HexColor(sesionUi.colorSesion).withOpacity(0.8),
               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
@@ -626,9 +662,10 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                           right: ColumnCountProvider.aspectRatioForWidthSesion(context, 4)),
                       child: Text(sesionUi.estadoEjecucion??"",
                         style: TextStyle(
-                          fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10),
+                          fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 9),
                           color: HexColor(sesionUi.colorSesion).withOpacity(0.9),
-                          fontFamily: AppTheme.fontName,
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w700
                         ),)
                   ),
                 ),

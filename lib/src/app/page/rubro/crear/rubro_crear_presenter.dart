@@ -1,16 +1,18 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_peso_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/crear_local_rubro_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_forma_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_temas_criterio.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_tipo_evaluacion.dart';
@@ -18,7 +20,6 @@ import 'package:ss_crmeducativo_2/src/domain/usecase/get_tipo_nota.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/crear_server_rubro_evaluacion.dart';
 
 class RubroCrearPresenter extends Presenter{
-
   GetFormaEvaluacion _getFormaEvaluacion;
   late Function getFormaEvaluacionOnNext, getFormaEvaluacionOnError;
   GetTipoEvaluacion _getTipoEvaluacion;
@@ -28,6 +29,9 @@ class RubroCrearPresenter extends Presenter{
   GetTemaCriterios _getTemaCriterios;
   late Function getTemaCriteriosOnNext, getTemaCriteriosOnError;
   CrearServerRubroEvaluacion _saveRubroEvaluacion;
+  late Function saveRubroEvaluacionSucces, saveRubroEvaluacionSuccesError;
+  CrearLocalRubroEvaluacion _saveRubroEvalLocal;
+  Map<String, dynamic>? _dataBD;
 
   RubroCrearPresenter(RubroRepository rubroRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo):
       _getFormaEvaluacion = new GetFormaEvaluacion(rubroRepo),
@@ -35,6 +39,7 @@ class RubroCrearPresenter extends Presenter{
       _getTipoNota = new GetTipoNota(configuracionRepo, rubroRepo),
         _getTemaCriterios = new GetTemaCriterios(rubroRepo),
         _saveRubroEvaluacion = CrearServerRubroEvaluacion(configuracionRepo, rubroRepo, httpDatosRepo),
+        _saveRubroEvalLocal = CrearLocalRubroEvaluacion(configuracionRepo, rubroRepo),
         super();
 
   getFormaEvaluacion(){
@@ -62,9 +67,19 @@ class RubroCrearPresenter extends Presenter{
     _getTemaCriterios.execute(_GetTemaCriteriosCase(this), GetTemaCriteriosParms(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
   }
 
-  Future<SaveRubroEvaluacionResponse> save(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, String? tituloRubrica, FormaEvaluacionUi? formaEvaluacionUi, TipoEvaluacionUi? tipoEvaluacionUi, TipoNotaUi? tipoNotaUi, List<CriterioPesoUi> criterioPesoUiList, List<CriterioValorTipoNotaUi> criterioValorTipoNotaUiList, SesionUi? sesionUi) async{
-    var response = await _saveRubroEvaluacion.execute(SaveRubroEvaluacionParms(null, tituloRubrica, formaEvaluacionUi?.id, tipoEvaluacionUi?.id, tipoNotaUi?.tipoNotaId, calendarioPeriodoUI?.id, cursosUi?.silaboEventoId, cursosUi?.cargaCursoId, sesionUi?.sesionAprendizajeId, null, criterioPesoUiList, criterioValorTipoNotaUiList, tipoNotaUi));
-    return response;
+  Future<HttpStream?> save(RubricaEvaluacionUi? rubricaEvaluacionUi) async{
+    return await _saveRubroEvaluacion.execute(SaveRubroEvaluacionParms(rubricaEvaluacionUi), (response){
+      if(response.success){
+         saveRubroEvaluacionSucces();
+       }else {
+        saveRubroEvaluacionSuccesError(response.errorServidor, response.offline, response.errorInterno);
+       }
+      _dataBD = response.dataBD;
+    });
+  }
+
+  Future<void> saveLocal(RubricaEvaluacionUi? rubricaEvaluacionUi){
+    return _saveRubroEvalLocal.execute(CrearLocalRubroEvaluacionParms(rubricaEvaluacionUi, _dataBD));;
   }
 
 }

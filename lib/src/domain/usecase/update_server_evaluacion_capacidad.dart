@@ -19,8 +19,8 @@ class UpdateServerEvaluacionCompetencia {
     bool offline = false;
     try{
       List<Map<String, dynamic>?> mapList = [];
-      for(String rubroEvaluacionId in params.rubroEvaluacionIdList??[]){
-        Map<String, dynamic>? data = await repository.getRubroEvaluacionSerial(rubroEvaluacionId);
+      for(String? rubroEvaluacionId in params.rubroEvaluacionIdList??[]){
+        Map<String, dynamic>? data = await repository.getRubroEvaluacionIdSerial(rubroEvaluacionId);
         if(data != null) mapList.add(data);
       }
       print("mapList: ${mapList.length}");
@@ -29,7 +29,7 @@ class UpdateServerEvaluacionCompetencia {
 
         success = await httpDatosRepository.updateCompetenciaRubroFlutter(urlServidorLocal, georeferenciaId, usuarioId, mapList);
         if(success??false){
-          for(String rubroEvaluacionId in params.rubroEvaluacionIdList??[]){
+          for(String? rubroEvaluacionId in params.rubroEvaluacionIdList??[]){
             await repository.cambiarEstadoActualizado(rubroEvaluacionId);
           }
         }
@@ -44,7 +44,7 @@ class UpdateServerEvaluacionCompetencia {
 }
 
 class UpdateServerEvaluacionRubroParms{
-  List<String>? rubroEvaluacionIdList;
+  List<String?>? rubroEvaluacionIdList;
 
   UpdateServerEvaluacionRubroParms(
       this.rubroEvaluacionIdList);

@@ -61,11 +61,15 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/silabo_evento
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_alumno.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_alumno_archivo.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_eval_detalle.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_recurso_didactico.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_unidad.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipo_evaluacion_rubro.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipos.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipos_rubro.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/campotematico_sesion.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/competencia_sesion.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/desempenio_icd_sesion.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/rel_unidad_evento_tipo.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/sesion_evento.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/unidad_evento.dart';
@@ -81,7 +85,7 @@ part 'app_database.g.dart';
   CalendarioAcademico, Usuario, WebConfigs, Criterio, TipoEvaluacionRubro, TiposRubro, TipoNotaRubro, ValorTipoNotaRubro, RubroEvaluacionProceso, ArchivoRubro, EquipoEvaluacion,
   EvaluacionProceso, RubroCampotematico, RubroComentario, RubroEvalRNPFormula, ContactoDocente, CriterioRubroEvaluacion, Calendario, CalendarioListaUsuario, Evento, EventoPersona,
   ListaUsuarioDetalle, ListaUsuarios, PersonaEvento, RelacionesEvento, TipoEvento, UsuarioEvento, UnidadEvento, SesionEvento, RelUnidadEvento, RubroUpdateServidor, CalendarioPeriodoCargaCurso,
-  TipoNotaResultado, ValorTipoNotaResultado, Tarea, TareaUnidad, TareaAlumno, TareaAlumnoArchivo, TareaRecursoDidactico, EventoAdjunto])
+  TipoNotaResultado, ValorTipoNotaResultado, Tarea, TareaUnidad, TareaAlumno, TareaAlumnoArchivo, TareaRecursoDidactico, EventoAdjunto, TareaEvalDetalle, CompetenciaSesion, DesempenioIcdSesion, CampotematicoSesion])
 class AppDataBase extends _$AppDataBase {
   @override
   int get schemaVersion => 1;

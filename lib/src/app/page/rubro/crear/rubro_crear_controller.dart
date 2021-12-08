@@ -1,3 +1,4 @@
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
@@ -10,23 +11,28 @@ import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tema_criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/crear_server_rubro_evaluacion.dart';
 
 class RubroCrearController extends Controller{
-
+  bool modoOnline;//se usa cuando se crea un rubro desde la tarea
   RubroCrearPresenter presenter;
   CursosUi? cursosUi;
   CalendarioPeriodoUI? calendarioPeriodoUI;
   SesionUi? sesionUi;
-  RubricaEvaluacionUi? rubroUi;
+  RubricaEvaluacionUi? rubricaEvaluacionUi;
+  TareaUi? tareaUi;
+  String? newRubroEvalid = IdGenerator.generateId();
   String? _mensaje = null;
-  bool _showDialog = false;
-  bool get showDialog => _showDialog;
+  bool _showGuardarProgress = false;
+  bool get showGuardarProgress => _showGuardarProgress;
   String? get mensaje => _mensaje;
   String?  _tituloRubrica = null;
   String? get tituloRubrica => _tituloRubrica;
@@ -65,10 +71,27 @@ class RubroCrearController extends Controller{
   String? get tituloCriterio => _tituloCriterio;
   List<TemaCriterioUi> _temaCriterioEditList = [];
   List<TemaCriterioUi> get temaCriterioEditList => _temaCriterioEditList;
-  RubroCrearController(this.cursosUi, this.calendarioPeriodoUI, this.rubroUi, this.sesionUi, rubroRepo, usuarioRepo, httpDatosRepo): presenter = new RubroCrearPresenter(rubroRepo,usuarioRepo, httpDatosRepo);
+  bool? get errorServidor => _errorServidor;
+  bool? _errorServidor = false;
+  bool? get errorConexion => _errorConexion;
+  bool? _errorConexion = false;
+  int get countReintentos => _countReintentos;
+  int _countReintentos =0;
+  bool get cerraryactualizar => _cerraryactualizar;
+  bool _cerraryactualizar = false;
+  bool get dialogGuardarLocal => _dialogGuardarLocal;
+  bool _dialogGuardarLocal = false;
+  bool get dialogReintentar => _dialogReintentar;
+  bool _dialogReintentar = false;
+  HttpStream? _cancelSaveRubro = null;
+
+      RubroCrearController(this.cursosUi, this.calendarioPeriodoUI, this.rubricaEvaluacionUi, this.sesionUi, this.tareaUi, this.modoOnline,rubroRepo, usuarioRepo, httpDatosRepo): presenter = new RubroCrearPresenter(rubroRepo,usuarioRepo, httpDatosRepo);
 
   @override
   void initListeners() {
+    print("tareaId ${tareaUi}");
+    print("sesionAprendizajeId ${sesionUi?.sesionAprendizajeId}");
+
     presenter.getFormaEvaluacionOnNext = (List<FormaEvaluacionUi> formaEvaluacionUiList, FormaEvaluacionUi? formaEvaluacionUi){
       _formaEvaluacionUiList = formaEvaluacionUiList;
       _formaEvaluacionUi = formaEvaluacionUi;
@@ -125,6 +148,33 @@ class RubroCrearController extends Controller{
       _competenciaUiEnfoqueList.clear();
       refreshUI();
     };
+
+    presenter.saveRubroEvaluacionSucces = (){
+      _cerraryactualizar = true;
+      refreshUI();
+    };
+
+    presenter.saveRubroEvaluacionSuccesError = (bool errorServidor, bool errorConexion, bool errorInterno){
+      _showGuardarProgress = false;
+      _errorConexion = errorConexion;
+      _errorServidor = errorServidor;
+      if(!modoOnline){ // modo hecho especialmente para la tarea por que es online
+        _dialogGuardarLocal = false;
+        _dialogReintentar = true;
+      }else{
+        if(countReintentos<2){
+          _dialogGuardarLocal = false;
+          _dialogReintentar = true;
+        }else{
+          _dialogGuardarLocal = true;
+          _dialogReintentar = false;
+        }
+      }
+
+
+      refreshUI();
+    };
+
 
   }
 
@@ -207,6 +257,7 @@ class RubroCrearController extends Controller{
     presenter.getTipoEvaluacion();
     presenter.getTipoNota();
     presenter.getTemaCriterios(cursosUi, calendarioPeriodoUI);
+    _tituloRubrica = tareaUi?.titulo;
     print("getFormaEvaluacion");
     super.onInitState();
   }
@@ -215,35 +266,35 @@ class RubroCrearController extends Controller{
     _mensaje = null;
   }
 
-  Future<int> onSave()async {
+  void onSave()async {
     if((_tituloRubrica??"").isEmpty){
       _mensaje = "Ingrese el título de la rúbrica";
       refreshUI();
-      return 0;
+      return;
     }
 
     if(_formaEvaluacionUi==null){
       _mensaje = "Forma evaluación vacío";
       refreshUI();
-      return 0;
+      return;
     }
 
     if(_tipoEvaluacionUi==null){
       _mensaje = "Tipo evaluación vacío";
       refreshUI();
-      return 0;
+      return;
     }
 
     if(_tipoEvaluacionUi==null) {
       _mensaje = "Promedio de logro vacío";
       refreshUI();
-      return 0;
+      return;
     }
 
    if(_criterioUiList.isEmpty){
      _mensaje = "No ha seleccionado criterios";
      refreshUI();
-     return 0;
+     return;
    }
    /*Vasta que un indicador este selecionado para guardar*/
     /*Esta validacion puede cambiar privio analisis*/
@@ -253,15 +304,15 @@ class RubroCrearController extends Controller{
      if(camposTemaSelecionado)break;
    }
     if(!camposTemaSelecionado){
-      _mensaje = "No ha seleccionado campo Acción";
+      _mensaje = "No ha seleccionado campo acción";
       refreshUI();
-      return 0;
+      return;
     }
 
     if(!validarPeso(_tableTipoNotaCells)){
       _mensaje = "El peso_criterio de los inidicadores erroneos";
       refreshUI();
-      return 0;
+      return;
     }
 
     List<CriterioValorTipoNotaUi> criterioValorTipoNotaUiList = [];
@@ -276,19 +327,27 @@ class RubroCrearController extends Controller{
        }
     }
 
-    _showDialog = true;
-    refreshUI();
-    SaveRubroEvaluacionResponse? response = await presenter.save(cursosUi, calendarioPeriodoUI, tituloRubrica, formaEvaluacionUi, tipoEvaluacionUi, tipoNotaUi, criterioPesoUiList, criterioValorTipoNotaUiList, sesionUi);
-    _showDialog = false;
+    _showGuardarProgress = true;
+    _errorConexion = false;
+    _errorServidor = false;
     refreshUI();
 
-    if(response.success??false){
-      return 1;
-    }else if(response.offline){
-      return -2;
-    }else{
-      return -1;
-    }
+    rubricaEvaluacionUi = RubricaEvaluacionUi();
+    rubricaEvaluacionUi?.rubroEvaluacionId = newRubroEvalid;
+    rubricaEvaluacionUi?.titulo = tituloRubrica;
+    rubricaEvaluacionUi?.formaEvaluacionId = formaEvaluacionUi?.id;
+    rubricaEvaluacionUi?.tipoEvaluacionId = tipoEvaluacionUi?.id;
+    rubricaEvaluacionUi?.tipoNotaUi = tipoNotaUi;
+    rubricaEvaluacionUi?.criterioPesoUiList = criterioPesoUiList;
+    rubricaEvaluacionUi?.criterioValorTipoNotaUiList = criterioValorTipoNotaUiList;
+    rubricaEvaluacionUi?.sesionAprendizajeId = sesionUi?.sesionAprendizajeId;
+    rubricaEvaluacionUi?.tareaUi = tareaUi;
+    rubricaEvaluacionUi?.calendarioPeriodoId = calendarioPeriodoUI?.id;
+    rubricaEvaluacionUi?.silaboEventoId = cursosUi?.silaboEventoId;
+    rubricaEvaluacionUi?.cargaCursoId = cursosUi?.cargaCursoId;
+
+    _cancelSaveRubro = await presenter.save(rubricaEvaluacionUi);
+
   }
 
   void clearTitulo() {
@@ -495,16 +554,47 @@ class RubroCrearController extends Controller{
         if(toogle && !(capacidadUi.toogle??false)) onClickCapacidad(capacidadUi, competenciaUi);
       }
     }
-
-
-
-
   }
 
   void retornoDialogCamposAccion() {
     iniciarTablaTipoNota();
     refreshUI();
   }
+
+  void onClickGuardarVerMasTarde() async{
+    _cerraryactualizar = true;
+    _cancelSaveRubro?.cancel();
+    await presenter.saveLocal(rubricaEvaluacionUi);
+    refreshUI();
+  }
+
+  void cerrarProgress() {
+    _cancelSaveRubro?.cancel();
+    _showGuardarProgress = false;
+    refreshUI();
+  }
+
+  void onClickAtrasReintentar() {
+    _dialogReintentar = false;
+    refreshUI();
+  }
+
+  void onClickReintentar() {
+    _countReintentos++;
+    _dialogReintentar = false;
+    onSave();
+  }
+
+  void onClickAtrasGuardarLocal() {
+    _dialogGuardarLocal = false;
+    _countReintentos=0;
+    refreshUI();
+  }
+
+  void clearCerraryactualizar() {
+    _cerraryactualizar = false;
+  }
+
 
 
 

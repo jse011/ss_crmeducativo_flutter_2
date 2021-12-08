@@ -32,6 +32,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 class AppRouter {
   AppRouter._();
 
@@ -64,10 +66,13 @@ class AppRouter {
 
   static dynamic? generateRoute(RouteSettings settings) {
     if (settings.name == CURSO) {
-      final CursosUi cursosUi = settings.arguments as CursosUi;
+      final Map arguments = settings.arguments as Map;
       return MaterialPageRoute(
         builder: (context) {
-          return CursoView(cursosUi);
+          UsuarioUi? usuarioUi = arguments['usuarioUi'];
+          CursosUi cursosUi = arguments['cursoUi'];
+
+          return CursoView(cursosUi, usuarioUi);
         },
       );
     }else if (settings.name == RUBRO) {
@@ -86,6 +91,8 @@ class AppRouter {
           RubricaEvaluacionUi? rubroUi = null;
           CalendarioPeriodoUI? calendarioPeriodoUI = null;
           SesionUi? sesionUi = null;
+          TareaUi? tareaUi = null;
+          bool online = false;
           if(arguments.containsKey('rubroUi')){
             rubroUi  = arguments['rubroUi'];
           }
@@ -95,54 +102,69 @@ class AppRouter {
           if(arguments.containsKey('sesionUi')){
             sesionUi = arguments['sesionUi'];
           }
-          return RubroCrearView(cursosUi, calendarioPeriodoUI, rubroUi, sesionUi);
+          if(arguments.containsKey('tareaUi')){
+            tareaUi = arguments['tareaUi'];
+          }
+          if(arguments.containsKey('online')){
+            online = arguments['online'];
+          }
+          return RubroCrearView(cursosUi, calendarioPeriodoUI, rubroUi, sesionUi, tareaUi, online);
         },
       );
     }else if(settings.name == TAREA){
-      final CursosUi cursosUi = settings.arguments as CursosUi;
+      final Map arguments = settings.arguments as Map;
       return MaterialPageRoute(
         builder: (context) {
-          return TareaView2(cursosUi);
+          UsuarioUi? usuarioUi = arguments['usuarioUi'];
+          CursosUi cursosUi = arguments['cursoUi'];
+          return TareaView2(cursosUi, usuarioUi);
         },
       );
     }else if(settings.name == TAREA_CREAR){
       final Map arguments = settings.arguments as Map;
       return MaterialPageRoute(
         builder: (context) {
+          UsuarioUi? usuarioUi = arguments['usuarioUi'];
           CursosUi? cursosUi = arguments['cursoUi'];
           TareaUi? tareaUi = arguments['tareaUi'];
           CalendarioPeriodoUI? calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
-          int? unidadEventoId = arguments["unidadEventoId"];
-          int? sesionAprendizajeId = arguments["sesionAprendizajeId"];
-          return TareaCrearView(cursosUi, calendarioPeriodoUI, tareaUi, unidadEventoId, sesionAprendizajeId);
+          UnidadUi? unidadUi = arguments["unidadUi"];
+          SesionUi? sesionUi = arguments["sesionAprendizajeId"];
+          return TareaCrearView(usuarioUi, cursosUi, calendarioPeriodoUI, tareaUi, unidadUi, sesionUi);
         },
       );
     }else if(settings.name == SESION_LISTA){
-      final CursosUi cursosUi = settings.arguments as CursosUi;
+      final Map arguments = settings.arguments as Map;
       return MaterialPageRoute(
         builder: (context) {
-          return SesionListaView(cursosUi);
+          UsuarioUi? usuarioUi = arguments['usuarioUi'];
+          CursosUi? cursosUi = arguments['cursoUi'];
+          return SesionListaView(cursosUi, usuarioUi);
         },
       );
     }else if(settings.name == SESION_PORTAL){
       final Map arguments = settings.arguments as Map;
       return MaterialPageRoute(
         builder: (context) {
+          UsuarioUi usuarioUi = arguments['usuarioUi'];
           CursosUi cursosUi = arguments['cursoUi'];
+          UnidadUi unidadUi = arguments['unidadUi'];
           SesionUi sesionUi = arguments['sesionUi'];
           CalendarioPeriodoUI calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
-          return SesionView(cursosUi, sesionUi, calendarioPeriodoUI);
+          return SesionView(usuarioUi, cursosUi, unidadUi, sesionUi, calendarioPeriodoUI);
         },
       );
     }else if(settings.name == TAREA_PORTAL){
       final Map arguments = settings.arguments as Map;
       return MaterialPageRoute(
         builder: (context) {
+          UsuarioUi? usuarioUi = arguments['usuarioUi'];
           CursosUi? cursosUi = arguments['cursoUi'];
           TareaUi? tareaUi = arguments['tareaUi'];
           CalendarioPeriodoUI? calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
+          UnidadUi? unidadUi = arguments["unidadUi"];
           SesionUi? sesionUi = arguments["sesionUi"];
-          return PortalTareaView2(cursosUi, tareaUi, calendarioPeriodoUI, sesionUi);
+          return PortalTareaView2(usuarioUi, cursosUi, tareaUi, calendarioPeriodoUI, unidadUi, sesionUi);
         },
       );
     }else if(settings.name == EVALUACION_CAPACIDAD){
@@ -181,12 +203,12 @@ class AppRouter {
       return MaterialPageRoute(
         builder: (context) {
           CursosUi cursosUi = arguments['cursoUi'];
-          String? rubroEvaluacionId = null;
-          if(arguments.containsKey('rubroEvaluacionId')){
-            rubroEvaluacionId  = arguments['rubroEvaluacionId'];
+          RubricaEvaluacionUi? rubricaEvaluacionUi = null;
+          if(arguments.containsKey('rubricaEvaluacionUi')){
+            rubricaEvaluacionUi  = arguments['rubricaEvaluacionUi'];
           }
           CalendarioPeriodoUI calendarioPeriodoUI = arguments['calendarioPeriodoUI'];
-          return EvaluacionIndicadorView(rubroEvaluacionId, cursosUi, calendarioPeriodoUI);
+          return EvaluacionIndicadorView(rubricaEvaluacionUi, cursosUi, calendarioPeriodoUI);
         },
       );
     }else if(settings.name == RESULTADO){
@@ -263,10 +285,10 @@ class AppRouter {
   }
 
 
-  static void createRouteCursosRouter(BuildContext context, CursosUi cursosUi) {
+  static void createRouteCursosRouter(BuildContext context, UsuarioUi? usuarioUi, CursosUi cursosUi) {
     Navigator.pushNamed(context,
         CURSO,
-        arguments: cursosUi
+        arguments: {'usuarioUi': usuarioUi, 'cursoUi': cursosUi}
     );
   }
 
@@ -276,29 +298,29 @@ class AppRouter {
         arguments: cursosUi
     );
   }
-  static void createRouteSesionListaRouter(BuildContext context, CursosUi cursosUi) {
+  static void createRouteSesionListaRouter(BuildContext context, UsuarioUi? usuarioUi, CursosUi cursosUi) {
     Navigator.pushNamed(context,
         SESION_LISTA,
-        arguments: cursosUi
+        arguments:  {'usuarioUi': usuarioUi, 'cursoUi': cursosUi}
     );
   }
-  static void createRouteSesionPortalRouter(BuildContext context, CursosUi cursosUi, SesionUi sesionUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
+  static void createRouteSesionPortalRouter(BuildContext context, UsuarioUi? usuarioUi, CursosUi? cursosUi, UnidadUi? unidadUi, SesionUi? sesionUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
     Navigator.pushNamed(context,
         SESION_PORTAL,
-        arguments:  {'cursoUi': cursosUi, 'sesionUi':sesionUi, "calendarioPeriodoUI": calendarioPeriodoUI }
+        arguments:  {'usuarioUi': usuarioUi, 'cursoUi': cursosUi, 'unidadUi': unidadUi,'sesionUi':sesionUi, "calendarioPeriodoUI": calendarioPeriodoUI }
     );
   }
-  static Future<dynamic> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, SesionUi? sesionUi, RubricaEvaluacionUi? rubroUi) async{
+  static Future<dynamic> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, SesionUi? sesionUi,TareaUi? tareaUi ,RubricaEvaluacionUi? rubroUi, bool online) async{
    return await Navigator.pushNamed(context,
         RUBROCREAR,
-        arguments: {'cursoUi': cursosUi, 'calendarioPeriodoUI':calendarioPeriodoUI ,'rubroUi': rubroUi, 'sesionUi': sesionUi}
+        arguments: {'cursoUi': cursosUi, 'calendarioPeriodoUI':calendarioPeriodoUI ,'rubroUi': rubroUi, 'sesionUi': sesionUi, 'tareaUi':tareaUi, 'online': online}
     );
   }
 
-  static createRouteTareaRouter(BuildContext context, CursosUi cursosUi) {
+  static createRouteTareaRouter(BuildContext context, UsuarioUi? usuarioUi, CursosUi cursosUi) {
     Navigator.pushNamed(context,
         TAREA,
-        arguments: cursosUi
+        arguments: {'usuarioUi': usuarioUi, 'cursoUi': cursosUi}
     );
   }
 
@@ -323,26 +345,29 @@ class AppRouter {
     );
   }
 
-  static Future<dynamic> createRouteEvaluacionSimple(BuildContext context, CursosUi? cursosUi, String? rubroEvaluacionId, CalendarioPeriodoUI? calendarioPeriodoUI) async{
+  static Future<dynamic> createRouteEvaluacionSimple(BuildContext context, CursosUi? cursosUi, RubricaEvaluacionUi? rubricaEvaluacionUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
     return await Navigator.pushNamed(context,
         EVALUACION_SIMPLE,
-        arguments: {'cursoUi': cursosUi, 'rubroEvaluacionId': rubroEvaluacionId, 'calendarioPeriodoUI':  calendarioPeriodoUI}
+        arguments: {'cursoUi': cursosUi, 'rubricaEvaluacionUi': rubricaEvaluacionUi, 'calendarioPeriodoUI':  calendarioPeriodoUI}
     );
   }
 
-  static Future<dynamic> createRouteTareaPortalRouter(BuildContext context, CursosUi? cursosUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI, SesionUi? sesionUi) async{
+  static Future<dynamic> createRouteTareaPortalRouter(BuildContext context, UsuarioUi? usuarioUi, CursosUi? cursosUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI, UnidadUi? unidadUi, SesionUi? sesionUi) async{
+    print("createRouteTareaPortalRouter: ${unidadUi}");
     return await Navigator.pushNamed(context,
         TAREA_PORTAL,
-        arguments:  {'cursoUi': cursosUi, 'tareaUi':tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI, 'sesionUi': sesionUi }
+        arguments:  {'unidadUi': unidadUi, 'usuarioUi': usuarioUi, 'cursoUi': cursosUi, 'tareaUi':tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI, 'sesionUi': sesionUi }
     );
   }
 
-  static Future<dynamic> createRouteTareaCrearRouter(BuildContext context, CursosUi? cursosUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI, int? unidadEventoId, int? sesionAprendizajeId) async{
+  static Future<dynamic> createRouteTareaCrearRouter(BuildContext context, UsuarioUi? usuarioUi,CursosUi? cursosUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI, UnidadUi? unidadUi, SesionUi? sesionUi) async{
+    print("createRouteTareaCrearRouter: ${unidadUi}");
 
     return await Navigator.pushNamed(context,
         TAREA_CREAR,
-        arguments:  {'cursoUi': cursosUi, 'tareaUi': tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI, "unidadEventoId": unidadEventoId, "sesionAprendizajeId": sesionAprendizajeId }
+        arguments:  {'usuarioUi': usuarioUi,'cursoUi': cursosUi, 'tareaUi': tareaUi, 'calendarioPeriodoUI': calendarioPeriodoUI, "unidadUi": unidadUi, "sesionUi": sesionUi }
     );
+
   }
 
   static createRouteResultadoRouter(BuildContext context, CursosUi cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) {

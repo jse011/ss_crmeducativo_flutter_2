@@ -19,6 +19,13 @@ class SaveTareaDocente {
       try{
         Map<String, dynamic> data =  repository.getTareaDosenteSerial(tareaUi, usuarioId);
         success = await _httpDatosRepository.saveTareaDocente(urlServidorLocal, data);
+        if(success??false){
+          bool? sucess = await _httpDatosRepository.saveTareaDocenteFlutter(urlServidorLocal, data);
+          print("sucess:) ${sucess}");
+          if(sucess??false){
+            await repository.saveTareaDocenteSerial(data);
+          }
+        }
       }catch(e){
         offline = true;
       }

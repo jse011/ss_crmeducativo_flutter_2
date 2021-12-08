@@ -8,9 +8,9 @@ class UpdateEvaluacion {
   ConfiguracionRepository configuracionRepository;
   UpdateEvaluacion(this.repository, this.configuracionRepository);
 
-  void execute(RubricaEvaluacionUi? rubricaEvaluacionUi, int? alumnoId) async {
+  Future<void> execute(RubricaEvaluacionUi? rubricaEvaluacionUi, int? alumnoId) async {
     int usuarioId = await configuracionRepository.getSessionUsuarioId();
-    await repository.updateEvaluacion(rubricaEvaluacionUi, alumnoId, usuarioId);
+    return repository.updateEvaluacion(rubricaEvaluacionUi, alumnoId, usuarioId);
   }
 
 }

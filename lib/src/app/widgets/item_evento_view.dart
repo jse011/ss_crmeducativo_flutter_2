@@ -79,12 +79,12 @@ class _ItemEventoState extends State<ItemEventoView>{
                          },
                          child: Container(
                            padding: EdgeInsets.only(
-                               left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16) ,
-                               right: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16),
-                               top: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8),
-                               bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8)),
+                               left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                               right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                               top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                               bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
                            decoration: BoxDecoration(
-                               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,6))),
+                               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
                                color: HexColor("#71bb74")
                            ),
                            alignment: Alignment.center,
@@ -92,8 +92,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                              mainAxisAlignment: MainAxisAlignment.center,
                              crossAxisAlignment: CrossAxisAlignment.center,
                              children: [
-                               Icon(Icons.edit ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,15), ),
-                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,2)),),
+                               Icon(Icons.edit ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,15), ),
+                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
                                FittedBox(
                                  fit: BoxFit.scaleDown,
                                  child: Text("Editar",
@@ -102,7 +102,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                        fontWeight: FontWeight.w500,
                                        letterSpacing: 0.5,
                                        color:AppTheme.white,
-                                       fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,11),
+                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,11),
                                      )),
                                ),
                              ],
@@ -110,19 +110,19 @@ class _ItemEventoState extends State<ItemEventoView>{
                          ),
                        ),
                        Padding(padding: EdgeInsets.only(
-                           left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16)
+                           left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
                        )),
                        InkWell(
                          onTap: ()=> widget.onClickEliminar?.call(widget.eventoUi),
                          child: Container(
                            padding: EdgeInsets.only(
-                               left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16) ,
-                               right: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,16),
-                               top: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8),
-                               bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8)
+                               left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                               right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                               top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                               bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)
                            ),
                            decoration: BoxDecoration(
-                               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,6))),
+                               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
                                color: HexColor("#71bb74")
                            ),
                            alignment: Alignment.center,
@@ -130,8 +130,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                              mainAxisAlignment: MainAxisAlignment.center,
                              crossAxisAlignment: CrossAxisAlignment.center,
                              children: [
-                               Icon(Ionicons.trash ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,14)),
-                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,2)),),
+                               Icon(Ionicons.trash ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,14)),
+                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
                                FittedBox(
                                  fit: BoxFit.scaleDown,
                                  child: Text("Elimnar",
@@ -140,7 +140,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                        fontWeight: FontWeight.w500,
                                        letterSpacing: 0.5,
                                        color:AppTheme.white,
-                                       fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,11),
+                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,11),
                                      )),
                                ),
                              ],
@@ -148,7 +148,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                          ),
                        ),
                        Padding(padding: EdgeInsets.only(
-                           left: ColumnCountProvider.aspectRatioForWidthButtonPortalTarea(context,8)
+                           left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)
                        )),
                      ],
                    ),
@@ -179,7 +179,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                            Container(
                              margin: EdgeInsets.only(
                                  top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
-                                 left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
+                                 left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
                                  right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
                                  bottom: 0),
                              child: CachedNetworkImage(
@@ -187,8 +187,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                                  imageUrl: widget.eventoUi?.fotoEntidad??'',
                                  errorWidget: (context, url, error) => Container(),
                                  imageBuilder: (context, imageProvider) => Container(
-                                     height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 40),
-                                     width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 40),
+                                     height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
+                                     width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
                                      decoration: BoxDecoration(
                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 50))),
                                        image: DecorationImage(
@@ -214,17 +214,21 @@ class _ItemEventoState extends State<ItemEventoView>{
                                          maxLines: 1,
                                          overflow: TextOverflow.ellipsis,
                                          style: TextStyle(
-                                             fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 14),
+                                             fontFamily: AppTheme.fontTTNorms,
+                                             fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
+                                             fontWeight: FontWeight.w500,
                                              color: AppTheme.darkText
                                          )
                                      ),
                                      Padding(
-                                         padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 2))
+                                         padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 1))
                                      ),
                                      Text('${widget.eventoUi?.rolEmisor??""} ${(widget.eventoUi?.nombreFechaPublicacion??"").isNotEmpty?" - " + (widget.eventoUi?.nombreFechaPublicacion??""): ""}',
                                          maxLines: 1,
                                          overflow: TextOverflow.ellipsis,
                                          style: TextStyle(
+                                             fontFamily: AppTheme.fontTTNorms,
+                                             fontWeight: FontWeight.w700,
                                              fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10),
                                              color: AppTheme.lightText)
                                      )
@@ -250,7 +254,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                            style: TextStyle(
                              fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 14),
                              color: AppTheme.darkText,
-                             fontFamily: AppTheme.fontName,
+                             fontWeight: FontWeight.w500,
+                             fontFamily: AppTheme.fontTTNorms,
                            )
                        ),
                      ),
@@ -264,7 +269,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                          child: Linkify(
                            text: '${widget.eventoUi?.descripcion}',
                            style: TextStyle(
-                               fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
+                               fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 14),
                                color: AppTheme.darkText,
                                fontWeight: FontWeight.w300,
                                height: 1.5),
@@ -292,6 +297,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                Text("Encuesta: ",  style: TextStyle(
                                    fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
                                    color: HexColor("#5588AD"),
+                                   fontFamily: AppTheme.fontTTNorms,
                                    fontWeight: FontWeight.w700
                                ),),
                                Expanded(
@@ -306,6 +312,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                        style: TextStyle(
                                            fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
                                            color: HexColor("439EF2"),
+                                           fontFamily: AppTheme.fontTTNorms,
                                            fontWeight: FontWeight.w400
                                        )
                                        ,),
@@ -350,7 +357,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                                megusta += "1k me gusta" ;
                              }
                              return Text(megusta, style: TextStyle(
-                                 fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10),
+                                 fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 11),
+                                 fontFamily: AppTheme.fontTTNorms,
                                  color: AppTheme.darkText
                              ));
                            }(),
@@ -360,7 +368,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                            Text(widget.eventoUi?.nombreEntidad??'',
                              maxLines: 1,
                              overflow: TextOverflow.ellipsis,
-                             style: TextStyle( fontSize: 12, color: AppTheme.darkText, fontStyle: FontStyle.italic),),
+                             style: TextStyle( fontSize: 11, fontFamily: AppTheme.fontTTNorms, color: AppTheme.darkText,fontWeight: FontWeight.w500, fontStyle: FontStyle.italic),),
                            Padding(padding: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16)))
                          ],
                        ),
@@ -378,26 +386,37 @@ class _ItemEventoState extends State<ItemEventoView>{
                          Material(
                            color: Colors.transparent,
                            child: Container(
-                             padding: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 0),
+                             padding: const EdgeInsets.only(top: 0, left: 0, right: 0, bottom: 0),
                              height: 36,
                              child: (){
                                if(widget.eventoUi?.tipoEventoUi?.tipo != EventoIconoEnumUI.AGENDA){
                                  return InkWell(
+                                   focusColor: Colors.transparent,
+                                   highlightColor: Colors.transparent,
+                                   hoverColor: Colors.transparent,
+                                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                   splashColor: AppTheme.nearlyDarkBlue.withOpacity(0.2),
                                    onTap: () => widget.onClickMegusta?.call(widget.eventoUi),
                                    child: Row(
                                      children: [
                                        Container(
                                          width:18,
                                          height:18,
-                                         margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                                         margin: const EdgeInsets.only(top: 0, left: 16, right: 8, bottom: 0),
                                          child: Image.asset(AppIcon.img_evento_megusta),
                                        ),
-                                       Text("Me gusta", style: TextStyle( fontSize: 12, color: AppTheme.lightText),),
+                                       Text("Me gusta", style: TextStyle( fontSize: 12, fontFamily: AppTheme.fontTTNorms, color: AppTheme.lightText, fontWeight: FontWeight.w500),),
+                                       Padding(padding: EdgeInsets.only(left: 16))
                                      ],
                                    ),
                                  );
                                }else{
                                  return InkWell(
+                                   focusColor: Colors.transparent,
+                                   highlightColor: Colors.transparent,
+                                   hoverColor: Colors.transparent,
+                                   borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                   splashColor: AppTheme.nearlyDarkBlue.withOpacity(0.2),
                                    onTap: (){
                                      widget.onClickPublicar?.call(widget.eventoUi);
                                    },
@@ -406,13 +425,14 @@ class _ItemEventoState extends State<ItemEventoView>{
                                        Container(
                                          width:18,
                                          height:18,
-                                         margin:  EdgeInsets.only(top: 0, left: 0, right: 8, bottom: 0),
+                                         margin:  EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
                                          child: Icon(Ionicons.globe_outline, size: 20, color: AppTheme.blueGreyDarken1,),
                                        ),
                                        Padding(
                                            padding: EdgeInsets.only(top: 2),
-                                            child: Text(widget.eventoUi?.publicado??false?"Publicado":"Sin publicar", style: TextStyle( fontSize: 12, color: AppTheme.lightText),),
-                                       )
+                                            child: Text(widget.eventoUi?.publicado??false?"Publicado":"Sin publicar", style: TextStyle( fontSize: 12,   fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w500,color: AppTheme.lightText),),
+                                       ),
+                                       Padding(padding: EdgeInsets.only(left: 8))
                                      ],
                                    ),
                                  );
@@ -448,7 +468,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                        margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
                                        child: Image.asset(AppIcon.img_evento_compartir),
                                      ),
-                                     Text("Compartir", style: TextStyle( fontSize: 12, color: AppTheme.lightText),),
+                                     Text("Compartir", style: TextStyle( fontSize: 12,   fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w500,color: AppTheme.lightText),),
                                    ],
                                  ),
                                )
@@ -944,7 +964,7 @@ class _ItemEventoState extends State<ItemEventoView>{
     }
 
     return Container(
-      height: 52,
+      height: 45,
       //color: AppTheme.black.withOpacity(0.5),
       child: Row(
         children: [
@@ -954,15 +974,15 @@ class _ItemEventoState extends State<ItemEventoView>{
               borderRadius: BorderRadius.circular(4),
               color: color,
             ),
-            height: 20,
-            width: 20,
+            height: 18,
+            width: 18,
             child: Center(
               child: SvgPicture.asset(
                 imagepath,
                 semanticsLabel:"Eventos",
                 color: AppTheme.white,
-                width: 12,
-                height: 12,
+                width: 10,
+                height: 10,
               ),
             ),
           ),
@@ -971,7 +991,9 @@ class _ItemEventoState extends State<ItemEventoView>{
               margin: EdgeInsets.only(left: 8),
               child: Text(eventoUi?.tipoEventoUi?.nombre??"",
                 style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
+                    fontFamily: AppTheme.fontTTNorms,
+                    fontWeight: FontWeight.w700,
                     color: HexColor("#346081")
                 ),
               ),
@@ -989,6 +1011,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                 child: Text("${eventoUi?.tipoEventoUi?.nombre??""} ${eventoUi?.nombreFecha??""}",
                   style: TextStyle(
                       fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: AppTheme.fontTTNorms,
                       color: AppTheme.white
                   ),
                 ),

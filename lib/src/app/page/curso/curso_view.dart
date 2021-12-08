@@ -19,13 +19,15 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_per
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 class CursoView extends View{
   CursosUi cursosUi;
-  CursoView(this.cursosUi);
+  UsuarioUi? usuarioUi;
+  CursoView(this.cursosUi, this.usuarioUi);
 
   @override
-  _CursoViewState createState() => _CursoViewState(cursosUi);
+  _CursoViewState createState() => _CursoViewState(cursosUi, usuarioUi);
 
 }
 
@@ -35,8 +37,8 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
 
-  _CursoViewState(cursosUi)
-      : super(CursoController(cursosUi,MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio()));
+  _CursoViewState(cursosUi, usuarioUi)
+      : super(CursoController(usuarioUi, cursosUi,MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio()));
 
   @override
   void initState() {
@@ -133,16 +135,19 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 8,
-                            right: 24,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
+                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 12),
+                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 28),
+                            top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 18 - 10.0 * topBarOpacity),
+                            bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 14 - 10.0 * topBarOpacity)),
                         child:  ControlledWidgetBuilder<CursoController>(
                           builder: (context, controller) => Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               IconButton(
-                                icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                                icon: Icon(Ionicons.arrow_back,
+                                  color: AppTheme.nearlyBlack,
+                                  size: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 24 + 8 - 8 * topBarOpacity)
+                                ),
                                 onPressed: () {
                                   animationController.reverse().then<dynamic>((data) {
                                     if (!mounted) {
@@ -153,42 +158,53 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                 },
                               ),
                               Expanded(
-                                flex: 4,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  child: Stack(
                                     children: [
-                                      Text(
-                                        "${controller.cursos?.nombreCurso??""}",
-                                        textAlign: TextAlign.left,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontFamily: AppTheme.fontTTNorms,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 17 + 3 - 3 * topBarOpacity,
-                                          letterSpacing: 1.2,
-                                          color: AppTheme.darkerText,
-                                        ),
-                                      ),
-                                      Text(
-                                        "${controller.cursos?.gradoSeccion??""}",
-                                        textAlign: TextAlign.left,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontFamily: AppTheme.fontTTNorms,
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 13 + 3 - 3 * topBarOpacity,
-                                          letterSpacing: 1.2,
-                                          color: AppTheme.darkerText,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              /*Container(
+                                      Center(
+                                        child: Container(
+                                          constraints: BoxConstraints(
+                                            //minWidth: 200.0,
+                                            maxWidth: 550.0,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 4,
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 12)),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        "${controller.cursos?.nombreCurso??""}",
+                                                        textAlign: TextAlign.left,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontWeight: FontWeight.w700,
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 18 + 5 - 5 * topBarOpacity),
+                                                          letterSpacing: 1.2,
+                                                          color: AppTheme.darkerText,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        "${controller.cursos?.gradoSeccion??""}",
+                                                        textAlign: TextAlign.left,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontWeight: FontWeight.w400,
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 15 + 5 - 5 * topBarOpacity),
+                                                          letterSpacing: 1.2,
+                                                          color: AppTheme.darkerText,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              /*Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8 + 2 - 2 * topBarOpacity))),
                                   color: HexColor(controller.cursos?.color1).withOpacity(0.1),
@@ -216,18 +232,25 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                   ],
                                 ),
                               ),*/
-                              ClipOval(
-                                child: Material(
-                                  color: HexColor(controller.cursos?.color1).withOpacity(0.1), // button color
-                                  child: InkWell(
-                                    splashColor:HexColor(controller.cursos?.color1).withOpacity(0.5), // inkwell color
-                                    child: SizedBox(width: 45 + 6 - 8 * topBarOpacity, height: 45 + 6 - 8 * topBarOpacity,
-                                        child: Icon(Ionicons.mail_open_outline, size: 26 + 6 - 6 * topBarOpacity,color: HexColor(controller.cursos?.color1),)),
-                                    onTap: () {
+                                              ClipOval(
+                                                child: Material(
+                                                  color: HexColor(controller.cursos?.color1).withOpacity(0.1), // button color
+                                                  child: InkWell(
+                                                    splashColor:HexColor(controller.cursos?.color1).withOpacity(0.5), // inkwell color
+                                                    child: SizedBox(width: 45 + 6 - 8 * topBarOpacity, height: 45 + 6 - 8 * topBarOpacity,
+                                                        child: Icon(Ionicons.mail_open_outline, size: 26 + 6 - 6 * topBarOpacity,color: HexColor(controller.cursos?.color1),)),
+                                                    onTap: () {
 
-                                    },
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                ),
                               ),
 
                             ],
@@ -271,564 +294,649 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                               SliverList(
                                   delegate: SliverChildListDelegate(
                                     [
-                                      Padding(padding: EdgeInsets.only( top: 40)),
-                                      Container(
-                                        height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,180),
-                                        margin: EdgeInsets.only(
-                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24)
-                                        ),
-                                        child: Stack(
-                                              children: [
-                                                ClipRRect(
-                                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28))),
-                                                  child: controller.cursos?.banner!=null?FancyShimmerImage(
-                                                    boxFit: BoxFit.cover,
-                                                    imageUrl: controller.cursos?.banner??'',
-                                                    width: MediaQuery.of(context!).size.width,
-                                                    errorWidget: Icon(Icons.warning_amber_rounded, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,105),),
-                                                  ):
-                                                  Container(),
+                                      Padding(padding: EdgeInsets.only( top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,50))),
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 550.0,
+                                              ),
+                                              child:  Container(
+                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,180),
+                                                margin: EdgeInsets.only(
+                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                    right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24)
                                                 ),
-                                                Opacity(
-                                                  opacity: 0.8,
-                                                  child:  Container(
-                                                    decoration: BoxDecoration(
-                                                        color: HexColor(controller.cursos?.color1),
-                                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,26)))
+                                                child: Stack(
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28))),
+                                                      child: controller.cursos?.banner!=null?FancyShimmerImage(
+                                                        boxFit: BoxFit.cover,
+                                                        imageUrl: controller.cursos?.banner??'',
+                                                        width: MediaQuery.of(context!).size.width,
+                                                        errorWidget: Icon(Icons.warning_amber_rounded, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,105),),
+                                                      ):
+                                                      Container(),
                                                     ),
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  right: 16,
-                                                  top: 0,
-                                                  bottom: 0,
-                                                  child: Opacity(
-                                                    opacity:1,
-                                                    child: SvgPicture.asset(AppIcon.ic_curso_exam,
-                                                      width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,150),
-                                                      height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,150),
+                                                    Opacity(
+                                                      opacity: 0.8,
+                                                      child:  Container(
+                                                        decoration: BoxDecoration(
+                                                            color: HexColor(controller.cursos?.color1),
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,26)))
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                    Positioned(
+                                                      right: 16,
+                                                      top: 0,
+                                                      bottom: 0,
+                                                      child: Opacity(
+                                                        opacity:1,
+                                                        child: SvgPicture.asset(AppIcon.ic_curso_exam,
+                                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,150),
+                                                          height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,150),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,150)),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Padding(
+                                                            padding: EdgeInsets.only(
+                                                                top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                                                left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                            ),
+                                                            child:  Material(
+                                                              color: HexColor(controller.cursos?.color3),
+                                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
+                                                              child: InkWell(
+                                                                focusColor: Colors.transparent,
+                                                                highlightColor: Colors.transparent,
+                                                                hoverColor: Colors.transparent,
+                                                                borderRadius:  BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
+                                                                splashColor: AppTheme.colorPrimary.withOpacity(0.4),
+                                                                onTap: () {
+
+                                                                },
+                                                                child:
+                                                                Container(
+                                                                    padding:  EdgeInsets.only(
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,4),
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)
+                                                                    ),
+                                                                    child: Text("Nuevo",
+                                                                      style: TextStyle(
+                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,12),
+                                                                        letterSpacing: 0.8,
+                                                                        color: AppTheme.white,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                      ),)
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                              child:  Container(
+                                                                padding: EdgeInsets.only(
+                                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                                    top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)
+                                                                ),
+                                                                child: Text("Registro\nde Evaluación\npor competencias",
+                                                                  maxLines: 3,
+                                                                  style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,17),
+                                                                      fontFamily: AppTheme.fontTTNorms,
+                                                                      fontWeight: FontWeight.w700 ),),
+                                                              )
+                                                          ),
+                                                          Container(
+                                                            padding: EdgeInsets.only(
+                                                                left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                            ),
+                                                            child: Row(
+                                                              children: [
+                                                                Text("Haga clic y experimente ",
+                                                                    style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,12)
+                                                                    )
+                                                                ),
+                                                                Padding(
+                                                                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2))
+                                                                ),
+                                                                SvgPicture.asset(AppIcon.ic_curso_flecha,
+                                                                  color: AppTheme.white,
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,17),
+                                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,17),
+                                                                )
+                                                              ],
+                                                            ) ,
+                                                          )
+
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                Container(
-                                                  padding: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,150)),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Padding(padding: EdgeInsets.only( top: 24)),
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 550.0,
+                                              ),
+                                              child:  GestureDetector(
+                                                onTap: () =>  {
+                                                  AppRouter.createRouteSesionListaRouter(context!, controller.usuarioUi, controller.cursos!)
+                                                },
+                                                child: Container(
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
+                                                  margin: EdgeInsets.only(
+                                                      top: 0,
+                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursos?.color1).withOpacity(0.1),
+                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22))),
+                                                  ),
+                                                  child: Row(
                                                     children: [
+                                                      Container(
+                                                        margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
+                                                        decoration: BoxDecoration(
+                                                            color: HexColor("#E3F8FA"),
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                                        ),
+                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                                        height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                                        child: Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)), child: SvgPicture.asset(AppIcon.ic_curso_sesion),),
+                                                      ),
+                                                      Padding(padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
+                                                      Expanded(
+                                                          child: Text("Sesiones", style: TextStyle(
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontWeight: FontWeight.w700,
+                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                                            letterSpacing: 1.2,
+                                                            color: AppTheme.darkerText,
+                                                          ),)
+                                                      ),
                                                       Padding(
                                                         padding: EdgeInsets.only(
-                                                            top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
-                                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
                                                         ),
-                                                        child:  Material(
-                                                          color: HexColor(controller.cursos?.color3),
-                                                          borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
-                                                          child: InkWell(
-                                                            focusColor: Colors.transparent,
-                                                            highlightColor: Colors.transparent,
-                                                            hoverColor: Colors.transparent,
-                                                            borderRadius:  BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
-                                                            splashColor: AppTheme.colorPrimary.withOpacity(0.4),
-                                                            onTap: () {
-
-                                                            },
-                                                            child:
-                                                            Container(
-                                                                padding:  EdgeInsets.only(
-                                                                    top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,4),
-                                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10),
-                                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                                                    right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)
-                                                                ),
-                                                                child: Text("Nuevo",
-                                                                  style: TextStyle(
-                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,12),
-                                                                    letterSpacing: 0.8,
-                                                                    color: AppTheme.white,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    fontFamily: AppTheme.fontName,
-                                                                  ),)
+                                                        child: ClipOval(
+                                                          child: Material(
+                                                            color: HexColor(controller.cursos?.color1), // button color
+                                                            child: InkWell(
+                                                              splashColor: HexColor(controller.cursos?.color3), // inkwell color
+                                                              child: SizedBox(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  child: Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                                    ),
+                                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                                  )),
+                                                              onTap: () {},
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                      Expanded(
-                                                          child:  Container(
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)
-                                                            ),
-                                                            child: Text("Registro\nde Evaluación\npor competencias",
-                                                              maxLines: 3,
-                                                              style: TextStyle(
-                                                                  color: Colors.white,
-                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                                  fontWeight: FontWeight.w700 ),),
-                                                          )
-                                                      ),
-                                                      Container(
-                                                        padding: EdgeInsets.only(
-                                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-                                                            Text("Haga clic y experimente ",
-                                                                style: TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,12)
-                                                                )
-                                                            ),
-                                                            Padding(
-                                                                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2))
-                                                            ),
-                                                            SvgPicture.asset(AppIcon.ic_curso_flecha,
-                                                              color: AppTheme.white,
-                                                              width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                              height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                            )
-                                                          ],
-                                                        ) ,
-                                                      )
 
                                                     ],
                                                   ),
                                                 ),
-                                              ],
-                                        ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      Padding(padding: EdgeInsets.only( top: 24)),
-                                      GestureDetector(
-                                        onTap: () =>  {
-                                          AppRouter.createRouteSesionListaRouter(context!, controller.cursos!)
-                                        },
-                                        child: Container(
-                                          height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
-                                          margin: EdgeInsets.only(
-                                              top: 0,
-                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
-                                          ),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: HexColor(controller.cursos?.color1).withOpacity(0.1),
-                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 550.0,
                                               ),
-                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22))),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
-                                                decoration: BoxDecoration(
-                                                    color: HexColor("#E3F8FA"),
-                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
-                                                ),
-                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                                child: Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)), child: SvgPicture.asset(AppIcon.ic_curso_sesion),),
-                                              ),
-                                              Padding(padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
-                                              Expanded(
-                                                  child: Text("Sesiones", style: TextStyle(
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                    letterSpacing: 0.8,
-                                                    color: AppTheme.darkerText,
-                                                  ),)
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                                    right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
-                                                ),
-                                                child: ClipOval(
-                                                  child: Material(
-                                                    color: HexColor(controller.cursos?.color1), // button color
-                                                    child: InkWell(
-                                                      splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                      child: SizedBox(
-                                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                          height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                          child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                          ),
-                                                          child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                        )),
-                                                      onTap: () {},
-                                                    ),
+                                              child:   GestureDetector(
+                                                onTap: () => {
+                                                  if(context!=null && controller.cursos != null){
+                                                    AppRouter.createRouteTareaRouter(context, controller.usuarioUi, controller.cursos!)
+                                                  }
+                                                },
+                                                child:  Container(
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
+                                                  margin: EdgeInsets.only(
+                                                      top: 0,
+                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
                                                   ),
-                                                ),
-                                              ),
-
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () => {
-                                          if(context!=null && controller.cursos != null){
-                                            AppRouter.createRouteTareaRouter(context, controller.cursos!)
-                                          }
-                                        },
-                                        child:  Container(
-                                          height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
-                                          margin: EdgeInsets.only(
-                                              top: 0,
-                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
-                                          ),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color:  HexColor(controller.cursos?.color1).withOpacity(0.1),
-                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
-                                              ),
-                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
-                                                decoration: BoxDecoration(
-                                                    color: HexColor("#FFF8EE"),
-                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
-                                                ),
-                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                                child: Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)), child: SvgPicture.asset(AppIcon.ic_curso_tarea),),
-                                              ),
-                                              Padding(padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
-                                              Expanded(
-                                                  child: Text("Tareas", style: TextStyle(
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                    letterSpacing: 0.8,
-                                                    color: AppTheme.darkerText,
-                                                  ),)
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                                    right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
-                                                ),
-                                                child: ClipOval(
-                                                  child: Material(
-                                                    color: HexColor(controller.cursos?.color1), // button color
-                                                    child: InkWell(
-                                                      splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                      child: SizedBox(
-                                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                          height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color:  HexColor(controller.cursos?.color1).withOpacity(0.1),
+                                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                                      ),
+                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
+                                                        decoration: BoxDecoration(
+                                                            color: HexColor("#FFF8EE"),
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                                        ),
+                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                                        child: Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)), child: SvgPicture.asset(AppIcon.ic_curso_tarea),),
+                                                      ),
+                                                      Padding(padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
+                                                      Expanded(
+                                                          child: Text("Tareas", style: TextStyle(
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontWeight: FontWeight.w700,
+                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                                            letterSpacing: 0.8,
+                                                            color: AppTheme.darkerText,
+                                                          ),)
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
+                                                        ),
+                                                        child: ClipOval(
+                                                          child: Material(
+                                                            color: HexColor(controller.cursos?.color1), // button color
+                                                            child: InkWell(
+                                                              splashColor: HexColor(controller.cursos?.color3), // inkwell color
+                                                              child: SizedBox(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  child: Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                                    ),
+                                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                                  )),
+                                                              onTap: () {},
                                                             ),
-                                                            child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                          )),
-                                                      onTap: () {},
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () =>  {
-                                          if(context!=null && controller.cursos != null){
-                                            AppRouter.createRouteRubrosRouter(context, controller.cursos!)
-                                          }
-                                        },
-                                       child: Container(
-                                         height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
-                                         margin: EdgeInsets.only(top: 0,
-                                             left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                             right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                             bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
-                                         ),
-                                         decoration: BoxDecoration(
-                                             border: Border.all(
-                                                 color:  HexColor(controller.cursos?.color1).withOpacity(0.1),
-                                                 width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
-                                             ),
-                                             borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
-                                         ),
-                                         child: Row(
-                                           children: [
-                                             Container(
-                                               margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
-                                               decoration: BoxDecoration(
-                                                   color: HexColor("#EDF8FF"),
-                                                   borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
-                                               ),
-                                               width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                               child: Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)), child: SvgPicture.asset(AppIcon.ic_curso_evaluacion),),
-                                             ),
-                                             Padding(padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
-                                             Expanded(
-                                                 child: Text("Evaluación", style: TextStyle(
-                                                   fontFamily: AppTheme.fontTTNorms,
-                                                   fontWeight: FontWeight.w800,
-                                                   fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                   letterSpacing: 0.8,
-                                                   color: AppTheme.darkerText,
-                                                 ),)
-                                             ),
-                                             Padding(
-                                               padding: EdgeInsets.only(
-                                                   left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                                   right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
-                                               ),
-                                               child: ClipOval(
-                                                 child: Material(
-                                                   color: HexColor(controller.cursos?.color1), // button color
-                                                   child: InkWell(
-                                                     splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                     child: SizedBox(
-                                                         width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                         height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                         child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
                                                           ),
-                                                          child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                        )),
-                                                     onTap: () {},
-                                                   ),
-                                                 ),
-                                               ),
-                                             ),
+                                                        ),
+                                                      ),
 
-                                           ],
-                                         ),
-                                       ),
-                                      ),
-                                      Container(
-                                        height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
-                                        margin: EdgeInsets.only(
-                                            top: 0,
-                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
-                                        ),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: HexColor(controller.cursos?.color1).withOpacity(0.1),
-                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
-                                            ),
-                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
-                                              decoration: BoxDecoration(
-                                                  color: HexColor("#FFECFA"),
-                                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
-                                              ),
-                                              width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                              child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_grupo),),
-                                            ),
-                                            Padding(padding: EdgeInsets.only(left: 8)),
-                                            Expanded(
-                                                child: Text("Grupos", style: TextStyle(
-                                                  fontFamily: AppTheme.fontTTNorms,
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                  color: AppTheme.darkerText,
-                                                  letterSpacing: 0.8,
-                                                ),)
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                                  right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
-                                              ),
-                                              child: ClipOval(
-                                                child: Material(
-                                                  color: HexColor(controller.cursos?.color1), // button color
-                                                  child: InkWell(
-                                                    splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                    child: SizedBox(
-                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                        height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                        child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                          ),
-                                                          child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                        )),
-                                                    onTap: () {},
+                                                    ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-
-                                          ],
-                                        ),
+                                          )
+                                        ],
                                       ),
-                                      GestureDetector(
-                                        onTap: (){
-                                          if(context!=null && controller.cursos != null){
-                                            AppRouter.createRouteResultadoRouter(context, controller.cursos!, null);
-                                          }
-                                        },
-                                        child: Container(
-                                          height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
-                                          margin: EdgeInsets.only(
-                                              top: 0,
-                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
-                                          ),
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: HexColor(controller.cursos?.color1).withOpacity(0.1),
-                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 550.0,
                                               ),
-                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Container(
-                                                margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
-                                                decoration: BoxDecoration(
-                                                    color: HexColor("#edf2fb"),
-                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
-                                                ),
-                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                                child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_nota_final),),
-                                              ),
-                                              Padding(padding: EdgeInsets.only(left: 8)),
-                                              Expanded(
-                                                  child: Text("Resultado", style: TextStyle(
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                    color: AppTheme.darkerText,
-                                                    letterSpacing: 0.8,
-                                                  ),)
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                                    right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
-                                                ),
-                                                child: ClipOval(
-                                                  child: Material(
-                                                    color: HexColor(controller.cursos?.color1), // button color
-                                                    child: InkWell(
-                                                      splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                      child: SizedBox(
-                                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                          height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                              child: GestureDetector(
+                                                onTap: () =>  {
+                                                  if(context!=null && controller.cursos != null){
+                                                    AppRouter.createRouteRubrosRouter(context, controller.cursos!)
+                                                  }
+                                                },
+                                                child: Container(
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
+                                                  margin: EdgeInsets.only(top: 0,
+                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color:  HexColor(controller.cursos?.color1).withOpacity(0.1),
+                                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                                      ),
+                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
+                                                        decoration: BoxDecoration(
+                                                            color: HexColor("#EDF8FF"),
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                                        ),
+                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                                        child: Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,10)), child: SvgPicture.asset(AppIcon.ic_curso_evaluacion),),
+                                                      ),
+                                                      Padding(padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8))),
+                                                      Expanded(
+                                                          child: Text("Evaluación", style: TextStyle(
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontWeight: FontWeight.w700,
+                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                                            letterSpacing: 0.8,
+                                                            color: AppTheme.darkerText,
+                                                          ),)
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
+                                                        ),
+                                                        child: ClipOval(
+                                                          child: Material(
+                                                            color: HexColor(controller.cursos?.color1), // button color
+                                                            child: InkWell(
+                                                              splashColor: HexColor(controller.cursos?.color3), // inkwell color
+                                                              child: SizedBox(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  child: Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                                    ),
+                                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                                  )),
+                                                              onTap: () {},
                                                             ),
-                                                            child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                          )),
-                                                      onTap: () {},
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      Container(
-                                        height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
-                                        margin: EdgeInsets.only(
-                                            top: 0,
-                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
-                                        ),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: HexColor(controller.cursos?.color1).withOpacity(0.1),
-                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
-                                            ),
-                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
-                                              decoration: BoxDecoration(
-                                                  color: HexColor("#f3f9d2"),
-                                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
-                                              ),
-                                              width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                              child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_agenda),),
-                                            ),
-                                            Padding(padding: EdgeInsets.only(left: 8)),
-                                            Expanded(
-                                                child: Text("Mi Agenda", style: TextStyle(
-                                                  fontFamily: AppTheme.fontTTNorms,
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,18),
-                                                  color: AppTheme.darkerText,
-                                                  letterSpacing: 0.8,
-                                                ),)
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                                  right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
-                                              ),
-                                              child: ClipOval(
-                                                child: Material(
-                                                  color: HexColor(controller.cursos?.color1), // button color
-                                                  child: InkWell(
-                                                    splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                    child: SizedBox(
-                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                        height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                        child: Padding(
-                                                          padding: EdgeInsets.only(
-                                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
                                                           ),
-                                                          child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                        )),
-                                                    onTap: () {},
+                                                        ),
+                                                      ),
+
+                                                    ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-
-                                          ],
-                                        ),
+                                          )
+                                        ],
                                       ),
-                                      Padding(padding: EdgeInsets.only( top: 80)),
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 550.0,
+                                              ),
+                                              child:  Container(
+                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
+                                                margin: EdgeInsets.only(
+                                                    top: 0,
+                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                    right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursos?.color1).withOpacity(0.1),
+                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor("#FFECFA"),
+                                                          borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                                      ),
+                                                      width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                                      child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_grupo),),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(left: 8)),
+                                                    Expanded(
+                                                        child: Text("Grupos", style: TextStyle(
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontWeight: FontWeight.w700,
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                                          color: AppTheme.darkerText,
+                                                          letterSpacing: 0.8,
+                                                        ),)
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                                          right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
+                                                      ),
+                                                      child: ClipOval(
+                                                        child: Material(
+                                                          color: HexColor(controller.cursos?.color1), // button color
+                                                          child: InkWell(
+                                                            splashColor: HexColor(controller.cursos?.color3), // inkwell color
+                                                            child: SizedBox(
+                                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                child: Padding(
+                                                                  padding: EdgeInsets.only(
+                                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                      top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                                  ),
+                                                                  child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                                )),
+                                                            onTap: () {},
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 550.0,
+                                              ),
+                                              child:   GestureDetector(
+                                                onTap: (){
+                                                  if(context!=null && controller.cursos != null){
+                                                    AppRouter.createRouteResultadoRouter(context, controller.cursos!, null);
+                                                  }
+                                                },
+                                                child: Container(
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
+                                                  margin: EdgeInsets.only(
+                                                      top: 0,
+                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: HexColor(controller.cursos?.color1).withOpacity(0.1),
+                                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                                      ),
+                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
+                                                        decoration: BoxDecoration(
+                                                            color: HexColor("#edf2fb"),
+                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                                        ),
+                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                                        child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_nota_final),),
+                                                      ),
+                                                      Padding(padding: EdgeInsets.only(left: 8)),
+                                                      Expanded(
+                                                          child: Text("Resultado", style: TextStyle(
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontWeight: FontWeight.w700,
+                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                                            color: AppTheme.darkerText,
+                                                            letterSpacing: 0.8,
+                                                          ),)
+                                                      ),
+                                                      Padding(
+                                                        padding: EdgeInsets.only(
+                                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
+                                                        ),
+                                                        child: ClipOval(
+                                                          child: Material(
+                                                            color: HexColor(controller.cursos?.color1), // button color
+                                                            child: InkWell(
+                                                              splashColor: HexColor(controller.cursos?.color3), // inkwell color
+                                                              child: SizedBox(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                  child: Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                                    ),
+                                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                                  )),
+                                                              onTap: () {},
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Stack(
+                                        children: [
+                                          Center(
+                                            child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 550.0,
+                                              ),
+                                              child:  Container(
+                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
+                                                margin: EdgeInsets.only(
+                                                    top: 0,
+                                                    left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                    right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: HexColor(controller.cursos?.color1).withOpacity(0.1),
+                                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
+                                                    ),
+                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor("#f3f9d2"),
+                                                          borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                                      ),
+                                                      width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                                      child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_agenda),),
+                                                    ),
+                                                    Padding(padding: EdgeInsets.only(left: 8)),
+                                                    Expanded(
+                                                        child: Text("Mi Agenda", style: TextStyle(
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontWeight: FontWeight.w700,
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                                          color: AppTheme.darkerText,
+                                                          letterSpacing: 0.8,
+                                                        ),)
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                                          right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
+                                                      ),
+                                                      child: ClipOval(
+                                                        child: Material(
+                                                          color: HexColor(controller.cursos?.color1), // button color
+                                                          child: InkWell(
+                                                            splashColor: HexColor(controller.cursos?.color3), // inkwell color
+                                                            child: SizedBox(
+                                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                                child: Padding(
+                                                                  padding: EdgeInsets.only(
+                                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                      top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                                  ),
+                                                                  child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                                )),
+                                                            onTap: () {},
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Padding(padding: EdgeInsets.only( top: 150)),
                                     ],
                                   )
                               ),

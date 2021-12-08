@@ -24,7 +24,6 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
   static const int ANIO_ACADEMICO_MATRICULA = 192, ANIO_ACADEMICO_ACTIVO = 193, ANIO_ACADEMICO_CERRADO = 194, ANIO_ACADEMICO_CREADO = 195, ANIO_ACADEMICO_ELIMINADO = 196;
   static const int SILABO_ESTADO_CREADO = 243, SILABO_ESTADO_AUTORIZADO = 244, SILABO_ESTADO_PROCESO = 245, SILABO_ESTADO_PUBLICADO = 246, SILABO_ESTADO_ELIMINADO = 397;
-  static const int CONTACTO_DOCENTE = 3, CONTACTO_DIRECTIVO = 4, CONTACTO_ALUMNO = 1, CONTACTO_PADRE = 2, CONTACTO_APODERADO = 5;
 
   @override
   Future<bool> validarUsuario() async{
@@ -811,24 +810,24 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
       for(var row  in rows){
         ContactoDocenteData contactoData = row.readTable(SQL.contactoDocente);
-        ContactoDocenteData padreData = row.readTable(padre);
-        ContactoDocenteData apoderadoData = row.readTable(padre);
-        ContactoUi? contactoUi = contactoUiList.firstWhereOrNull((element) => element.personaUi?.personaId == contactoData.personaId && element.tipo == contactoData.tipo);
-        if(contactoUi == null){
-          contactoUi = new ContactoUi();
-          contactoUi.personaUi = PersonaUi();
-          contactoUi.personaUi?.personaId = contactoData.personaId;
-          contactoUi.relacionList = [];
-          contactoUi.personaUi?.foto = contactoData.foto;
-          contactoUi.personaUi?.nombreCompleto = '${DomainTools.capitalize(contactoData.nombres??"")} ${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
-          contactoUi.relacion = contactoData.relacion;
-          contactoUi.personaUi?.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
-
+        ContactoDocenteData? padreData = row.readTableOrNull(padre);
+        ContactoDocenteData? apoderadoData = row.readTableOrNull(padre);
+        //ContactoUi? contactoUi = contactoUiList.firstWhereOrNull((element) => element.personaUi?.personaId == contactoData.personaId && element.tipo == contactoData.tipo);
+        ContactoUi contactoUi = new ContactoUi();
+        contactoUi.personaUi = PersonaUi();
+        contactoUi.personaUi?.personaId = contactoData.personaId;
+        contactoUi.relacionList = [];
+        contactoUi.personaUi?.foto = contactoData.foto;
+        if((contactoData.nombres??"").isEmpty){
+          print("Desconocido");
         }
+
+        contactoUi.personaUi?.nombreCompleto = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}, ${DomainTools.capitalize(contactoData.nombres??"")}';
+        contactoUi.relacion = contactoData.relacion;
+        contactoUi.personaUi?.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
 
         if(padreData!=null){
           ContactoUi padreUi = new ContactoUi();
-          contactoUi.personaUi = PersonaUi();
           padreUi.personaUi?.personaId = padreData.personaId;
           padreUi.relacion = padreData.relacion;
           contactoUi.relacionList?.add(padreUi);
@@ -840,7 +839,6 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
         contactoUi.tipo = contactoData.tipo;
         contactoUiList.add(contactoUi);
-
       }
 
       print("getContactos: "+contactoUiList.length.toString());
@@ -867,7 +865,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     List<PersonaUi> contactoUiList = [];
     print("cargaCursoId: " + cargaCursoId.toString());
     var query = SQL.select(SQL.contactoDocente)..where((tbl) => SQL.contactoDocente.cargaCursoId.equals(cargaCursoId));
-    query.where((tbl) => tbl.tipo.equals(CONTACTO_ALUMNO));
+    query.where((tbl) => tbl.tipo.equals(ConfiguracionRepository.CONTACTO_ALUMNO));
     query.orderBy([(tbl)=> OrderingTerm.asc(tbl.apellidoPaterno)]);
 
 

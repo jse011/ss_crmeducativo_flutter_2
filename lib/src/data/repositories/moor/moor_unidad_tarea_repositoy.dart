@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_unidad.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/serializable_convert.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/TareaEvaluacionUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_archivo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_ui.dart';
@@ -22,7 +25,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
   @override
   Future<List<UnidadUi>> getUnidadTarea(int calendarioPeriodoId, int silaboEventoId) async{
     AppDataBase SQL = AppDataBase();
-
+    print("getUnidadTarea calendarioPeriodoId: ${calendarioPeriodoId}, silaboEventoId: ${silaboEventoId}");
     var queryUnidad = SQL.select(SQL.tareaUnidad)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     queryUnidad.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     queryUnidad.orderBy([
@@ -37,6 +40,8 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           (u) =>
           OrderingTerm(expression: u.fechaCreacion, mode: OrderingMode.desc),
     ]);
+
+
     List<UnidadUi> unidadUiList = [];
     for(TareaUnidadData tareaUnidadData in await queryUnidad.get()){
       UnidadUi unidadUi = UnidadUi();
@@ -49,12 +54,22 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
     }
     List<TareaUi> tareaUiList = [];
     for(TareaData tareaData in await queryTarea.get()){
+      print("getUnidadTarea tareaId: ${tareaData.tareaId}");
       TareaUi tareaUi = TareaUi();
       tareaUi.tareaId = tareaData.tareaId;
+
+      tareaUi.rubroEvalProcesoId = tareaData.rubroEvalProcesoId;
+      tareaUi.tipoNotaId = tareaData.tipoNotaId;
+      tareaUi.competenciaId = tareaData.competenciaId;
+      tareaUi.desempenioIcdId = tareaData.desempenioIcdId;
+      tareaUi.silaboEventoId = tareaData.silaboEventoId;
+      print("getUnidadTarea  silaboEventoId: ${tareaData.silaboEventoId}");
       tareaUi.titulo = tareaData.titulo;
       tareaUi.instrucciones = tareaData.instrucciones;
-      tareaUi.rubroEvalProcesoId = tareaData.rubroEvalProcesoId;
+      tareaUi.tipoNotaId = tareaData.tipoNotaId;
       tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;
+      tareaUi.calendarioPeriodoId = tareaData.calendarioPeriodoId;
+
       if((tareaData.fechaEntrega??"").isNotEmpty){
         tareaUi.fechaEntrega = DomainTools.tiempoFechaCreacionTarea(DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega));
         tareaUi.fechaEntregaTime = DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega);
@@ -104,6 +119,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       if(unidadSesion.containsKey("tarea")){
         print("unidadAprendizaje tarea");
         batch.insertAll(SQL.tarea, SerializableConvert.converListSerializeTarea(unidadSesion["tarea"])  , mode: InsertMode.insertOrReplace );
+        print("unidadAprendizaje tarea 2");
       }
 
       print("unidadAprendizaje 1");
@@ -111,8 +127,6 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
         print("unidadAprendizaje 2");
         batch.insertAll(SQL.tareaUnidad, SerializableConvert.converListSerializeTareaUnidad(unidadSesion["unidadAprendizaje"])  , mode: InsertMode.insertOrReplace );
       }
-
-
 
     });
 
@@ -135,6 +149,9 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       var queryTareaAlumnoArchivo = SQL.delete(SQL.tareaAlumnoArchivo)..where((tbl) => tbl.tareaId.equals(tareaId));
       queryTareaAlumnoArchivo.go();
 
+      var queryTareaEvaluacion = SQL.delete(SQL.tareaEvalDetalle)..where((tbl) => tbl.tareaId.equals(tareaId));
+      queryTareaEvaluacion.go();
+
       if(unidadTarea.containsKey("bETareaAlumnos")){
         print("bETareaAlumnos");
         var unidadTareaAlumnos = unidadTarea["bETareaAlumnos"];
@@ -144,8 +161,12 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           if(item.containsKey("archivos")){
             batch.insertAll(SQL.tareaAlumnoArchivo, SerializableConvert.converListSerializeTareaAlumnoArchivo(item["archivos"])  , mode: InsertMode.insertOrReplace );
           }
-        }
+          if(item.containsKey("evalDetalle")){
+            print("evalDetalle");
+            batch.insertAll(SQL.tareaEvalDetalle, SerializableConvert.converListSerializeTareaEvalDetalle(item["evalDetalle"])  , mode: InsertMode.insertOrReplace );
+          }
 
+        }
       }
 
       if(unidadTarea.containsKey("recursoDidacticos")){
@@ -244,6 +265,9 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
     List<TareaAlumnoArchivoData> tareaAlumnoArchivoList = await (SQL.select(SQL.tareaAlumnoArchivo)
             ..where((tbl) => tbl.tareaId.equals(tareaId))).get();
 
+    List<TareaEvalDetalleData> tareaEvalDetalleList = await (SQL.select(SQL.tareaEvalDetalle)
+      ..where((tbl) => tbl.tareaId.equals(tareaId))).get();
+    print("tareaEvalDetalleList: ${tareaEvalDetalleList.length}");
     for(TareaAlumnoData tareaAlumnoData in await query.get()){
       TareaAlumnoUi tareaAlumnoUi = TareaAlumnoUi();
       tareaAlumnoUi.entregado = tareaAlumnoData.entregado;
@@ -252,6 +276,8 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       tareaAlumnoUi.alumnoId = tareaAlumnoData.alumnoId;
       tareaAlumnoUi.tareaId = tareaAlumnoData.tareaId;
       tareaAlumnoUi.valorTipoNotaId = tareaAlumnoData.valorTipoNotaId;
+      tareaAlumnoUi.nota = tareaAlumnoData.nota;
+      tareaAlumnoUi.rubroEvalProcesoId = tareaAlumnoData.rubroEvalProcesoId;
       List<TareaAlumnoArchivoUi> tareaAlumnoArchivoUiList = [];
       for(TareaAlumnoArchivoData tareaAlumnoArchivoData in tareaAlumnoArchivoList){
         if(tareaAlumnoArchivoData.tareaId == tareaAlumnoData.tareaId && tareaAlumnoArchivoData.alumnoId == tareaAlumnoData.alumnoId){
@@ -262,6 +288,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           tareaAlumnoArchivoUi.nombre = tareaAlumnoArchivoData.nombre;
           tareaAlumnoArchivoUi.url = tareaAlumnoArchivoData.path;
           tareaAlumnoArchivoUi.repositorio = tareaAlumnoArchivoData.repositorio;
+          tareaAlumnoArchivoUi.driveId = tareaAlumnoArchivoData.driveId;
           if(tareaAlumnoArchivoUi.repositorio??false){
             tareaAlumnoArchivoUi.tipoRecurso = DomainTools.getType(tareaAlumnoArchivoData.path);
 
@@ -272,6 +299,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
               tareaAlumnoArchivoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
             }else if((idDrive??"").isNotEmpty){
               tareaAlumnoArchivoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_DRIVE;
+              tareaAlumnoArchivoUi.driveId = idDrive;
             }else{
               tareaAlumnoArchivoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
             }
@@ -279,40 +307,95 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           tareaAlumnoArchivoUiList.add(tareaAlumnoArchivoUi);
         }
       }
+
+
+
+      List<TareaEvaluacionUi> tareaEvaluacionUiList = [];
+      for(TareaEvalDetalleData tareaEvalDetalleData in tareaEvalDetalleList){
+        if(tareaEvalDetalleData.tareaId == tareaAlumnoData.tareaId && tareaEvalDetalleData.alumnoId == tareaAlumnoData.alumnoId){
+          TareaEvaluacionUi tareaEvaluacionUi = TareaEvaluacionUi();
+          tareaEvaluacionUi.desempenioIcdId = tareaEvalDetalleData.desempenioIcdId;
+          tareaEvaluacionUi.tareaId = tareaEvalDetalleData.tareaId;
+          tareaEvaluacionUi.valorTipoNotaId = tareaEvalDetalleData.valorTipoNotaId;
+          tareaEvaluacionUi.nota = tareaEvalDetalleData.nota;
+          tareaEvaluacionUi.alumnoId = tareaEvalDetalleData.alumnoId;
+          tareaEvaluacionUiList.add(tareaEvaluacionUi);
+        }
+      }
+      tareaAlumnoUi.evaluacion = tareaEvaluacionUiList;
       tareaAlumnoUi.archivos = tareaAlumnoArchivoUiList;
       print("tareaAlumnoUi.archivos: ${tareaAlumnoUi.archivos?.length}");
       tareaAlumnoUiList.add(tareaAlumnoUi);
     }
+
+
     return tareaAlumnoUiList;
   }
 
   @override
-  Map<String, dynamic> getTareaDosenteSerial(TareaUi tareaUi, int usuarioId) {
+  Future<void> saveTareaDocenteSerial(Map<String, dynamic> data) async{
+    print("saveTareaDocenteSerial");
+    AppDataBase SQL = AppDataBase();
+    await SQL.batch((batch) async {
+      TareaSerial serial = TareaSerial.fromJson(data);
+      log(data.toString());
+      print("saveTareaDocenteSerial: ${serial.silaboEventoId}");
+      batch.insert(SQL.tarea, SerializableConvert.converSerializeTarea(data), mode: InsertMode.insertOrReplace);
 
-    Map<String, dynamic> tarea = DomainTools.removeNull(TareaSerial(
-      tareaId: tareaUi.tareaId,
-      titulo: tareaUi.titulo,
-      instrucciones: tareaUi.instrucciones,
-      unidadAprendizajeId: tareaUi.unidadAprendizajeId,
-      sesionAprendizajeId: tareaUi.sesionAprendizajeId,
-      fechaEntrega: tareaUi.fechaEntregaTime?.millisecondsSinceEpoch,
-      horaEntrega: tareaUi.horaTarea,
-      estadoId: (tareaUi.publicado??false)?UnidadTareaRepository.ESTADO_PUBLICADO : UnidadTareaRepository.ESTADO_CREADO,
+      var queryTareaRecurso = SQL.delete(SQL.tareaRecursoDidactico)..where((tbl) => tbl.tareaId.equals(serial.tareaId));
+      queryTareaRecurso.go();
 
+      if(data.containsKey("tareasRecursosList")){
+        batch.insertAll(SQL.tareaRecursoDidactico, SerializableConvert.converListSerializeTareaRecursoDidactico(data["tareasRecursosList"])  , mode: InsertMode.insertOrReplace );
+      }
+
+
+    });
+
+
+  }
+
+  @override
+  Map<String, dynamic> getTareaDosenteSerial(TareaUi? tareaUi, int usuarioId) {
+    print("getTareaDosenteSerial: ${tareaUi?.silaboEventoId}");
+    Map<String, dynamic> tarea = TareaSerial(
+      tareaId: tareaUi?.tareaId,
+      titulo: tareaUi?.titulo,
+      instrucciones: tareaUi?.instrucciones,
+      unidadAprendizajeId: tareaUi?.unidadAprendizajeId,
+      sesionAprendizajeId: tareaUi?.sesionAprendizajeId,
+      fechaEntrega: tareaUi?.fechaEntregaTime?.millisecondsSinceEpoch,
+      horaEntrega: tareaUi?.horaTarea,
+      estadoId: (tareaUi?.publicado??false)?UnidadTareaRepository.ESTADO_PUBLICADO : UnidadTareaRepository.ESTADO_CREADO,
+      fechaEntrega_: DomainTools.getFechaDiaMesAnhoSimple(tareaUi?.fechaEntregaTime),
       fechaAccion: DateTime.now().millisecondsSinceEpoch,
       fechaCreacion: DateTime.now().millisecondsSinceEpoch,
       usuarioAccionId: usuarioId,
       usuarioCreacionId: usuarioId,
 
-    ).toJson());
+
+      silaboEventoId: tareaUi?.silaboEventoId,
+      datosUsuarioCreador: tareaUi?.docente,
+
+      rubroEvalProcesoId: tareaUi?.rubroEvalProcesoId,
+      tipoNotaId: tareaUi?.tipoNotaId,
+      competenciaId: tareaUi?.competenciaId,
+      desempenioIcdId: tareaUi?.desempenioIcdId,
+      calendarioPeriodoId: tareaUi?.calendarioPeriodoId,
+      nroSesion: tareaUi?.nroSesion,
+      tipoPeriodoId: tareaUi?.tipoPeriodoId,
+
+    ).toJson();
+
+    tarea = DomainTools.removeNull(tarea);
 
     List<Map<String, dynamic>> recursoDidactico = [];
-    for(TareaRecusoUi tareaRecusoUi in tareaUi.recursos??[]){
+    for(TareaRecusoUi tareaRecusoUi in tareaUi?.recursos??[]){
       recursoDidactico.add(DomainTools.removeNull(TareaRecursoDidacticoSerial(
           recursoDidacticoId: (tareaRecusoUi.recursoDidacticoId??"").isNotEmpty ? tareaRecusoUi.recursoDidacticoId : IdGenerator.generateId(),
           titulo: tareaRecusoUi.titulo,
           descripcion: tareaRecusoUi.descripcion,
-          tareaId: tareaUi.tareaId,
+          tareaId: tareaUi?.tareaId,
           url: tareaRecusoUi.url,
           tipoId: getTipoId(tareaRecusoUi.tipoRecurso??TipoRecursosUi.TIPO_RECURSO),
           driveId: tareaRecusoUi.driveId,
@@ -402,10 +485,16 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
     for(TareaData tareaData in await queryTarea.get()){
       TareaUi tareaUi = TareaUi();
       tareaUi.tareaId = tareaData.tareaId;
+
+      tareaUi.rubroEvalProcesoId = tareaData.rubroEvalProcesoId;
+      tareaUi.tipoNotaId = tareaData.tipoNotaId;
+      tareaUi.competenciaId = tareaData.competenciaId;
+      tareaUi.desempenioIcdId = tareaData.desempenioIcdId;
+
       tareaUi.titulo = tareaData.titulo;
       tareaUi.instrucciones = tareaData.instrucciones;
-      tareaUi.rubroEvalProcesoId = tareaData.rubroEvalProcesoId;
       tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;
+      tareaUi.silaboEventoId = tareaData.silaboEventoId;
       if((tareaData.fechaEntrega??"").isNotEmpty){
         print("fechaEntrega: ${tareaData.fechaEntrega}");
         tareaUi.fechaEntrega = DomainTools.tiempoFechaCreacionTarea(DomainTools.convertDateTimePtBR(tareaData.fechaEntrega, tareaData.horaEntrega));
@@ -438,6 +527,30 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           estadoId: Value(estadoId)
         ));
   }
+
+  @override
+  Future<void> saveDriveIdTareaAlumno(Map<String, dynamic> serial, String? tareaAlumnoArchivoId) async{
+    DriveSerial driveSerial = DriveSerial.fromJson(serial);
+    if((driveSerial.idDrive??"").isNotEmpty){
+      AppDataBase SQL = AppDataBase();
+      await (SQL.update(SQL.tareaAlumnoArchivo)
+        ..where((tbl) => tbl.tareaAlumnoArchivoId.equals(tareaAlumnoArchivoId)))
+          .write(
+          TareaAlumnoArchivoCompanion(
+              driveId: Value(driveSerial.idDrive)
+          ));
+    }
+
+  }
+
+  @override
+  Future<String?> getDriveIdTareaAlumno(String? tareaAlumnoArchivoId)async {
+    AppDataBase SQL = AppDataBase();
+    TareaAlumnoArchivoData? tareaAlumnoArchivoData = await (SQL.select(SQL.tareaAlumnoArchivo)..where((tbl) => tbl.tareaAlumnoArchivoId.equals(tareaAlumnoArchivoId))).getSingleOrNull();
+    return tareaAlumnoArchivoData?.driveId;
+  }
+
+
 
 
 }

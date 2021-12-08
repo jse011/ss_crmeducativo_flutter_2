@@ -31,6 +31,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tema_criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
@@ -43,11 +44,13 @@ class RubroCrearView extends View{
   final RubricaEvaluacionUi? rubroUi;
   final CalendarioPeriodoUI? calendarioPeriodoUI;
   final SesionUi? sesionUi;
+  final TareaUi? tareaUi;
+  final bool online;
 
-  RubroCrearView(this.cursosUi, this.calendarioPeriodoUI, this.rubroUi, this.sesionUi);
+  RubroCrearView(this.cursosUi, this.calendarioPeriodoUI, this.rubroUi, this.sesionUi, this.tareaUi,this.online);
 
   @override
-  RubroCrearViewState createState() => RubroCrearViewState(cursosUi, calendarioPeriodoUI, rubroUi, sesionUi);
+  RubroCrearViewState createState() => RubroCrearViewState(cursosUi, calendarioPeriodoUI, rubroUi, sesionUi, tareaUi,online);
 
 }
 class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController> with TickerProviderStateMixin{
@@ -58,7 +61,9 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
 
-  RubroCrearViewState(cursosUi, calendarioPeriodoUI, rubroUi, SesionUi? sesionUi) : super(RubroCrearController(cursosUi, calendarioPeriodoUI, rubroUi, sesionUi, MoorRubroRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
+  RubroCrearController? controller;
+
+  RubroCrearViewState(cursosUi, calendarioPeriodoUI, rubroUi, SesionUi? sesionUi, TareaUi? tareaUi, bool online) : super(RubroCrearController(cursosUi, calendarioPeriodoUI, rubroUi, sesionUi, tareaUi, online,MoorRubroRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
   var _tiuloRubricacontroller = TextEditingController();
   var _tiuloCriteriocontroller = TextEditingController();
 
@@ -124,11 +129,25 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
 
     super.initState();
 
+    if((widget.tareaUi?.titulo??"").isNotEmpty){
+      _tiuloRubricacontroller.text = widget.tareaUi?.titulo??"";
+    }
+
+
   }
 
   @override
   Widget get view =>  ControlledWidgetBuilder<RubroCrearController>(
       builder: (context, controller) {
+        if(controller.cerraryactualizar){
+          if (mounted) {
+           WidgetsBinding.instance?.addPostFrameCallback((_){
+             Navigator.of(context).pop(controller.newRubroEvalid);
+             controller.clearCerraryactualizar();
+           });
+          }
+        }
+
         return WillPopScope(
           onWillPop: () async {
             bool? respuesta = await _showMaterialDialog(controller);
@@ -142,18 +161,372 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                 children: <Widget>[
                   getMainTab(),
                   getAppBarUI(),
-                if(controller.showDialog)
+                if(controller.showGuardarProgress)
                   ArsProgressWidget(
                       blur: 2,
                       backgroundColor: Color(0x33000000),
-                      animationDuration: Duration(milliseconds: 500))
+                      animationDuration: Duration(milliseconds: 500),
+                      loadingWidget:  Container(
+                        child: FutureBuilder<bool>(
+                            future: progressDelay(),
+                            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                              if (!snapshot.hasData) {
+                                return Container(
+                                  padding: EdgeInsets.all(10.0),
+                                  height: 100.0,
+                                  width: 100.0,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.white,
+                                  ),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                );
+                              } else {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(child: Container()),
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 16, top: 16),
+                                          child: InkWell(
+                                            onTap: (){
+                                              controller.cerrarProgress();
+                                            },
+                                            child:  Container(
+                                              width: 45,
+                                              height: 45,
+                                              child:  Icon(Ionicons.close, size: 35, color: AppTheme.white,),
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: AppTheme.black.withOpacity(0.5)),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Expanded(
+                                        child: Stack(
+                                          children: [
+                                            Center(
+                                              child: !controller.modoOnline?
+                                              Card(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(16), // if you need this
+                                                  side: BorderSide(
+                                                    color: Colors.grey.withOpacity(0.2),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: Container(
+                                                  padding: EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 24),
+                                                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Container(
+                                                            width: 50,
+                                                            height: 50,
+                                                            child:  Padding(padding: EdgeInsets.all(10), child: Center(
+                                                              child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.white,),
+                                                            ),),
+                                                            decoration: BoxDecoration(
+                                                                shape: BoxShape.circle,
+                                                                color: getColorCurso(controller)),
+                                                          ),
+                                                          Padding(padding: EdgeInsets.all(8)),
+                                                          Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Padding(padding: EdgeInsets.all(4),),
+                                                                  Text(
+                                                                    "El guardar está demorando más de lo previsto", style: TextStyle(
+                                                                      fontSize: 18,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: AppTheme.fontTTNormsMedium
+                                                                  ),),
+                                                                  Padding(padding: EdgeInsets.all(4),),
+                                                                  Text("Guarde una copia en su dispositivo y siga trabajando ó espere hasta que se complete el guardar.",
+                                                                    style: TextStyle(
+                                                                        fontSize: 14,
+                                                                        height: 1.5
+                                                                    ),),
+                                                                  Padding(padding: EdgeInsets.all(8),),
 
+                                                                ],
+                                                              )
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Padding(padding: EdgeInsets.only(bottom: 24)),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                              child: OutlinedButton(
+                                                                onPressed: () {
+                                                                  controller.cerrarProgress();
+                                                                },
+                                                                child: Text('Atras',  style: TextStyle(fontSize: 14)),
+                                                                style: OutlinedButton.styleFrom(
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(8),
+                                                                  ),
+                                                                  primary: AppTheme.darkText,
+                                                                ),
+                                                              )
+                                                          ),
+                                                          Padding(padding: EdgeInsets.all(8)),
+                                                          Expanded(child: ElevatedButton(
+                                                            onPressed: () {
+                                                              controller.onClickGuardarVerMasTarde();
+                                                            },
+                                                            style: ElevatedButton.styleFrom(
+                                                              primary: HexColor("#e5faf3"),
+                                                              onPrimary: Colors.white,
+                                                              elevation: 0,
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(8.0),
+                                                              ),
+                                                            ),
+                                                            child: Padding(padding: EdgeInsets.all(8), child: Text('Guardar una copia en mi dispositivo', style: TextStyle(color:  HexColor("#00c985"), fontWeight: FontWeight.w700, fontSize: 14),),),
+                                                          )),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ):Container(
+                                                padding: EdgeInsets.all(10.0),
+                                                height: 100.0,
+                                                width: 100.0,
+                                                alignment: Alignment.center,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  color: Colors.white,
+                                                ),
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                    ),
+                                    Padding(padding: EdgeInsets.only(bottom: 60))
+                                  ],
+                                );
+                              }
+
+                            }),
+                      ),
+                  ),
+                if(controller.dialogReintentar)
+                  ArsProgressWidget(
+                      blur: 2,
+                      backgroundColor: Color(0x33000000),
+                      animationDuration: Duration(milliseconds: 500),
+                      loadingWidget: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16), // if you need this
+                          side: BorderSide(
+                            color: Colors.grey.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 24),
+                          constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 50,
+                                    height: 50,
+                                    child: Icon(Ionicons.cellular_outline, size: 28, color: AppTheme.white,),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: getColorCurso(controller)),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(8)),
+                                  Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(padding: EdgeInsets.all(4),),
+                                          Text(
+                                            "Su conexión a internet está lenta${controller.errorServidor??false?" o nuestros servidores no responden":""}", style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: AppTheme.fontTTNormsMedium
+                                          ),),
+                                          Padding(padding: EdgeInsets.all(4),),
+                                          Text("No pudimos guardar la evaluación${(controller.tareaUi?.titulo??"").isNotEmpty?" de su tarea":""}. Inténtalo de nuevo.",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                height: 1.5
+                                            ),),
+                                          Padding(padding: EdgeInsets.all(8),),
+                                        ],
+                                      )
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: OutlinedButton(
+                                        onPressed: () {
+                                          controller.onClickAtrasReintentar();
+                                        },
+                                        child: Text('Atras',  style: TextStyle(fontSize: 14)),
+                                        style: OutlinedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                          primary: AppTheme.darkText,
+                                        ),
+                                      )
+                                  ),
+                                  Padding(padding: EdgeInsets.all(8)),
+                                  Expanded(child: ElevatedButton(
+                                    onPressed: () {
+                                      controller.onClickReintentar();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      primary: HexColor("#e5faf3"),
+                                      onPrimary: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    child: Padding(padding: EdgeInsets.all(8), child: Text('Inténtalo de nuevo', style: TextStyle(color:  HexColor("#00c985"), fontWeight: FontWeight.w700, fontSize: 14),),),
+                                  )),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                  ),
+                if(controller.dialogGuardarLocal)
+                  ArsProgressWidget(
+                        blur: 2,
+                        backgroundColor: Color(0x33000000),
+                        animationDuration: Duration(milliseconds: 500),
+                        loadingWidget: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16), // if you need this
+                            side: BorderSide(
+                              color: Colors.grey.withOpacity(0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 24),
+                            constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 50,
+                                      height: 50,
+                                      child: Icon(Ionicons.save, size: 28, color: AppTheme.white,),
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: getColorCurso(controller)),
+                                    ),
+                                    Padding(padding: EdgeInsets.all(8)),
+                                    Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(padding: EdgeInsets.all(4),),
+                                            Text(
+                                              "Su conexión a internet está lenta${controller.errorServidor??false?" o nuestros servidores no responden":""}", style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: AppTheme.fontTTNormsMedium
+                                            ),),
+                                            Padding(padding: EdgeInsets.all(4),),
+                                            Text("No pudimos guardar su nueva evaluación. Guarde una copia en su dispositivo y siga trabajando.",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  height: 1.5
+                                              ),),
+                                            Padding(padding: EdgeInsets.all(8),),
+                                          ],
+                                        )
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: OutlinedButton(
+                                          onPressed: () {
+                                            controller.onClickAtrasGuardarLocal();
+                                          },
+                                          child: Text('Atras',  style: TextStyle(fontSize: 14)),
+                                          style: OutlinedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            primary: AppTheme.darkText,
+                                          ),
+                                        )
+                                    ),
+                                    Padding(padding: EdgeInsets.all(8)),
+                                    Expanded(child: ElevatedButton(
+                                      onPressed: () {
+                                        controller.onClickGuardarVerMasTarde();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        primary: HexColor("#e5faf3"),
+                                        onPrimary: Colors.white,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                      child: Padding(padding: EdgeInsets.all(8), child: Text('Guardar una copia en mi dispositivo', style: TextStyle(color:  HexColor("#00c985"), fontWeight: FontWeight.w700, fontSize: 14),),),
+                                    )),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                    ),
                 ],
               ),
             ),
           ),
         );
       });
+
+
+  Future<bool> progressDelay() async {
+    await Future<dynamic>.delayed(const Duration(milliseconds: 10000));
+    return true;
+  }
+
 
   Widget getAppBarUI() {
     return Column(
@@ -242,22 +615,9 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                     hoverColor: Colors.transparent,
                                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                     splashColor: AppTheme.grey.withOpacity(0.4),
-                                    onTap: () async {
+                                    onTap: ()  {
                                       print("guardar");
-                                      int success = await controller.onSave();
-                                      if(success != 0){
-                                        Navigator.of(context).pop(1);
-                                      }
-
-
-                                      /*if(success == 1|| success == -2){
-
-                                        }else if(success == -1){
-                                          bool? respuesta = await _showDialogErroGuardar(context, success);
-                                          if(respuesta??false){
-                                            Navigator.of(context).pop(true);
-                                          }
-                                        }*/
+                                      controller.onSave();
                                     },
                                     child:
                                     Container(
@@ -632,12 +992,11 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
         });
   }
 
-
-
   @override
   void dispose() {
     super.dispose();
   }
+
 
   void showDialogTipos(RubroCrearController controller) {
     FocusScope.of(context).unfocus();
@@ -1785,11 +2144,12 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                 onPressed: () {
                                   Navigator.of(context).pop(false);
                                 },
-                                child: Text('Cancelar', style: TextStyle(color: getColorCurso(controller), fontSize: 13),),
+                                child: Text('Atras', style: TextStyle(fontSize: 14),),
                                 style: OutlinedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
+                                  primary: AppTheme.darkText
                                 ),
                               )
                           ),
@@ -1799,8 +2159,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                               Navigator.of(context).pop(true);
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: getColorCurso(controller),
-                              onPrimary: Colors.white,
+                              primary: AppTheme.redLighten4,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
@@ -1809,7 +2168,9 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                             child: Text('Salir sin guardar',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 13
+                                fontSize: 14,
+                                color: AppTheme.red,
+                                fontWeight: FontWeight.w700
                               ),
                             ),
                           )),
@@ -1829,113 +2190,6 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
         const Duration(milliseconds: 150));
   }
 
-  Future<bool?> _showDialogErroGuardar(BuildContext context, int tipoError) async {
-    RubroCrearController controller =
-    FlutterCleanArchitecture.getController<RubroCrearController>(context, listen: false);
-    return await showGeneralDialog(
-        context: context,
-        pageBuilder: (BuildContext buildContext,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation) {
-          return ArsProgressWidget(
-              blur: 2,
-              backgroundColor: Color(0x33000000),
-              animationDuration: Duration(milliseconds: 500),
-              loadingWidget: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16), // if you need this
-                  side: BorderSide(
-                    color: Colors.grey.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            child: Icon(Ionicons.cellular_outline, size: 35, color: AppTheme.white,),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppTheme.yellowDarken3),
-                          ),
-                          Padding(padding: EdgeInsets.all(8)),
-                          Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text(
-                                  "Su conexión a internet esta lenta o nuestros servidores no responden.", style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: AppTheme.fontTTNormsMedium
-                                  ),),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("No pudimos guardar su nueva evaluación. Si desea puede guardar una copia de la evaluación en su dispositivo y seguir trabajando.",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        height: 1.5
-                                    ),),
-                                  Padding(padding: EdgeInsets.all(8),),
-                                ],
-                              )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(false);
-                                },
-                                child: Text('Atras'),
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              )
-                          ),
-                          Padding(padding: EdgeInsets.all(8)),
-                          Expanded(child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: AppTheme.red,
-                              onPrimary: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            child: Padding(padding: EdgeInsets.all(4), child: Text('Guardar más tarde y trabajar con una copia'),),
-                          )),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              )
-          );
-        },
-        barrierDismissible: true,
-        barrierLabel: MaterialLocalizations.of(context)
-            .modalBarrierDismissLabel,
-        barrierColor: Colors.transparent,
-        transitionDuration:
-        const Duration(milliseconds: 150));
-  }
 
   Widget getCompetencia(String titulo,int index ,CompetenciaUi competenciaUi, RubroCrearController controller, StateSetter dialogState){
     return Column(
@@ -2033,6 +2287,42 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
     );
   }
 
+  void guardarRecursivo(RubroCrearController controller) async{
+    /*int success = await controller.onSave(false);
+    if(success > 0){
+      Navigator.of(context).pop(1);
+    }else if(success == 0){
+      // No hacer nada
+    }else{
+      if(controller.modoOnline){
+        bool? respuesta = await _showDialogErroGuardarOnline(context, controller);
+        if(respuesta??false){
+          guardarRecursivo(controller);
+        }else{
+          // No hacer nada
+        }
+
+      }else{
+
+        bool reintentar = controller.isReintento();
+        bool? respuesta = reintentar?
+        await _showDialogErroGuardarOnline(context, controller):
+        await _showDialogErroGuardar(context, controller);
+
+        if(respuesta??false){
+          if(reintentar){
+            controller.onClickReintentar();
+            guardarRecursivo(controller);
+          }else{
+            await controller.onSave(true);
+            Navigator.of(context).pop(1);
+          }
+        }else{
+          // No hacer nada
+        }
+      }
+    }*/
+  }
 }
 
 class ItemCompetencia extends StatefulWidget{
@@ -2408,6 +2698,7 @@ class _ItemCompetenciaState extends State<ItemCompetencia>{
     }
     criterioUi.toogle = todosTemasSelecionados;
   }
+
 
 
 }

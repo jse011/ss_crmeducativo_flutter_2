@@ -61,6 +61,7 @@ class PesoCriterioController extends Controller{
     _rubricaEvaluacionList.clear();
 
     _rubricaEvaluacionList = capacidadUi.rubricaEvalUiList??[];
+    _tableColumns.add("promedio");
     _tableColumns.add("alta");//Nivel complejidad\nalta
     _tableColumns.add("estandar");//Nivel complejidad\nestandar
     _tableColumns.add("baja");//Nivel complejidad\nbaja
@@ -72,6 +73,8 @@ class PesoCriterioController extends Controller{
     for (int i = 0; i < _rubricaEvaluacionList.length; i++) {
       RubricaEvaluacionUi rubricaEvaluacionUi = _rubricaEvaluacionList[i];
       final List<dynamic> row = [];
+
+      row.add(rubricaEvaluacionUi);
 
       RubricaEvaluacionPesoSelectedUi criterioPesoAltaUi = RubricaEvaluacionPesoSelectedUi();
       criterioPesoAltaUi.peso = 3;
@@ -124,7 +127,7 @@ class PesoCriterioController extends Controller{
     for(List list in _tableCells){
       for(dynamic cell in list){
         if(cell is RubricaEvaluacionPesoSelectedUi ){
-          if(cell.rubricaEvaluacionUi?.rubricaId == pesoSelectedUi.rubricaEvaluacionUi?.rubricaId){
+          if(cell.rubricaEvaluacionUi?.rubroEvaluacionId == pesoSelectedUi.rubricaEvaluacionUi?.rubroEvaluacionId){
             cell.selected = false;
           }
         }
@@ -143,13 +146,17 @@ class PesoCriterioController extends Controller{
   Future<bool> onSave() async {
     bool modificado = _rubricaModificadoList.isNotEmpty;
     if(modificado){
-      List<String> rubroEvaluacionIdList = [];
+      List<String?> rubroEvaluacionIdList = [];
 
       for(var rubricaEvaluacionUi in _rubricaModificadoList){
+        print("rubroEvaluacionId: ${rubricaEvaluacionUi?.rubroEvaluacionId} as");
+        print("rubroEvaluacionIdCabecera: ${rubricaEvaluacionUi?.rubricaIdRubroCabecera} as");
 
-        String? rubroEvaluacionIdCabecera = rubroEvaluacionIdList.firstWhereOrNull((id) => id == (rubricaEvaluacionUi?.rubricaIdRubroCabecera??rubricaEvaluacionUi?.rubricaId));
-        if(rubroEvaluacionIdCabecera==null){
-          rubroEvaluacionIdList.add(rubricaEvaluacionUi?.rubricaIdRubroCabecera??"");
+        String? rubricaEvalId = rubricaEvaluacionUi?.rubricaIdRubroCabecera??rubricaEvaluacionUi?.rubroEvaluacionId;//obtner el id de los rubrica o el id rubro unidimensional
+        bool existeId = rubroEvaluacionIdList.firstWhereOrNull((id) => id == rubricaEvalId) != null;
+
+        if(!existeId){
+          rubroEvaluacionIdList.add(rubricaEvalId);
         }
         await presenter.updatePesoRubroEvaluacion(rubricaEvaluacionUi);
         print("rubroEvaluacionIdCabecera: ${rubricaEvaluacionUi?.rubricaIdRubroCabecera}");

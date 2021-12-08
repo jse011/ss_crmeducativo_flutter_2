@@ -38,19 +38,14 @@ class EvaluacionIndicadorMultipleController extends Controller {
   List<List<dynamic>> _cellListList = [];
   List<List<dynamic>> get cellListList => _cellListList;
   List<PersonaUi> _alumnoCursoList = [];
-  List<PersonaUi> _alumnoCursoListDesordenado = [];
-  List<PersonaUi> get alumnoCursoList => _alumnoCursoListDesordenado;
-  List<double> get tablecolumnWidths => _tablecolumnWidths;
-  List<double> _tablecolumnWidths = [];
+  /*List<PersonaUi> _alumnoCursoListDesordenado = [];*/
+  List<PersonaUi> get alumnoCursoList => _alumnoCursoList;
   Map<PersonaUi, List<dynamic>> _mapColumnList = Map();
   Map<PersonaUi, List<RubricaEvaluacionUi>> _mapRowList = Map();
   Map<PersonaUi, List<List<dynamic>>> _mapCellListList = Map();
   Map<PersonaUi, List<dynamic>> get mapColumnList => _mapColumnList;
   Map<PersonaUi, List<RubricaEvaluacionUi>> get mapRowList => _mapRowList;
   Map<PersonaUi, List<List<dynamic>>> get mapCellListList => _mapCellListList;
-
-  bool _tipoMatriz = true;
-  bool get tipoMatriz => _tipoMatriz;
 
   bool _precision = false;
   bool get precision => _precision;
@@ -61,6 +56,14 @@ class EvaluacionIndicadorMultipleController extends Controller {
   bool _showDialog = false;
   bool get showDialog => _showDialog;
 
+  PersonaUi? _personaUiSelected = null;
+  PersonaUi? get personaUiSelected => _personaUiSelected;
+
+  bool _atras = false;
+  bool get atras => _atras;
+  bool _siguiente = false;
+  bool get siguiente => _siguiente;
+
   EvaluacionIndicadorMultipleController(this.rubroEvaluacionId, this.cursosUi, this.calendarioPeriodoUI,
       RubroRepository rubroRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo) :
         presenter = EvaluacionIndicadorMultiplePresenter(
@@ -69,7 +72,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   @override
   void initListeners() {
     presenter.getRubroEvaluacionOnError = (e){
-
+      this.rubroEvaluacionUi = null;
     };
 
     presenter.getSessionUsuarioOnNext = (UsuarioUi usuarioUi){
@@ -77,7 +80,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
     };
 
     presenter.getSessionUsuarioOnError = (e) {
-      this.rubroEvaluacionUi = null;
+      _usuarioUi = null;
     };
 
     presenter.getRubroEvaluacionOnNext =
@@ -110,9 +113,9 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _rowList2.add(""); //Espacio
 
     _columnList2.add(ContactoUi()); //Titulo alumno
-    _columnList2.add(EvaluacionUi()); //Titulo Nota Final
 
     _columnList2.addAll(rubricaEvaluacionUi?.rubrosDetalleList??[]);
+    _columnList2.add(EvaluacionUi()); //Titulo Nota Final
     _columnList2.add(EvaluacionPublicadoUi(EvaluacionUi()));
     _columnList2.add(""); // espacio
 
@@ -121,10 +124,11 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
       cellList.add(row);
       EvaluacionPublicadoUi? evaluacionPublicadoUi = null;
+      EvaluacionUi? evaluacionUiCabecera = null;
       //#obtner Nota Tatal
       if (row is PersonaUi) {
 
-        EvaluacionUi? evaluacionUiCabecera = rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
+        evaluacionUiCabecera = rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
         if (evaluacionUiCabecera == null){
           evaluacionUiCabecera = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
           evaluacionUiCabecera.rubroEvaluacionUi = rubricaEvaluacionUi;
@@ -134,7 +138,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
         }
         evaluacionUiCabecera.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
 
-        cellList.add(evaluacionUiCabecera);
+        //cellList.add(evaluacionUiCabecera);
         evaluacionPublicadoUi = EvaluacionPublicadoUi(evaluacionUiCabecera);
 
         //Comprobar si el detalle tiene tiene evaluacion
@@ -162,7 +166,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
           if (evaluacionUi == null){
             evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
             evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
-            evaluacionUi.rubroEvaluacionId = rubricaEvaluacionUi.rubricaId;
+            evaluacionUi.rubroEvaluacionId = rubricaEvaluacionUi.rubroEvaluacionId;
             row.soloApareceEnElCurso = true;
           }
           evaluacionUi.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
@@ -171,6 +175,8 @@ class EvaluacionIndicadorMultipleController extends Controller {
           cellList.add(""); //Espacio
         }
       }
+
+      cellList.add(evaluacionUiCabecera);
 
       //#obtner Validar si todos los rubros detalles esta publicados
       if(evaluacionPublicadoUi!=null){
@@ -233,8 +239,8 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
   void initLista(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubroEvaluacionUi) {
     _alumnoCursoList = alumnoCursoList;
-    _alumnoCursoListDesordenado.clear();
-    _alumnoCursoListDesordenado.addAll(alumnoCursoList);
+    //_alumnoCursoListDesordenado.clear();
+    //_alumnoCursoListDesordenado.addAll(alumnoCursoList);
     _mapColumnList.clear();
     _mapRowList.clear();
     _mapCellListList.clear();
@@ -250,7 +256,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
       _mapRowList[personaUi]?.addAll(rubroEvaluacionUi?.rubrosDetalleList??[]);
 
-      _mapColumnList[personaUi]?.add(RubricaEvaluacionUi());
+      //_mapColumnList[personaUi]?.add(RubricaEvaluacionUi());
       TipoNotaUi? tipoNotaUi = null;
       if(rubroEvaluacionUi?.rubrosDetalleList?.isNotEmpty??false){
         tipoNotaUi = rubroEvaluacionUi?.rubrosDetalleList?[0].tipoNotaUi;
@@ -260,11 +266,11 @@ class EvaluacionIndicadorMultipleController extends Controller {
       }else{
         _mapColumnList[personaUi]?.add(EvaluacionUi());//Teclado numerico
       }
-      _mapColumnList[personaUi]?.add(RubricaEvaluacionFormulaPesoUi(RubricaEvaluacionUi()));//peso_criterio
+      //_mapColumnList[personaUi]?.add(RubricaEvaluacionFormulaPesoUi(RubricaEvaluacionUi()));//peso_criterio
 
       for(RubricaEvaluacionUi row in _mapRowList[personaUi]??[]){
         List<dynamic> cellList = [];
-        cellList.add(row);
+        //cellList.add(row);
         EvaluacionUi? evaluacionUi = row.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == personaUi.personaId);
 
         if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
@@ -279,29 +285,11 @@ class EvaluacionIndicadorMultipleController extends Controller {
         }else{
           cellList.add(evaluacionUi);
         }
-        RubricaEvaluacionFormulaPesoUi pesoUi = RubricaEvaluacionFormulaPesoUi(row);
-        cellList.add(pesoUi);
+        //RubricaEvaluacionFormulaPesoUi pesoUi = RubricaEvaluacionFormulaPesoUi(row);
+        //cellList.add(pesoUi);
         _mapCellListList[personaUi]?.add(cellList);
       }
     }
-
-    /*Calular el tamaño*/
-    _tablecolumnWidths.clear();
-      if(alumnoCursoList.isNotEmpty){
-        for(dynamic s in _mapColumnList[alumnoCursoList[0]]??[]){
-          if(s is ValorTipoNotaUi){
-            _tablecolumnWidths.add(45.0);
-          } else if(s is RubricaEvaluacionUi){
-            _tablecolumnWidths.add(85);
-          } else if(s is EvaluacionUi){
-            _tablecolumnWidths.add(45);
-          }else if(s is RubricaEvaluacionFormulaPesoUi){
-            _tablecolumnWidths.add(45);
-          }else{
-            _tablecolumnWidths.add(50.0);
-          }
-        }
-      }
 
 
 
@@ -310,18 +298,20 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   onClicEvaluacionRubrica(EvaluacionUi evaluacionUi) {
-    _alumnoCursoListDesordenado.clear();
+    _personaUiSelected = evaluacionUi.personaUi;
+    comprobarButtom();
+   /* _alumnoCursoListDesordenado.clear();
     _alumnoCursoListDesordenado.addAll(_alumnoCursoList);
     _alumnoCursoListDesordenado.firstWhereOrNull((element) => false);
 
     _alumnoCursoListDesordenado.remove(evaluacionUi.personaUi);
     _alumnoCursoListDesordenado.insert(0,evaluacionUi.personaUi??PersonaUi());
-    _tipoMatriz = false;
+    _tipoMatriz = false;*/
     refreshUI();
   }
 
   onClicVolverMatriz(){
-    _tipoMatriz = true;
+   // _tipoMatriz = true;
     refreshUI();
   }
 
@@ -337,15 +327,16 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
   void onClickEliminar() {
     _showDialogEliminar = true;
+
     refreshUI();
   }
 
-  void onClicEvaluar(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi personaUi) {
+  void onClicEvaluar(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi? personaUi) {
     for (List cellList in mapCellListList[personaUi] ?? []) {
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
           if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-              && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -368,15 +359,15 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _modificado = true;
     refreshUI();
 
-    presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+    presenter.updateEvaluacion(rubroEvaluacionUi, personaUi?.personaId);
   }
 
-  void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi personaUi, nota) {
+  void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi? personaUi, nota) {
     for (List cellList in mapCellListList[personaUi] ?? []) {
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
           if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-              && cell.evaluacionUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -392,7 +383,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _actualizarCabecera(personaUi);
     _modificado = true;
     refreshUI();
-    presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+    presenter.updateEvaluacion(rubroEvaluacionUi, personaUi?.personaId);
   }
 
   String getRangoNota(ValorTipoNotaUi? valorTipoNotaUi){
@@ -414,7 +405,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
     return rango;
   }
 
-  onClicEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, PersonaUi personaUi) {
+  onClicEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, PersonaUi? personaUi) {
 
     for(List cellList in mapCellListList[personaUi]??[]){
       for(var cell in cellList){
@@ -439,23 +430,23 @@ class EvaluacionIndicadorMultipleController extends Controller {
     presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
-  void _actualizarCabecera(PersonaUi personaUi) {
+  void _actualizarCabecera(PersonaUi? personaUi) {
     CalcularEvaluacionProceso.actualizarCabecera(rubroEvaluacionUi, personaUi);
     refreshUI();
   }
 
-  EvaluacionUi? getEvaluacionGeneralPersona(PersonaUi personaUi) {
+  EvaluacionUi? getEvaluacionGeneralPersona(PersonaUi? personaUi) {
     EvaluacionUi? evaluacionUi = null;
 
     for(EvaluacionUi item in rubroEvaluacionUi?.evaluacionUiList??[]){
-      if(item.personaUi?.personaId == personaUi.personaId){
+      if(item.personaUi?.personaId == personaUi?.personaId){
         evaluacionUi = item;
       }
     }
     return evaluacionUi;
   }
 
-  onClicClearEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, PersonaUi personaUi) {
+  onClicClearEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, PersonaUi? personaUi) {
     for(List cellList in mapCellListList[personaUi]??[]){
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
@@ -494,6 +485,34 @@ class EvaluacionIndicadorMultipleController extends Controller {
   onClicGuardar() async{
 
   }
+
+  void onClickFinalizarEvaluacion() {
+    _personaUiSelected = null;
+    refreshUI();
+  }
+
+  void onClickAtrasEvaluacion() {
+    int count = _alumnoCursoList.indexOf(_personaUiSelected!);
+    _personaUiSelected = _alumnoCursoList[count-1];
+    comprobarButtom();
+    refreshUI();
+  }
+
+  void comprobarButtom() {
+    int size = _alumnoCursoList.length;
+    int count = _alumnoCursoList.indexOf(_personaUiSelected!);
+    print("count ${count} size ${size}");
+    _atras =  count != 0;
+    _siguiente = (size-1) != count;
+  }
+
+  void onClickSiguienteEvaluacion() {
+    int count = _alumnoCursoList.indexOf(_personaUiSelected!);
+    _personaUiSelected = _alumnoCursoList[count+1];
+    comprobarButtom();
+    refreshUI();
+  }
+
 
 
 

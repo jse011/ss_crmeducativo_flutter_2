@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/io_client.dart';
@@ -257,7 +258,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<Map<String, dynamic>?> getDatosRubroFlutter(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId, String? tareaId,List<dynamic> rubrosNoEnviados) async{
+  Future<Map<String, dynamic>?> getDatosRubroFlutter(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId, String? tareaId,List<dynamic> rubrosNoEnviados, bool contenidoExtra, int anioAcademicoId, int programaEducativoId, int empleadoId) async{
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
     parameters["vint_SilaboEventoId"] = silaboEventoId;
@@ -267,6 +268,12 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_SesionAprendizajeAlumnoId"] = sesionAprendizajeAlumnoId;
     parameters["vstr_tareaId"] = tareaId;
     parameters["vlst_RubroEvalEnvioSimple"] = rubrosNoEnviados;
+    parameters["vbol_contenidoExtra"] = contenidoExtra;
+    parameters["vint_AnioAcademicoId"] = anioAcademicoId;
+    parameters["vint_ProgramaEducativoId"] = programaEducativoId;
+    parameters["vint_EmpleadoId"] = empleadoId;
+
+
     final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getDatosRubroFlutter",parameters))
         .timeout(Duration(seconds: 60), onTimeout: (){throw Exception('Failed to load getDatosRubroFlutter');});
 
@@ -298,7 +305,9 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_GeoreferenciaId"] = georeferenciaId;
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["bERubroEvalEnvio"] = data;
-    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("crearRubroEvaluacion", parameters))
+    String params = getBody("crearRubroEvaluacion", parameters);
+    //log(params);
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: params)
         .timeout(Duration(seconds: 15), onTimeout: (){throw Exception('Failed to load rubro eval');});
 
     if (response.statusCode == 200) {
@@ -320,6 +329,72 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
+  Future<HttpStream> crearRubroEvaluacion2(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, Map<String, dynamic> data, HttpSuccess httpSuccessListen) async {
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+    parameters["vint_GeoreferenciaId"] = georeferenciaId;
+    parameters["vint_UsuarioId"] = usuarioId;
+    parameters["bERubroEvalEnvio"] = data;
+    Dio dio = new Dio();
+    String params = getBody("crearRubroEvaluacion", parameters);
+    //log(params);
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: params,
+      cancelToken: token,
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(body["Value"], true);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, true);
+          print("Response null ${response.data}");
+        }
+      }
+    }).catchError((dioError, stackTrace) {
+      switch (dioError.type) {
+        case DioErrorType.cancel:
+        //message = "Request to API server was cancelled";
+          break;
+        case DioErrorType.connectTimeout:
+          print("Connection timeout with API server");
+          httpSuccessListen.call(false, true);
+          break;
+        case DioErrorType.other:
+          print("Connection to API server failed due to internet connection");
+          httpSuccessListen.call(false, true);
+          break;
+        case DioErrorType.receiveTimeout:
+          httpSuccessListen.call(false, true);
+          print("Receive timeout in connection with API server");
+          break;
+        case DioErrorType.response:
+        /// When the server response, but with a incorrect status, such as 404, 503...
+          httpSuccessListen.call(false, false);
+          print("Response error 404, 503 ...");
+          break;
+        case DioErrorType.sendTimeout:
+          throw Exception("Send timeout in connection with API server");
+        default:
+          httpSuccessListen.call(false, false);
+          print("Response error Something went wrong");
+          //message = "Something went wrong";
+          break;
+      }
+    });
+
+    return dioCancellation;
+  }
+
+
+  @override
   Future<bool?> updateEvaluacionRubroFlutter(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, Map<String, dynamic> data) async{
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
@@ -327,7 +402,9 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_GeoreferenciaId"] = georeferenciaId;
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["bERubroEvalEnvio"] = data;
-    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("updateEvaluacionRubroFlutter", parameters))
+    String params = getBody("updateEvaluacionRubroFlutter", parameters);
+    //log(params);
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: params)
         .timeout(Duration(seconds: 15), onTimeout: (){throw Exception('Failed to load rubro eval');});
 
     if (response.statusCode == 200) {
@@ -404,10 +481,9 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<Map<String, dynamic>?> getInfoTareaDocente(String urlServidorLocal, String? tareaId, String? rubroEvaluacionId, int? silaboEventoId, int? unidadEventoId) async{
+  Future<Map<String, dynamic>?> getInfoTareaDocente(String urlServidorLocal, String? tareaId, int? silaboEventoId, int? unidadEventoId) async{
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vstr_TareaId"] = tareaId;
-    parameters["vstr_rubroEvaluacionId"] = rubroEvaluacionId;
     parameters["vint_SilaboEventoId"] = silaboEventoId;
     parameters["vint_UnidadEventoId"] = unidadEventoId;
     final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getInfoTareaDocente", parameters))
@@ -432,7 +508,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<HttpStream> uploadFileArchivoDocente(String urlServidorLocal, int silaboEventoId, String nombre, File file, HttpProgressListen progressListen, HttpSuccess httpSuccessListen) async{
+  Future<HttpStream> uploadFileArchivoDocente(String urlServidorLocal, int silaboEventoId, String nombre, File file, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen) async{
     CancelToken token = CancelToken();
     DioCancellation dioCancellation = DioCancellation(token);
     Map<String, dynamic> parameters = Map<String, dynamic>();
@@ -580,7 +656,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<HttpStream?> uploadFileAgendaDocente(String urlServidorLocal, String nombre, File file, HttpProgressListen progressListen, HttpSuccess httpSuccessListen) async {
+  Future<HttpStream?> uploadFileAgendaDocente(String urlServidorLocal, String nombre, File file, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen) async {
     CancelToken token = CancelToken();
     DioCancellation dioCancellation = DioCancellation(token);
     Map<String, dynamic> parameters = Map<String, dynamic>();
@@ -685,6 +761,310 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     }
   }
 
+  @override
+  Future<bool?> saveTareaDocenteFlutter(String urlServidorLocal, Map<String, dynamic> data)async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vobj_TareEvento"] = data;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("saveTareaDocenteFirebase", parameters))
+        .timeout(Duration(seconds: 20), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<HttpStream> saveTareaEvalDocente(String urlServidorLocal, int? georeferenciaId,int? usuarioId, int? calendarioPeriodoId, int? silaboEventoId, int? unidadAprendizajeId, String? tareaId, Map<String, dynamic> dataSerial, HttpSuccess httpSuccessListen) async{
+
+    Dio dio = new Dio();
+    DioCancellation2 dioCancellation = DioCancellation2(dio);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_GeoreferenciaId"] = georeferenciaId;
+    parameters["vint_UsuarioId"] = usuarioId;
+    parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+    parameters["vint_UnidadAprendizajeId"] = unidadAprendizajeId;
+    parameters["vstr_TareaId"] = tareaId;
+    parameters["bERubroEvalEnvio"] = dataSerial;
+
+
+    String params = getBody("evaluacionTareaFlutter", parameters);
+    log(params);
+
+
+
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: params,
+      cancelToken: dioCancellation.token,
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(body["Value"], false);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, false);
+          print("Response null ${response.data}");
+        }
+      }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      switch (dioError.type) {
+        case DioErrorType.cancel:
+          print("Request to API server was cancelled");
+          httpSuccessListen.call(false, false);
+          break;
+        case DioErrorType.connectTimeout:
+          print("Connection timeout with API server");
+          httpSuccessListen.call(false, true);
+          break;
+        case DioErrorType.other:
+          print("Connection to API server failed due to internet connection");
+          httpSuccessListen.call(false, true);
+          break;
+        case DioErrorType.receiveTimeout:
+          httpSuccessListen.call(false, true);
+          print("Receive timeout in connection with API server");
+          break;
+        case DioErrorType.response:
+        /// When the server response, but with a incorrect status, such as 404, 503...
+          httpSuccessListen.call(null, false);
+          print("Response error 404, 503 ...");
+          break;
+        case DioErrorType.sendTimeout:
+          print("Send timeout in connection with API server");
+          httpSuccessListen.call(false, true);
+          break;
+        default:
+          httpSuccessListen.call(false, false);
+          print("Response error Something went wrong");
+          //message = "Something went wrong";
+          break;
+      }
+    });
+
+    return dioCancellation;
+  }
+
+  @override
+  Future<HttpStream> procesarEvaluacionTarea(String urlServidorLocal, int georeferenciaId, int usuarioId, int? calendarioPeriodoId, int? silaboEventoId, int? unidadEventoId, String? rubroEvalId, String? tareaId, HttpSuccess httpSuccessListen) async {
+    Dio dio = new Dio();
+    DioCancellation2 dioCancellation = DioCancellation2(dio);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_UsuarioId"] = usuarioId;
+    parameters["vint_GeoreferenciaId"] = georeferenciaId;
+    parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+    parameters["vint_UnidadAprendizajeId"] = unidadEventoId;
+    parameters["vstr_RubroEvalId"] = rubroEvalId;
+    parameters["vstr_TareaId"] = tareaId;
+
+
+    String params = getBody("procesarEvaluacionTareaFlutter", parameters);
+    //log(params);
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: params,
+      cancelToken: dioCancellation.token,
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(body["Value"], false);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(null, false);
+          print("Response null ${response.data}");
+        }
+      }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+            print("Request to API server was cancelled");
+            httpSuccessListen.call(false, false);
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, true);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(null, false);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            print("Send timeout in connection with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          default:
+            httpSuccessListen.call(false, false);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(null, false);
+      }
+
+    });
+
+    return dioCancellation;
+  }
+
+  @override
+  Future<HttpStream> getUrlDownloadTareaEvaluacion(String urlServidorLocal, int? silaboEventoId, int? unidadAprendizajeId, String? tareaId, int? personaId, String? archivo, HttpSuccessValue2 httpSuccessListen) async{
+
+    Dio dio = new Dio();
+    DioCancellation2 dioCancellation = DioCancellation2(dio);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+    parameters["vint_UnidadAprendizajeId"] = unidadAprendizajeId;
+    parameters["vstr_TareaId"] = tareaId;
+    parameters["vint_PersonaId"] = personaId;
+    parameters["vsts_Archivo"] = archivo;
+
+
+    String params = getBody("getUrlDowloadTareaEvaluacion", parameters);
+    //log(params);
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: params,
+      cancelToken: dioCancellation.token,
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(body["Value"], false, );
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(null, false);
+          print("Response null ${response.data}");
+        }
+      }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+            print("Request to API server was cancelled");
+            httpSuccessListen.call(false, false);
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, true);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(null, false);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            print("Send timeout in connection with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          default:
+            httpSuccessListen.call(false, false);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(null, false);
+      }
+
+    });
+
+    return dioCancellation;
+
+
+  }
+
+  @override
+  Future<List<dynamic>?> getSesionesHoy(String urlServidorLocal, int? anioAcademicoId, int? docenteId) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_AnioAcademicoId"] = anioAcademicoId;
+    parameters["vint_DocenteId"] = docenteId;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getSesionesHoy",parameters))
+        .timeout(Duration(seconds: 10), onTimeout: (){throw Exception('Failed to load getSesionesHoy');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load crear_agenda 0');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getAprendizajeSesion(String urlServidorLocal, int? sesionAprendizajeId) async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_SesionAprendizajeId"] = sesionAprendizajeId;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getAprendizajeSesion",parameters))
+        .timeout(Duration(seconds: 10), onTimeout: (){throw Exception('Failed to load getAprendizajeSesion');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load crear_agenda 0');
+    }
+  }
 
 }
 
@@ -695,8 +1075,32 @@ class DioCancellation  extends HttpStream{
   DioCancellation(this.token);
 
   @override
-  void cancel() {
-    token.cancel();
+  void cancel()async{
+    print("token ${token.hashCode}");
+    token.cancel('cancelled');
+  }
+
+  @override
+  bool isFinished() {
+    return finishesd??false;
+  }
+}
+
+class DioCancellation2  extends HttpStream{
+  Dio dio;
+  bool? finishesd;
+  CancelToken? token;
+
+  DioCancellation2(this.dio){
+    //dio.interceptors.add(LogInterceptor());
+    // Token can be shared with different requests.
+    token = CancelToken();
+  }
+
+  @override
+  void cancel()async{
+    print("token ${token.hashCode}");
+    token?.cancel('cancelled');
   }
 
   @override

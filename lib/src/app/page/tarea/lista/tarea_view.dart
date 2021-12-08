@@ -15,13 +15,15 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_r
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 class TareaView extends View{
   CursosUi cursosUi;
+  UsuarioUi? usuarioUi;
   TareaView(this.cursosUi);
 
   @override
-  _TareaViewState createState() => _TareaViewState(cursosUi);
+  _TareaViewState createState() => _TareaViewState(cursosUi, usuarioUi);
 
 }
 
@@ -32,7 +34,7 @@ class _TareaViewState extends ViewState<TareaView, TareaController> with TickerP
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
 
-  _TareaViewState(cursoUi) : super(TareaController(cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository()));
+  _TareaViewState(cursoUi, usuarioUi) : super(TareaController(usuarioUi, cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository()));
 
   @override
   void initState() {

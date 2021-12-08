@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/TareaEvaluacionUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:collection/collection.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -8,6 +9,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
 
 class GetInformacionTarea extends UseCase<GetInformacionTareaResponse, GetInformacionTareaParams>{
@@ -29,7 +31,8 @@ class GetInformacionTarea extends UseCase<GetInformacionTareaResponse, GetInform
         bool errorServidor = false;
         try{
           String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
-          Map<String, dynamic>? unidadSesion = await httpDatosRepository.getInfoTareaDocente(urlServidorLocal, params?.tareaUi?.tareaId, params?.rubroEvaluacionId, params?.silaboEventoId, params?.unidadEventoId);
+          Map<String, dynamic>? unidadSesion = await httpDatosRepository.getInfoTareaDocente(urlServidorLocal, params?.tareaUi?.tareaId, params?.silaboEventoId, params?.unidadEventoId);
+
           errorServidor = unidadSesion==null;
           if(!errorServidor){
             await unidadTareaRepository.saveInformacionTarea(params?.tareaUi?.tareaId, unidadSesion);
@@ -86,12 +89,11 @@ class GetInformacionTarea extends UseCase<GetInformacionTareaResponse, GetInform
 
 class GetInformacionTareaParams{
   TareaUi? tareaUi;
-  String? rubroEvaluacionId;
   int? cargaCursoId;
   int? silaboEventoId;
   int? unidadEventoId;
 
-  GetInformacionTareaParams(this.tareaUi, this.rubroEvaluacionId, this.cargaCursoId,
+  GetInformacionTareaParams(this.tareaUi, this.cargaCursoId,
       this.silaboEventoId, this.unidadEventoId);
 }
 

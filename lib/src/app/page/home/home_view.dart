@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 //import 'package:sqlite_viewer/sqlite_viewer.dart';
 import 'package:ss_crmeducativo_2/libs/new_version.dart';
+import 'package:ss_crmeducativo_2/src/app/page/contactos/contactos_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/escritorio/portal/escritorio_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/portal/evento_agenda_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/portal_docente/portal_docente_view.dart';
@@ -151,10 +152,7 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
                       case 0:
                         return EventoAgendaView(controller.usuario,animationController: animationController!);
                       default:
-                        return Container(
-                          color: Colors.red,
-                          child: Text(position.toString(), style: TextStyle(color: Colors.black),),
-                        );
+                        return ContactosView(animationController: animationController!);
                     }
 
               },

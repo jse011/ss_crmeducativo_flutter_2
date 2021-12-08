@@ -21,13 +21,15 @@ import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 class TareaView2 extends View{
   CursosUi cursosUi;
-  TareaView2(this.cursosUi);
+  UsuarioUi? usuarioUi;
+  TareaView2(this.cursosUi, this.usuarioUi);
 
   @override
-  _TareaViewState createState() => _TareaViewState(cursosUi);
+  _TareaViewState createState() => _TareaViewState(cursosUi, usuarioUi);
 
 }
 
@@ -38,7 +40,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
 
-  _TareaViewState(cursoUi) : super(TareaController(cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository()));
+  _TareaViewState(cursoUi, usuarioUi) : super(TareaController(usuarioUi, cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository()));
 
   @override
   void initState() {
@@ -336,13 +338,13 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                               dynamic o = unidadItemList[index];
                                               if(o is TareaUi){
                                                 return ItemTarea(color1: HexColor(controller.cursosUi.color1), tareaUi: o, onTap: () async{
-                                                  dynamic? result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI, null);
+                                                  dynamic? result = await AppRouter.createRouteTareaPortalRouter(context, controller.usuarioUi,  controller.cursosUi, o, controller.calendarioPeriodoUI, unidadUi, null);
                                                   if(result is int) controller.refrescarListTarea(unidadUi);
                                                 });
                                               }else{
                                                 return InkWell(
                                                   onTap: () async{
-                                                    dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi.unidadAprendizajeId, null);
+                                                    dynamic? result = await AppRouter.createRouteTareaCrearRouter(context, controller.usuarioUi, controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi, null);
                                                     if(result is int) controller.refrescarListTarea(unidadUi);
                                                   },
                                                   child: Container(

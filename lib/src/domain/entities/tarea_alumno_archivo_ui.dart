@@ -8,5 +8,7 @@ class TareaAlumnoArchivoUi{
   String? url;
   bool? repositorio;
   TipoRecursosUi? tipoRecurso;
+  String? driveId;
+  bool? upload;
 
 }

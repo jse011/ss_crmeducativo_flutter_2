@@ -159,7 +159,7 @@ class EvaluacionCapacidadController extends Controller{
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
           if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.alumnoId
-              && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+              && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -193,7 +193,7 @@ class EvaluacionCapacidadController extends Controller{
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
           if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionTransformadaUi?.alumnoId
-              && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubricaId
+              && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -221,13 +221,13 @@ class EvaluacionCapacidadController extends Controller{
         for (var cell in cellList) {
           if (cell is EvaluacionRubricaValorTipoNotaUi) {
             if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
-                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionUi?.rubroEvaluacionId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
                 && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
               cell.toggle = true;
             }
 
             if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
-                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubricaId == evaluacionUi?.rubroEvaluacionId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
                 && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
               cell.toggle = false;
             }
@@ -287,11 +287,11 @@ class EvaluacionCapacidadController extends Controller{
   }
 
   validacionModificacion(RubricaEvaluacionUi? rubricaEvaluacionUi, int tipoModificacion){
-    if(rubroModificadosMap.containsKey(rubricaEvaluacionUi?.rubricaId) == Modifico_Evaluacion && tipoModificacion == Modifico_Peso_Rubro){
+    if(rubroModificadosMap.containsKey(rubricaEvaluacionUi?.rubroEvaluacionId) == Modifico_Evaluacion && tipoModificacion == Modifico_Peso_Rubro){
       // Si ya se modifico el peso_criterio a evaluacion no es nesario pasar al estado Modifico_Peso_Rubro devido a que con el estado modificacion se actaualizar tambien el peso_criterio
-      rubroModificadosMap[rubricaEvaluacionUi?.rubricaId] = Modifico_Evaluacion;
+      rubroModificadosMap[rubricaEvaluacionUi?.rubroEvaluacionId] = Modifico_Evaluacion;
     }else{
-      rubroModificadosMap[rubricaEvaluacionUi?.rubricaId] = tipoModificacion;
+      rubroModificadosMap[rubricaEvaluacionUi?.rubroEvaluacionId] = tipoModificacion;
     }
   }
 
@@ -352,17 +352,20 @@ class EvaluacionCapacidadController extends Controller{
   Future<bool> onSave() async {
     bool modificado = rubroModificadosMap.isNotEmpty;
 
-    List<String> rubroEvaluacionIdList = [];
+    List<String?> rubroEvaluacionIdList = [];
     if(modificado){
       _showDialog = true;
       refreshUI();
       for(MapEntry<String?, int> row in rubroModificadosMap.entries) {
-        RubricaEvaluacionUi? rubricaEvaluacionUi = evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList?.firstWhereOrNull((element) => element.rubricaId == row.key);
+        RubricaEvaluacionUi? rubricaEvaluacionUi = evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList?.firstWhereOrNull((element) => element.rubroEvaluacionId == row.key);
         if(rubricaEvaluacionUi != null){
 
-          String? rubroEvaluacionIdCabecera = rubroEvaluacionIdList.firstWhereOrNull((id) => id == rubricaEvaluacionUi.rubricaIdRubroCabecera);
-          if(rubroEvaluacionIdCabecera==null){
-            rubroEvaluacionIdList.add(rubricaEvaluacionUi.rubricaIdRubroCabecera??"");
+          //String? rubroEvaluacionIdCabecera = rubroEvaluacionIdList.firstWhereOrNull((id) => id == rubricaEvaluacionUi.rubricaIdRubroCabecera);
+          String? rubricaEvalId = rubricaEvaluacionUi.rubricaIdRubroCabecera??rubricaEvaluacionUi.rubroEvaluacionId;//obtner el id de los rubrica o el id rubro unidimensional
+          bool existeId = rubroEvaluacionIdList.firstWhereOrNull((id) => id == rubricaEvalId) != null;
+
+          if(!existeId){
+            rubroEvaluacionIdList.add(rubricaEvalId);
           }
           if(row.value == Modifico_Peso_Rubro){
 

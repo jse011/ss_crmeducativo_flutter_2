@@ -58,13 +58,13 @@ class _TabTareasState extends State<TabTareas>{
                 dynamic o = controller.tareaUiList[index];
                 if(o is TareaUi){
                   return ItemTarea(color1: HexColor(controller.cursosUi.color1), tareaUi: o, onTap: () async{
-                    dynamic? result = await AppRouter.createRouteTareaPortalRouter(context,  controller.cursosUi, o, controller.calendarioPeriodoUI, controller.sesionUi);
+                    dynamic? result = await AppRouter.createRouteTareaPortalRouter(context, controller.usuarioUi, controller.cursosUi, o, controller.calendarioPeriodoUI, controller.unidadUi, controller.sesionUi);
                     if(result is int) controller.refrescarListTarea();
                   });
                 }else{
                   return InkWell(
                     onTap: () async{
-                      dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.cursosUi, null, controller.calendarioPeriodoUI, controller.sesionUi.unidadAprendizajeId, controller.sesionUi.sesionAprendizajeId);
+                      dynamic? result = await AppRouter.createRouteTareaCrearRouter(context, controller.usuarioUi, controller.cursosUi, null, controller.calendarioPeriodoUI, controller.unidadUi, controller.sesionUi);
                       if(result is int) controller.refrescarListTarea();
                     },
                     child: Container(
