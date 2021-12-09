@@ -326,6 +326,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   void onClickEliminar() {
+    if(isCalendarioDesactivo())return;
     _showDialogEliminar = true;
 
     refreshUI();
