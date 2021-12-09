@@ -124,7 +124,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
               }
             },
             child: Container(
-              color: AppTheme.white,
+              color: AppTheme.background,
               child: Scaffold(
                 backgroundColor: Colors.transparent,
                 body: Stack(
@@ -447,14 +447,14 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                 tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 65));
                               }else if(column is String){
                                 if(column == "peso_criterio"){
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 65));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70));
                                 }else if(column == "total"){
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 60));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70));
                                 }else{
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 60));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70));
                                 }
                               }else{
-                                tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 60));
+                                tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70));
                               }
 
 
@@ -491,10 +491,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                       InkWell(
                                         onTap: ()=> controller.onClicPrecision(),
                                         child: Container(
-                                          width: 120,
-                                          padding: EdgeInsets.all(8),
+                                          width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 120),
+                                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8)),
                                           decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(6)),
+                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 6))),
                                               color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
                                           ),
                                           alignment: Alignment.center,
@@ -502,19 +502,21 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              SvgPicture.asset(AppIcon.ic_presicion, color: controller.precision? AppTheme.white :AppTheme.greyDarken1, height: 16, width: 16,),
-                                              Padding(padding: EdgeInsets.all(2),),
-                                              FittedBox(
-                                                fit: BoxFit.scaleDown,
-                                                child: Text("Precisión",
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.w500,
-                                                      letterSpacing: 0.5,
-                                                      color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
-                                                      fontSize: 5 + 6 - 1 * topBarOpacity ,
-                                                    )),
+                                              SvgPicture.asset(AppIcon.ic_presicion,
+                                                color: controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                height: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16),
+                                                width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16)
                                               ),
+                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4)),),
+                                              Text("Precisión",
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontFamily: AppTheme.fontTTNorms,
+                                                    letterSpacing: 0.5,
+                                                    color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                    fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12) ,
+                                                  )),
                                             ],
                                           ),
                                         ),
@@ -522,10 +524,14 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                       InkWell(
                                         //onTap: ()=> controller.onClicPrecision(),
                                         child: Container(
-                                          width: 110,
-                                          padding: EdgeInsets.only(left: 16 , right: 16, top: 8, bottom: 8),
+                                          width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 110),
+                                          padding: EdgeInsets.only(
+                                              left: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16) ,
+                                              right: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16),
+                                              top: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                                              bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8)),
                                           decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(6)),
+                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 6))),
                                               color: HexColor(controller.cursosUi.color2)
                                           ),
                                           alignment: Alignment.center,
@@ -533,17 +539,21 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              Icon(Ionicons.help_circle ,color: AppTheme.white, size: 9 + 6 - 2 * topBarOpacity , ),
-                                              Padding(padding: EdgeInsets.all(2),),
+                                              Icon(Ionicons.help_circle,
+                                                color: AppTheme.white,
+                                                size: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16)
+                                              ),
+                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 2))),
                                               FittedBox(
                                                 fit: BoxFit.scaleDown,
                                                 child: Text("Ayuda",
                                                     overflow: TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: AppTheme.fontTTNorms,
                                                       letterSpacing: 0.5,
                                                       color:AppTheme.white,
-                                                      fontSize: 5 + 6 - 1 * topBarOpacity ,
+                                                      fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12) ,
                                                     )),
                                               ),
                                             ],
@@ -556,7 +566,11 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
 
                                 Container(
                                   padding: EdgeInsets.all(8),
-                                  margin: EdgeInsets.only(left: padding_left, right: padding_right, top: 24),
+                                  margin: EdgeInsets.only(
+                                      left: padding_left,
+                                      right: padding_right,
+                                      top: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 24)
+                                  ),
                                   width: width - (padding_left + padding_right),
                                   color: HexColor(controller.cursosUi.color3).withOpacity(0.1),
                                   child: Column(
@@ -565,8 +579,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                       RichText(
                                         text: TextSpan(
                                             style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
                                               height: 1.5,
                                               letterSpacing: 0.3,
                                               color: HexColor(controller.cursosUi.color1),
@@ -574,7 +589,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                             children: [
                                               TextSpan(text: 'EVALUA LOS CRITERIOS ASOCIADOS A LA CAPACIDAD '),
                                               //TextSpan(text: "${(controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"").toUpperCase()}"),
-                                              TextSpan(text: '"${(controller.evaluacionCapacidadUi.capacidadUi?.nombre??"").toUpperCase()}"', style: TextStyle(fontWeight: FontWeight.w700)),
+                                              TextSpan(text: '"${(controller.evaluacionCapacidadUi.capacidadUi?.nombre??"").toUpperCase()}"',
+                                                  style: TextStyle(fontWeight: FontWeight.w900)),
 
                                             ]
                                         ),
@@ -583,15 +599,24 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                   ),
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(left: padding_left, right: padding_right),
+                                  margin: EdgeInsets.only(
+                                      left: padding_left,
+                                      right: padding_right
+                                  ),
                                   width: width - (padding_left + padding_right),
                                   height: 1,
                                   color: HexColor(controller.cursosUi.color1),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(left: padding_left, right: padding_right, top: 16),
+                                  padding: EdgeInsets.only(
+                                      left: padding_left,
+                                      right: padding_right,
+                                      top: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16)
+                                  ),
                                   width: width,
                                   child:  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         CachedNetworkImage(
                                           placeholder: (context, url) => Container(
@@ -618,8 +643,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 3,
                                           style: TextStyle(
+                                            fontFamily: AppTheme.fontTTNorms,
                                             fontWeight: FontWeight.w700,
-                                            fontSize: 14,
+                                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16),
                                             height: 1.5,
                                             color: AppTheme.darkerText,
                                           ),
@@ -629,7 +655,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
 
                                 ),
                                 Padding(
-                                    padding: EdgeInsets.only(top: 24)
+                                    padding: EdgeInsets.only(
+                                        top: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 24)
+                                    )
                                 ),
                                 Container(
                                   width: width,
@@ -640,7 +668,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                       Container(
                                         width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
                                         height: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
-                                        margin: EdgeInsets.only(bottom: 8),
+                                        margin: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8)),
                                         child: FDottedLine(
                                           color: AppTheme.greyLighten1,
                                           strokeWidth: 1.0,
@@ -656,8 +684,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                       ),
                                       Text(controller.evaluacionCapacidadUi.valorTipoNotaUi?.alias??"",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 12,
+                                            fontWeight: FontWeight.w900,
+                                            fontFamily: AppTheme.fontTTNorms,
+                                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
                                             color: AppTheme.darkerText,
                                           )
                                       ),
@@ -666,7 +695,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                 ) ,
                                 Container(
                                   width: width,
-                                  padding: EdgeInsets.only(left: padding_left, top:24),
+                                  padding: EdgeInsets.only(
+                                      left: padding_left,
+                                      top:ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 24)
+                                  ),
                                   child: showTableTipoNota(controller, tableTipoNotacolumnWidths),
                                 ),
                                 Container(
@@ -676,7 +708,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Container(
-                                        width: width_table - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 65) - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 61) - padding_left,
+                                        width: width_table - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70) - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45) - padding_left,
                                       ),
                                       Container(
                                         child: Row(
@@ -684,15 +716,16 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                           children: [
                                             Container(
                                                 height: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 50),
-                                                width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 65),
+                                                width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70),
                                                 padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4)),
                                                 child: Center(
                                                   child:  Text("Promedio\nponderado",
                                                       textAlign: TextAlign.center,
                                                       style: TextStyle(
                                                           color: AppTheme.greyDarken3,
-                                                          fontWeight: FontWeight.w700,
-                                                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 9)
+                                                          fontWeight: FontWeight.w900,
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10)
                                                       )
                                                   ),
                                                 ),
@@ -706,14 +739,15 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                             ),
                                             Container(
                                                 height: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 50),
-                                                width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 61),
+                                                width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70),
                                                 padding: EdgeInsets.all(8),
                                                 child: Center(
                                                     child:  Text("${DomainTools.removeDecimalZeroFormat(controller.evaluacionCapacidadUi.nota,fractionDigits: 3)??"-"}",
                                                         style: TextStyle(
-                                                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 11),
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
                                                           color: AppTheme.greyDarken3,
                                                           fontWeight: FontWeight.w700,
+                                                          fontFamily: AppTheme.fontTTNorms,
                                                         )
                                                     )
                                                 ),
@@ -756,8 +790,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
       child: StickyHeadersTableNotExpandedCustom(
           cellDimensions: CellDimensions.variableColumnWidth(
               stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
-              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 125),
-              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 74),
+              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 150),
+              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 100),
               columnWidths: tableTipoNotacolumnWidths
           ),
           //cellAlignments: CellAlignments.,
@@ -783,7 +817,8 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color:  AppTheme.white,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 11),
+                          fontFamily: AppTheme.fontTTNorms,
                           fontWeight: FontWeight.w700
                       )
                     ),
@@ -804,8 +839,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color:  AppTheme.black,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
-                          fontWeight: FontWeight.w700)
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w700,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 11)
+                      )
                     ),
                   )
                 ],
@@ -874,8 +911,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis ,
                             style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
-                                fontWeight: FontWeight.w700),),
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                                fontWeight: FontWeight.w900,
+                                fontFamily: AppTheme.fontTTNorms
+                            ),),
                         ),
                         if(rubrica)
                           Container(
@@ -886,7 +925,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis ,
                               style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 7),
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 9),
                                 fontWeight: FontWeight.w700,
                                 color: AppTheme.greyDarken1,
                                 //fontStyle: FontStyle.italic
@@ -932,7 +971,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                     maxLines: 3,
                                     overflow: TextOverflow.ellipsis ,
                                     style: TextStyle(
-                                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
                                         color: AppTheme.textGrey
                                     )
                                   ),
@@ -952,7 +993,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       right: BorderSide(color: AppTheme.greyLighten2),
                       bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.rubricaEvaluacionList.length-1) <= i ? 1:0)),
                     ),
-                    color: ((rubricaEvaluacionUi.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(rubricaEvaluacionUi.ningunaEvalCalificada??false))?null:AppTheme.red.withOpacity(0.1),
+                    color: ((rubricaEvaluacionUi.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(rubricaEvaluacionUi.ningunaEvalCalificada??false))?AppTheme.white:AppTheme.red.withOpacity(0.1),
                   )
               ),
             );
@@ -978,9 +1019,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false))
                       Text("${DomainTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 3)}%",
                         style: TextStyle(
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
                           color: AppTheme.greyDarken3,
                           fontWeight: FontWeight.w700,
+                          fontFamily: AppTheme.fontTTNorms
                         )
                       ),
                       Padding(padding: EdgeInsets.all(2)),
@@ -1001,8 +1043,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       }(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 9),
                             fontWeight: FontWeight.w700,
+                            fontFamily: AppTheme.fontTTNorms,
                             letterSpacing: 0.5,
                             color: AppTheme.greyDarken3,
                         )
@@ -1029,9 +1072,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   children: [
                     Text("${DomainTools.removeDecimalZeroFormat(o.total,fractionDigits: 3)??"-"}",
                       style: TextStyle(
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 11),
-                        color: AppTheme.greyDarken3,
-                        fontWeight: FontWeight.w700,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
+                          color: AppTheme.greyDarken3,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: AppTheme.fontTTNorms
                       )
                     ),
                   ],
@@ -1074,9 +1118,12 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                   children: [
                     _getTipoNotaDetalle(o, controller,i, j),
                     Positioned(
-                        bottom: 4,
-                        right: 4,
-                        child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
+                        bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4),
+                        right: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4),
+                        child: Icon(Icons.block,
+                          color: AppTheme.redLighten1.withOpacity(0.8),
+                          size: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14)
+                        )
                     ),
                   ],
                 ),
@@ -1136,9 +1183,11 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       Text("Criterios evaluados",
                           style: TextStyle(
                               color: AppTheme.white,
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
-                              fontWeight: FontWeight.w700
-                          ))
+                              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 11),
+                              fontWeight: FontWeight.w700,
+                              fontFamily: AppTheme.fontTTNorms
+                          )
+                      )
                     ],
                   ),
               )
@@ -1252,9 +1301,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         widget = Center(
           child: Text("${ evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.titulo??"-"}",
               style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
-                  color: color_texto
+                  fontFamily: AppTheme.fontTTNorms,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14),
+                  fontWeight: FontWeight.w700,
+                  color: color_texto?.withOpacity((evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.7)
               )),
         );
         break;
@@ -1285,9 +1335,10 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         else nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico??0;
         widget = Center(
           child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-              fontFamily: AppTheme.fontTTNormsMedium,
-              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
-              color: color_texto
+              fontFamily: AppTheme.fontTTNorms,
+              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14),
+              fontWeight: FontWeight.w700,
+              color: color_texto?.withOpacity((evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.7)
           ),),
         );
         break;
@@ -1339,17 +1390,17 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
             children: [
               Text(valorTipoNotaUi?.titulo??"",
                   style: TextStyle(
-                    fontFamily: AppTheme.fontTTNormsMedium,
-                    fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
-                    fontWeight: FontWeight.w700,
+                    fontFamily: AppTheme.fontTTNorms,
+                    fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14),
+                    fontWeight: FontWeight.w900,
                     color: color,
                   )),
               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 2)),),
               Text("${DomainTools.removeDecimalZeroFormat(nota, fractionDigits: 1)??"-"}",
                   style: TextStyle(
-                    fontFamily: AppTheme.fontTTNormsMedium,
-                    fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
-                    fontWeight: FontWeight.w700,
+                    fontFamily: AppTheme.fontTTNorms,
+                    fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14),
+                    fontWeight: FontWeight.w900,
                     color: color,
                   ))
             ],
@@ -1438,8 +1489,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           child: Center(
             child: Text(valorTipoNotaUi?.titulo ?? "",
                 style: TextStyle(
-                    fontFamily: AppTheme.fontTTNormsMedium,
-                    fontSize: 12,
+                    fontFamily: AppTheme.fontTTNorms,
+                    fontWeight: FontWeight.w700,
+                    fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14),
                     color: color_texto
                 )),
           ),
@@ -1483,8 +1535,9 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
             Container(
               margin: EdgeInsets.only(top: 2),
               child: Text("${(valorTipoNotaUi?.valorNumerico??0).toStringAsFixed(1)}", style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: 10,
+                  fontFamily: AppTheme.fontTTNorms,
+                  fontWeight: FontWeight.w700,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14),
                   color: color_texto
               ),),
             )

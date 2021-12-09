@@ -306,7 +306,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 ),
                 child: Container(
                   padding: EdgeInsets.all(16),
-                  constraints: BoxConstraints(minWidth: 280, maxWidth: 400),
+                  constraints: BoxConstraints(
+                      minWidth: 280,
+                      maxWidth: 400),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
 
@@ -315,11 +317,14 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SvgPicture.asset(AppIcon.ic_procesear_nota, width: 40, height: 40,),
-                          Padding(padding: EdgeInsets.all(8)),
+                          SvgPicture.asset(AppIcon.ic_procesear_nota,
+                            width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
+                            height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40)
+                          ),
+                          Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
                           Container(
-                            width: 250,
-                            height: 40,
+                            width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 250),
+                            height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
                             child:  ElevatedButton(
                               onPressed: () {
 
@@ -329,22 +334,25 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                 onPrimary: Colors.white,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)),
                                 ),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Icon(Ionicons.send , color: AppTheme.white, size: 14, ),
+                                  Icon(Ionicons.send , color: AppTheme.white,
+                                    size: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14)
+                                  ),
                                   Padding(padding: EdgeInsets.all(4),),
                                   Text("Informar registro".toUpperCase(),
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w700,
                                         letterSpacing: 0.5,
+                                        fontFamily: AppTheme.fontTTNorms,
                                         color: AppTheme.white,
-                                        fontSize: 14,
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14),
                                       )),
                                 ],
                               ),
@@ -352,15 +360,19 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                           ),
                         ],
                       ),
-                      Padding(padding: EdgeInsets.all(16)),
+                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16))),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SvgPicture.asset(AppIcon.ic_cerrar_curso, width: 40, height: 40,),
-                          Padding(padding: EdgeInsets.all(8)),
+                          SvgPicture.asset(AppIcon.ic_cerrar_curso,
+                            width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
+                            height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40)
+                          ),
+                          Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
+                          
                           Container(
-                            width: 250,
-                            height: 40,
+                            width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 250),
+                            height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
                             child:  ElevatedButton(
                               onPressed: () {
 
@@ -370,22 +382,22 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                 onPrimary: Colors.white,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)),
                                 ),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Icon(Ionicons.lock_closed ,color: AppTheme.white, size: 14, ),
-                                  Padding(padding: EdgeInsets.all(4),),
+                                  Icon(Ionicons.lock_closed ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14), ),
+                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 4))),
                                   Text("Cerrar curso".toUpperCase(),
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         letterSpacing: 0.5,
                                         color:AppTheme.white,
-                                        fontSize: 14,
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14),
                                       )),
                                 ],
                               ),
@@ -398,8 +410,8 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         children: [
                           Expanded(child: Container()),
                           Container(
-                            width: 110,
-                            height: 40,
+                            width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 110),
+                            height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
                             child: ElevatedButton(
                               onPressed: () {
                                 controller.onClickSalirDialogInformar();
@@ -412,7 +424,14 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              child: Text('Atras', style: TextStyle(fontSize: 14, color: AppTheme.white),),
+                              child: Text('Atras'.toUpperCase(),
+                                style: TextStyle(
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14),
+                                    color: AppTheme.white,
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700
+                                )
+                              ),
                             ),
                           )
                         ],
@@ -482,7 +501,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                     )
                                 ),
                                 Container(
-                                  margin: EdgeInsets.only(top: 0, bottom: 8, left: 8, right: 32),
+                                  margin: EdgeInsets.only(top: 0, bottom: 8, left: 8, right: 0),
                                   child:
                                   topBarOpacity >= 1  && controller.seletedItem == 0 ?
                                   Padding(
@@ -571,7 +590,10 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                         ],
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(left:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 48), top: 10),
+                                        margin: EdgeInsets.only(
+                                            left: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 48),
+                                            top: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14)
+                                        ),
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -596,17 +618,14 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                                       width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
                                                     ),
                                                     Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
-                                                    FittedBox(
-                                                      fit: BoxFit.scaleDown,
-                                                      child: Text("Precisión",
-                                                          overflow: TextOverflow.ellipsis,
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.w500,
-                                                            letterSpacing: 0.5,
-                                                            color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
-                                                            fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
-                                                          )),
-                                                    ),
+                                                    Text("Precisión",
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                          fontWeight: FontWeight.w500,
+                                                          letterSpacing: 0.5,
+                                                          color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                          fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
+                                                        )),
                                                   ],
                                                 ),
                                               ),

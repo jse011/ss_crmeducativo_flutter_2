@@ -163,7 +163,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   onClicEvaluar(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi) {
-
+    if(isCalendarioDesactivo())return;
     for(List cellList in cellListList){
       for(var cell in cellList){
          if(cell is EvaluacionRubricaValorTipoNotaUi){
@@ -193,6 +193,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, double nota) {
+    if(isCalendarioDesactivo())return;
     for(List cellList in cellListList){
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
@@ -221,6 +222,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   onClicEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi) {
+    if(isCalendarioDesactivo())return;
     for(List cellList in cellListList){
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
@@ -263,7 +265,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   void onClicPublicado(EvaluacionPublicadoUi evaluacionPublicadoUi) {
-
+    //if(isCalendarioDesactivo())return;
       evaluacionPublicadoUi.publicado = !evaluacionPublicadoUi.publicado;
       showTodosPublicados();
       refreshUI();
@@ -272,6 +274,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   void showTodosPublicados(){
+    if(isCalendarioDesactivo())return;
     bool todosPublicados = true;
     for(List cellList in cellListList){
       for(var cell in cellList){
@@ -291,6 +294,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   void onClicPublicarAll(EvaluacionPublicadoUi evaluacionPublicadoUi) {
+    //if(isCalendarioDesactivo())return;
     evaluacionPublicadoUi.publicado = !evaluacionPublicadoUi.publicado;
     for(List cellList in cellListList){
       for(var cell in cellList){
@@ -310,6 +314,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   void onClickEliminar() {
+    if(isCalendarioDesactivo())return;
     _showDialogEliminar = true;
     print("rubroEvaluacionUi: ${rubricaEvaluacionUiCebecera2?.rubroEvaluacionId}");
     refreshUI();
@@ -334,6 +339,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   onClikShowDialogClearEvaluacion() {
+    if(isCalendarioDesactivo())return;
     _showDialogClearEvaluacion = true;
     refreshUI();
   }
@@ -368,6 +374,10 @@ class EvaluacionIndicadorController extends Controller{
     if(rubroEvaluacionUi?.rubrosDetalleList?.isNotEmpty??false){
       CalcularEvaluacionProceso.actualizarCabecera(rubroEvaluacionUi, personaUi);
     }
+  }
+
+  bool isCalendarioDesactivo() {
+    return calendarioPeriodoUI?.habilitado != 1;
   }
 
 

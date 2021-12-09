@@ -332,6 +332,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   void onClicEvaluar(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi? personaUi) {
+    if(isCalendarioDesactivo())return;
     for (List cellList in mapCellListList[personaUi] ?? []) {
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
@@ -363,6 +364,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi? personaUi, nota) {
+    if(isCalendarioDesactivo())return;
     for (List cellList in mapCellListList[personaUi] ?? []) {
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
@@ -406,7 +408,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   onClicEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, PersonaUi? personaUi) {
-
+    if(isCalendarioDesactivo())return;
     for(List cellList in mapCellListList[personaUi]??[]){
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
@@ -447,6 +449,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   onClicClearEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, PersonaUi? personaUi) {
+    if(isCalendarioDesactivo())return;
     for(List cellList in mapCellListList[personaUi]??[]){
       for(var cell in cellList){
         if(cell is EvaluacionRubricaValorTipoNotaUi){
@@ -513,7 +516,9 @@ class EvaluacionIndicadorMultipleController extends Controller {
     refreshUI();
   }
 
-
+  bool isCalendarioDesactivo() {
+    return calendarioPeriodoUI?.habilitado != 1;
+  }
 
 
 

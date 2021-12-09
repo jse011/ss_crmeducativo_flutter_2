@@ -582,7 +582,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                   ),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
-                                      color: AppTheme.red
+                                      color:  controller.isCalendarioDesactivo()?AppTheme.greyLighten2:AppTheme.red
                                   ),
                                   alignment: Alignment.center,
                                   child: Row(
@@ -590,7 +590,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       Icon(Ionicons.trash ,
-                                          color: AppTheme.white,
+                                          color: controller.isCalendarioDesactivo()?AppTheme.greyDarken1:AppTheme.white,
                                           size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 9 + 6 - 2 * topBarOpacity)
                                       ),
                                       Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2)),),
@@ -601,7 +601,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                             style: TextStyle(
                                               fontWeight: FontWeight.w700,
                                               letterSpacing: 0.5,
-                                              color: AppTheme.white,
+                                              color:  controller.isCalendarioDesactivo()?AppTheme.greyDarken1:AppTheme.white,
                                               fontFamily: AppTheme.fontTTNorms,
                                               fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity),
                                             )),

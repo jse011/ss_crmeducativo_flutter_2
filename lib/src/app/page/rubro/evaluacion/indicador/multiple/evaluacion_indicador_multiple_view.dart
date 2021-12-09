@@ -226,7 +226,55 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                               mainAxisSize: MainAxisSize.min,
                                                               children: [
                                                                 Padding(
-                                                                    padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))
+                                                                    padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16))
+                                                                ),
+                                                                Container(
+                                                                  margin: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 20)),
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    children: [
+                                                                      InkWell(
+                                                                        onTap: ()=> controller.onClicPrecision(),
+                                                                        child: Container(
+                                                                          width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
+                                                                          padding: EdgeInsets.only(
+                                                                              left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                              right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                              top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                                                                              bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)
+                                                                          ),
+                                                                          decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
+                                                                              color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten2
+                                                                          ),
+                                                                          alignment: Alignment.center,
+                                                                          child: Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                                            children: [
+                                                                              Icon(Ionicons.apps ,
+                                                                                  color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                                                  size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 9 + 6 - 2 * topBarOpacity)
+                                                                              ),
+                                                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2))),
+                                                                              FittedBox(
+                                                                                fit: BoxFit.scaleDown,
+                                                                                child: Text("Precisión",
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    style: TextStyle(
+                                                                                        fontWeight: FontWeight.w700,
+                                                                                        letterSpacing: 0.5,
+                                                                                        color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity)
+                                                                                    )),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                                 Container(
                                                                   child: Row(
@@ -1353,7 +1401,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                             ),
                             child: _getTipoNota(o, o.nota, controller),
                           ),
-                          controller.calendarioPeriodoUI?.habilitado==1?Container():
+                         !controller.isCalendarioDesactivo()?Container():
                           Positioned(
                               bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
                               right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
@@ -1396,7 +1444,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                             ),
                             child: _getTipoNota(o, o.nota, controller),
                           ),
-                          controller.calendarioPeriodoUI?.habilitado==1?Container():
+                         !controller.isCalendarioDesactivo()?Container():
                           Positioned(
                               bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
                               right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
@@ -1648,10 +1696,13 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
             return InkWell(
               onTap: () {
                 if(o.evaluacionUi?.personaUi?.contratoVigente??true){
-                  if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false))
-                    showDialogPresicion(controller, o, i, personaUi);
-                  else
+                  if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false)){
+                    if(!controller.isCalendarioDesactivo()){
+                      showDialogPresicion(controller, o, i, personaUi);
+                    }
+                  }else{
                     controller.onClicEvaluar(o, personaUi);
+                  }
                 }else{
                   _showControNoVigente(context, o.evaluacionUi?.personaUi);
                 }
@@ -1660,7 +1711,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
               child: Stack(
                 children: [
                   _getTipoNotaV2(o, controller, controller.mapCellListList[personaUi]?.length,i, j),
-                  controller.calendarioPeriodoUI?.habilitado==1?Container():
+                 !controller.isCalendarioDesactivo()?Container():
                   Positioned(
                       bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
                       right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
@@ -1689,7 +1740,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                     ),
                     //child: _getTipoNota(o.valorTipoNotaUi, o.nota, i),
                   ),
-                  controller.calendarioPeriodoUI?.habilitado==1?Container():
+                 !controller.isCalendarioDesactivo()?Container():
                   Positioned(
                       bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
                       right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
@@ -1727,7 +1778,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                       ),
                     ),
                   ),
-                  controller.calendarioPeriodoUI?.habilitado==1?Container():
+                 !controller.isCalendarioDesactivo()?Container():
                   Positioned(
                       bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
                       right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4),
@@ -2137,16 +2188,16 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
   }
 
   Color getPosition(int position){
-    if(position == 1){
+    if(position == 0){
       return HexColor("#1976d2");
-    }else if(position == 2){
+    }else if(position == 1){
       return  HexColor("#388e3c");
-    }else if(position == 3){
+    }else if(position == 2){
       return   HexColor("#FF6D00");
-    }else if(position == 4){
+    }else if(position == 3){
       return  HexColor("#D32F2F");
     }else{
-      return  AppTheme.greyLighten2;
+      return  AppTheme.greyDarken1;
     }
   }
 

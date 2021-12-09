@@ -287,7 +287,7 @@ class ColumnCountProvider{
     } else if (widthPx >= 480) {
       return (pixcel) / 1;
     }  else if (widthPx >= 360) {
-      return (pixcel) / 1.15;
+      return (pixcel) / 1.20;
     }else if (widthPx >= 320) {
       return (pixcel) / 1.2;
     } else {
