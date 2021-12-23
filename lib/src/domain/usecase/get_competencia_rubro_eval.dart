@@ -42,7 +42,10 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
       List<PersonaUi> alumnoCursoList = await repository.getListAlumnoCurso(params?.cargaCursoId??0);
 
       List<CompetenciaUi> competenciaUiList = await rubroRepository.getRubroCompetencia(params?.silaboEventoId, params?.calendarioPeriodoUI?.id, params?.cargaCursoId);
+      competenciaUiList.removeWhere((element) => !(element.evaluable??false));
+
       for(CompetenciaUi competenciaUi in competenciaUiList){
+
         List<CapacidadUi> capacidadUiList = [];
         for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
           if((capacidadUi.evaluable??false)){

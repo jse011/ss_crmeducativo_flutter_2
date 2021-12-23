@@ -7,4 +7,7 @@ class ResultadoCapacidadUi{
   int? orden2;
   int? competenciaId;
   int? parendId;
+  int? valorMaximo;
+  int? valorMinimo;
+  bool? round;
 }

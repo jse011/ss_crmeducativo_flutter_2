@@ -812,8 +812,10 @@ class SerializableConvert{
         competenciaNombre: serial.competenciaNombre,
         competenciaDescripcion: serial.competenciaDescripcion,
         competenciaTipoId: serial.competenciaTipoId,
-        rubroEvalResultadoId: serial.rubroEvalResultadoId,
-        evaluable: serial.evaluable,
+        competenciaResultadoId: serial.competenciaResultadoId,
+        competenciaEvaluable: serial.competenciaEvaluable,
+        superCompetenciaEvaluable: serial.superCompetenciaEvaluable,
+        superCompetenciaResultadoId: serial.superCompetenciaResultadoId,
         superCompetenciaId: serial.superCompetenciaId,
         superCompetenciaNombre: serial.superCompetenciaNombre,
         superCompetenciaDescripcion: serial.superCompetenciaDescripcion,
@@ -922,7 +924,12 @@ class SerializableConvert{
         fechaRecibido: serial.fechaRecibido,
         fechaVisto: serial.fechaVisto,
         fechaRespuesta: serial.fechaRespuesta,
-        getSTime: serial.getSTime
+        getSTime: serial.getSTime,
+      limiteInferiorTransf: serial.limiteInferiorTransf,
+      limiteSuperiorTransf: serial.limiteSuperiorTransf,
+      valorNumericoTransf: serial.valorNumericoTransf,
+      incluidoLInferiorTransf: serial.incluidoLInferiorTransf,
+      incluidoLSuperiorTransf: serial.incluidoLSuperiorTransf,
     );
   }
 
@@ -1000,7 +1007,13 @@ class SerializableConvert{
         fechaRecibido: serial.fechaRecibido,
         fechaVisto: serial.fechaVisto,
         fechaRespuesta: serial.fechaRespuesta,
-        getSTime: serial.getSTime
+        getSTime: serial.getSTime,
+      limiteInferiorTransf: serial.limiteInferiorTransf,
+      limiteSuperiorTransf: serial.limiteSuperiorTransf,
+      valorNumericoTransf: serial.valorNumericoTransf,
+      incluidoLInferiorTransf: serial.incluidoLInferiorTransf,
+      incluidoLSuperiorTransf: serial.incluidoLSuperiorTransf,
+
     );
   }
 

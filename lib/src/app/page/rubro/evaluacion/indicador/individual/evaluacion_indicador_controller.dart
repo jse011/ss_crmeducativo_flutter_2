@@ -85,11 +85,16 @@ class EvaluacionIndicadorController extends Controller{
     _rowList2.add("");//Espacio
 
     _columnList2.add(ContactoUi());//Titulo alumno
+
+    print("tipoNotaUi ${rubroEvaluacionUi?.tipoNotaUi?.nombre}");
+    //rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
+    //rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
     if(rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
       _columnList2.addAll(rubroEvaluacionUi?.tipoNotaUi?.valorTipoNotaList??[]);
-
+      print("tipoNotaUi 1 ${rubroEvaluacionUi?.tipoNotaUi?.nombre}");
     }else {
       _columnList2.add(EvaluacionUi());//Notas de tipo Numerico
+      print("tipoNotaUi 2 ${rubroEvaluacionUi?.tipoNotaUi?.nombre}");
     }
 
    _columnList2.add(EvaluacionPublicadoUi(EvaluacionUi()));
@@ -378,6 +383,41 @@ class EvaluacionIndicadorController extends Controller{
 
   bool isCalendarioDesactivo() {
     return calendarioPeriodoUI?.habilitado != 1;
+  }
+
+  void onSaveTecladoPresicion(nota, EvaluacionUi? evaluacionUi) {
+    if(isCalendarioDesactivo())return;
+    if (evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
+      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi, nota??0);
+
+      for (List cellList in _cellListList) {
+        for (var cell in cellList) {
+          if (cell is EvaluacionRubricaValorTipoNotaUi) {
+            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = true;
+            }
+
+            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = false;
+            }
+
+          }
+        }
+      }
+      evaluacionUi?.valorTipoNotaId = valorTipoNotaUi?.valorTipoNotaId;
+      evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
+
+    }
+    evaluacionUi?.nota = nota;
+
+    refreshUI();
+    _modificado = true;
+    _actualizarCabecera(evaluacionUi?.personaUi);
+    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionUi?.alumnoId);
   }
 
 

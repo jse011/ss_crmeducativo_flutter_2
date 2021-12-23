@@ -8,6 +8,10 @@ import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_info_simple_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/home/home_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/login/login_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/login/login_view_2.dart';
+import 'package:ss_crmeducativo_2/src/app/page/login/login_view_3.dart';
+import 'package:ss_crmeducativo_2/src/app/page/login/login_view_4.dart';
+import 'package:ss_crmeducativo_2/src/app/page/login/login_view_5.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/individual/evaluacion_indicador_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multiple/evaluacion_indicador_multiple_view.dart';
@@ -59,7 +63,7 @@ class AppRouter {
 
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
-    LOGIN: (BuildContext context) => LoginView(),
+    LOGIN: (BuildContext context) => LoginView5(),
     HOME: (BuildContext context) => HomeView(),
     //CURSO:(BuildContext context) => CursoView(),
   };

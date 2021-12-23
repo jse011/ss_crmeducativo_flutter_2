@@ -160,9 +160,9 @@ class LoginController extends Controller{
     String? mensaje = null;
     if(_password==null||_password.isEmpty){
       mensaje = "Ingresar contraseña";
-    }else if( _password.length < 3){
+    }/*else if( _password.length < 3){
       mensaje = "Contraseña demasiado corta";
-    }
+    }*/
 
     return mensaje;
   }
@@ -183,19 +183,19 @@ class LoginController extends Controller{
   }
 
   void onChangeUsuario(String str) {
-    _usuario = str;
+    _usuario = str.trim();
   }
 
   void onChangeContrasenia(String str) {
-    _password = str;
+    _password = str.trim();
   }
 
   void onChangeDni(String str) {
-    _dni = str;
+    _dni = str.trim();
   }
 
   void onChangeCorreo(String str) {
-    _correo = str;
+    _correo = str.trim();
   }
 
   void successMsg() {
@@ -204,6 +204,14 @@ class LoginController extends Controller{
 
   void onValidatorCorreo(bool validate) {
     _correoValidate = validate;
+  }
+
+  void clearDismis() {
+    _dismis = false;
+  }
+
+  void clearMensaje() {
+    _mensaje = null;
   }
 
 }

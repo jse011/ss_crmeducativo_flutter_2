@@ -32,6 +32,7 @@ class _SplashViewState extends State<SplashView> {
                   Expanded(
                     flex: 4,
                       child: Container(
+                        padding: EdgeInsets.all(48),
                         child: Image.asset(ChangeAppTheme.imagenEspera()),
                       ),
                   ),
@@ -45,7 +46,7 @@ class _SplashViewState extends State<SplashView> {
                           CircularProgressIndicator(
                             valueColor: new AlwaysStoppedAnimation<Color>(AppTheme.white),
                           ),
-                          Padding(padding: const EdgeInsets.only(bottom: 48))
+                          Padding(padding: EdgeInsets.only(bottom: 48))
                         ],
                       )
                   )

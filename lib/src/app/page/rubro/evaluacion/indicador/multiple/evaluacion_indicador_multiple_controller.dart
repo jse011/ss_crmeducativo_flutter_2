@@ -261,6 +261,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
       if(rubroEvaluacionUi?.rubrosDetalleList?.isNotEmpty??false){
         tipoNotaUi = rubroEvaluacionUi?.rubrosDetalleList?[0].tipoNotaUi;
       }
+//      tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_NUMERICO;
       if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
         _mapColumnList[personaUi]?.addAll(tipoNotaUi?.valorTipoNotaList??[]);
       }else{
@@ -519,6 +520,41 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
   bool isCalendarioDesactivo() {
     return calendarioPeriodoUI?.habilitado != 1;
+  }
+
+  void onSaveTecladoPresicion(nota, EvaluacionUi? evaluacionUi) {
+    if(isCalendarioDesactivo())return;
+    if (evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
+      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi, nota??0);
+
+      for (List cellList in _mapCellListList[evaluacionUi?.personaUi]??[]) {
+        for (var cell in cellList) {
+          if (cell is EvaluacionRubricaValorTipoNotaUi) {
+            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = true;
+            }
+
+            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = false;
+            }
+
+          }
+        }
+      }
+      evaluacionUi?.valorTipoNotaId = valorTipoNotaUi?.valorTipoNotaId;
+      evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
+
+    }
+    evaluacionUi?.nota = nota;
+
+    _actualizarCabecera(evaluacionUi?.personaUi);
+    _modificado = true;
+    refreshUI();
+    presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionUi?.personaUi?.personaId);
   }
 
 

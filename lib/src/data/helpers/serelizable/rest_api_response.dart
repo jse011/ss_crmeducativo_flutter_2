@@ -905,9 +905,12 @@ class CriteriosSerial {
   String? superCompetenciaNombre;
   String? superCompetenciaDescripcion;
   int? superCompetenciaTipoId;
-  int? rubroEvalResultadoId;
-  bool? evaluable;
 
+  int? competenciaResultadoId;
+  bool? competenciaEvaluable;
+
+  int? superCompetenciaResultadoId;
+  bool? superCompetenciaEvaluable;
 
   /// <summary>
   /// Tabla DesempenioIcd Desempenio Icd
@@ -962,8 +965,10 @@ class CriteriosSerial {
       this.superCompetenciaNombre,
       this.superCompetenciaDescripcion,
       this.superCompetenciaTipoId,
-      this.rubroEvalResultadoId,
-      this.evaluable,
+      this.competenciaResultadoId,
+      this.competenciaEvaluable,
+      this.superCompetenciaResultadoId,
+      this.superCompetenciaEvaluable,
       this.desempenioIcdId,
       this.DesempenioDescripcion,
       this.peso,
@@ -1092,6 +1097,12 @@ class ValorTipoNotaRubroSerial {
   int? fechaRespuesta;
   String? getSTime;
 
+  double? limiteInferiorTransf;
+  double? limiteSuperiorTransf;
+  double? valorNumericoTransf;
+  bool? incluidoLInferiorTransf;
+  bool? incluidoLSuperiorTransf;
+
   ValorTipoNotaRubroSerial(
       {this.valorTipoNotaId,
         this.tipoNotaId,
@@ -1117,7 +1128,13 @@ class ValorTipoNotaRubroSerial {
         this.fechaRecibido,
         this.fechaVisto,
         this.fechaRespuesta,
-        this.getSTime});
+        this.getSTime,
+        this.limiteInferiorTransf,
+        this.limiteSuperiorTransf,
+        this.valorNumericoTransf,
+        this.incluidoLInferiorTransf,
+        this.incluidoLSuperiorTransf,
+      });
   factory ValorTipoNotaRubroSerial.fromJson(Map<String, dynamic> json) => _$ValorTipoNotaRubroSerialFromJson(json);
 
   Map<String, dynamic> toJson() => _$ValorTipoNotaRubroSerialToJson(this);
@@ -2326,14 +2343,17 @@ class ResultadoCapacidadSerial{
 @JsonSerializable()
 class ResultadoCompetenciaSerial {
   String? titulo;
+  String? tipoNotaId;
   int? tipoId;
+  int? valorMinimo;
+  int? valorMaximo;
   String? competencia;
   int? competenciaId;
   bool? notaDup;
   int? rubroEvalResultadoId;
   int? rubroFormal;
   ResultadoCompetenciaSerial({
-    this.titulo, this.tipoId, this.competencia,
+    this.titulo, this.tipoNotaId, this.tipoId, this.valorMaximo, this.valorMinimo, this.competencia,
     this.competenciaId, this.notaDup, this.rubroEvalResultadoId, this.rubroFormal});
 
   factory ResultadoCompetenciaSerial.fromJson(Map<String, dynamic> json) => _$ResultadoCompetenciaSerialFromJson(json);

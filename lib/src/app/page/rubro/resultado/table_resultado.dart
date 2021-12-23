@@ -10,11 +10,13 @@ import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dar
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/matriz_resultado_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_capacidad_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_competencia_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_evaluacion.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_capacidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_evaluacion.dart';
 import 'package:collection/collection.dart';
 
 class TableResultado extends StatefulWidget{
@@ -81,13 +83,13 @@ class _TableResultadoState extends State<TableResultado>{
       List<double> tablecolumnWidths = [];
       for(dynamic s in widget.columns){
         if(s is PersonaUi){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 85));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 100));
         } else if(s is CalendarioPeriodoUI){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70)*3);
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 70)*3);
         }else if(s is ResultadoCapacidadUi){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 65));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 70));
         }else{
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 70));
         }
       }
 
@@ -103,9 +105,9 @@ class _TableResultadoState extends State<TableResultado>{
             widget.onEndScrolling?.call(scrollOffsetX, scrollOffsetY);
           },
           cellDimensions: CellDimensions.variableColumnWidth(
-              stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 120),
-              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 50),
-              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 35),
+              stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 145),
+              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 50),
+              contentCellHeight: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 40),
               columnWidths: tablecolumnWidths
           ),
           columnsLength: widget.columns.length,
@@ -118,44 +120,62 @@ class _TableResultadoState extends State<TableResultado>{
                   child: Center(
                     child:  Text("Apellidos y\n Nombres",
                       style: TextStyle(
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                          color: AppTheme.black,
-                          fontWeight: FontWeight.w500 ),),
+                        color: AppTheme.greyDarken3,
+                        fontWeight: FontWeight.w700,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                        fontFamily: AppTheme.fontTTNorms,
+                      ),),
                   ),
                   decoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
                         right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                        bottom: BorderSide(color: HexColor(widget.cursosUi?.color3)),
                       ),
                       color: HexColor("#EFEDEE")
                   )
               );
             }else if(o is ResultadoCompetenciaUi){
-              return Container(
-                  constraints: BoxConstraints.expand(),
-                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
-                  child: Center(
-                    child:  RotatedBox(
-                      quarterTurns: -1,
-                      child: Text(o.titulo??"",
-                          textAlign: TextAlign.center,
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                              color: AppTheme.darkText,
-                              fontWeight: FontWeight.w700
-                          )
+              return Stack(
+                children: [
+                  Container(
+                      constraints: BoxConstraints.expand(),
+                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)),
+                      child: Center(
+                        child:  RotatedBox(
+                          quarterTurns: -1,
+                          child: Text(o.titulo??"",
+                              textAlign: TextAlign.center,
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppTheme.greyDarken3,
+                                fontWeight: FontWeight.w700,
+                                fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                                fontFamily: AppTheme.fontTTNorms,
+                              )
+                          ),
+                        ),
                       ),
-                    ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                            left: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                            right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                            bottom: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                          ),
+                          borderRadius: (widget.columns.length-2 == i)?BorderRadius.only(
+                              topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))
+                          ):null,
+                          color: HexColor("#EFEDEE")
+                      )
                   ),
-                  decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
-                        right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
-                      ),
-                      color: HexColor("#EFEDEE")
+                  Container(
+                    width: 1,
+                    color: HexColor("#EFEDEE"),
+                    margin: EdgeInsets.only(top: 1, bottom: 1),
                   )
+                ],
               );
             }else if(o is ResultadoCapacidadUi){
               return Container(
@@ -164,10 +184,10 @@ class _TableResultadoState extends State<TableResultado>{
                     children: [
                       Container(
                         margin: EdgeInsets.only(
-                            left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
-                            top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
-                            bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
-                            right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)
+                            left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                            top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                            bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                            right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)
                         ),
                         child: Center(
                           child:  RotatedBox(
@@ -177,9 +197,10 @@ class _TableResultadoState extends State<TableResultado>{
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                    fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                                    color: AppTheme.greyDarken3,
-                                    fontWeight: FontWeight.w500
+                                  color: AppTheme.greyDarken3,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                                  fontFamily: AppTheme.fontTTNorms,
                                 )
                             ),
                           ),
@@ -191,7 +212,12 @@ class _TableResultadoState extends State<TableResultado>{
                       border: Border(
                         top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
                         right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                        left: BorderSide(color: (o.round??false)?HexColor(widget.cursosUi?.color3): Colors.white),
+                        bottom: BorderSide(color: HexColor(widget.cursosUi?.color3)),
                       ),
+                      borderRadius: (o.round??false)?BorderRadius.only(
+                          topLeft: Radius.circular(8)
+                      ):null,
                       color: AppTheme.white
                   )
               );
@@ -200,30 +226,37 @@ class _TableResultadoState extends State<TableResultado>{
                 children: [
                   Expanded(
                       flex: 1,
-                      child: Container(
-                          constraints: BoxConstraints.expand(),
-                          padding: EdgeInsets.all(8),
-                          child: Center(
-                            child:  RotatedBox(
-                              quarterTurns: -1,
-                              child: Text("Final ${o.nombre??""}",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 4,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                                      color: AppTheme.black,
-                                      fontWeight: FontWeight.w700
-                                  )),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
-                                right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))
+                        ),
+                        child: Container(
+                            constraints: BoxConstraints.expand(),
+                            padding: EdgeInsets.all(8),
+                            child: Center(
+                              child:  RotatedBox(
+                                quarterTurns: -1,
+                                child: Text("Final ${o.nombre??""}",
+                                    textAlign: TextAlign.center,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                                        color: AppTheme.black,
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700
+                                    )),
                               ),
-                              color: AppTheme.greyLighten1
-                          )
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                                  right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                                  bottom: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                                ),
+                                color: AppTheme.greyLighten1
+                            )
+                        ),
                       )
                   ),
                   Expanded(
@@ -232,10 +265,11 @@ class _TableResultadoState extends State<TableResultado>{
                           constraints: BoxConstraints.expand(),
                           decoration: BoxDecoration(
                               border: Border(
-                                top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
-                                right: BorderSide(color:  HexColor(widget.cursosUi?.color3)),
+                                //top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                                //right: BorderSide(color:  HexColor(widget.cursosUi?.color3)),
+
                               ),
-                              color: HexColor("#EFEDEE")
+                              //color: HexColor("#EFEDEE")
                           )
                       )
                   )
@@ -253,21 +287,22 @@ class _TableResultadoState extends State<TableResultado>{
                   constraints: BoxConstraints.expand(),
                   child: Row(
                     children: [
-                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4))),
+                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 4))),
                       Expanded(
                           child: Text((i+1).toString() + ".",
                               style: TextStyle(
-                                  color: AppTheme.white,
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                                  fontWeight: FontWeight.w700
+                                color: AppTheme.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                                fontFamily: AppTheme.fontTTNorms,
                               )
                           )
                       ),
                       Container(
-                        height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
-                        width: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
+                        height: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
+                        width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
                         margin: EdgeInsets.only(
-                            right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 3)
+                            right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 3)
                         ),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -278,7 +313,7 @@ class _TableResultadoState extends State<TableResultado>{
                           placeholder: (context, url) => CircularProgressIndicator(),
                           imageUrl: o.foto??"",
                           errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded,
-                              size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 80)
+                              size: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 80)
                           ),
                           imageBuilder: (context, imageProvider) =>
                               Container(
@@ -293,7 +328,7 @@ class _TableResultadoState extends State<TableResultado>{
                         ):
                         Container(),
                       ),
-                      Padding(padding: EdgeInsets.all(1)),
+                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 1))),
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -323,9 +358,10 @@ class _TableResultadoState extends State<TableResultado>{
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                              color: AppTheme.black,
-                              fontWeight: FontWeight.w500
+                            color: AppTheme.greyDarken3,
+                            fontWeight: FontWeight.w700,
+                            fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
+                            fontFamily: AppTheme.fontTTNorms,
                           )
                       ),
                       Text(o.nombres??"",
@@ -333,7 +369,10 @@ class _TableResultadoState extends State<TableResultado>{
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
+                            color: AppTheme.greyDarken3,
+                            fontWeight: FontWeight.w500,
+                            fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
+                            fontFamily: AppTheme.fontTTNorms,
                           )
                       ),
                     ],
@@ -356,6 +395,7 @@ class _TableResultadoState extends State<TableResultado>{
                           border: Border(
                             top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
                             right: BorderSide(color:  HexColor(widget.cursosUi?.color3)),
+                            left: BorderSide(color: (o.capacidadUi?.round??false)?HexColor(widget.cursosUi?.color3): Colors.white),
                           ),
                           color: _getColorAlumnoBloqueados(o.personaUi, 0)
                       ),
@@ -424,9 +464,9 @@ class _TableResultadoState extends State<TableResultado>{
                             constraints: BoxConstraints.expand(),
                             decoration: BoxDecoration(
                                 border: Border(
-                                  right: BorderSide(color:  HexColor(widget.cursosUi?.color3)),
+                                  //right: BorderSide(color:  HexColor(widget.cursosUi?.color3)),
                                 ),
-                                color: HexColor("#EFEDEE")
+                                //color: HexColor("#EFEDEE")
                             )
                         )
                     ),
@@ -453,7 +493,8 @@ class _TableResultadoState extends State<TableResultado>{
                         style: TextStyle(
                           color: AppTheme.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                          fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                          fontFamily: AppTheme.fontTTNorms,
                         )
                     ),
                   ),
@@ -490,6 +531,110 @@ class _TableResultadoState extends State<TableResultado>{
     }
   }
 
+  Widget? _getTipoNota(ResultadoEvaluacionUi? resultadoEvaluacionUi, bool? precision) {
+
+    double? nota = resultadoEvaluacionUi?.nota!=null?DomainTools.roundDouble(resultadoEvaluacionUi?.nota??0, 1): null;
+
+    var tipo = TipoNotaTiposUi.VALOR_NUMERICO;
+    if(!(precision??false)) tipo = resultadoEvaluacionUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
+    switch(tipo){
+      case TipoNotaTiposUi.SELECTOR_VALORES:
+        Color color;
+        if (("B" == (resultadoEvaluacionUi?.tituloNota??"") || "C" == (resultadoEvaluacionUi?.tituloNota??""))) {
+          color = AppTheme.redDarken4;
+        }else if (("AD" == (resultadoEvaluacionUi?.tituloNota??"")) || "A" == (resultadoEvaluacionUi?.tituloNota??"")) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+        print("#color: ${resultadoEvaluacionUi?.color}");
+        return Center(
+          child: Container(
+            padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 4),),
+            child: Text("${resultadoEvaluacionUi?.tituloNota??"-"}",
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                  fontFamily: AppTheme.fontTTNorms,
+                  color: color,
+                )),
+          ),
+        );
+      case TipoNotaTiposUi.SELECTOR_ICONOS:
+        /*if(resultadoEvaluacionUi?.valorTipoNotaId!=null){
+          return Container(
+            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 4)),
+            child:  CachedNetworkImage(
+              imageUrl: resultadoEvaluacionUi.??"",
+              placeholder: (context, url) => Center(
+                  child: SizedBox(
+                    child: CircularProgressIndicator(),
+                    height: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
+                    width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
+                  )
+              ),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          );
+        }else{
+          return Center(
+            child: Text("-",
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                  fontFamily: AppTheme.fontTTNorms,
+                  color: AppTheme.black,
+                )),
+          );
+        }*/
+      case TipoNotaTiposUi.VALOR_ASISTENCIA:
+      case TipoNotaTiposUi.VALOR_NUMERICO:
+      case TipoNotaTiposUi.SELECTOR_NUMERICO:
+      Color color;
+      if(resultadoEvaluacionUi?.valorMaximo == 20){
+        if ((nota??0) < 10.5) {
+          color = AppTheme.redDarken4;
+        }else if ( (nota??0) >= 10.5) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+      }else if(resultadoEvaluacionUi?.valorMaximo == 4){
+        if ((nota??0) < 3) {
+          color = AppTheme.redDarken4;
+        }else if ( (nota??0) >= 3) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+      }else if(resultadoEvaluacionUi?.valorMaximo == 3){
+        if ((nota??0) < 3) {
+          color = AppTheme.redDarken4;
+        }else if ( (nota??0) >= 3) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+      }else{
+        color = AppTheme.black;
+      }
+      String textoNota = "${nota?.toStringAsFixed(1)??"-"}";
+      if((resultadoEvaluacionUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES ||
+          resultadoEvaluacionUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS) &&
+          (resultadoEvaluacionUi?.valorTipoNotaId??"").isEmpty)textoNota = "-";
+
+        return Center(
+          child: Text(textoNota, style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+            fontFamily: AppTheme.fontTTNorms,
+            color: color,
+          ),),
+        );
+    }
+  }
+
+/*
   _getTipoNota(ResultadoEvaluacionUi? resultadoEvaluacionUi, bool? precision) {
     double? nota = resultadoEvaluacionUi?.nota!=null?DomainTools.roundDouble(resultadoEvaluacionUi?.nota??0, 1): null;
 
@@ -507,20 +652,20 @@ class _TableResultadoState extends State<TableResultado>{
         }
         return Center(
           child: Container(
-            padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4),),
+            padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 4),),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text("${ resultadoEvaluacionUi?.tituloNota??"-"}",
                     style: TextStyle(
                       fontFamily: AppTheme.fontTTNormsMedium,
-                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                      fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
                       fontWeight: FontWeight.w700,
                       color: color,
                     )),
                 Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
                   fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                  fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
                   fontWeight: FontWeight.w700,
                   color: color,
                 ),)
@@ -541,7 +686,7 @@ class _TableResultadoState extends State<TableResultado>{
         return Center(
           child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
             fontFamily: AppTheme.fontTTNormsMedium,
-            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+            fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
             fontWeight: FontWeight.w700,
             color: color,
           ),),
@@ -553,7 +698,7 @@ class _TableResultadoState extends State<TableResultado>{
         return Center(
           child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
             fontFamily: AppTheme.fontTTNormsMedium,
-            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+            fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
             fontWeight: FontWeight.w700,
             color: color,
           ),),
@@ -561,7 +706,7 @@ class _TableResultadoState extends State<TableResultado>{
 
     }
   }
-
+  */
 }
 
 
@@ -594,8 +739,18 @@ class TableResultadoUtils{
     _columns.add(calendarioPeriodoUI);
 
     //Competencia Enfoque Transversal
+    bool round = false;//solo es visual para la redondera
     for(ResultadoCompetenciaUi competenciaUi in matrizResultadoUi?.competenciaUiList??[]){
       if(competenciaUi.rubroformal != 1){//tipo Transversal
+
+        if(!round){
+          if((competenciaUi.resulCapacidadUiList??[]).isNotEmpty){
+            round = true;
+            ResultadoCapacidadUi capacidadUi = competenciaUi.resulCapacidadUiList![0];
+            capacidadUi.round = true;
+          }
+        }
+
         for(ResultadoCapacidadUi capacidadUi in competenciaUi.resulCapacidadUiList??[]){
           _columns.add(capacidadUi);
         }

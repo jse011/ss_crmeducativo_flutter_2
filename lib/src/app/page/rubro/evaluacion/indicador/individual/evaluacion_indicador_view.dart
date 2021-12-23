@@ -12,6 +12,7 @@ import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/individual/evaluacion_indicador_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_2_view.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
@@ -555,7 +556,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                       Padding(padding: EdgeInsets.all(2),),
                                       FittedBox(
                                         fit: BoxFit.scaleDown,
-                                        child: Text("Modificar",
+                                        child: Text("Editar",
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontWeight: FontWeight.w700,
@@ -738,7 +739,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
                                 color: AppTheme.darkText,
                                 fontWeight: FontWeight.w900,
                                 fontFamily: AppTheme.fontTTNorms
@@ -918,7 +919,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                     );
                   }else if(o is EvaluacionUi){
                     return InkWell(
-                      //onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
+                      onTap: () => showDialogTecladoNumerico(controller, o),
                       child: Stack(
                         children: [
                           Container(
@@ -1404,5 +1405,32 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
         const Duration(milliseconds: 150));
   }
 
+  void showDialogTecladoNumerico(EvaluacionIndicadorController controller, EvaluacionUi? evaluacionUi) {
 
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return TecladoPresicionView2(
+            valorMaximo: evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
+            valorMinimo:  evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
+            valor: evaluacionUi?.nota,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onSaveTecladoPresicion(nota, evaluacionUi);
+      }
+    });
+  }
 }

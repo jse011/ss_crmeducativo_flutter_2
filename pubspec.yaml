@@ -33,13 +33,14 @@ dependencies:
   sqflite: ^2.0.0+3
   http: ^0.13.1
   json_serializable: ^6.0.1
-  json_annotation: ^4.3.0
+  json_annotation: ^4.4.0
   moor_flutter: ^4.0.0
   flutter_launcher_icons: ^0.9.0
   #flutter_launcher_name: ^0.0.1
 
   ionicons: ^0.1.2
   cached_network_image: ^3.0.0
+  #svg_cached_network_image: ^1.0.0+1
   url_launcher: ^6.0.3
   fluttertoast: ^8.0.8
   lottie: ^1.0.1
@@ -82,6 +83,7 @@ dependencies:
   youtube_plyr_iframe: ^2.0.7
   connectivity_plus: ^2.0.3
   material_floating_search_bar: ^0.3.6
+  #local_auth: ^1.1.9 lector de huella digital
 # Region Firebase
 # https://pub.dev/packages/firebase_core
 # https://firebase.flutter.dev/docs/overview/
@@ -158,7 +160,9 @@ flutter:
           weight: 500
         - asset: assets/fonts/Quicksand-Bold.ttf
           weight: 700
-
+    - family: Trueno
+      fonts:
+        - asset: assets/fonts/TruenoExBd.otf
 #  fonts:
 #    - family: Gotham
 #      fonts:

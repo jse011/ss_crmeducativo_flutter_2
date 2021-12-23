@@ -14363,8 +14363,10 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
   final String? superCompetenciaNombre;
   final String? superCompetenciaDescripcion;
   final int? superCompetenciaTipoId;
-  final int? rubroEvalResultadoId;
-  final bool? evaluable;
+  final int? competenciaResultadoId;
+  final bool? competenciaEvaluable;
+  final int? superCompetenciaResultadoId;
+  final bool? superCompetenciaEvaluable;
 
   /// <summary>
   /// Tabla DesempenioIcd Desempenio Icd
@@ -14415,8 +14417,10 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
       this.superCompetenciaNombre,
       this.superCompetenciaDescripcion,
       this.superCompetenciaTipoId,
-      this.rubroEvalResultadoId,
-      this.evaluable,
+      this.competenciaResultadoId,
+      this.competenciaEvaluable,
+      this.superCompetenciaResultadoId,
+      this.superCompetenciaEvaluable,
       required this.desempenioIcdId,
       this.DesempenioDescripcion,
       this.peso,
@@ -14479,10 +14483,14 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           data['${effectivePrefix}super_competencia_descripcion']),
       superCompetenciaTipoId: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}super_competencia_tipo_id']),
-      rubroEvalResultadoId: const IntType().mapFromDatabaseResponse(
-          data['${effectivePrefix}rubro_eval_resultado_id']),
-      evaluable: const BoolType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}evaluable']),
+      competenciaResultadoId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}competencia_resultado_id']),
+      competenciaEvaluable: const BoolType().mapFromDatabaseResponse(
+          data['${effectivePrefix}competencia_evaluable']),
+      superCompetenciaResultadoId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}super_competencia_resultado_id']),
+      superCompetenciaEvaluable: const BoolType().mapFromDatabaseResponse(
+          data['${effectivePrefix}super_competencia_evaluable']),
       desempenioIcdId: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}desempenio_icd_id'])!,
       DesempenioDescripcion: const StringType().mapFromDatabaseResponse(
@@ -14583,11 +14591,19 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
     if (!nullToAbsent || superCompetenciaTipoId != null) {
       map['super_competencia_tipo_id'] = Variable<int?>(superCompetenciaTipoId);
     }
-    if (!nullToAbsent || rubroEvalResultadoId != null) {
-      map['rubro_eval_resultado_id'] = Variable<int?>(rubroEvalResultadoId);
+    if (!nullToAbsent || competenciaResultadoId != null) {
+      map['competencia_resultado_id'] = Variable<int?>(competenciaResultadoId);
     }
-    if (!nullToAbsent || evaluable != null) {
-      map['evaluable'] = Variable<bool?>(evaluable);
+    if (!nullToAbsent || competenciaEvaluable != null) {
+      map['competencia_evaluable'] = Variable<bool?>(competenciaEvaluable);
+    }
+    if (!nullToAbsent || superCompetenciaResultadoId != null) {
+      map['super_competencia_resultado_id'] =
+          Variable<int?>(superCompetenciaResultadoId);
+    }
+    if (!nullToAbsent || superCompetenciaEvaluable != null) {
+      map['super_competencia_evaluable'] =
+          Variable<bool?>(superCompetenciaEvaluable);
     }
     map['desempenio_icd_id'] = Variable<int>(desempenioIcdId);
     if (!nullToAbsent || DesempenioDescripcion != null) {
@@ -14709,12 +14725,20 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
       superCompetenciaTipoId: superCompetenciaTipoId == null && nullToAbsent
           ? const Value.absent()
           : Value(superCompetenciaTipoId),
-      rubroEvalResultadoId: rubroEvalResultadoId == null && nullToAbsent
+      competenciaResultadoId: competenciaResultadoId == null && nullToAbsent
           ? const Value.absent()
-          : Value(rubroEvalResultadoId),
-      evaluable: evaluable == null && nullToAbsent
+          : Value(competenciaResultadoId),
+      competenciaEvaluable: competenciaEvaluable == null && nullToAbsent
           ? const Value.absent()
-          : Value(evaluable),
+          : Value(competenciaEvaluable),
+      superCompetenciaResultadoId:
+          superCompetenciaResultadoId == null && nullToAbsent
+              ? const Value.absent()
+              : Value(superCompetenciaResultadoId),
+      superCompetenciaEvaluable:
+          superCompetenciaEvaluable == null && nullToAbsent
+              ? const Value.absent()
+              : Value(superCompetenciaEvaluable),
       desempenioIcdId: Value(desempenioIcdId),
       DesempenioDescripcion: DesempenioDescripcion == null && nullToAbsent
           ? const Value.absent()
@@ -14806,9 +14830,14 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           serializer.fromJson<String?>(json['superCompetenciaDescripcion']),
       superCompetenciaTipoId:
           serializer.fromJson<int?>(json['superCompetenciaTipoId']),
-      rubroEvalResultadoId:
-          serializer.fromJson<int?>(json['rubroEvalResultadoId']),
-      evaluable: serializer.fromJson<bool?>(json['evaluable']),
+      competenciaResultadoId:
+          serializer.fromJson<int?>(json['competenciaResultadoId']),
+      competenciaEvaluable:
+          serializer.fromJson<bool?>(json['competenciaEvaluable']),
+      superCompetenciaResultadoId:
+          serializer.fromJson<int?>(json['superCompetenciaResultadoId']),
+      superCompetenciaEvaluable:
+          serializer.fromJson<bool?>(json['superCompetenciaEvaluable']),
       desempenioIcdId: serializer.fromJson<int>(json['desempenioIcdId']),
       DesempenioDescripcion:
           serializer.fromJson<String?>(json['DesempenioDescripcion']),
@@ -14870,8 +14899,12 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
       'superCompetenciaDescripcion':
           serializer.toJson<String?>(superCompetenciaDescripcion),
       'superCompetenciaTipoId': serializer.toJson<int?>(superCompetenciaTipoId),
-      'rubroEvalResultadoId': serializer.toJson<int?>(rubroEvalResultadoId),
-      'evaluable': serializer.toJson<bool?>(evaluable),
+      'competenciaResultadoId': serializer.toJson<int?>(competenciaResultadoId),
+      'competenciaEvaluable': serializer.toJson<bool?>(competenciaEvaluable),
+      'superCompetenciaResultadoId':
+          serializer.toJson<int?>(superCompetenciaResultadoId),
+      'superCompetenciaEvaluable':
+          serializer.toJson<bool?>(superCompetenciaEvaluable),
       'desempenioIcdId': serializer.toJson<int>(desempenioIcdId),
       'DesempenioDescripcion':
           serializer.toJson<String?>(DesempenioDescripcion),
@@ -14923,8 +14956,10 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           String? superCompetenciaNombre,
           String? superCompetenciaDescripcion,
           int? superCompetenciaTipoId,
-          int? rubroEvalResultadoId,
-          bool? evaluable,
+          int? competenciaResultadoId,
+          bool? competenciaEvaluable,
+          int? superCompetenciaResultadoId,
+          bool? superCompetenciaEvaluable,
           int? desempenioIcdId,
           String? DesempenioDescripcion,
           int? peso,
@@ -14971,8 +15006,13 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
             superCompetenciaDescripcion ?? this.superCompetenciaDescripcion,
         superCompetenciaTipoId:
             superCompetenciaTipoId ?? this.superCompetenciaTipoId,
-        rubroEvalResultadoId: rubroEvalResultadoId ?? this.rubroEvalResultadoId,
-        evaluable: evaluable ?? this.evaluable,
+        competenciaResultadoId:
+            competenciaResultadoId ?? this.competenciaResultadoId,
+        competenciaEvaluable: competenciaEvaluable ?? this.competenciaEvaluable,
+        superCompetenciaResultadoId:
+            superCompetenciaResultadoId ?? this.superCompetenciaResultadoId,
+        superCompetenciaEvaluable:
+            superCompetenciaEvaluable ?? this.superCompetenciaEvaluable,
         desempenioIcdId: desempenioIcdId ?? this.desempenioIcdId,
         DesempenioDescripcion:
             DesempenioDescripcion ?? this.DesempenioDescripcion,
@@ -15025,8 +15065,10 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           ..write('superCompetenciaNombre: $superCompetenciaNombre, ')
           ..write('superCompetenciaDescripcion: $superCompetenciaDescripcion, ')
           ..write('superCompetenciaTipoId: $superCompetenciaTipoId, ')
-          ..write('rubroEvalResultadoId: $rubroEvalResultadoId, ')
-          ..write('evaluable: $evaluable, ')
+          ..write('competenciaResultadoId: $competenciaResultadoId, ')
+          ..write('competenciaEvaluable: $competenciaEvaluable, ')
+          ..write('superCompetenciaResultadoId: $superCompetenciaResultadoId, ')
+          ..write('superCompetenciaEvaluable: $superCompetenciaEvaluable, ')
           ..write('desempenioIcdId: $desempenioIcdId, ')
           ..write('DesempenioDescripcion: $DesempenioDescripcion, ')
           ..write('peso: $peso, ')
@@ -15074,8 +15116,10 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
         superCompetenciaNombre,
         superCompetenciaDescripcion,
         superCompetenciaTipoId,
-        rubroEvalResultadoId,
-        evaluable,
+        competenciaResultadoId,
+        competenciaEvaluable,
+        superCompetenciaResultadoId,
+        superCompetenciaEvaluable,
         desempenioIcdId,
         DesempenioDescripcion,
         peso,
@@ -15122,8 +15166,11 @@ class CriterioData extends DataClass implements Insertable<CriterioData> {
           other.superCompetenciaDescripcion ==
               this.superCompetenciaDescripcion &&
           other.superCompetenciaTipoId == this.superCompetenciaTipoId &&
-          other.rubroEvalResultadoId == this.rubroEvalResultadoId &&
-          other.evaluable == this.evaluable &&
+          other.competenciaResultadoId == this.competenciaResultadoId &&
+          other.competenciaEvaluable == this.competenciaEvaluable &&
+          other.superCompetenciaResultadoId ==
+              this.superCompetenciaResultadoId &&
+          other.superCompetenciaEvaluable == this.superCompetenciaEvaluable &&
           other.desempenioIcdId == this.desempenioIcdId &&
           other.DesempenioDescripcion == this.DesempenioDescripcion &&
           other.peso == this.peso &&
@@ -15169,8 +15216,10 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
   final Value<String?> superCompetenciaNombre;
   final Value<String?> superCompetenciaDescripcion;
   final Value<int?> superCompetenciaTipoId;
-  final Value<int?> rubroEvalResultadoId;
-  final Value<bool?> evaluable;
+  final Value<int?> competenciaResultadoId;
+  final Value<bool?> competenciaEvaluable;
+  final Value<int?> superCompetenciaResultadoId;
+  final Value<bool?> superCompetenciaEvaluable;
   final Value<int> desempenioIcdId;
   final Value<String?> DesempenioDescripcion;
   final Value<int?> peso;
@@ -15212,8 +15261,10 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
     this.superCompetenciaNombre = const Value.absent(),
     this.superCompetenciaDescripcion = const Value.absent(),
     this.superCompetenciaTipoId = const Value.absent(),
-    this.rubroEvalResultadoId = const Value.absent(),
-    this.evaluable = const Value.absent(),
+    this.competenciaResultadoId = const Value.absent(),
+    this.competenciaEvaluable = const Value.absent(),
+    this.superCompetenciaResultadoId = const Value.absent(),
+    this.superCompetenciaEvaluable = const Value.absent(),
     this.desempenioIcdId = const Value.absent(),
     this.DesempenioDescripcion = const Value.absent(),
     this.peso = const Value.absent(),
@@ -15256,8 +15307,10 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
     this.superCompetenciaNombre = const Value.absent(),
     this.superCompetenciaDescripcion = const Value.absent(),
     this.superCompetenciaTipoId = const Value.absent(),
-    this.rubroEvalResultadoId = const Value.absent(),
-    this.evaluable = const Value.absent(),
+    this.competenciaResultadoId = const Value.absent(),
+    this.competenciaEvaluable = const Value.absent(),
+    this.superCompetenciaResultadoId = const Value.absent(),
+    this.superCompetenciaEvaluable = const Value.absent(),
     required int desempenioIcdId,
     this.DesempenioDescripcion = const Value.absent(),
     this.peso = const Value.absent(),
@@ -15305,8 +15358,10 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
     Expression<String?>? superCompetenciaNombre,
     Expression<String?>? superCompetenciaDescripcion,
     Expression<int?>? superCompetenciaTipoId,
-    Expression<int?>? rubroEvalResultadoId,
-    Expression<bool?>? evaluable,
+    Expression<int?>? competenciaResultadoId,
+    Expression<bool?>? competenciaEvaluable,
+    Expression<int?>? superCompetenciaResultadoId,
+    Expression<bool?>? superCompetenciaEvaluable,
     Expression<int>? desempenioIcdId,
     Expression<String?>? DesempenioDescripcion,
     Expression<int?>? peso,
@@ -15357,9 +15412,14 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
         'super_competencia_descripcion': superCompetenciaDescripcion,
       if (superCompetenciaTipoId != null)
         'super_competencia_tipo_id': superCompetenciaTipoId,
-      if (rubroEvalResultadoId != null)
-        'rubro_eval_resultado_id': rubroEvalResultadoId,
-      if (evaluable != null) 'evaluable': evaluable,
+      if (competenciaResultadoId != null)
+        'competencia_resultado_id': competenciaResultadoId,
+      if (competenciaEvaluable != null)
+        'competencia_evaluable': competenciaEvaluable,
+      if (superCompetenciaResultadoId != null)
+        'super_competencia_resultado_id': superCompetenciaResultadoId,
+      if (superCompetenciaEvaluable != null)
+        'super_competencia_evaluable': superCompetenciaEvaluable,
       if (desempenioIcdId != null) 'desempenio_icd_id': desempenioIcdId,
       if (DesempenioDescripcion != null)
         'desempenio_descripcion': DesempenioDescripcion,
@@ -15415,8 +15475,10 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
       Value<String?>? superCompetenciaNombre,
       Value<String?>? superCompetenciaDescripcion,
       Value<int?>? superCompetenciaTipoId,
-      Value<int?>? rubroEvalResultadoId,
-      Value<bool?>? evaluable,
+      Value<int?>? competenciaResultadoId,
+      Value<bool?>? competenciaEvaluable,
+      Value<int?>? superCompetenciaResultadoId,
+      Value<bool?>? superCompetenciaEvaluable,
       Value<int>? desempenioIcdId,
       Value<String?>? DesempenioDescripcion,
       Value<int?>? peso,
@@ -15463,8 +15525,13 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
           superCompetenciaDescripcion ?? this.superCompetenciaDescripcion,
       superCompetenciaTipoId:
           superCompetenciaTipoId ?? this.superCompetenciaTipoId,
-      rubroEvalResultadoId: rubroEvalResultadoId ?? this.rubroEvalResultadoId,
-      evaluable: evaluable ?? this.evaluable,
+      competenciaResultadoId:
+          competenciaResultadoId ?? this.competenciaResultadoId,
+      competenciaEvaluable: competenciaEvaluable ?? this.competenciaEvaluable,
+      superCompetenciaResultadoId:
+          superCompetenciaResultadoId ?? this.superCompetenciaResultadoId,
+      superCompetenciaEvaluable:
+          superCompetenciaEvaluable ?? this.superCompetenciaEvaluable,
       desempenioIcdId: desempenioIcdId ?? this.desempenioIcdId,
       DesempenioDescripcion:
           DesempenioDescripcion ?? this.DesempenioDescripcion,
@@ -15560,12 +15627,21 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
       map['super_competencia_tipo_id'] =
           Variable<int?>(superCompetenciaTipoId.value);
     }
-    if (rubroEvalResultadoId.present) {
-      map['rubro_eval_resultado_id'] =
-          Variable<int?>(rubroEvalResultadoId.value);
+    if (competenciaResultadoId.present) {
+      map['competencia_resultado_id'] =
+          Variable<int?>(competenciaResultadoId.value);
     }
-    if (evaluable.present) {
-      map['evaluable'] = Variable<bool?>(evaluable.value);
+    if (competenciaEvaluable.present) {
+      map['competencia_evaluable'] =
+          Variable<bool?>(competenciaEvaluable.value);
+    }
+    if (superCompetenciaResultadoId.present) {
+      map['super_competencia_resultado_id'] =
+          Variable<int?>(superCompetenciaResultadoId.value);
+    }
+    if (superCompetenciaEvaluable.present) {
+      map['super_competencia_evaluable'] =
+          Variable<bool?>(superCompetenciaEvaluable.value);
     }
     if (desempenioIcdId.present) {
       map['desempenio_icd_id'] = Variable<int>(desempenioIcdId.value);
@@ -15666,8 +15742,10 @@ class CriterioCompanion extends UpdateCompanion<CriterioData> {
           ..write('superCompetenciaNombre: $superCompetenciaNombre, ')
           ..write('superCompetenciaDescripcion: $superCompetenciaDescripcion, ')
           ..write('superCompetenciaTipoId: $superCompetenciaTipoId, ')
-          ..write('rubroEvalResultadoId: $rubroEvalResultadoId, ')
-          ..write('evaluable: $evaluable, ')
+          ..write('competenciaResultadoId: $competenciaResultadoId, ')
+          ..write('competenciaEvaluable: $competenciaEvaluable, ')
+          ..write('superCompetenciaResultadoId: $superCompetenciaResultadoId, ')
+          ..write('superCompetenciaEvaluable: $superCompetenciaEvaluable, ')
           ..write('desempenioIcdId: $desempenioIcdId, ')
           ..write('DesempenioDescripcion: $DesempenioDescripcion, ')
           ..write('peso: $peso, ')
@@ -15790,17 +15868,30 @@ class $CriterioTable extends Criterio
   late final GeneratedColumn<int?> superCompetenciaTipoId =
       GeneratedColumn<int?>('super_competencia_tipo_id', aliasedName, true,
           typeName: 'INTEGER', requiredDuringInsert: false);
-  final VerificationMeta _rubroEvalResultadoIdMeta =
-      const VerificationMeta('rubroEvalResultadoId');
-  late final GeneratedColumn<int?> rubroEvalResultadoId = GeneratedColumn<int?>(
-      'rubro_eval_resultado_id', aliasedName, true,
-      typeName: 'INTEGER', requiredDuringInsert: false);
-  final VerificationMeta _evaluableMeta = const VerificationMeta('evaluable');
-  late final GeneratedColumn<bool?> evaluable = GeneratedColumn<bool?>(
-      'evaluable', aliasedName, true,
-      typeName: 'INTEGER',
-      requiredDuringInsert: false,
-      defaultConstraints: 'CHECK (evaluable IN (0, 1))');
+  final VerificationMeta _competenciaResultadoIdMeta =
+      const VerificationMeta('competenciaResultadoId');
+  late final GeneratedColumn<int?> competenciaResultadoId =
+      GeneratedColumn<int?>('competencia_resultado_id', aliasedName, true,
+          typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _competenciaEvaluableMeta =
+      const VerificationMeta('competenciaEvaluable');
+  late final GeneratedColumn<bool?> competenciaEvaluable =
+      GeneratedColumn<bool?>('competencia_evaluable', aliasedName, true,
+          typeName: 'INTEGER',
+          requiredDuringInsert: false,
+          defaultConstraints: 'CHECK (competencia_evaluable IN (0, 1))');
+  final VerificationMeta _superCompetenciaResultadoIdMeta =
+      const VerificationMeta('superCompetenciaResultadoId');
+  late final GeneratedColumn<int?> superCompetenciaResultadoId =
+      GeneratedColumn<int?>('super_competencia_resultado_id', aliasedName, true,
+          typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _superCompetenciaEvaluableMeta =
+      const VerificationMeta('superCompetenciaEvaluable');
+  late final GeneratedColumn<bool?> superCompetenciaEvaluable =
+      GeneratedColumn<bool?>('super_competencia_evaluable', aliasedName, true,
+          typeName: 'INTEGER',
+          requiredDuringInsert: false,
+          defaultConstraints: 'CHECK (super_competencia_evaluable IN (0, 1))');
   final VerificationMeta _desempenioIcdIdMeta =
       const VerificationMeta('desempenioIcdId');
   late final GeneratedColumn<int?> desempenioIcdId = GeneratedColumn<int?>(
@@ -15927,8 +16018,10 @@ class $CriterioTable extends Criterio
         superCompetenciaNombre,
         superCompetenciaDescripcion,
         superCompetenciaTipoId,
-        rubroEvalResultadoId,
-        evaluable,
+        competenciaResultadoId,
+        competenciaEvaluable,
+        superCompetenciaResultadoId,
+        superCompetenciaEvaluable,
         desempenioIcdId,
         DesempenioDescripcion,
         peso,
@@ -16075,15 +16168,31 @@ class $CriterioTable extends Criterio
           superCompetenciaTipoId.isAcceptableOrUnknown(
               data['super_competencia_tipo_id']!, _superCompetenciaTipoIdMeta));
     }
-    if (data.containsKey('rubro_eval_resultado_id')) {
+    if (data.containsKey('competencia_resultado_id')) {
       context.handle(
-          _rubroEvalResultadoIdMeta,
-          rubroEvalResultadoId.isAcceptableOrUnknown(
-              data['rubro_eval_resultado_id']!, _rubroEvalResultadoIdMeta));
+          _competenciaResultadoIdMeta,
+          competenciaResultadoId.isAcceptableOrUnknown(
+              data['competencia_resultado_id']!, _competenciaResultadoIdMeta));
     }
-    if (data.containsKey('evaluable')) {
-      context.handle(_evaluableMeta,
-          evaluable.isAcceptableOrUnknown(data['evaluable']!, _evaluableMeta));
+    if (data.containsKey('competencia_evaluable')) {
+      context.handle(
+          _competenciaEvaluableMeta,
+          competenciaEvaluable.isAcceptableOrUnknown(
+              data['competencia_evaluable']!, _competenciaEvaluableMeta));
+    }
+    if (data.containsKey('super_competencia_resultado_id')) {
+      context.handle(
+          _superCompetenciaResultadoIdMeta,
+          superCompetenciaResultadoId.isAcceptableOrUnknown(
+              data['super_competencia_resultado_id']!,
+              _superCompetenciaResultadoIdMeta));
+    }
+    if (data.containsKey('super_competencia_evaluable')) {
+      context.handle(
+          _superCompetenciaEvaluableMeta,
+          superCompetenciaEvaluable.isAcceptableOrUnknown(
+              data['super_competencia_evaluable']!,
+              _superCompetenciaEvaluableMeta));
     }
     if (data.containsKey('desempenio_icd_id')) {
       context.handle(
@@ -17810,6 +17919,11 @@ class ValorTipoNotaRubroData extends DataClass
   final bool? incluidoLInferior;
   final bool? incluidoLSuperior;
   final int? tipoId;
+  final double? limiteInferiorTransf;
+  final double? limiteSuperiorTransf;
+  final double? valorNumericoTransf;
+  final bool? incluidoLInferiorTransf;
+  final bool? incluidoLSuperiorTransf;
   final int? usuarioCreacionId;
   final int? usuarioCreadorId;
   final int? fechaCreacion;
@@ -17834,6 +17948,11 @@ class ValorTipoNotaRubroData extends DataClass
       this.incluidoLInferior,
       this.incluidoLSuperior,
       this.tipoId,
+      this.limiteInferiorTransf,
+      this.limiteSuperiorTransf,
+      this.valorNumericoTransf,
+      this.incluidoLInferiorTransf,
+      this.incluidoLSuperiorTransf,
       this.usuarioCreacionId,
       this.usuarioCreadorId,
       this.fechaCreacion,
@@ -17874,6 +17993,16 @@ class ValorTipoNotaRubroData extends DataClass
           data['${effectivePrefix}incluido_l_superior']),
       tipoId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}tipo_id']),
+      limiteInferiorTransf: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}limite_inferior_transf']),
+      limiteSuperiorTransf: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}limite_superior_transf']),
+      valorNumericoTransf: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}valor_numerico_transf']),
+      incluidoLInferiorTransf: const BoolType().mapFromDatabaseResponse(
+          data['${effectivePrefix}incluido_l_inferior_transf']),
+      incluidoLSuperiorTransf: const BoolType().mapFromDatabaseResponse(
+          data['${effectivePrefix}incluido_l_superior_transf']),
       usuarioCreacionId: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}usuario_creacion_id']),
       usuarioCreadorId: const IntType().mapFromDatabaseResponse(
@@ -17934,6 +18063,23 @@ class ValorTipoNotaRubroData extends DataClass
     }
     if (!nullToAbsent || tipoId != null) {
       map['tipo_id'] = Variable<int?>(tipoId);
+    }
+    if (!nullToAbsent || limiteInferiorTransf != null) {
+      map['limite_inferior_transf'] = Variable<double?>(limiteInferiorTransf);
+    }
+    if (!nullToAbsent || limiteSuperiorTransf != null) {
+      map['limite_superior_transf'] = Variable<double?>(limiteSuperiorTransf);
+    }
+    if (!nullToAbsent || valorNumericoTransf != null) {
+      map['valor_numerico_transf'] = Variable<double?>(valorNumericoTransf);
+    }
+    if (!nullToAbsent || incluidoLInferiorTransf != null) {
+      map['incluido_l_inferior_transf'] =
+          Variable<bool?>(incluidoLInferiorTransf);
+    }
+    if (!nullToAbsent || incluidoLSuperiorTransf != null) {
+      map['incluido_l_superior_transf'] =
+          Variable<bool?>(incluidoLSuperiorTransf);
     }
     if (!nullToAbsent || usuarioCreacionId != null) {
       map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId);
@@ -18003,6 +18149,21 @@ class ValorTipoNotaRubroData extends DataClass
           : Value(incluidoLSuperior),
       tipoId:
           tipoId == null && nullToAbsent ? const Value.absent() : Value(tipoId),
+      limiteInferiorTransf: limiteInferiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limiteInferiorTransf),
+      limiteSuperiorTransf: limiteSuperiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limiteSuperiorTransf),
+      valorNumericoTransf: valorNumericoTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(valorNumericoTransf),
+      incluidoLInferiorTransf: incluidoLInferiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(incluidoLInferiorTransf),
+      incluidoLSuperiorTransf: incluidoLSuperiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(incluidoLSuperiorTransf),
       usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
           ? const Value.absent()
           : Value(usuarioCreacionId),
@@ -18055,6 +18216,16 @@ class ValorTipoNotaRubroData extends DataClass
       incluidoLInferior: serializer.fromJson<bool?>(json['incluidoLInferior']),
       incluidoLSuperior: serializer.fromJson<bool?>(json['incluidoLSuperior']),
       tipoId: serializer.fromJson<int?>(json['tipoId']),
+      limiteInferiorTransf:
+          serializer.fromJson<double?>(json['limiteInferiorTransf']),
+      limiteSuperiorTransf:
+          serializer.fromJson<double?>(json['limiteSuperiorTransf']),
+      valorNumericoTransf:
+          serializer.fromJson<double?>(json['valorNumericoTransf']),
+      incluidoLInferiorTransf:
+          serializer.fromJson<bool?>(json['incluidoLInferiorTransf']),
+      incluidoLSuperiorTransf:
+          serializer.fromJson<bool?>(json['incluidoLSuperiorTransf']),
       usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
       usuarioCreadorId: serializer.fromJson<int?>(json['usuarioCreadorId']),
       fechaCreacion: serializer.fromJson<int?>(json['fechaCreacion']),
@@ -18084,6 +18255,13 @@ class ValorTipoNotaRubroData extends DataClass
       'incluidoLInferior': serializer.toJson<bool?>(incluidoLInferior),
       'incluidoLSuperior': serializer.toJson<bool?>(incluidoLSuperior),
       'tipoId': serializer.toJson<int?>(tipoId),
+      'limiteInferiorTransf': serializer.toJson<double?>(limiteInferiorTransf),
+      'limiteSuperiorTransf': serializer.toJson<double?>(limiteSuperiorTransf),
+      'valorNumericoTransf': serializer.toJson<double?>(valorNumericoTransf),
+      'incluidoLInferiorTransf':
+          serializer.toJson<bool?>(incluidoLInferiorTransf),
+      'incluidoLSuperiorTransf':
+          serializer.toJson<bool?>(incluidoLSuperiorTransf),
       'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
       'usuarioCreadorId': serializer.toJson<int?>(usuarioCreadorId),
       'fechaCreacion': serializer.toJson<int?>(fechaCreacion),
@@ -18111,6 +18289,11 @@ class ValorTipoNotaRubroData extends DataClass
           bool? incluidoLInferior,
           bool? incluidoLSuperior,
           int? tipoId,
+          double? limiteInferiorTransf,
+          double? limiteSuperiorTransf,
+          double? valorNumericoTransf,
+          bool? incluidoLInferiorTransf,
+          bool? incluidoLSuperiorTransf,
           int? usuarioCreacionId,
           int? usuarioCreadorId,
           int? fechaCreacion,
@@ -18135,6 +18318,13 @@ class ValorTipoNotaRubroData extends DataClass
         incluidoLInferior: incluidoLInferior ?? this.incluidoLInferior,
         incluidoLSuperior: incluidoLSuperior ?? this.incluidoLSuperior,
         tipoId: tipoId ?? this.tipoId,
+        limiteInferiorTransf: limiteInferiorTransf ?? this.limiteInferiorTransf,
+        limiteSuperiorTransf: limiteSuperiorTransf ?? this.limiteSuperiorTransf,
+        valorNumericoTransf: valorNumericoTransf ?? this.valorNumericoTransf,
+        incluidoLInferiorTransf:
+            incluidoLInferiorTransf ?? this.incluidoLInferiorTransf,
+        incluidoLSuperiorTransf:
+            incluidoLSuperiorTransf ?? this.incluidoLSuperiorTransf,
         usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
         usuarioCreadorId: usuarioCreadorId ?? this.usuarioCreadorId,
         fechaCreacion: fechaCreacion ?? this.fechaCreacion,
@@ -18162,6 +18352,11 @@ class ValorTipoNotaRubroData extends DataClass
           ..write('incluidoLInferior: $incluidoLInferior, ')
           ..write('incluidoLSuperior: $incluidoLSuperior, ')
           ..write('tipoId: $tipoId, ')
+          ..write('limiteInferiorTransf: $limiteInferiorTransf, ')
+          ..write('limiteSuperiorTransf: $limiteSuperiorTransf, ')
+          ..write('valorNumericoTransf: $valorNumericoTransf, ')
+          ..write('incluidoLInferiorTransf: $incluidoLInferiorTransf, ')
+          ..write('incluidoLSuperiorTransf: $incluidoLSuperiorTransf, ')
           ..write('usuarioCreacionId: $usuarioCreacionId, ')
           ..write('usuarioCreadorId: $usuarioCreadorId, ')
           ..write('fechaCreacion: $fechaCreacion, ')
@@ -18191,6 +18386,11 @@ class ValorTipoNotaRubroData extends DataClass
         incluidoLInferior,
         incluidoLSuperior,
         tipoId,
+        limiteInferiorTransf,
+        limiteSuperiorTransf,
+        valorNumericoTransf,
+        incluidoLInferiorTransf,
+        incluidoLSuperiorTransf,
         usuarioCreacionId,
         usuarioCreadorId,
         fechaCreacion,
@@ -18219,6 +18419,11 @@ class ValorTipoNotaRubroData extends DataClass
           other.incluidoLInferior == this.incluidoLInferior &&
           other.incluidoLSuperior == this.incluidoLSuperior &&
           other.tipoId == this.tipoId &&
+          other.limiteInferiorTransf == this.limiteInferiorTransf &&
+          other.limiteSuperiorTransf == this.limiteSuperiorTransf &&
+          other.valorNumericoTransf == this.valorNumericoTransf &&
+          other.incluidoLInferiorTransf == this.incluidoLInferiorTransf &&
+          other.incluidoLSuperiorTransf == this.incluidoLSuperiorTransf &&
           other.usuarioCreacionId == this.usuarioCreacionId &&
           other.usuarioCreadorId == this.usuarioCreadorId &&
           other.fechaCreacion == this.fechaCreacion &&
@@ -18246,6 +18451,11 @@ class ValorTipoNotaRubroCompanion
   final Value<bool?> incluidoLInferior;
   final Value<bool?> incluidoLSuperior;
   final Value<int?> tipoId;
+  final Value<double?> limiteInferiorTransf;
+  final Value<double?> limiteSuperiorTransf;
+  final Value<double?> valorNumericoTransf;
+  final Value<bool?> incluidoLInferiorTransf;
+  final Value<bool?> incluidoLSuperiorTransf;
   final Value<int?> usuarioCreacionId;
   final Value<int?> usuarioCreadorId;
   final Value<int?> fechaCreacion;
@@ -18270,6 +18480,11 @@ class ValorTipoNotaRubroCompanion
     this.incluidoLInferior = const Value.absent(),
     this.incluidoLSuperior = const Value.absent(),
     this.tipoId = const Value.absent(),
+    this.limiteInferiorTransf = const Value.absent(),
+    this.limiteSuperiorTransf = const Value.absent(),
+    this.valorNumericoTransf = const Value.absent(),
+    this.incluidoLInferiorTransf = const Value.absent(),
+    this.incluidoLSuperiorTransf = const Value.absent(),
     this.usuarioCreacionId = const Value.absent(),
     this.usuarioCreadorId = const Value.absent(),
     this.fechaCreacion = const Value.absent(),
@@ -18295,6 +18510,11 @@ class ValorTipoNotaRubroCompanion
     this.incluidoLInferior = const Value.absent(),
     this.incluidoLSuperior = const Value.absent(),
     this.tipoId = const Value.absent(),
+    this.limiteInferiorTransf = const Value.absent(),
+    this.limiteSuperiorTransf = const Value.absent(),
+    this.valorNumericoTransf = const Value.absent(),
+    this.incluidoLInferiorTransf = const Value.absent(),
+    this.incluidoLSuperiorTransf = const Value.absent(),
     this.usuarioCreacionId = const Value.absent(),
     this.usuarioCreadorId = const Value.absent(),
     this.fechaCreacion = const Value.absent(),
@@ -18320,6 +18540,11 @@ class ValorTipoNotaRubroCompanion
     Expression<bool?>? incluidoLInferior,
     Expression<bool?>? incluidoLSuperior,
     Expression<int?>? tipoId,
+    Expression<double?>? limiteInferiorTransf,
+    Expression<double?>? limiteSuperiorTransf,
+    Expression<double?>? valorNumericoTransf,
+    Expression<bool?>? incluidoLInferiorTransf,
+    Expression<bool?>? incluidoLSuperiorTransf,
     Expression<int?>? usuarioCreacionId,
     Expression<int?>? usuarioCreadorId,
     Expression<int?>? fechaCreacion,
@@ -18345,6 +18570,16 @@ class ValorTipoNotaRubroCompanion
       if (incluidoLInferior != null) 'incluido_l_inferior': incluidoLInferior,
       if (incluidoLSuperior != null) 'incluido_l_superior': incluidoLSuperior,
       if (tipoId != null) 'tipo_id': tipoId,
+      if (limiteInferiorTransf != null)
+        'limite_inferior_transf': limiteInferiorTransf,
+      if (limiteSuperiorTransf != null)
+        'limite_superior_transf': limiteSuperiorTransf,
+      if (valorNumericoTransf != null)
+        'valor_numerico_transf': valorNumericoTransf,
+      if (incluidoLInferiorTransf != null)
+        'incluido_l_inferior_transf': incluidoLInferiorTransf,
+      if (incluidoLSuperiorTransf != null)
+        'incluido_l_superior_transf': incluidoLSuperiorTransf,
       if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
       if (usuarioCreadorId != null) 'usuario_creador_id': usuarioCreadorId,
       if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
@@ -18372,6 +18607,11 @@ class ValorTipoNotaRubroCompanion
       Value<bool?>? incluidoLInferior,
       Value<bool?>? incluidoLSuperior,
       Value<int?>? tipoId,
+      Value<double?>? limiteInferiorTransf,
+      Value<double?>? limiteSuperiorTransf,
+      Value<double?>? valorNumericoTransf,
+      Value<bool?>? incluidoLInferiorTransf,
+      Value<bool?>? incluidoLSuperiorTransf,
       Value<int?>? usuarioCreacionId,
       Value<int?>? usuarioCreadorId,
       Value<int?>? fechaCreacion,
@@ -18396,6 +18636,13 @@ class ValorTipoNotaRubroCompanion
       incluidoLInferior: incluidoLInferior ?? this.incluidoLInferior,
       incluidoLSuperior: incluidoLSuperior ?? this.incluidoLSuperior,
       tipoId: tipoId ?? this.tipoId,
+      limiteInferiorTransf: limiteInferiorTransf ?? this.limiteInferiorTransf,
+      limiteSuperiorTransf: limiteSuperiorTransf ?? this.limiteSuperiorTransf,
+      valorNumericoTransf: valorNumericoTransf ?? this.valorNumericoTransf,
+      incluidoLInferiorTransf:
+          incluidoLInferiorTransf ?? this.incluidoLInferiorTransf,
+      incluidoLSuperiorTransf:
+          incluidoLSuperiorTransf ?? this.incluidoLSuperiorTransf,
       usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
       usuarioCreadorId: usuarioCreadorId ?? this.usuarioCreadorId,
       fechaCreacion: fechaCreacion ?? this.fechaCreacion,
@@ -18449,6 +18696,26 @@ class ValorTipoNotaRubroCompanion
     if (tipoId.present) {
       map['tipo_id'] = Variable<int?>(tipoId.value);
     }
+    if (limiteInferiorTransf.present) {
+      map['limite_inferior_transf'] =
+          Variable<double?>(limiteInferiorTransf.value);
+    }
+    if (limiteSuperiorTransf.present) {
+      map['limite_superior_transf'] =
+          Variable<double?>(limiteSuperiorTransf.value);
+    }
+    if (valorNumericoTransf.present) {
+      map['valor_numerico_transf'] =
+          Variable<double?>(valorNumericoTransf.value);
+    }
+    if (incluidoLInferiorTransf.present) {
+      map['incluido_l_inferior_transf'] =
+          Variable<bool?>(incluidoLInferiorTransf.value);
+    }
+    if (incluidoLSuperiorTransf.present) {
+      map['incluido_l_superior_transf'] =
+          Variable<bool?>(incluidoLSuperiorTransf.value);
+    }
     if (usuarioCreacionId.present) {
       map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId.value);
     }
@@ -18500,6 +18767,11 @@ class ValorTipoNotaRubroCompanion
           ..write('incluidoLInferior: $incluidoLInferior, ')
           ..write('incluidoLSuperior: $incluidoLSuperior, ')
           ..write('tipoId: $tipoId, ')
+          ..write('limiteInferiorTransf: $limiteInferiorTransf, ')
+          ..write('limiteSuperiorTransf: $limiteSuperiorTransf, ')
+          ..write('valorNumericoTransf: $valorNumericoTransf, ')
+          ..write('incluidoLInferiorTransf: $incluidoLInferiorTransf, ')
+          ..write('incluidoLSuperiorTransf: $incluidoLSuperiorTransf, ')
           ..write('usuarioCreacionId: $usuarioCreacionId, ')
           ..write('usuarioCreadorId: $usuarioCreadorId, ')
           ..write('fechaCreacion: $fechaCreacion, ')
@@ -18579,6 +18851,35 @@ class $ValorTipoNotaRubroTable extends ValorTipoNotaRubro
   late final GeneratedColumn<int?> tipoId = GeneratedColumn<int?>(
       'tipo_id', aliasedName, true,
       typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _limiteInferiorTransfMeta =
+      const VerificationMeta('limiteInferiorTransf');
+  late final GeneratedColumn<double?> limiteInferiorTransf =
+      GeneratedColumn<double?>('limite_inferior_transf', aliasedName, true,
+          typeName: 'REAL', requiredDuringInsert: false);
+  final VerificationMeta _limiteSuperiorTransfMeta =
+      const VerificationMeta('limiteSuperiorTransf');
+  late final GeneratedColumn<double?> limiteSuperiorTransf =
+      GeneratedColumn<double?>('limite_superior_transf', aliasedName, true,
+          typeName: 'REAL', requiredDuringInsert: false);
+  final VerificationMeta _valorNumericoTransfMeta =
+      const VerificationMeta('valorNumericoTransf');
+  late final GeneratedColumn<double?> valorNumericoTransf =
+      GeneratedColumn<double?>('valor_numerico_transf', aliasedName, true,
+          typeName: 'REAL', requiredDuringInsert: false);
+  final VerificationMeta _incluidoLInferiorTransfMeta =
+      const VerificationMeta('incluidoLInferiorTransf');
+  late final GeneratedColumn<bool?> incluidoLInferiorTransf =
+      GeneratedColumn<bool?>('incluido_l_inferior_transf', aliasedName, true,
+          typeName: 'INTEGER',
+          requiredDuringInsert: false,
+          defaultConstraints: 'CHECK (incluido_l_inferior_transf IN (0, 1))');
+  final VerificationMeta _incluidoLSuperiorTransfMeta =
+      const VerificationMeta('incluidoLSuperiorTransf');
+  late final GeneratedColumn<bool?> incluidoLSuperiorTransf =
+      GeneratedColumn<bool?>('incluido_l_superior_transf', aliasedName, true,
+          typeName: 'INTEGER',
+          requiredDuringInsert: false,
+          defaultConstraints: 'CHECK (incluido_l_superior_transf IN (0, 1))');
   final VerificationMeta _usuarioCreacionIdMeta =
       const VerificationMeta('usuarioCreacionId');
   late final GeneratedColumn<int?> usuarioCreacionId = GeneratedColumn<int?>(
@@ -18645,6 +18946,11 @@ class $ValorTipoNotaRubroTable extends ValorTipoNotaRubro
         incluidoLInferior,
         incluidoLSuperior,
         tipoId,
+        limiteInferiorTransf,
+        limiteSuperiorTransf,
+        valorNumericoTransf,
+        incluidoLInferiorTransf,
+        incluidoLSuperiorTransf,
         usuarioCreacionId,
         usuarioCreadorId,
         fechaCreacion,
@@ -18730,6 +19036,38 @@ class $ValorTipoNotaRubroTable extends ValorTipoNotaRubro
     if (data.containsKey('tipo_id')) {
       context.handle(_tipoIdMeta,
           tipoId.isAcceptableOrUnknown(data['tipo_id']!, _tipoIdMeta));
+    }
+    if (data.containsKey('limite_inferior_transf')) {
+      context.handle(
+          _limiteInferiorTransfMeta,
+          limiteInferiorTransf.isAcceptableOrUnknown(
+              data['limite_inferior_transf']!, _limiteInferiorTransfMeta));
+    }
+    if (data.containsKey('limite_superior_transf')) {
+      context.handle(
+          _limiteSuperiorTransfMeta,
+          limiteSuperiorTransf.isAcceptableOrUnknown(
+              data['limite_superior_transf']!, _limiteSuperiorTransfMeta));
+    }
+    if (data.containsKey('valor_numerico_transf')) {
+      context.handle(
+          _valorNumericoTransfMeta,
+          valorNumericoTransf.isAcceptableOrUnknown(
+              data['valor_numerico_transf']!, _valorNumericoTransfMeta));
+    }
+    if (data.containsKey('incluido_l_inferior_transf')) {
+      context.handle(
+          _incluidoLInferiorTransfMeta,
+          incluidoLInferiorTransf.isAcceptableOrUnknown(
+              data['incluido_l_inferior_transf']!,
+              _incluidoLInferiorTransfMeta));
+    }
+    if (data.containsKey('incluido_l_superior_transf')) {
+      context.handle(
+          _incluidoLSuperiorTransfMeta,
+          incluidoLSuperiorTransf.isAcceptableOrUnknown(
+              data['incluido_l_superior_transf']!,
+              _incluidoLSuperiorTransfMeta));
     }
     if (data.containsKey('usuario_creacion_id')) {
       context.handle(
@@ -35919,6 +36257,11 @@ class ValorTipoNotaResultadoData extends DataClass
   final bool? incluidoLInferior;
   final bool? incluidoLSuperior;
   final int? tipoId;
+  final double? limiteInferiorTransf;
+  final double? limiteSuperiorTransf;
+  final double? valorNumericoTransf;
+  final bool? incluidoLInferiorTransf;
+  final bool? incluidoLSuperiorTransf;
   final int? usuarioCreacionId;
   final int? usuarioCreadorId;
   final int? fechaCreacion;
@@ -35944,6 +36287,11 @@ class ValorTipoNotaResultadoData extends DataClass
       this.incluidoLInferior,
       this.incluidoLSuperior,
       this.tipoId,
+      this.limiteInferiorTransf,
+      this.limiteSuperiorTransf,
+      this.valorNumericoTransf,
+      this.incluidoLInferiorTransf,
+      this.incluidoLSuperiorTransf,
       this.usuarioCreacionId,
       this.usuarioCreadorId,
       this.fechaCreacion,
@@ -35986,6 +36334,16 @@ class ValorTipoNotaResultadoData extends DataClass
           data['${effectivePrefix}incluido_l_superior']),
       tipoId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}tipo_id']),
+      limiteInferiorTransf: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}limite_inferior_transf']),
+      limiteSuperiorTransf: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}limite_superior_transf']),
+      valorNumericoTransf: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}valor_numerico_transf']),
+      incluidoLInferiorTransf: const BoolType().mapFromDatabaseResponse(
+          data['${effectivePrefix}incluido_l_inferior_transf']),
+      incluidoLSuperiorTransf: const BoolType().mapFromDatabaseResponse(
+          data['${effectivePrefix}incluido_l_superior_transf']),
       usuarioCreacionId: const IntType().mapFromDatabaseResponse(
           data['${effectivePrefix}usuario_creacion_id']),
       usuarioCreadorId: const IntType().mapFromDatabaseResponse(
@@ -36047,6 +36405,23 @@ class ValorTipoNotaResultadoData extends DataClass
     }
     if (!nullToAbsent || tipoId != null) {
       map['tipo_id'] = Variable<int?>(tipoId);
+    }
+    if (!nullToAbsent || limiteInferiorTransf != null) {
+      map['limite_inferior_transf'] = Variable<double?>(limiteInferiorTransf);
+    }
+    if (!nullToAbsent || limiteSuperiorTransf != null) {
+      map['limite_superior_transf'] = Variable<double?>(limiteSuperiorTransf);
+    }
+    if (!nullToAbsent || valorNumericoTransf != null) {
+      map['valor_numerico_transf'] = Variable<double?>(valorNumericoTransf);
+    }
+    if (!nullToAbsent || incluidoLInferiorTransf != null) {
+      map['incluido_l_inferior_transf'] =
+          Variable<bool?>(incluidoLInferiorTransf);
+    }
+    if (!nullToAbsent || incluidoLSuperiorTransf != null) {
+      map['incluido_l_superior_transf'] =
+          Variable<bool?>(incluidoLSuperiorTransf);
     }
     if (!nullToAbsent || usuarioCreacionId != null) {
       map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId);
@@ -36117,6 +36492,21 @@ class ValorTipoNotaResultadoData extends DataClass
           : Value(incluidoLSuperior),
       tipoId:
           tipoId == null && nullToAbsent ? const Value.absent() : Value(tipoId),
+      limiteInferiorTransf: limiteInferiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limiteInferiorTransf),
+      limiteSuperiorTransf: limiteSuperiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(limiteSuperiorTransf),
+      valorNumericoTransf: valorNumericoTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(valorNumericoTransf),
+      incluidoLInferiorTransf: incluidoLInferiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(incluidoLInferiorTransf),
+      incluidoLSuperiorTransf: incluidoLSuperiorTransf == null && nullToAbsent
+          ? const Value.absent()
+          : Value(incluidoLSuperiorTransf),
       usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
           ? const Value.absent()
           : Value(usuarioCreacionId),
@@ -36170,6 +36560,16 @@ class ValorTipoNotaResultadoData extends DataClass
       incluidoLInferior: serializer.fromJson<bool?>(json['incluidoLInferior']),
       incluidoLSuperior: serializer.fromJson<bool?>(json['incluidoLSuperior']),
       tipoId: serializer.fromJson<int?>(json['tipoId']),
+      limiteInferiorTransf:
+          serializer.fromJson<double?>(json['limiteInferiorTransf']),
+      limiteSuperiorTransf:
+          serializer.fromJson<double?>(json['limiteSuperiorTransf']),
+      valorNumericoTransf:
+          serializer.fromJson<double?>(json['valorNumericoTransf']),
+      incluidoLInferiorTransf:
+          serializer.fromJson<bool?>(json['incluidoLInferiorTransf']),
+      incluidoLSuperiorTransf:
+          serializer.fromJson<bool?>(json['incluidoLSuperiorTransf']),
       usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
       usuarioCreadorId: serializer.fromJson<int?>(json['usuarioCreadorId']),
       fechaCreacion: serializer.fromJson<int?>(json['fechaCreacion']),
@@ -36200,6 +36600,13 @@ class ValorTipoNotaResultadoData extends DataClass
       'incluidoLInferior': serializer.toJson<bool?>(incluidoLInferior),
       'incluidoLSuperior': serializer.toJson<bool?>(incluidoLSuperior),
       'tipoId': serializer.toJson<int?>(tipoId),
+      'limiteInferiorTransf': serializer.toJson<double?>(limiteInferiorTransf),
+      'limiteSuperiorTransf': serializer.toJson<double?>(limiteSuperiorTransf),
+      'valorNumericoTransf': serializer.toJson<double?>(valorNumericoTransf),
+      'incluidoLInferiorTransf':
+          serializer.toJson<bool?>(incluidoLInferiorTransf),
+      'incluidoLSuperiorTransf':
+          serializer.toJson<bool?>(incluidoLSuperiorTransf),
       'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
       'usuarioCreadorId': serializer.toJson<int?>(usuarioCreadorId),
       'fechaCreacion': serializer.toJson<int?>(fechaCreacion),
@@ -36228,6 +36635,11 @@ class ValorTipoNotaResultadoData extends DataClass
           bool? incluidoLInferior,
           bool? incluidoLSuperior,
           int? tipoId,
+          double? limiteInferiorTransf,
+          double? limiteSuperiorTransf,
+          double? valorNumericoTransf,
+          bool? incluidoLInferiorTransf,
+          bool? incluidoLSuperiorTransf,
           int? usuarioCreacionId,
           int? usuarioCreadorId,
           int? fechaCreacion,
@@ -36253,6 +36665,13 @@ class ValorTipoNotaResultadoData extends DataClass
         incluidoLInferior: incluidoLInferior ?? this.incluidoLInferior,
         incluidoLSuperior: incluidoLSuperior ?? this.incluidoLSuperior,
         tipoId: tipoId ?? this.tipoId,
+        limiteInferiorTransf: limiteInferiorTransf ?? this.limiteInferiorTransf,
+        limiteSuperiorTransf: limiteSuperiorTransf ?? this.limiteSuperiorTransf,
+        valorNumericoTransf: valorNumericoTransf ?? this.valorNumericoTransf,
+        incluidoLInferiorTransf:
+            incluidoLInferiorTransf ?? this.incluidoLInferiorTransf,
+        incluidoLSuperiorTransf:
+            incluidoLSuperiorTransf ?? this.incluidoLSuperiorTransf,
         usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
         usuarioCreadorId: usuarioCreadorId ?? this.usuarioCreadorId,
         fechaCreacion: fechaCreacion ?? this.fechaCreacion,
@@ -36281,6 +36700,11 @@ class ValorTipoNotaResultadoData extends DataClass
           ..write('incluidoLInferior: $incluidoLInferior, ')
           ..write('incluidoLSuperior: $incluidoLSuperior, ')
           ..write('tipoId: $tipoId, ')
+          ..write('limiteInferiorTransf: $limiteInferiorTransf, ')
+          ..write('limiteSuperiorTransf: $limiteSuperiorTransf, ')
+          ..write('valorNumericoTransf: $valorNumericoTransf, ')
+          ..write('incluidoLInferiorTransf: $incluidoLInferiorTransf, ')
+          ..write('incluidoLSuperiorTransf: $incluidoLSuperiorTransf, ')
           ..write('usuarioCreacionId: $usuarioCreacionId, ')
           ..write('usuarioCreadorId: $usuarioCreadorId, ')
           ..write('fechaCreacion: $fechaCreacion, ')
@@ -36311,6 +36735,11 @@ class ValorTipoNotaResultadoData extends DataClass
         incluidoLInferior,
         incluidoLSuperior,
         tipoId,
+        limiteInferiorTransf,
+        limiteSuperiorTransf,
+        valorNumericoTransf,
+        incluidoLInferiorTransf,
+        incluidoLSuperiorTransf,
         usuarioCreacionId,
         usuarioCreadorId,
         fechaCreacion,
@@ -36340,6 +36769,11 @@ class ValorTipoNotaResultadoData extends DataClass
           other.incluidoLInferior == this.incluidoLInferior &&
           other.incluidoLSuperior == this.incluidoLSuperior &&
           other.tipoId == this.tipoId &&
+          other.limiteInferiorTransf == this.limiteInferiorTransf &&
+          other.limiteSuperiorTransf == this.limiteSuperiorTransf &&
+          other.valorNumericoTransf == this.valorNumericoTransf &&
+          other.incluidoLInferiorTransf == this.incluidoLInferiorTransf &&
+          other.incluidoLSuperiorTransf == this.incluidoLSuperiorTransf &&
           other.usuarioCreacionId == this.usuarioCreacionId &&
           other.usuarioCreadorId == this.usuarioCreadorId &&
           other.fechaCreacion == this.fechaCreacion &&
@@ -36368,6 +36802,11 @@ class ValorTipoNotaResultadoCompanion
   final Value<bool?> incluidoLInferior;
   final Value<bool?> incluidoLSuperior;
   final Value<int?> tipoId;
+  final Value<double?> limiteInferiorTransf;
+  final Value<double?> limiteSuperiorTransf;
+  final Value<double?> valorNumericoTransf;
+  final Value<bool?> incluidoLInferiorTransf;
+  final Value<bool?> incluidoLSuperiorTransf;
   final Value<int?> usuarioCreacionId;
   final Value<int?> usuarioCreadorId;
   final Value<int?> fechaCreacion;
@@ -36393,6 +36832,11 @@ class ValorTipoNotaResultadoCompanion
     this.incluidoLInferior = const Value.absent(),
     this.incluidoLSuperior = const Value.absent(),
     this.tipoId = const Value.absent(),
+    this.limiteInferiorTransf = const Value.absent(),
+    this.limiteSuperiorTransf = const Value.absent(),
+    this.valorNumericoTransf = const Value.absent(),
+    this.incluidoLInferiorTransf = const Value.absent(),
+    this.incluidoLSuperiorTransf = const Value.absent(),
     this.usuarioCreacionId = const Value.absent(),
     this.usuarioCreadorId = const Value.absent(),
     this.fechaCreacion = const Value.absent(),
@@ -36419,6 +36863,11 @@ class ValorTipoNotaResultadoCompanion
     this.incluidoLInferior = const Value.absent(),
     this.incluidoLSuperior = const Value.absent(),
     this.tipoId = const Value.absent(),
+    this.limiteInferiorTransf = const Value.absent(),
+    this.limiteSuperiorTransf = const Value.absent(),
+    this.valorNumericoTransf = const Value.absent(),
+    this.incluidoLInferiorTransf = const Value.absent(),
+    this.incluidoLSuperiorTransf = const Value.absent(),
     this.usuarioCreacionId = const Value.absent(),
     this.usuarioCreadorId = const Value.absent(),
     this.fechaCreacion = const Value.absent(),
@@ -36446,6 +36895,11 @@ class ValorTipoNotaResultadoCompanion
     Expression<bool?>? incluidoLInferior,
     Expression<bool?>? incluidoLSuperior,
     Expression<int?>? tipoId,
+    Expression<double?>? limiteInferiorTransf,
+    Expression<double?>? limiteSuperiorTransf,
+    Expression<double?>? valorNumericoTransf,
+    Expression<bool?>? incluidoLInferiorTransf,
+    Expression<bool?>? incluidoLSuperiorTransf,
     Expression<int?>? usuarioCreacionId,
     Expression<int?>? usuarioCreadorId,
     Expression<int?>? fechaCreacion,
@@ -36472,6 +36926,16 @@ class ValorTipoNotaResultadoCompanion
       if (incluidoLInferior != null) 'incluido_l_inferior': incluidoLInferior,
       if (incluidoLSuperior != null) 'incluido_l_superior': incluidoLSuperior,
       if (tipoId != null) 'tipo_id': tipoId,
+      if (limiteInferiorTransf != null)
+        'limite_inferior_transf': limiteInferiorTransf,
+      if (limiteSuperiorTransf != null)
+        'limite_superior_transf': limiteSuperiorTransf,
+      if (valorNumericoTransf != null)
+        'valor_numerico_transf': valorNumericoTransf,
+      if (incluidoLInferiorTransf != null)
+        'incluido_l_inferior_transf': incluidoLInferiorTransf,
+      if (incluidoLSuperiorTransf != null)
+        'incluido_l_superior_transf': incluidoLSuperiorTransf,
       if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
       if (usuarioCreadorId != null) 'usuario_creador_id': usuarioCreadorId,
       if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
@@ -36500,6 +36964,11 @@ class ValorTipoNotaResultadoCompanion
       Value<bool?>? incluidoLInferior,
       Value<bool?>? incluidoLSuperior,
       Value<int?>? tipoId,
+      Value<double?>? limiteInferiorTransf,
+      Value<double?>? limiteSuperiorTransf,
+      Value<double?>? valorNumericoTransf,
+      Value<bool?>? incluidoLInferiorTransf,
+      Value<bool?>? incluidoLSuperiorTransf,
       Value<int?>? usuarioCreacionId,
       Value<int?>? usuarioCreadorId,
       Value<int?>? fechaCreacion,
@@ -36525,6 +36994,13 @@ class ValorTipoNotaResultadoCompanion
       incluidoLInferior: incluidoLInferior ?? this.incluidoLInferior,
       incluidoLSuperior: incluidoLSuperior ?? this.incluidoLSuperior,
       tipoId: tipoId ?? this.tipoId,
+      limiteInferiorTransf: limiteInferiorTransf ?? this.limiteInferiorTransf,
+      limiteSuperiorTransf: limiteSuperiorTransf ?? this.limiteSuperiorTransf,
+      valorNumericoTransf: valorNumericoTransf ?? this.valorNumericoTransf,
+      incluidoLInferiorTransf:
+          incluidoLInferiorTransf ?? this.incluidoLInferiorTransf,
+      incluidoLSuperiorTransf:
+          incluidoLSuperiorTransf ?? this.incluidoLSuperiorTransf,
       usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
       usuarioCreadorId: usuarioCreadorId ?? this.usuarioCreadorId,
       fechaCreacion: fechaCreacion ?? this.fechaCreacion,
@@ -36581,6 +37057,26 @@ class ValorTipoNotaResultadoCompanion
     if (tipoId.present) {
       map['tipo_id'] = Variable<int?>(tipoId.value);
     }
+    if (limiteInferiorTransf.present) {
+      map['limite_inferior_transf'] =
+          Variable<double?>(limiteInferiorTransf.value);
+    }
+    if (limiteSuperiorTransf.present) {
+      map['limite_superior_transf'] =
+          Variable<double?>(limiteSuperiorTransf.value);
+    }
+    if (valorNumericoTransf.present) {
+      map['valor_numerico_transf'] =
+          Variable<double?>(valorNumericoTransf.value);
+    }
+    if (incluidoLInferiorTransf.present) {
+      map['incluido_l_inferior_transf'] =
+          Variable<bool?>(incluidoLInferiorTransf.value);
+    }
+    if (incluidoLSuperiorTransf.present) {
+      map['incluido_l_superior_transf'] =
+          Variable<bool?>(incluidoLSuperiorTransf.value);
+    }
     if (usuarioCreacionId.present) {
       map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId.value);
     }
@@ -36633,6 +37129,11 @@ class ValorTipoNotaResultadoCompanion
           ..write('incluidoLInferior: $incluidoLInferior, ')
           ..write('incluidoLSuperior: $incluidoLSuperior, ')
           ..write('tipoId: $tipoId, ')
+          ..write('limiteInferiorTransf: $limiteInferiorTransf, ')
+          ..write('limiteSuperiorTransf: $limiteSuperiorTransf, ')
+          ..write('valorNumericoTransf: $valorNumericoTransf, ')
+          ..write('incluidoLInferiorTransf: $incluidoLInferiorTransf, ')
+          ..write('incluidoLSuperiorTransf: $incluidoLSuperiorTransf, ')
           ..write('usuarioCreacionId: $usuarioCreacionId, ')
           ..write('usuarioCreadorId: $usuarioCreadorId, ')
           ..write('fechaCreacion: $fechaCreacion, ')
@@ -36717,6 +37218,35 @@ class $ValorTipoNotaResultadoTable extends ValorTipoNotaResultado
   late final GeneratedColumn<int?> tipoId = GeneratedColumn<int?>(
       'tipo_id', aliasedName, true,
       typeName: 'INTEGER', requiredDuringInsert: false);
+  final VerificationMeta _limiteInferiorTransfMeta =
+      const VerificationMeta('limiteInferiorTransf');
+  late final GeneratedColumn<double?> limiteInferiorTransf =
+      GeneratedColumn<double?>('limite_inferior_transf', aliasedName, true,
+          typeName: 'REAL', requiredDuringInsert: false);
+  final VerificationMeta _limiteSuperiorTransfMeta =
+      const VerificationMeta('limiteSuperiorTransf');
+  late final GeneratedColumn<double?> limiteSuperiorTransf =
+      GeneratedColumn<double?>('limite_superior_transf', aliasedName, true,
+          typeName: 'REAL', requiredDuringInsert: false);
+  final VerificationMeta _valorNumericoTransfMeta =
+      const VerificationMeta('valorNumericoTransf');
+  late final GeneratedColumn<double?> valorNumericoTransf =
+      GeneratedColumn<double?>('valor_numerico_transf', aliasedName, true,
+          typeName: 'REAL', requiredDuringInsert: false);
+  final VerificationMeta _incluidoLInferiorTransfMeta =
+      const VerificationMeta('incluidoLInferiorTransf');
+  late final GeneratedColumn<bool?> incluidoLInferiorTransf =
+      GeneratedColumn<bool?>('incluido_l_inferior_transf', aliasedName, true,
+          typeName: 'INTEGER',
+          requiredDuringInsert: false,
+          defaultConstraints: 'CHECK (incluido_l_inferior_transf IN (0, 1))');
+  final VerificationMeta _incluidoLSuperiorTransfMeta =
+      const VerificationMeta('incluidoLSuperiorTransf');
+  late final GeneratedColumn<bool?> incluidoLSuperiorTransf =
+      GeneratedColumn<bool?>('incluido_l_superior_transf', aliasedName, true,
+          typeName: 'INTEGER',
+          requiredDuringInsert: false,
+          defaultConstraints: 'CHECK (incluido_l_superior_transf IN (0, 1))');
   final VerificationMeta _usuarioCreacionIdMeta =
       const VerificationMeta('usuarioCreacionId');
   late final GeneratedColumn<int?> usuarioCreacionId = GeneratedColumn<int?>(
@@ -36784,6 +37314,11 @@ class $ValorTipoNotaResultadoTable extends ValorTipoNotaResultado
         incluidoLInferior,
         incluidoLSuperior,
         tipoId,
+        limiteInferiorTransf,
+        limiteSuperiorTransf,
+        valorNumericoTransf,
+        incluidoLInferiorTransf,
+        incluidoLSuperiorTransf,
         usuarioCreacionId,
         usuarioCreadorId,
         fechaCreacion,
@@ -36877,6 +37412,38 @@ class $ValorTipoNotaResultadoTable extends ValorTipoNotaResultado
     if (data.containsKey('tipo_id')) {
       context.handle(_tipoIdMeta,
           tipoId.isAcceptableOrUnknown(data['tipo_id']!, _tipoIdMeta));
+    }
+    if (data.containsKey('limite_inferior_transf')) {
+      context.handle(
+          _limiteInferiorTransfMeta,
+          limiteInferiorTransf.isAcceptableOrUnknown(
+              data['limite_inferior_transf']!, _limiteInferiorTransfMeta));
+    }
+    if (data.containsKey('limite_superior_transf')) {
+      context.handle(
+          _limiteSuperiorTransfMeta,
+          limiteSuperiorTransf.isAcceptableOrUnknown(
+              data['limite_superior_transf']!, _limiteSuperiorTransfMeta));
+    }
+    if (data.containsKey('valor_numerico_transf')) {
+      context.handle(
+          _valorNumericoTransfMeta,
+          valorNumericoTransf.isAcceptableOrUnknown(
+              data['valor_numerico_transf']!, _valorNumericoTransfMeta));
+    }
+    if (data.containsKey('incluido_l_inferior_transf')) {
+      context.handle(
+          _incluidoLInferiorTransfMeta,
+          incluidoLInferiorTransf.isAcceptableOrUnknown(
+              data['incluido_l_inferior_transf']!,
+              _incluidoLInferiorTransfMeta));
+    }
+    if (data.containsKey('incluido_l_superior_transf')) {
+      context.handle(
+          _incluidoLSuperiorTransfMeta,
+          incluidoLSuperiorTransf.isAcceptableOrUnknown(
+              data['incluido_l_superior_transf']!,
+              _incluidoLSuperiorTransfMeta));
     }
     if (data.containsKey('usuario_creacion_id')) {
       context.handle(

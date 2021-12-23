@@ -66,6 +66,13 @@ class MyApp extends StatelessWidget {
         textTheme: AppTheme.textTheme,
         //platform: TargetPlatform.iOS,
       ),
+      /*theme: ThemeData(
+        primaryColor: Colors.black,
+        bottomAppBarColor: Colors.white,
+        bottomAppBarTheme: BottomAppBarTheme(color: Colors.white),
+        brightness: Brightness.dark,
+        hintColor: Colors.white,
+      ),*/
       home: HomeView(),
       routes: AppRouter.routes,
       onGenerateRoute: (settings) {

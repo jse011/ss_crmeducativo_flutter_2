@@ -16,16 +16,7 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_resultado_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_capacidad_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_competencia_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_evaluacion.dart';
 
 import 'table_resultado.dart';
 
@@ -44,7 +35,6 @@ class ResultadoView extends View{
 class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with TickerProviderStateMixin{
   late Animation<double> topBarAnimation;
   late final ScrollController scrollController = ScrollController();
-  late double topBarOpacity = 0.0;
   late AnimationController animationController;
   late final ScrollControllers scrollControllers = ScrollControllers();
   Key? key;
@@ -61,24 +51,12 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
-        if (topBarOpacity != 1.0) {
-          setState(() {
-            topBarOpacity = 1.0;
-          });
-        }
+
       } else if (scrollController.offset <= 24 &&
           scrollController.offset >= 0) {
-        if (topBarOpacity != scrollController.offset / 24) {
-          setState(() {
-            topBarOpacity = scrollController.offset / 24;
-          });
-        }
+
       } else if (scrollController.offset <= 0) {
-        if (topBarOpacity != 0.0) {
-          setState(() {
-            topBarOpacity = 0.0;
-          });
-        }
+
       }
     });
 
@@ -129,14 +107,14 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                     0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
+                    color: AppTheme.white.withOpacity(0),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(32.0),
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
                           color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
+                              .withOpacity(0.4 * 0),
                           offset: const Offset(1.1, 1.1),
                           blurRadius: 10.0),
                     ],
@@ -148,17 +126,21 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
+                            left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                            right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                            top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 16 - 8.0 ),
+                            bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 12 - 8.0)
+                        ),
                         child: ControlledWidgetBuilder<ResultadoController>(
                           builder: (context, controller) {
                             return Stack(
                               children: <Widget>[
                                 Positioned(
                                     child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                                      icon: Icon(Ionicons.arrow_back,
+                                        color: AppTheme.nearlyBlack,
+                                        size: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 22 + 6 - 6)
+                                      ),
                                       onPressed: () {
                                         animationController.reverse().then<dynamic>((data) {
                                           if (!mounted) {
@@ -170,14 +152,25 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                                     )
                                 ),
                                 Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
+                                  margin: EdgeInsets.only(
+                                      top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                                      bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                                      left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                                      right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)
+                                  ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_nota_final, height: 35 +  6 - 10 * topBarOpacity, width: 35 +  6 - 10 * topBarOpacity,),
+                                      SvgPicture.asset(AppIcon.ic_curso_nota_final,
+                                        height: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 30),
+                                        width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 30),
+                                      ),
                                       Padding(
-                                        padding: EdgeInsets.only(left: 12, top: 8),
+                                        padding: EdgeInsets.only(
+                                            left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 12),
+                                            top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 0)
+                                        ),
                                         child: Text(
                                           'Resultado',
                                           textAlign: TextAlign.center,
@@ -185,7 +178,7 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                                           style: TextStyle(
                                             fontFamily: AppTheme.fontTTNorms,
                                             fontWeight: FontWeight.w700,
-                                            fontSize: 16 + 6 - 6 * topBarOpacity,
+                                            fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 22) ,
                                             letterSpacing: 0.8,
                                             color: AppTheme.darkerText,
                                           ),
@@ -194,23 +187,42 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                                     ],
                                   ),
                                 ),
-                                /*Positioned(
-                                  right: 10,
-                                  child: ClipOval(
-                                    child: Material(
-                                      color: AppTheme.colorPrimary.withOpacity(0.1), // button color
-                                      child: InkWell(
-                                        splashColor: AppTheme.colorPrimary, // inkwell color
-                                        child: SizedBox(width: 43 + 6 - 8 * topBarOpacity, height: 43 + 6 - 8 * topBarOpacity,
-                                          child: Icon(Ionicons.sync, size: 24 + 6 - 8 * topBarOpacity,color: AppTheme.colorPrimary, ),
-                                        ),
-                                        onTap: () {
-                                          //controller.onSyncronizarCurso();
-                                        },
+                                Positioned(
+                                  top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                                  right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
+                                  child:  InkWell(
+                                    onTap: ()=> controller.onClicPrecision(),
+                                    child: Container(
+                                      width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 95),
+                                      padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 6))),
+                                          color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(AppIcon.ic_presicion,
+                                            color: controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                            height:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 14),
+                                            width:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 14),
+                                          ),
+                                          Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 2)),),
+                                          Text("Precisión",
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: 0.5,
+                                                color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                                              )),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                )*/
+                                )
                               ],
                             );
                           },
@@ -234,12 +246,7 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
             children: [
               Container(
                 padding: EdgeInsets.only(
-                  top: AppBar().preferredSize.height +
-                      MediaQuery
-                          .of(context)
-                          .padding
-                          .top +
-                      16,
+                  top: AppBar().preferredSize.height + 20,
                   left: 0, //24,
                   right: 0, //48
                 ),

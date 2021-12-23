@@ -16,4 +16,5 @@ class ValorTipoNotaUi{
    int? tipoId;
    String? getSTime;
   TipoNotaUi? tipoNotaUi;
+
 }

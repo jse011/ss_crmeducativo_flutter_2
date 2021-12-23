@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
@@ -84,11 +85,10 @@ class _TecladoPresicionView extends State<TecladoPresicionView> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTecladoNumerico(context, 18),
+                          color:  AppTheme.darkText,
                           fontFamily: AppTheme.fontTTNorms,
                           fontWeight: FontWeight.w800,
-                          fontSize: 18,
-                          letterSpacing: 0.8,
-                          color: AppTheme.darkerText,
                         )),
                   ),
                 ),
@@ -113,7 +113,7 @@ class _TecladoPresicionView extends State<TecladoPresicionView> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(3),
                               ),
-                              hintText: "Digite una nota entre ${widget.valorMinimo??"0"} y ${widget.valorMaximo??"0"}.",
+                              hintText: "Digite una nota entre ${widget.valorMinimo??"0"} a ${widget.valorMaximo??"0"}.",
                             ),
                             style: TextStyle(
                               fontSize: 18,

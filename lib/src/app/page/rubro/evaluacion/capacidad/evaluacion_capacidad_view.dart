@@ -463,7 +463,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                             double width_pantalla = MediaQuery.of(context).size.width;
                             double padding_left = ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 32);
                             double padding_right = ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 32);
-                            double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 125);
+                            double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 180);
                             for(double column_px in tableTipoNotacolumnWidths){
                               width_table += column_px;
                             }
@@ -708,7 +708,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       Container(
-                                        width: width_table - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70) - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45) - padding_left,
+                                        width: width_table - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70) - ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 70) - padding_left,
                                       ),
                                       Container(
                                         child: Row(
@@ -790,7 +790,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
       child: StickyHeadersTableNotExpandedCustom(
           cellDimensions: CellDimensions.variableColumnWidth(
               stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
-              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 150),
+              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 180),
               contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 100),
               columnWidths: tableTipoNotacolumnWidths
           ),
@@ -1096,7 +1096,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
 
                   if((o.evaluacionTransformadaUi?.personaUi?.contratoVigente == true)){
                     if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false)){
-                      //showDialogPresicion(controller, o, i);
+                      showDialogPresicion(controller, o, i);
                     } else{
                       controller.onClicEvaluar(o); 
                     }
@@ -1548,7 +1548,6 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
 
 
   void showDialogPresicion(EvaluacionCapacidadController controller, EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position) {
-
     showModalBottomSheet(
         shape:  RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
@@ -1577,7 +1576,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   }
 
   void showDialogTecladoPrecicion(EvaluacionCapacidadController controller, TipoNotaUi? tipoNotaUi, EvaluacionTransformadaUi? evaluacionUi) {
-
+    print("showDialogTecladoPrecicion");
     showModalBottomSheet(
         shape:  RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),

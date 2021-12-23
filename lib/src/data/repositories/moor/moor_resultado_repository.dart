@@ -2,12 +2,12 @@ import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/matriz_resultado_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/resultado_respository.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_capacidad_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_competencia_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_evaluacion.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_capacidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_evaluacion.dart';
 
 class MoorResultadoRepository extends ResultadoRepository{
   static const int TN_VALOR_NUMERICO = 410, TN_SELECTOR_NUMERICO = 411, TN_SELECTOR_VALORES = 412, TN_SELECTOR_ICONOS = 409, TN_VALOR_ASISTENCIA= 474;
@@ -48,7 +48,8 @@ class MoorResultadoRepository extends ResultadoRepository{
         resultadoCompetenciaUi.rubroResultadoId = competenciaSerial.rubroEvalResultadoId;
         resultadoCompetenciaUi.competenciaId = competenciaSerial.competenciaId;
         resultadoCompetenciaUi.rubroformal = competenciaSerial.rubroFormal;
-
+        resultadoCompetenciaUi.valorMaximo = competenciaSerial.valorMaximo;
+        resultadoCompetenciaUi.valorMinimo = competenciaSerial.valorMinimo;
         resultadoCompetenciaUiList.add(resultadoCompetenciaUi);
       }
     }
@@ -70,7 +71,8 @@ class MoorResultadoRepository extends ResultadoRepository{
         resultadoCapacidadUi.parendId = capacidadSerial.parentId;
         resultadoCapacidadUi.orden = capacidadSerial.orden;
         resultadoCapacidadUi.orden2 = capacidadSerial.orden2;
-
+        resultadoCapacidadUi.valorMaximo = capacidadSerial.valorMaximo;
+        resultadoCapacidadUi.valorMinimo = capacidadSerial.valorMinimo;
         resultadoCapacidadUiList.add(resultadoCapacidadUi);
       }
     }
@@ -90,6 +92,7 @@ class MoorResultadoRepository extends ResultadoRepository{
         resultadoEvaluacionUi.tituloNota = evaluacionSerial.tituloNota;
         resultadoEvaluacionUi.orden = evaluacionSerial.orden;
         resultadoEvaluacionUi.orden2 = evaluacionSerial.orden2;
+
 
         resultadoEvaluacionUi.evaluado = evaluacionSerial.evaluado;
         int? tipoId = null;

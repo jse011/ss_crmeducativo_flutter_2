@@ -12,6 +12,6 @@ class CompetenciaUi{
   String? url;
   bool? toogle;
   int? rubroResultadoId;
-
+  bool? evaluable;
 
 }

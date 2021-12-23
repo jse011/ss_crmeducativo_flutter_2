@@ -913,8 +913,10 @@ CriteriosSerial _$CriteriosSerialFromJson(Map<String, dynamic> json) =>
       json['superCompetenciaNombre'] as String?,
       json['superCompetenciaDescripcion'] as String?,
       json['superCompetenciaTipoId'] as int?,
-      json['rubroEvalResultadoId'] as int?,
-      json['evaluable'] as bool?,
+      json['competenciaResultadoId'] as int?,
+      json['competenciaEvaluable'] as bool?,
+      json['superCompetenciaResultadoId'] as int?,
+      json['superCompetenciaEvaluable'] as bool?,
       json['desempenioIcdId'] as int?,
       json['DesempenioDescripcion'] as String?,
       json['peso'] as int?,
@@ -959,8 +961,10 @@ Map<String, dynamic> _$CriteriosSerialToJson(CriteriosSerial instance) =>
       'superCompetenciaNombre': instance.superCompetenciaNombre,
       'superCompetenciaDescripcion': instance.superCompetenciaDescripcion,
       'superCompetenciaTipoId': instance.superCompetenciaTipoId,
-      'rubroEvalResultadoId': instance.rubroEvalResultadoId,
-      'evaluable': instance.evaluable,
+      'competenciaResultadoId': instance.competenciaResultadoId,
+      'competenciaEvaluable': instance.competenciaEvaluable,
+      'superCompetenciaResultadoId': instance.superCompetenciaResultadoId,
+      'superCompetenciaEvaluable': instance.superCompetenciaEvaluable,
       'desempenioIcdId': instance.desempenioIcdId,
       'DesempenioDescripcion': instance.DesempenioDescripcion,
       'peso': instance.peso,
@@ -1088,6 +1092,11 @@ ValorTipoNotaRubroSerial _$ValorTipoNotaRubroSerialFromJson(
       fechaVisto: json['fechaVisto'] as int?,
       fechaRespuesta: json['fechaRespuesta'] as int?,
       getSTime: json['getSTime'] as String?,
+      limiteInferiorTransf: (json['limiteInferiorTransf'] as num?)?.toDouble(),
+      limiteSuperiorTransf: (json['limiteSuperiorTransf'] as num?)?.toDouble(),
+      valorNumericoTransf: (json['valorNumericoTransf'] as num?)?.toDouble(),
+      incluidoLInferiorTransf: json['incluidoLInferiorTransf'] as bool?,
+      incluidoLSuperiorTransf: json['incluidoLSuperiorTransf'] as bool?,
     );
 
 Map<String, dynamic> _$ValorTipoNotaRubroSerialToJson(
@@ -1118,6 +1127,11 @@ Map<String, dynamic> _$ValorTipoNotaRubroSerialToJson(
       'fechaVisto': instance.fechaVisto,
       'fechaRespuesta': instance.fechaRespuesta,
       'getSTime': instance.getSTime,
+      'limiteInferiorTransf': instance.limiteInferiorTransf,
+      'limiteSuperiorTransf': instance.limiteSuperiorTransf,
+      'valorNumericoTransf': instance.valorNumericoTransf,
+      'incluidoLInferiorTransf': instance.incluidoLInferiorTransf,
+      'incluidoLSuperiorTransf': instance.incluidoLSuperiorTransf,
     };
 
 RubroEvaluacionProcesoSerial _$RubroEvaluacionProcesoSerialFromJson(
@@ -2301,7 +2315,10 @@ ResultadoCompetenciaSerial _$ResultadoCompetenciaSerialFromJson(
         Map<String, dynamic> json) =>
     ResultadoCompetenciaSerial(
       titulo: json['titulo'] as String?,
+      tipoNotaId: json['tipoNotaId'] as String?,
       tipoId: json['tipoId'] as int?,
+      valorMaximo: json['valorMaximo'] as int?,
+      valorMinimo: json['valorMinimo'] as int?,
       competencia: json['competencia'] as String?,
       competenciaId: json['competenciaId'] as int?,
       notaDup: json['notaDup'] as bool?,
@@ -2313,7 +2330,10 @@ Map<String, dynamic> _$ResultadoCompetenciaSerialToJson(
         ResultadoCompetenciaSerial instance) =>
     <String, dynamic>{
       'titulo': instance.titulo,
+      'tipoNotaId': instance.tipoNotaId,
       'tipoId': instance.tipoId,
+      'valorMinimo': instance.valorMinimo,
+      'valorMaximo': instance.valorMaximo,
       'competencia': instance.competencia,
       'competenciaId': instance.competenciaId,
       'notaDup': instance.notaDup,

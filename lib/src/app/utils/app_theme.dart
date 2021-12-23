@@ -1,6 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_lottie.dart';
+
+import 'app_imagen.dart';
 
 enum App{
   EDUCAR, ICRM
@@ -8,14 +11,14 @@ enum App{
 abstract class ChangeAppTheme{
   ChangeAppTheme._();
 
-  static const App _app = App.ICRM;
+  static const App _app = App.EDUCAR;
 
-  static getApp() => _app;
+  static App getApp() => _app;
 
   static String loginBanner({App app = _app}){
     switch(app){
       case App.EDUCAR:
-        return 'assets/educar/logo_educar.png';
+        return AppImagen.splash_educar;
       case App.ICRM:
         return 'assets/docentementor/logo_icrmovil.png';
     }
@@ -33,18 +36,27 @@ abstract class ChangeAppTheme{
   static Color colorEspera({App app = _app}){
     switch(app){
       case App.EDUCAR:
-        return Color(0xFFBBADA2);
+        return AppTheme.colorEducarDocente;
       case App.ICRM:
-        return Color(0xFFBBADA2);
+        return AppTheme.colorDocenteMentor;
     }
   }
 
   static String imagenEspera({App app = _app}) {
     switch(app){
       case App.EDUCAR:
-        return 'assets/educar/launcher_educar.png';
+        return AppImagen.splash_educar;
       case App.ICRM:
-        return 'assets/educar/launcher_educar.png';
+        return AppImagen.splash_icrm;
+    }
+  }
+
+  static String splahLottieLoginBanner({App app = _app}) {
+    switch(app){
+      case App.EDUCAR:
+        return AppLottie.splash_login_educar_docente;
+      case App.ICRM:
+        return AppLottie.splash_login_docente_mentor;
     }
   }
 
@@ -52,6 +64,10 @@ abstract class ChangeAppTheme{
 
 class AppTheme  {
   AppTheme._();
+
+  static const Color colorEducarDocente = Color(0xFFEFB226);
+  static const Color colorDocenteMentor = Color(0xFF6BBFFE);
+  static const Color colorAlumnoMentor = Color(0xFF84DC54);
 
   static const Color notWhite = Color(0xFFEDF0F2);
   static const Color nearlyWhite = Color(0xFFFAFAFA);
@@ -85,6 +101,7 @@ class AppTheme  {
   static const String fontTTNormsLigth = 'TT-Norms-Ligth';
   static const String fontTTNorms = 'TT-Norms';
   static const String fontTTNormsMedium = 'TT-Norms-Medium';
+  static const String fontTTrueno = 'Trueno';
 
   static const TextTheme textTheme = TextTheme(
     headline4: display1,

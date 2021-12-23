@@ -87,6 +87,7 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
             ),*/
             body: ControlledWidgetBuilder<HomeController>(
                 builder: (context, controller) {
+
                   if(controller.showLoggin == 0){
                     return Container(
                       color:  ChangeAppTheme.colorEspera(),
@@ -96,7 +97,10 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
                       // fetch data
                       AppRouter.createRouteLogin(context);
                     });
-                    return Container();
+                    return Container(
+                      color:  ChangeAppTheme.colorEspera(),
+                    );
+
                   }else{
                     changeIndex(controller.vistaActual, controller);
                     return Stack(

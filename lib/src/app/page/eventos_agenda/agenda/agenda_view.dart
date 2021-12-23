@@ -31,7 +31,7 @@ class AgendaView extends View{
   AgendaView(this.cursosUi);
 
   @override
-  _AgendaViewState createState() => _AgendaViewState();
+  _AgendaViewState createState() => _AgendaViewState(this.cursosUi);
 
 }
 
@@ -41,7 +41,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
   late double topBarOpacity = 0.0;
   late AnimationController animationController;
   
-  _AgendaViewState() : super(AgendaController(MoorAgendaEventoRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
+  _AgendaViewState(CursosUi? cursosUi) : super(AgendaController(cursosUi, MoorAgendaEventoRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
 
   @override
   void initState() {
@@ -356,7 +356,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                                 Center(
                                   child: InkWell(
                                     onTap: () async{
-                                      dynamic respuesta = await AppRouter.createCrearEventoRouter(context, null, null);
+                                      dynamic respuesta = await AppRouter.createCrearEventoRouter(context, null, controller.cursosUi);
                                       if(respuesta is int) controller.cambiosEvento();
                                     },
                                     child: Container(
@@ -412,7 +412,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                                   dynamic response = await AppRouter.createEventoInfoComplejoRouter(context, eventoUi);
                                 },
                                 onClickEditar: (eventoUi) async {
-                                  dynamic respuesta = await AppRouter.createCrearEventoRouter(context, eventoUi, null);
+                                  dynamic respuesta = await AppRouter.createCrearEventoRouter(context, eventoUi, controller.cursosUi);
                                   if(respuesta is int) controller.cambiosEvento();
                                 },
                                 onClickEliminar: (eventoUi) async{

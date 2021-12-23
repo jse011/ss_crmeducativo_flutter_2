@@ -19,5 +19,6 @@ class CapacidadUi{
   bool? evaluable;
   String? tipoCapacidad;
   List<DesempenioUi>? desempenioUiList;
+  bool? round;//campo solo visual para capacidades
 
 }

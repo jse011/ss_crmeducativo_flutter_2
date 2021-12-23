@@ -10,6 +10,8 @@ import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multiple/evaluacion_indicador_multiple_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_2_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_view.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
@@ -189,7 +191,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                               } else if(s is RubricaEvaluacionUi){
                                                                 tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 85));
                                                               } else if(s is EvaluacionUi){
-                                                                tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45));
+                                                                tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 60));
                                                               }else if(s is RubricaEvaluacionFormulaPesoUi){
                                                                 tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45));
                                                               }else{
@@ -1539,17 +1541,16 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                 constraints: BoxConstraints.expand(),
                 padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
                 child: Center(
-                  child:  RotatedBox(
-                    quarterTurns: -1,
-                    child: Text(" ",
+                  child: Text("Nota",
                       textAlign: TextAlign.center,
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
-                          color: AppTheme.darkText
+                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 13),
+                        color:  AppTheme.darkText,
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontWeight: FontWeight.w800,
                       )
-                    ),
                   ),
                 ),
                 decoration: BoxDecoration(
@@ -1557,7 +1558,6 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                       top: BorderSide(color: AppTheme.greyLighten2),
                       right: BorderSide(color: AppTheme.greyLighten2),
                     ),
-                    color: AppTheme.red
                 )
             );
           }else if(o is ValorTipoNotaUi){
@@ -1628,7 +1628,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
               ],
             );
           }else
-            return Container();
+            return Container(
+
+            );
         },
         rowsTitleBuilder: (i) {
 
@@ -1725,7 +1727,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
             );
           }else if(o is EvaluacionUi){
             return InkWell(
-              //onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
+              onTap: () => showDialogTecladoNumerico(controller, o),
               child: Stack(
                 children: [
                   Container(
@@ -1738,7 +1740,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                         ),
                         color: _getColorAlumnoBloqueados(o.personaUi, 0)
                     ),
-                    //child: _getTipoNota(o.valorTipoNotaUi, o.nota, i),
+                    child: _getTipoNota(o, o.nota, controller),
                   ),
                  !controller.isCalendarioDesactivo()?Container():
                   Positioned(
@@ -2187,6 +2189,35 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
     });
   }
 
+  void showDialogTecladoNumerico(EvaluacionIndicadorMultipleController controller, EvaluacionUi? evaluacionUi) {
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return TecladoPresicionView2(
+            valorMaximo: evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
+            valorMinimo:  evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
+            valor: evaluacionUi?.nota,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onSaveTecladoPresicion(nota, evaluacionUi);
+      }
+    });
+  }
+
   Color getPosition(int position){
     if(position == 0){
       return HexColor("#1976d2");
@@ -2295,284 +2326,5 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         transitionDuration:
         const Duration(milliseconds: 150));
   }
-
-  /*
-  * SliverPadding(
-                  padding: EdgeInsets.only(left: 32, right: 0, top: 16),
-                  sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index){
-                            PersonaUi personaUi = controller.alumnoCursoList[index];
-                            EvaluacionUi? evaluacionGeneralUi = controller.getEvaluacionGeneralPersona(personaUi);
-                            return Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      CachedNetworkImage(
-                                        placeholder: (context, url) => Container(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                        imageUrl: personaUi.foto??"",
-                                        errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                                        imageBuilder: (context, imageProvider) =>
-                                            Container(
-                                                width: 35,
-                                                height: 35,
-                                                margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                                                  image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                )
-                                            ),
-                                      ),
-                                      Expanded(
-                                          child: Text((personaUi.nombreCompleto??"").toUpperCase(),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontFamily: AppTheme.fontTTNorms,
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 12,
-                                                letterSpacing: 0.8,
-                                                color: AppTheme.darkerText,
-                                              ))
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 8)
-                                  ),
-                                  if(controller.precision)
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Container(
-                                              width: 55,
-                                              height: 55,
-                                              margin: EdgeInsets.only(bottom: 4),
-                                              child: FDottedLine(
-                                                color: AppTheme.greyLighten1,
-                                                strokeWidth: 1.0,
-                                                dottedLength: 5.0,
-                                                space: 3.0,
-                                                corner: FDottedLineCorner.all(30.0),
-                                                child: Container(
-                                                  color: AppTheme.greyLighten2,
-                                                  child: (){
-                                                    //#region Nota
-                                                    Color color;
-                                                    if (("B" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"") || "C" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??""))) {
-                                                      color = AppTheme.redDarken4;
-                                                    }else if (("AD" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"")) || "A" == (evaluacionGeneralUi?.valorTipoNotaUi?.titulo??"")) {
-                                                      color = AppTheme.blueDarken4;
-                                                    }else {
-                                                      color = AppTheme.black;
-                                                    }
-
-                                                    switch(evaluacionGeneralUi?.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi) {
-                                                      case TipoNotaTiposUi.SELECTOR_VALORES:
-                                                        return Container(
-                                                          child: Center(
-                                                            child: Text(evaluacionGeneralUi?.valorTipoNotaUi?.titulo ?? "",
-                                                                style: TextStyle(
-                                                                    fontFamily: AppTheme.fontTTNormsMedium,
-                                                                    fontSize: 22,
-                                                                    color: color
-                                                                )),
-                                                          ),
-                                                        );
-                                                      case TipoNotaTiposUi.SELECTOR_ICONOS:
-                                                        return Container(
-                                                          child: CachedNetworkImage(
-                                                            imageUrl: evaluacionGeneralUi?.valorTipoNotaUi?.icono ?? "",
-                                                            placeholder: (context, url) => Stack(
-                                                              children: [
-                                                                CircularProgressIndicator()
-                                                              ],
-                                                            ),
-                                                            errorWidget: (context, url, error) => Icon(Icons.error),
-                                                          ),
-                                                        );
-                                                      case TipoNotaTiposUi.SELECTOR_NUMERICO:
-                                                      case TipoNotaTiposUi.VALOR_NUMERICO:
-                                                      case TipoNotaTiposUi.VALOR_ASISTENCIA:
-                                                        return Center(
-                                                          child: Text("${(evaluacionGeneralUi?.valorTipoNotaUi?.valorNumerico??0).toStringAsFixed(1)}", style: TextStyle(
-                                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                                              fontSize: 16,
-                                                              color: AppTheme.textGrey),
-                                                          ),
-                                                        );
-                                                      default:
-                                                        return Center(
-                                                          child: Text("", style: TextStyle(
-                                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                                              fontSize: 14,
-                                                              color: AppTheme.textGrey
-                                                          ),),
-                                                        );
-                                                    }
-                                                    //#endregion
-                                                  }(),
-                                                ),
-
-                                              ),
-                                            ),
-                                            Text(evaluacionGeneralUi?.valorTipoNotaUi?.alias??"",
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 14,
-                                                  color: AppTheme.darkerText,
-                                                )
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(left: 8, right: 0),
-                                          height: 65,
-                                          width: 2,
-                                        ),
-                                        Container(
-                                          width: 75,
-                                          height: 60,
-                                          child: Center(
-                                            child: Text("${evaluacionGeneralUi?.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 24,
-                                              color: AppTheme.darkerText,
-                                            ),),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  if(controller.precision)
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 16)
-                                  ),
-                                  showTableRubroDetalle(controller, personaUi),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 28)
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    child: Text("Comentarios privados(Sólo lo ve el padre)",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: AppTheme.colorPrimary
-                                        )
-                                    ),
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 8)
-                                  ),
-                                  Row(
-                                   children: [
-                                     CachedNetworkImage(
-                                       placeholder: (context, url) => Container(
-                                         child: CircularProgressIndicator(),
-                                       ),
-                                       imageUrl: controller.usuarioUi?.foto??"",
-                                       errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                                       imageBuilder: (context, imageProvider) =>
-                                           Container(
-                                               width: 50,
-                                               height: 50,
-                                               margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                               decoration: BoxDecoration(
-                                                 borderRadius: BorderRadius.all(Radius.circular(25)),
-                                                 image: DecorationImage(
-                                                   image: imageProvider,
-                                                   fit: BoxFit.cover,
-                                                 ),
-                                               )
-                                           ),
-                                     ),
-                                     Expanded(
-                                       child: Row(
-                                         children: [
-                                          Expanded(
-                                              child:  Container(
-                                                padding: EdgeInsets.only(left: 8, right: 8),
-                                                decoration: BoxDecoration(
-                                                  color: AppTheme.greyLighten3,
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                  border: Border.all(color: AppTheme.greyLighten1),
-                                                ),
-                                                child: TextField(
-                                                  keyboardType: TextInputType.multiline,
-                                                  maxLines: null,
-                                                  decoration: InputDecoration(
-                                                      hintText: "",
-                                                      hintStyle: TextStyle( color: Colors.blueAccent),
-                                                      border: InputBorder.none),
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              )
-                                          ),
-                                           IconButton(
-                                             onPressed: () {
-                                               // You enter here what you want the button to do once the user interacts with it
-                                             },
-                                             icon: Icon(
-                                               Icons.send,
-                                               color: AppTheme.greyDarken1,
-                                             ),
-                                             iconSize: 20.0,
-                                           )
-                                         ],
-                                       ),
-                                     )
-                                   ],
-                                 ),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 16)
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    child: Text("Evidencias (Sólo lo ve el padre)",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: AppTheme.colorPrimary
-                                        )
-                                    ),
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 8)
-                                  ),
-                                  Row(
-                                    children: [
-                                      FloatingActionButton(
-                                        heroTag: "btn_${personaUi.personaId??""}",
-                                        onPressed: () {},
-                                        elevation: 0,
-                                        child: Icon(Icons.add,),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                                      )
-                                    ],
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(top: 48)
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        childCount: controller.alumnoCursoList.length
-                      )
-                  ),
-                )
-  * */
-
 
 }

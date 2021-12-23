@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
 
@@ -471,5 +473,103 @@ class ColumnCountProvider{
     } else {
       return (pixcel) / 1.1;
     }
+  }
+
+  static double aspectRatioForWidthButtonRubroResultado(BuildContext context, double pixcel ) {
+    // 16 = x 6 / 13
+    // 13 = (16 / 6) * X
+    // 13 / (16 / 6) = X
+    double widthPx = context.widthPx;
+
+    if (widthPx >= 900) {
+      return (pixcel) * 1.15;
+    } else if (widthPx >= 720) {
+      return (pixcel) * 1.15;
+    } else if (widthPx >= 600) {
+      return (pixcel) * 1.15;
+    } else if (widthPx >= 480) {
+      return (pixcel) * 1.15;
+    } else if (widthPx >= 320) {
+      return (pixcel) * 1;
+    } else {
+      return (pixcel) * 1;
+    }
+  }
+
+  static double aspectRatioForWidthTecladoNumerico(BuildContext context, double pixcel ) {
+    // 16 = x 6 / 13
+    // 13 = (16 / 6) * X
+    // 13 / (16 / 6) = X
+
+    if(context.isLandscape){
+      double heightPx = context.heightPx;
+      if (heightPx >= 900) {
+        return (pixcel) / 1.4;
+      } else if (heightPx >= 720) {
+        return (pixcel) / 1.4;
+      } else if (heightPx >= 600) {
+        return (pixcel) / 1.4;
+      } else if (heightPx >= 480) {
+        return (pixcel) / 1.4;
+      } else if (heightPx >= 320) {
+        return (pixcel) / 1.4;
+      } else {
+        return (pixcel) / 1.4;
+      }
+    }else{
+      double widthPx = context.widthPx;
+      if (widthPx >= 900) {
+        return (pixcel) * 1.25;
+      } else if (widthPx >= 720) {
+        return (pixcel) * 1.15;
+      } else if (widthPx >= 600) {
+        return (pixcel) * 1.15;
+      } else if (widthPx >= 480) {
+        return (pixcel) * 1.15;
+      } else if (widthPx >= 320) {
+        return (pixcel) * 1;
+      } else {
+        return (pixcel) * 1;
+      }
+    }
+
+
+  }
+
+  static double aspectRatioForWidthLogin(BuildContext context, double pixcel ) {
+    // 16 = x 6 / 13
+    // 13 = (16 / 6) * X
+    // 13 / (16 / 6) = X
+    double widthPx = context.widthPx;
+
+    if(context.isLandscape){
+      widthPx =  context.heightPx;
+    }
+    if (widthPx >= 900) {
+      return (pixcel) * 1.05;
+    } else if (widthPx >= 720) {
+      return (pixcel) * 1.05;
+    } else if (widthPx >= 600) {
+      return (pixcel) * 1.05;
+    } else if (widthPx >= 480) {
+      return (pixcel) * 1.1;
+    }  else if (widthPx >= 360) {
+      return (pixcel) / 1;
+    }else if (widthPx >= 320) {
+      return (pixcel) / 1.05;
+    } else {
+      return (pixcel) * 1;
+    }
+  }
+
+
+  static bool isTablet(MediaQueryData query) {
+    var size = query.size;
+    var diagonal = sqrt(
+        (size.width * size.width) +
+            (size.height * size.height)
+    );
+    var isTablet = diagonal > 1100.0;
+    return isTablet;
   }
 }

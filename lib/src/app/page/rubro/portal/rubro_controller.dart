@@ -220,8 +220,17 @@ class RubroController extends Controller{
       _columnList2.add(calendarioPeriodoUI);
 
       //Competencia Enfoque Transversal
+     bool round = false;//solo es visual para la redondera
       for(CompetenciaUi competenciaUi in competenciaUiList){
         if(competenciaUi.tipoCompetenciaUi != TipoCompetenciaUi.BASE){
+          if(!round){
+            if((competenciaUi.capacidadUiList??[]).isNotEmpty){
+              round = true;
+              CapacidadUi capacidadUi = competenciaUi.capacidadUiList![0];
+              capacidadUi.round = true;
+            }
+          }
+
           _columnList2.addAll(competenciaUi.capacidadUiList??[]);
           _columnList2.add(competenciaUi);
         }
@@ -527,6 +536,11 @@ class RubroController extends Controller{
   void scrollRubroProceso(double x, double y) {
     _scrollRubroProcesoX = x;
     _scrollRubroProcesoY = y;
+  }
+
+  onClicPrecisionResultado() {
+    _precisionResultado = !_precisionResultado;
+    refreshUI();
   }
   
 }

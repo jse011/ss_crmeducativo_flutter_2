@@ -14,6 +14,12 @@ class ValorTipoNotaRubro extends Table{
   BoolColumn get incluidoLSuperior => boolean().nullable()();
   IntColumn get tipoId => integer().nullable()();
 
+  RealColumn get limiteInferiorTransf => real().nullable()();
+  RealColumn get limiteSuperiorTransf => real().nullable()();
+  RealColumn get valorNumericoTransf => real().nullable()();
+  BoolColumn get incluidoLInferiorTransf => boolean().nullable()();
+  BoolColumn get incluidoLSuperiorTransf => boolean().nullable()();
+
   IntColumn get usuarioCreacionId => integer().nullable()();
   IntColumn get usuarioCreadorId => integer().nullable()();
   IntColumn get fechaCreacion => integer().nullable()();

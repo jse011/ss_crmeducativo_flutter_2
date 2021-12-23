@@ -30,8 +30,6 @@ class RubroPresenter extends Presenter{
   GetCompetenciaRubroEval _getCompetenciaRubroEval;
   late Function getCompetenciaRubroEvalOnNext, getCompetenciaRubroEvalOnError;
 
-  GetTipoNotaResultado _getTipoNotaResultado;
-  late Function getTipoNotaResultadoOnNext, getTipoNotaResultadoEvalOnError;
 
   GetResultados _getResultados;
   late Function getResultadosOnComplete, getResultadosOnError;
@@ -42,7 +40,6 @@ class RubroPresenter extends Presenter{
                           _getRubroEvaluacion = GetRubroEvaluacionList(rubroRepo),
                           _getUnidadRubroEval = GetUnidadRubroEval(rubroRepo),
                           _getCompetenciaRubroEval = GetCompetenciaRubroEval(rubroRepo, configuracionRepo),
-                          _getTipoNotaResultado = GetTipoNotaResultado(rubroRepo),
                           _getResultados = GetResultados(httpDatosRepo, configuracionRepo, resultadoRepo);
 
   void getCalendarioPerido(CursosUi? cursosUi){
@@ -57,7 +54,6 @@ class RubroPresenter extends Presenter{
       _getRubroEvaluacion.dispose();
       _getUnidadRubroEval.dispose();
       _getCompetenciaRubroEval.dispose();
-      _getTipoNotaResultado.dispose();
   }
 
   void onActualizarCurso(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi cursosUi) {
@@ -78,11 +74,6 @@ class RubroPresenter extends Presenter{
   void onGetCompetenciaRubroEval(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
     _getCompetenciaRubroEval.dispose();
     _getCompetenciaRubroEval.execute(GetCompetenciaRubroEvalCase(this), GetCompetenciaRubroParams(calendarioPeriodoUI, cursosUi?.silaboEventoId, cursosUi?.cargaCursoId));
-  }
-
-  void onGetTipoNotaResultado(CursosUi? cursosUi){
-    _getTipoNotaResultado.dispose();
-    _getTipoNotaResultado.execute(GetTipoNotaResultadoCase(this), GetTipoNotaResultadoParms(cursosUi?.silaboEventoId));
   }
 
   void getResultados(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
@@ -209,30 +200,6 @@ class GetCompetenciaRubroEvalCase extends Observer<GetCompetenciaRubroResponse>{
   void onNext(GetCompetenciaRubroResponse? response) {
     assert(presenter.getCompetenciaRubroEvalOnNext!=null);
     presenter.getCompetenciaRubroEvalOnNext(response?.competenciaUiList, response?.personaUiList, response?.evaluacionCompetenciaUiList, response?.evaluacionCalendarioPeriodoUiList, response?.tipoNotaUi);
-  }
-
-}
-
-class GetTipoNotaResultadoCase extends Observer<GetTipoNotaResultadoResponse>{
-  RubroPresenter presenter;
-
-  GetTipoNotaResultadoCase(this.presenter);
-
-  @override
-  void onComplete() {
-
-  }
-
-  @override
-  void onError(e) {
-    assert(presenter.getTipoNotaResultadoEvalOnError!=null);
-    presenter.getTipoNotaResultadoEvalOnError(e);
-  }
-
-  @override
-  void onNext(GetTipoNotaResultadoResponse? response) {
-    assert(presenter.getTipoNotaResultadoOnNext!=null);
-    presenter.getTipoNotaResultadoOnNext(response?.tipoEvaluacionUi);
   }
 
 }

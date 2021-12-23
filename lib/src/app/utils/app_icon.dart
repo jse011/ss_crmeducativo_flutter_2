@@ -57,6 +57,8 @@ class AppIcon {
   static const String ic_evento_adjunto_download = "assets/icons/tipo_agenda/ic_download.svg";
   static const String ic_evento_adjunto_instrumetno = "assets/icons/tipo_agenda/ic_check_list.svg";
 
+  static const String ic_login_banner_1 = "assets/icons/pic_lg_teacher.svg";
+
  /* static const String ic_tipo_evento_todos = "assets/icons/ic_atras.svg";
   static const String ic_tipo_evento_agenda = "assets/icons/ic_libro.svg";
   static const String ic_tipo_evento_cita = "assets/icons/ic_calendario_1.svg";

@@ -57,8 +57,11 @@ class CrearAgendaController extends Controller{
   void initListeners() {
     presenter.getAlumnosOnResponse = (List<EventosListaEnvioUi> salonUiList){
       _eventosListaEnvioUiList = salonUiList;
-
+      print("cursosUi?.cargaCursoId ${cursosUi?.cargaCursoId}");
       for(EventosListaEnvioUi salonUi in salonUiList){
+        if(cursosUi?.cargaCursoId!=null && salonUi.cargaCursoId == cursosUi?.cargaCursoId){
+          _eventosListaEnvioUi = salonUi;
+        }
         if(_eventosListaEnvioUi==null)_eventosListaEnvioUi = salonUi;
       }
 

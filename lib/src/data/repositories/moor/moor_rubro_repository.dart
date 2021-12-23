@@ -19,9 +19,11 @@ import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tema_criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_resultado_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_resultado_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:collection/collection.dart';
@@ -255,7 +257,7 @@ class MoorRubroRepository extends RubroRepository{
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_VALORES;
         break;
       case TN_VALOR_NUMERICO:
-        tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_ICONOS;
+        tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
         break;
       case TN_VALOR_ASISTENCIA:
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_ASISTENCIA;
@@ -302,6 +304,8 @@ class MoorRubroRepository extends RubroRepository{
         competenciaUi.nombre = criterioData.superCompetenciaNombre;
         competenciaUi.descripcion = criterioData.superCompetenciaDescripcion;
         competenciaUi.url = criterioData.url;
+        competenciaUi.evaluable = criterioData.superCompetenciaEvaluable;
+        competenciaUi.rubroResultadoId = criterioData.superCompetenciaResultadoId;
         switch( criterioData.superCompetenciaTipoId??0){
           case COMPETENCIA_BASE:
             competenciaUi.tipoCompetenciaUi = TipoCompetenciaUi.BASE;
@@ -327,8 +331,8 @@ class MoorRubroRepository extends RubroRepository{
         capacidadUi.tipoId = criterioData.competenciaTipoId;
         capacidadUi.competenciaId = criterioData.superCompetenciaId;
         capacidadUi.competenciaUi = competenciaUi;
-        capacidadUi.rubroResultadoId = criterioData.rubroEvalResultadoId;
-        capacidadUi.evaluable = criterioData.evaluable;
+        capacidadUi.rubroResultadoId = criterioData.competenciaResultadoId;
+        capacidadUi.evaluable = criterioData.competenciaEvaluable;
         competenciaUi.capacidadUiList?.add(capacidadUi);
       }
 
@@ -1044,7 +1048,7 @@ class MoorRubroRepository extends RubroRepository{
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_VALORES;
         break;
       case TN_VALOR_NUMERICO:
-        tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_ICONOS;
+        tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
         break;
       case TN_VALOR_ASISTENCIA:
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_ASISTENCIA;
@@ -1073,6 +1077,7 @@ class MoorRubroRepository extends RubroRepository{
       valorTipoNotaUi.valorNumerico = valorTipoNotaRubroData.valorNumerico;
       valorTipoNotaUi.limiteInferior = valorTipoNotaRubroData.limiteInferior;
       valorTipoNotaUi.limiteSuperior = valorTipoNotaRubroData.limiteSuperior;
+
       valorTipoNotaUiList.add(valorTipoNotaUi);
     }
     print("valorTipoNotaList: " + (valorTipoNotaUiList.length).toString());
@@ -1107,7 +1112,7 @@ class MoorRubroRepository extends RubroRepository{
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_VALORES;
         break;
       case TN_VALOR_NUMERICO:
-        tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_ICONOS;
+        tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
         break;
       case TN_VALOR_ASISTENCIA:
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_ASISTENCIA;
@@ -1120,20 +1125,8 @@ class MoorRubroRepository extends RubroRepository{
     valorTipoNotaRubroList.sort((a, b) => (b.valorNumerico??0).compareTo(a.valorNumerico??0));
 
     for(ValorTipoNotaRubroData valorTipoNotaRubroData in valorTipoNotaRubroList){
-      ValorTipoNotaUi valorTipoNotaUi = ValorTipoNotaUi();
-      valorTipoNotaUi.valorTipoNotaId = valorTipoNotaRubroData.valorTipoNotaId;
-      valorTipoNotaUi.titulo = valorTipoNotaRubroData.titulo;
-      valorTipoNotaUi.alias = valorTipoNotaRubroData.alias;
-      valorTipoNotaUi.icono = valorTipoNotaRubroData.icono;
-      valorTipoNotaUi.incluidoLInferior = valorTipoNotaRubroData.incluidoLInferior;
-      valorTipoNotaUi.incluidoLSuperior = valorTipoNotaRubroData.incluidoLSuperior;
+      ValorTipoNotaUi valorTipoNotaUi = convertValorTipoNotaUi(valorTipoNotaRubroData);
       valorTipoNotaUi.tipoNotaUi = tipoNotaUi;
-      valorTipoNotaUi.tipoNotaId = valorTipoNotaRubroData.tipoNotaId;
-      valorTipoNotaUi.valorNumerico = valorTipoNotaRubroData.valorNumerico;
-      valorTipoNotaUi.limiteInferior = valorTipoNotaRubroData.limiteInferior;
-      valorTipoNotaUi.limiteSuperior = valorTipoNotaRubroData.limiteSuperior;
-
-
       valorTipoNotaUiList.add(valorTipoNotaUi);
     }
 

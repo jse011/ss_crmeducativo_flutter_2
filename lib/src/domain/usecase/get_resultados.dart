@@ -6,11 +6,13 @@ import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/matriz_resultado_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/resultado_respository.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_capacidad_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/usecase/resultado_competencia_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_capacidad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/resultado_evaluacion.dart';
+import 'package:collection/collection.dart';
 
 class GetResultados extends UseCase<GetResultadosResponse, GetResultadosParams> {
   HttpDatosRepository httpDatosRepository;
@@ -61,6 +63,7 @@ class GetResultados extends UseCase<GetResultadosResponse, GetResultadosParams> 
            return (o1.competenciaId??0).compareTo((o2.competenciaId??0));
          });
 
+
          matrizResultadoUi.evaluacionUiList?.sort((o1, o2){
            int value1 = (o1.orden2??0).compareTo((o2.orden2??0));
            if(value1 == 0){
@@ -88,6 +91,20 @@ class GetResultados extends UseCase<GetResultadosResponse, GetResultadosParams> 
          }
 
 
+         for(ResultadoEvaluacionUi resultadoEvaluacionUi in matrizResultadoUi.evaluacionUiList??[]){
+           ResultadoCompetenciaUi? competenciaUi = matrizResultadoUi.competenciaUiList?.firstWhereOrNull((element) => element.rubroResultadoId == resultadoEvaluacionUi.rubroEvalResultadoId);
+           if(competenciaUi!=null){
+             resultadoEvaluacionUi.valorMaximo = competenciaUi.valorMaximo;
+             resultadoEvaluacionUi.valorMinimo = competenciaUi.valorMinimo;
+           }else{
+             ResultadoCapacidadUi? capacidadUi = matrizResultadoUi.capacidadUiList?.firstWhereOrNull((element) => element.rubroResultadoId == resultadoEvaluacionUi.rubroEvalResultadoId);
+             if(capacidadUi!=null){
+               resultadoEvaluacionUi.valorMaximo = capacidadUi.valorMaximo;
+               resultadoEvaluacionUi.valorMinimo = capacidadUi.valorMinimo;
+             }
+           }
+
+         }
 
 
       }

@@ -26,4 +26,11 @@ class AppImagen {
   static const String archivo_hoja_calculo_ico = "assets/images/archivos/ext_xls_ico.png";
   static const String archivo_youtube_ico = "assets/images/archivos/ext_youtube_ico.png";
   static const String archivo_recurso_ico = "assets/images/archivos/ext_other_ico.png";
+
+  static final String patternimg = "assets/images/patterns.png";
+
+  static final String splash_educar = "assets/educar/logo_educar.png";
+  static final String splash_icrm = "assets/docentementor/logo_docente_mentor.png";
+
+
 }

@@ -126,7 +126,7 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
               }
             },
             child: Container(
-              color: AppTheme.white,
+              color: AppTheme.background,
               child: Scaffold(
                 backgroundColor: Colors.transparent,
                 body: Stack(
@@ -270,17 +270,17 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                             for(var column in controller.tableColumns){
                               if(column is String){
                                 if(column == "peso_criterio"){
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 70));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 75));
                                 }else if(column == "estandar"){
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 45));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 50));
                                 }else if(column == "baja"){
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 45));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 50));
                                 }else if(column == "alta"){
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 45));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 50));
                                 }else if(column == "no_usar"){
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 45));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 50));
                                 }else{
-                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 60));
+                                  tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 70));
                                 }
                               }else{
                                 tableTipoNotacolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 60));
@@ -291,7 +291,7 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                             double width_pantalla = MediaQuery.of(context).size.width;
                             double padding_left = ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 32);
                             double padding_right = ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 32);
-                            double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 150);
+                            double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 180);
                             for(double column_px in tableTipoNotacolumnWidths){
                               width_table += column_px;
                             }
@@ -308,7 +308,11 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Container(
-                                  padding: EdgeInsets.only(top: 32, left: padding_left, right: padding_right,),
+                                  padding: EdgeInsets.only(
+                                    top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 32),
+                                    left: padding_left,
+                                    right: padding_right
+                                  ),
                                   width: width,
                                   child:  Wrap(
                                     spacing: 10.0,
@@ -319,8 +323,13 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                                       InkWell(
                                         //onTap: ()=> controller.onClicPrecision(),
                                         child: Container(
-                                          width: 110,
-                                          padding: EdgeInsets.only(left: 0 , right: 16, top: 8, bottom: 8),
+                                          width: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 110),
+                                          padding: EdgeInsets.only(
+                                              left: 0 ,
+                                              right: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 16),
+                                              top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 8),
+                                              bottom: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 8)
+                                          ),
                                           decoration: BoxDecoration(
                                               borderRadius: BorderRadius.all(Radius.circular(6)),
                                               color: HexColor(controller.cursosUi.color2)
@@ -330,17 +339,21 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              Icon(Ionicons.help_circle ,color: AppTheme.white, size: 9 + 6 - 2 * topBarOpacity , ),
+                                              Icon(Ionicons.help_circle ,
+                                                color: AppTheme.white,
+                                                size:  ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 16)
+                                              ),
                                               Padding(padding: EdgeInsets.all(2),),
                                               FittedBox(
                                                 fit: BoxFit.scaleDown,
                                                 child: Text("Ayuda",
                                                     overflow: TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: AppTheme.fontTTNorms,
                                                       letterSpacing: 0.5,
                                                       color:AppTheme.white,
-                                                      fontSize: 5 + 6 - 1 * topBarOpacity ,
+                                                      fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12) ,
                                                     )),
                                               ),
                                             ],
@@ -360,8 +373,9 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                                       RichText(
                                         text: TextSpan(
                                             style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
                                               height: 1.5,
                                               letterSpacing: 0.3,
                                               color: HexColor(controller.cursosUi.color1),
@@ -369,7 +383,7 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                                             children: [
                                               TextSpan(text: 'MODIFICA EL NIVEL DE COMPLEJIDAD DE LOS CRITERIOS ASOCIADOS A LA CAPACIDAD '),
                                               //TextSpan(text: "${(controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"").toUpperCase()}"),
-                                              TextSpan(text: '"${(controller.capacidadUi.nombre??"").toUpperCase()}"', style: TextStyle(fontWeight: FontWeight.w700)),
+                                              TextSpan(text: '"${(controller.capacidadUi.nombre??"").toUpperCase()}"', style: TextStyle(fontWeight: FontWeight.w900)),
 
                                             ]
                                         ),
@@ -386,7 +400,10 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
 
                                 Container(
                                   width: width,
-                                  padding: EdgeInsets.only(left: padding_left, top:24),
+                                  padding: EdgeInsets.only(
+                                      left: padding_left,
+                                      top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 24)
+                                  ),
                                   child: showTableTipoNota(controller, tableTipoNotacolumnWidths),
                                 ),
                               ],
@@ -411,9 +428,9 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
     return SingleChildScrollView(
       child: StickyHeadersTableNotExpandedCustom(
           cellDimensions: CellDimensions.variableColumnWidth(
-              stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 94),
-              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 150),
-              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 70),
+              stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 100),
+              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 180),
+              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 100),
               columnWidths: tableTipoNotacolumnWidths
           ),
           //cellAlignments: CellAlignments.,
@@ -428,12 +445,20 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                 children: [
                   Container(
                       decoration: BoxDecoration(
-                        border: Border(
-                          right: BorderSide(color:  AppTheme.greyLighten2),
-                        ),
-                        color: HexColor(controller.cursosUi.color1),
+                        color: AppTheme.greyDarken1,
                       )
                   ),
+                  Center(
+                    child:  Text("Detalle",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color:  AppTheme.white,
+                            fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                            fontFamily: AppTheme.fontTTNorms,
+                            fontWeight: FontWeight.w700
+                        )
+                    ),
+                  )
                 ],
               );
             }else if(obj is String && obj == "peso_criterio"){
@@ -450,7 +475,8 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color:  AppTheme.white,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                          fontFamily: AppTheme.fontTTNorms,
                           fontWeight: FontWeight.w700
                       )
                     ),
@@ -463,6 +489,7 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                   Container(
                       decoration: BoxDecoration(
                         border: Border(
+                          left: BorderSide(color:  AppTheme.greyLighten2),
                           right: BorderSide(color:  AppTheme.greyLighten2),
                         ),
                         color: getPosition(0),
@@ -470,13 +497,15 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                   ),
                   Center(
                     child:  RotatedBox(
-                      quarterTurns: -1,
-                      child: Text("Complejidad\nAlta",
+                     quarterTurns: -1,
+                      child: Text("Peso\nAlta",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color:  AppTheme.white,
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
-                              fontWeight: FontWeight.w700)
+                              fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                              fontFamily: AppTheme.fontTTNorms,
+                              fontWeight: FontWeight.w700
+                          )
                       ),
                     ),
                   )
@@ -495,13 +524,15 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                     ),
                     Center(
                       child:  RotatedBox(
-                        quarterTurns: -1,
-                        child: Text("Complejidad\nEstandar",
+                       quarterTurns: -1,
+                        child: Text("Peso\nEstandar",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color:  AppTheme.white,
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
-                                fontWeight: FontWeight.w700)
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700
+                            )
                         )
                       ),
                     )
@@ -520,13 +551,15 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                     ),
                     Center(
                       child:  RotatedBox(
-                        quarterTurns: -1,
-                        child: Text("Complejidad\nBaja",
+                       quarterTurns: -1,
+                        child: Text("Peso\nBaja",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color:  AppTheme.white,
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
-                                fontWeight: FontWeight.w700)
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700
+                            )
                         ),
                       ),
                     )
@@ -545,13 +578,15 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                     ),
                     Center(
                       child:  RotatedBox(
-                        quarterTurns: -1,
+                       quarterTurns: -1,
                         child: Text("No usar\ncriterio",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color:  AppTheme.white,
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
-                                fontWeight: FontWeight.w700)
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700
+                            )
                         ),
                       ),
                     )
@@ -585,31 +620,32 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        if(rubrica)
+                          Container(
+                            padding: EdgeInsets.only(
+                                top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2)
+                            ),
+                            child: Text("- ${rubricaEvaluacionUi.tituloRubroCabecera??""}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis ,
+                              style: TextStyle(
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 9),
+                                fontWeight: FontWeight.w700,
+                                color: AppTheme.greyDarken1,
+                                //fontStyle: FontStyle.italic
+                              ),),
+                          ),
                         Container(
                           child: Text(("${rubricaEvaluacionUi.titulo??""}".trim()),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis ,
                             style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 8),
-                                fontWeight: FontWeight.w700,
-                              color: AppTheme.black
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                                fontWeight: FontWeight.w900,
+                                fontFamily: AppTheme.fontTTNorms
                             ),),
                         ),
-                       if(rubrica)
-                        Container(
-                          padding: EdgeInsets.only(
-                              top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2)
-                          ),
-                          child: Text("- ${rubricaEvaluacionUi.tituloRubroCabecera??""}",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis ,
-                            style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 7),
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.greyDarken1,
-                                //fontStyle: FontStyle.italic
-                            ),),
-                        ),
+
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.only(
@@ -650,10 +686,10 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                                     maxLines: 3,
                                     overflow: TextOverflow.ellipsis ,
                                     style: TextStyle(
-                                        fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 8),
-                                        color: AppTheme.greyDarken4,
-                                        fontWeight: FontWeight.w500,
-                                        height: 1.25
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppTheme.textGrey
                                     )
                                   ),
                                 )
@@ -672,7 +708,7 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                       right: BorderSide(color: AppTheme.greyLighten2),
                       bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.rubricaEvaluacionList.length-1) <= i ? 1:0)),
                     ),
-                    color: ((rubricaEvaluacionUi.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(rubricaEvaluacionUi.ningunaEvalCalificada??false))?null:AppTheme.red.withOpacity(0.1),
+                    color: ((rubricaEvaluacionUi.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(rubricaEvaluacionUi.ningunaEvalCalificada??false))? AppTheme.white:AppTheme.red.withOpacity(0.1),
                   )
               ),
             );
@@ -685,14 +721,14 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                 child: Container(
                   alignment: Alignment.center,
                   child: RotatedBox(
-                    quarterTurns: -1,
+                   quarterTurns: -1,
                     child: Text("${(){
                       if(o.peso==3){
-                        return "Complejidad\nAlta";
+                        return "Peso\nAlta";
                       }else if(o.peso==2){
-                        return "Complejidad\nEstandar";
+                        return "Peso\nEstandar";
                       }else if(o.peso==1){
-                        return "Complejidad\nBaja";
+                        return "Peso\nBaja";
                       }else if(o.peso==-1){
                         return "No usar\ncriterio";
                       }else{
@@ -701,9 +737,23 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                     }()}",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color:  AppTheme.white,
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 9),
-                            fontWeight: FontWeight.w700)
+                            color:  (o.selected??false)?AppTheme.white: getPosition((){
+                              if(o.peso==3){
+                                return 0;
+                              }else if(o.peso==2){
+                                return 1;
+                              }else if(o.peso==1){
+                                return 2;
+                              }else if(o.peso==-1){
+                                return 3;
+                              }else{
+                                return 4;
+                              }
+                            }()).withOpacity(0.8),
+                            fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                            fontFamily: AppTheme.fontTTNorms,
+                            fontWeight: FontWeight.w700
+                        )
                     ),
                   ),
                   decoration: BoxDecoration(
@@ -739,41 +789,39 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)
-                        Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 8))),
-                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false))
-                        Text("${DomainTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 3)}%",
-                            style: TextStyle(
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
-                              color: AppTheme.greyDarken3,
-                              fontWeight: FontWeight.w700,
-                            )
-                        ),
-                      Padding(padding: EdgeInsets.all(2)),
                       Text((){
                         if(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false)
                           return "Criterio sin\nevaluaciones";
                         if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_ALTO){
-                          return "P. Desconocido";
+                          return "Peso\ndesconocido";
                         }if(o.rubricaEvaluacionUi?.peso == RubricaEvaluacionUi.PESO_ALTO){
-                          return "P. Alto";
+                          return "Peso\nalto";
                         }else if(o.rubricaEvaluacionUi?.peso == RubricaEvaluacionUi.PESO_NORMAL){
-                          return "P. Estandar";
+                          return "Peso\nestandar";
                         }else if(o.rubricaEvaluacionUi?.peso == RubricaEvaluacionUi.PESO_BAJO){
-                          return "P. Bajo";
+                          return "Peso\nbajo";
                         }else{
                           return "No usar\ncriterio";
                         }
                       }(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
-                            color: AppTheme.greyDarken3,
+                              fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
+                              fontFamily: AppTheme.fontTTNorms,
+                              fontWeight: FontWeight.w500
                           )
                       ),
-
+                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO)
+                        Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2))),
+                      if((o.rubricaEvaluacionUi?.peso??0) > RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO && !(o.rubricaEvaluacionUi?.ningunaEvalCalificada??false))
+                        Text("${DomainTools.removeDecimalZeroFormat((o.rubricaEvaluacionUi?.peso??0)/(o.capacidadUi?.total_peso??1)*100, fractionDigits: 3)}%",
+                            style: TextStyle(
+                              color: AppTheme.greyDarken3,
+                              fontWeight: FontWeight.w700,
+                              fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                              fontFamily: AppTheme.fontTTNorms,
+                            )
+                        ),
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -790,36 +838,37 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
             }else if(o is RubricaEvaluacionUi){
               return InkWell(
                 child: Container(
+                  padding: EdgeInsets.only(
+                    top: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text("Evaluados", style: TextStyle(
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
-                        color: AppTheme.greyDarken3,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w500
                       )),
                       Padding(padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 2))),
-                      Text("${o.cantiEvalCalificadas??0} de ${o.evaluacionUiList?.length??0}", style: TextStyle(
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 0.5,
+                      Text("${o.cantiEvalCalificadas??0} de ${o.evaluacionUiList?.length??0}.", style: TextStyle(
                         color: AppTheme.greyDarken3,
+                        fontWeight: FontWeight.w700,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                        fontFamily: AppTheme.fontTTNorms,
                       )),
                       Padding(padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4))),
                       Text("Media", style: TextStyle(
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
-                        color: AppTheme.greyDarken3,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w500
                       ),),
                       Padding(padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 2))),
                       Text("${o.mediaDesvicion??""}", style: TextStyle(
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 8),
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 0.5,
                         color: AppTheme.greyDarken3,
+                        fontWeight: FontWeight.w700,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                        fontFamily: AppTheme.fontTTNorms,
                       )),
 
                     ],
@@ -858,16 +907,17 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
                   )
               ),
               Container(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.center,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text("Criterios evaluados",
                           style: TextStyle(
                               color: AppTheme.white,
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
-                              fontWeight: FontWeight.w700
+                              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
+                              fontWeight: FontWeight.w700,
+                              fontFamily: AppTheme.fontTTNorms
                           ))
                     ],
                   ),

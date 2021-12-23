@@ -116,6 +116,11 @@ class ResultadoController extends Controller{
     }
   }
 
+  onClicPrecision() {
+    _precision = !_precision;
+    refreshUI();
+  }
+
 
 
 }

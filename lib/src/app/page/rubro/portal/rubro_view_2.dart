@@ -708,27 +708,67 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                     ],
                                   ):
                                   Container(
-                                    margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                    margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 24),
+                                    child: Stack(
                                       children: [
-                                        SvgPicture.asset(AppIcon.ic_curso_nota_final, height: 35 +  6 - 10 * topBarOpacity, width: 35 +  6 - 10 * topBarOpacity,),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 12, top: 8),
-                                          child: Text(
-                                            'Resultado',
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontFamily: AppTheme.fontTTNorms,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 16 + 6 - 6 * topBarOpacity,
-                                              letterSpacing: 0.8,
-                                              color: AppTheme.darkerText,
+                                        Row(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(AppIcon.ic_curso_nota_final, height: 28 +  6 - 10 * topBarOpacity, width: 28 +  6 - 10 * topBarOpacity),
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 12, top: 4),
+                                              child: Text(
+                                                'Resultado',
+                                                textAlign: TextAlign.center,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 12 + 6 - 6 * topBarOpacity,
+                                                  letterSpacing: 0.8,
+                                                  color: AppTheme.darkerText,
+                                                ),
+                                              ),
                                             ),
-                                          ),
+
+                                          ]
                                         ),
+                                       Positioned(
+                                         child:  InkWell(
+                                         onTap: ()=> controller.onClicPrecisionResultado(),
+                                         child: Container(
+                                           width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
+                                           padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)),
+                                           decoration: BoxDecoration(
+                                               borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
+                                               color:  controller.precisionResultado?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
+                                           ),
+                                           alignment: Alignment.center,
+                                           child: Row(
+                                             mainAxisAlignment: MainAxisAlignment.center,
+                                             crossAxisAlignment: CrossAxisAlignment.center,
+                                             children: [
+                                               SvgPicture.asset(AppIcon.ic_presicion,
+                                                 color: controller.precisionResultado? AppTheme.white :AppTheme.greyDarken1,
+                                                 height:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
+                                                 width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
+                                               ),
+                                               Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
+                                               Text("Precisión",
+                                                   overflow: TextOverflow.ellipsis,
+                                                   style: TextStyle(
+                                                     fontWeight: FontWeight.w500,
+                                                     letterSpacing: 0.5,
+                                                     color:  controller.precisionResultado? AppTheme.white :AppTheme.greyDarken1,
+                                                     fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
+                                                   )),
+                                             ],
+                                           ),
+                                         ),
+                                       ),
+                                         right: 0,
+                                       )
                                       ],
                                     ),
                                   ),
@@ -786,7 +826,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                     tabRubroGeneral(controller),
                     //progress(tabRubroSesiones3(controller, count)),
                     tabRubCompetencia(controller),//:Container(child: Center(child: CircularProgressIndicator(),),),
-                    Padding(padding: EdgeInsets.only(top: 14),
+                    Padding(padding: EdgeInsets.only(top: 0),
                       child:  TableResultado(
                         calendarioPeriodoUI: controller.calendarioPeriodoUI,
                         rows: controller.rowsResultado,
@@ -1013,11 +1053,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
       List<double> tablecolumnWidths = [];
       for(dynamic s in controller.columnList2){
         if(s is ContactoUi){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 85));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 100));
         } else if(s is CalendarioPeriodoUI){
           tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70)*3);
         }else if(s is CapacidadUi){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 65));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70));
         }else{
           tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70));
         }
@@ -1043,9 +1083,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
         child:  StickyHeadersTableV2(
           scrollControllers: scrollControllersResultado,
           cellDimensions: CellDimensions.variableColumnWidth(
-              stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 120),
+              stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 145),
               stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 50),
-              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 35),
+              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 40),
               columnWidths: tablecolumnWidths
           ),
           initialScrollOffsetX: controller.scrollRubroProcesoX,
@@ -1064,9 +1104,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                   child: Center(
                     child:  Text("Apellidos y\n Nombres",
                       style: TextStyle(
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                          color: AppTheme.black,
-                          fontWeight: FontWeight.w500 ),),
+                        color: AppTheme.greyDarken3,
+                        fontWeight: FontWeight.w700,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                        fontFamily: AppTheme.fontTTNorms,
+                      ),),
                   ),
                   decoration: BoxDecoration(
                       border: Border(
@@ -1077,31 +1119,46 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                   )
               );
             }else if(o is CompetenciaUi){
-              return Container(
-                  constraints: BoxConstraints.expand(),
-                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
-                  child: Center(
-                    child:  RotatedBox(
-                      quarterTurns: -1,
-                      child: Text(o.nombre??"",
-                        textAlign: TextAlign.center,
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                            color: AppTheme.darkText,
-                            fontWeight: FontWeight.w700
-                        )
+              return Stack(
+                children: [
+                  Container(
+                      constraints: BoxConstraints.expand(),
+                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
+                      child: Center(
+                        child:  RotatedBox(
+                          quarterTurns: -1,
+                          child: Text(o.nombre??"",
+                              textAlign: TextAlign.center,
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppTheme.greyDarken3,
+                                fontWeight: FontWeight.w700,
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                fontFamily: AppTheme.fontTTNorms,
+                              )
+                          ),
+                        ),
                       ),
-                    ),
+                      decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                            left: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                            bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                            right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                          ),
+                          borderRadius: (controller.columnList2.length-2 == i)?BorderRadius.only(
+                              topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))
+                          ):null,
+                          color: HexColor("#EFEDEE")
+                      )
                   ),
-                  decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      ),
-                      color: HexColor("#EFEDEE")
+                  Container(
+                    width: 1,
+                    color: HexColor("#EFEDEE"),
+                    margin: EdgeInsets.only(top: 1, bottom: 1),
                   )
+                ],
               );
             }else if(o is CapacidadUi){
               return InkWell(
@@ -1129,9 +1186,10 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                   maxLines: 4,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                                      color: AppTheme.greyDarken3,
-                                      fontWeight: FontWeight.w500
+                                    color: AppTheme.greyDarken3,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                    fontFamily: AppTheme.fontTTNorms,
                                   )
                               ),
                             ),
@@ -1154,13 +1212,15 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                               children: [
                                 Icon(Ionicons.pencil,
                                   color: AppTheme.white,
-                                  size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                                  size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
                                 ),
                                 Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 2))),
                                 Text("Modifica",
                                   style: TextStyle(
-                                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
-                                      color: AppTheme.white
+                                    color: AppTheme.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
+                                    fontFamily: AppTheme.fontTTNorms,
                                   ),
                                 )
                               ],
@@ -1173,7 +1233,12 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         border: Border(
                           top: BorderSide(color: HexColor(controller.cursosUi.color3)),
                           right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                          left: BorderSide(color: (o.round??false)?HexColor(controller.cursosUi.color3): Colors.white),
+                          bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
                         ),
+                        borderRadius: (o.round??false)?BorderRadius.only(
+                          topLeft: Radius.circular(8)
+                        ):null,
                         color: AppTheme.white
                     )
                 ),
@@ -1183,30 +1248,36 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 children: [
                   Expanded(
                       flex: 1,
-                      child: Container(
-                          constraints: BoxConstraints.expand(),
-                          padding: EdgeInsets.all(8),
-                          child: Center(
-                            child:  RotatedBox(
-                              quarterTurns: -1,
-                              child: Text("Final ${o.nombre??""}",
-                                textAlign: TextAlign.center,
-                                maxLines: 4,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                                    color: AppTheme.black,
-                                    fontWeight: FontWeight.w700
-                                )),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                                right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))
+                        ),
+                        child: Container(
+                            constraints: BoxConstraints.expand(),
+                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
+                            child: Center(
+                              child:  RotatedBox(
+                                quarterTurns: -1,
+                                child: Text("Final ${o.nombre??""}",
+                                    textAlign: TextAlign.center,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                        color: AppTheme.black,
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700
+                                    )),
                               ),
-                              color: AppTheme.greyLighten1
-                          )
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: AppTheme.greyLighten1),
+                                  right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                ),
+                                color: AppTheme.greyLighten1
+                            )
+                        ),
                       )
                   ),
                   Expanded(
@@ -1215,10 +1286,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                           constraints: BoxConstraints.expand(),
                           decoration: BoxDecoration(
                               border: Border(
-                                top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                                right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
                               ),
-                              color: HexColor("#EFEDEE")
+
                           )
                       )
                   )
@@ -1241,8 +1311,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                           child: Text((i+1).toString() + ".",
                             style: TextStyle(
                                 color: AppTheme.white,
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                                fontWeight: FontWeight.w700
+                              fontWeight: FontWeight.w700,
+                              fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                              fontFamily: AppTheme.fontTTNorms,
                             )
                           )
                       ),
@@ -1306,9 +1377,10 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                            color: AppTheme.black,
-                            fontWeight: FontWeight.w500
+                          color: AppTheme.greyDarken3,
+                          fontWeight: FontWeight.w700,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                          fontFamily: AppTheme.fontTTNorms,
                         )
                       ),
                       Text(o.nombres??"",
@@ -1316,7 +1388,10 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         textAlign: TextAlign.center,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
+                          color: AppTheme.greyDarken3,
+                          fontWeight: FontWeight.w500,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                          fontFamily: AppTheme.fontTTNorms,
                         )
                       ),
                     ],
@@ -1340,6 +1415,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                           border: Border(
                             top: BorderSide(color: HexColor(controller.cursosUi.color3)),
                             right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                            left: BorderSide(color: (o.capacidadUi?.round??false)?HexColor(controller.cursosUi.color3): Colors.white),
                           ),
                           color: _getColorAlumnoBloqueados(o.personaUi, 0)
                       ),
@@ -1409,9 +1485,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                           constraints: BoxConstraints.expand(),
                           decoration: BoxDecoration(
                               border: Border(
-                                right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
                               ),
-                              color: HexColor("#EFEDEE")
+
                           )
                       )
                   ),
@@ -1434,9 +1510,10 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                   child: Center(
                     child: Text('N°',
                       style: TextStyle(
-                          color: AppTheme.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                        color: AppTheme.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                        fontFamily: AppTheme.fontTTNorms,
                       )
                     ),
                   ),
@@ -1991,9 +2068,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
             padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4),),
             child: Text("${ valorTipoNotaUi?.titulo??"-"}",
                 style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                  fontFamily: AppTheme.fontTTNorms,
                   color: color,
                 )),
           ),
@@ -2018,9 +2095,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
           return Center(
             child: Text("-",
                 style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                  fontFamily: AppTheme.fontTTNorms,
                   color: AppTheme.black,
                 )),
           );
@@ -2059,9 +2136,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
 
         return Center(
           child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-            fontFamily: AppTheme.fontTTNormsMedium,
-            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
+            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+            fontFamily: AppTheme.fontTTNorms,
             color: color,
           ),),
         );
