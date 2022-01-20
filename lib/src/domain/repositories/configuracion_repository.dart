@@ -1,7 +1,8 @@
-import 'package:ss_crmeducativo_2/src/domain/entities/anio_acemico_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/georeferencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/login_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/programa_educativo_ui.dart';
@@ -31,7 +32,7 @@ abstract class ConfiguracionRepository{
   Future<void> updateUsuarioSuccessData(int usuarioId, int anioAcademicoId);
   Future<void> saveDatosAnioAcademico(Map<String, dynamic> datosAnioAcademico);
   Future<UsuarioUi> getSessionUsuario();
-  Future<List<AnioAcademicoUi>> getAnioAcademicoList(int usuarioId);
+  Future<List<GeoreferenciaUi>> getGeoreferenciaList(int usuarioId);
   Future<void> updateSessionAnioAcademicoId(int anioAcademicoId);
   Future<void> updateSessionProgramaEducativoId(int programaEducativoId);
   Future<List<ProgramaEducativoUi>> getListProgramaEducativo(int empleadoId, int anioAcademicoId);
@@ -41,5 +42,10 @@ abstract class ConfiguracionRepository{
   Future<List<ContactoUi>> getListContacto(int empleadoId, int anioAcademicoIdSelect);
   Future<List<PersonaUi>> getListAlumnoCurso(int cargaCursoId);
   Future<bool> cerrrarSession();
+  Future<String?> getServerIcono();
+  Future<void> updatePersona(PersonaUi? personaUi);
+  PersonaUi transformarUpdatePersona(Map<String, dynamic> jsonPersona);
+  Future<List<CursosUi>> getFotoAlumnos(int empleadoId, int anioAcademicoIdSelec);
+  Future<void> udpateUsuario(int usuarioId, Map<String, dynamic> usuarioJson);
 
 }

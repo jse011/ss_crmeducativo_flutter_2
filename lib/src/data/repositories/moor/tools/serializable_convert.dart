@@ -552,7 +552,10 @@ class SerializableConvert{
         tipoId: serial.tipoId,
         estadoId: serial.estadoId,
         diazPlazo: serial.diazPlazo,
-        habilitado: serial.habilitado);
+        habilitado: serial.habilitado,
+        habilitadoProceso: serial.habilitadoProceso,
+        habilitadoResultado: serial.habilitadoResultado
+    );
   }
 
   static List<CalendarioPeriodoCargaCursoData> converListSerializeCalendarioPeriodoCargaCurso(dynamic model){

@@ -49,20 +49,14 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
 
   EvaluacionIndicadorState(rubroEvaluacionUi, cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) : super(EvaluacionIndicadorController(rubroEvaluacionUi, cursosUi, calendarioPeriodoUI, MoorRubroRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
 
-  late Animation<double> topBarAnimation;
+
   late final ScrollController scrollController = ScrollController();
   late final ScrollControllers crollControllers = ScrollControllers();
   late double topBarOpacity = 0.0;
-  late AnimationController animationController;
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
         if (topBarOpacity != 1.0) {
@@ -86,21 +80,11 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
       }
     });
 
-    animationController.reset();
-
-    Future.delayed(const Duration(milliseconds: 200), () {
-// Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
     super.initState();
   }
 
   @override
   void dispose() {
-    animationController.dispose();
     super.dispose();
   }
 
@@ -326,139 +310,127 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
   Widget getAppBarUI(EvaluacionIndicadorController controller) {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context!).padding.top,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
-                        child: Stack(
-                          children: <Widget>[
-                            Positioned(
-                                child:  IconButton(
-                                  icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                  onPressed: () async {
-                                    bool? respuesta = await controller.onSave();
-                                    Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                    top: 16 - 8.0 * topBarOpacity,
+                    bottom: 12 - 8.0 * topBarOpacity),
+                child: Stack(
+                  children: <Widget>[
+                    Positioned(
+                        child:  IconButton(
+                          icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                          onPressed: () async {
+                            bool? respuesta = await controller.onSave();
+                            Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
 
-                                  },
-                                )
-                            ),
-                            Container(
+                          },
+                        )
+                    ),
+                    Container(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child:  Container(
+                              margin: EdgeInsets.only(top: 0 + 8 * topBarOpacity, bottom: 8, left: 40, right: 0),
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Expanded(
-                                      child:  Container(
-                                        margin: EdgeInsets.only(top: 0 + 8 * topBarOpacity, bottom: 8, left: 40, right: 0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
-                                            Padding(padding: EdgeInsets.only(left: 4)),
-                                            Padding(
-                                              padding: EdgeInsets.only(top: 8),
-                                              child: Text(
-                                                'Evaluación',
-                                                textAlign: TextAlign.center,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontFamily: AppTheme.fontTTNorms,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 16 + 6 - 6 * topBarOpacity,
-                                                  letterSpacing: 0.8,
-                                                  color: AppTheme.darkerText,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                  SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
+                                  Padding(padding: EdgeInsets.only(left: 4)),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      'Evaluación',
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16 + 6 - 6 * topBarOpacity,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.darkerText,
                                       ),
+                                    ),
                                   ),
-                                  Container(
-                                       margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
-                                      child:InkWell(
-                                        //onTap: ()=> controller.onClicPrecision(),
-                                        child: Container(
-                                          width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 80 - 20 * topBarOpacity),
-                                          padding: EdgeInsets.only(
-                                              left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity) ,
-                                              right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity),
-                                              top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity),
-                                              bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8  - 2 * topBarOpacity)
-                                          ),
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
-                                              color: HexColor(controller.cursosUi?.color2)
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              Icon(Ionicons.help_circle,
-                                                  color: AppTheme.white,
-                                                  size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 + 6 - 2 * topBarOpacity)
-                                              ),
-                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2))),
-                                              FittedBox(
-                                                fit: BoxFit.scaleDown,
-                                                child: Text("Ayuda",
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.w500,
-                                                      letterSpacing: 0.5,
-                                                      color:AppTheme.white,
-                                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity),
-                                                    )),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                  )
                                 ],
                               ),
                             ),
-
-
-                          ],
-                        ),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
+                              child:InkWell(
+                                //onTap: ()=> controller.onClicPrecision(),
+                                child: Container(
+                                  width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 80 - 20 * topBarOpacity),
+                                  padding: EdgeInsets.only(
+                                      left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity) ,
+                                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity),
+                                      top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 - 2 * topBarOpacity),
+                                      bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8  - 2 * topBarOpacity)
+                                  ),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6))),
+                                      color: HexColor(controller.cursosUi?.color2)
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(Ionicons.help_circle,
+                                          color: AppTheme.white,
+                                          size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8 + 6 - 2 * topBarOpacity)
+                                      ),
+                                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2))),
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text("Ayuda",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 0.5,
+                                              color:AppTheme.white,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 5 + 6 - 1 * topBarOpacity),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                          )
+                        ],
                       ),
+                    ),
 
-                    ],
-                  ),
+
+                  ],
                 ),
               ),
-            );
-          },
+
+            ],
+          ),
         )
       ],
     );
@@ -908,7 +880,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                       child: Stack(
                         children: [
                           _getTipoNota(o, controller,i, j),
-                          controller.calendarioPeriodoUI?.habilitado != 1?
+                          controller.calendarioPeriodoUI?.habilitadoProceso != 1?
                           Positioned(
                               bottom: 4,
                               right: 4,

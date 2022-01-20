@@ -66,7 +66,7 @@ class UpdateCalendarioPerido extends UseCase<GetCalendarioPeridoResponse, GetCal
 
 
     for(CalendarioPeriodoUI item in calendarioPeriodoList){
-      if((item.habilitado??0)==1){
+      if((item.habilitadoProceso??0)==1){
         calendarioPeriodoUI = item;
       }
     }

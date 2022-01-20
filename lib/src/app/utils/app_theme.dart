@@ -5,57 +5,57 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_lottie.dart';
 
 import 'app_imagen.dart';
 
-enum App{
+enum AppType{
   EDUCAR, ICRM
 }
 abstract class ChangeAppTheme{
   ChangeAppTheme._();
 
-  static const App _app = App.EDUCAR;
+  static const AppType _app = AppType.EDUCAR;
 
-  static App getApp() => _app;
+  static AppType getApp() => _app;
 
-  static String loginBanner({App app = _app}){
+  static String loginBanner({AppType app = _app}){
     switch(app){
-      case App.EDUCAR:
+      case AppType.EDUCAR:
         return AppImagen.splash_educar;
-      case App.ICRM:
+      case AppType.ICRM:
         return 'assets/docentementor/logo_icrmovil.png';
     }
   }
 
-  static String nameApp({App app = _app}){
+  static String nameApp({AppType app = _app}){
     switch(app){
-      case App.EDUCAR:
+      case AppType.EDUCAR:
         return 'Educar Teacher';
-      case App.ICRM:
+      case AppType.ICRM:
         return 'Padre Mentor 3.0';
     }
   }
 
-  static Color colorEspera({App app = _app}){
+  static Color colorEspera({AppType app = _app}){
     switch(app){
-      case App.EDUCAR:
+      case AppType.EDUCAR:
         return AppTheme.colorEducarDocente;
-      case App.ICRM:
+      case AppType.ICRM:
         return AppTheme.colorDocenteMentor;
     }
   }
 
-  static String imagenEspera({App app = _app}) {
+  static String imagenEspera({AppType app = _app}) {
     switch(app){
-      case App.EDUCAR:
+      case AppType.EDUCAR:
         return AppImagen.splash_educar;
-      case App.ICRM:
+      case AppType.ICRM:
         return AppImagen.splash_icrm;
     }
   }
 
-  static String splahLottieLoginBanner({App app = _app}) {
+  static String splahLottieLoginBanner({AppType app = _app}) {
     switch(app){
-      case App.EDUCAR:
+      case AppType.EDUCAR:
         return AppLottie.splash_login_educar_docente;
-      case App.ICRM:
+      case AppType.ICRM:
         return AppLottie.splash_login_docente_mentor;
     }
   }
@@ -95,6 +95,7 @@ class AppTheme  {
   static const Color colorShimmer = Color(0xFFDFDFDF);
 
   static const Color colorSesion = Color(0xFF15542F);
+  static const Color colorLine = Color(0XFFD2D2D2);
 
   static const String fontName = 'Roboto';
   static const String fontGotham = 'Gotham';

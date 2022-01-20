@@ -11,6 +11,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/Item_tarea.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 
@@ -29,6 +30,20 @@ class _TabTareasState extends State<TabTareas>{
 
     return  Stack(
       children: [
+        if(controller.progressTarea)
+        Padding(padding: EdgeInsets.only(top: 4),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16)
+              ),
+              child: ArsProgressWidget(
+                blur: 2,
+                backgroundColor: Color(0x33000000),
+                animationDuration: Duration(milliseconds: 500),
+              ),
+            ),
+          ),
         controller.tareaUiList.isEmpty?
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -57,7 +72,10 @@ class _TabTareasState extends State<TabTareas>{
               itemBuilder: (context, index){
                 dynamic o = controller.tareaUiList[index];
                 if(o is TareaUi){
-                  return ItemTarea(color1: HexColor(controller.cursosUi.color1), tareaUi: o, onTap: () async{
+                  return ItemTarea(
+                      color1: HexColor(controller.cursosUi.color1),
+                      color2: HexColor(controller.cursosUi.color2),
+                      tareaUi: o, onTap: () async{
                     dynamic? result = await AppRouter.createRouteTareaPortalRouter(context, controller.usuarioUi, controller.cursosUi, o, controller.calendarioPeriodoUI, controller.unidadUi, controller.sesionUi);
                     if(result is int) controller.refrescarListTarea();
                   });

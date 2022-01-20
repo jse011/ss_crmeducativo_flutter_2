@@ -149,7 +149,7 @@ class PortalTareaController extends Controller{
       }
 
       _mostrarAlumnosDosListas = _tareaAlumnoUiNoEvaluadosList.isNotEmpty && _tareaAlumnoUiEvaluadosList.isNotEmpty;
-      /*Solo abrir la caja de evaluaciones abierta del primer alumno*/
+      /*Solo abrir la caja de evaluaciones abierta del primer foto_alumno*/
       if(_mostrarAlumnosDosListas){
         if(_tareaAlumnoUiEvaluadosList.isNotEmpty){
           _tareaAlumnoUiEvaluadosList[0].toogle = true;
@@ -484,7 +484,7 @@ class PortalTareaController extends Controller{
       _progress = true;
       refreshUI();
 
-      tareaUi?.docente = usuarioUi?.nombre;
+      tareaUi?.docente = usuarioUi?.personaUi?.nombreCompleto;
       tareaUi?.nroSesion = sesionUi?.nroSesion;
       tareaUi?.tipoPeriodoId = calendarioPeriodoUI?.tipoId;
       tareaUi?.silaboEventoId = unidadUi?.silaboEventoId;
@@ -514,7 +514,7 @@ class PortalTareaController extends Controller{
     _showDialogEliminar = false;
     _progress = true;
     refreshUI();
-    tareaUi?.docente = usuarioUi?.nombre;
+    tareaUi?.docente = usuarioUi?.personaUi?.nombreCompleto;
     tareaUi?.nroSesion = sesionUi?.nroSesion;
     tareaUi?.tipoPeriodoId = calendarioPeriodoUI?.tipoId;
     tareaUi?.silaboEventoId = unidadUi?.silaboEventoId;

@@ -27,63 +27,124 @@ class UpdateDatosCrearRubro extends UseCase<UpdateDatosCrearRubroResponse, Updat
     int programaEducativoId = await repository.getSessionProgramaEducativoId();
     String urlServidorLocal = await repository.getSessionUsuarioUrlServidor();
 
-    try{
+
+    if((params?.calendarioPeriodoId??0)>0) {
       int sessionAprendizajeId = 0;
       int sessionAprendizajeAlumnoId = 0;
       int sessionAprendizajeDocenteId = 0;
-      if((params?.sesionUi?.rolId??0)==6){
-        sessionAprendizajeId = params?.sesionUi?.sesionAprendizajeId??0;
-        sessionAprendizajeDocenteId = params?.sesionUi?.sesionAprendizajePadreId??0;
-        sessionAprendizajeAlumnoId = params?.sesionUi?.sesionAprendizajeId??0;
-      }else{
-        sessionAprendizajeDocenteId = params?.sesionUi?.sesionAprendizajeId??0;
+
+      if ((params?.sesionUi?.rolId ?? 0) == 6) {
+        sessionAprendizajeId = params?.sesionUi?.sesionAprendizajeId ?? 0;
+        sessionAprendizajeDocenteId =
+            params?.sesionUi?.sesionAprendizajePadreId ?? 0;
+        sessionAprendizajeAlumnoId = params?.sesionUi?.sesionAprendizajeId ?? 0;
+      } else {
+        sessionAprendizajeDocenteId =
+            params?.sesionUi?.sesionAprendizajeId ?? 0;
       }
 
-      if(!(params?.casoTarea??false)){
-        String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
-        Map<String, dynamic>? datosCrearRubro = await httpDatosRepository.updateDatosParaCrearRubro(urlServidorLocal, anioAcademicoId, programaEducativoId, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, empleadoId,sessionAprendizajeId);
-        print("datosCrearRubro: ${datosCrearRubro}");
-        errorServidor = datosCrearRubro == null;
-        if (!errorServidor) {
-          await rubroRepository.saveDatosCrearRubros(datosCrearRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0,sessionAprendizajeId);
+      print("casoss: ${params?.casoSesion } ${params?.casoTarea}");
+
+      if (params?.casoSesion ?? false) {
+
+        updateDatosParaCrearRubro()async{
+          Map<String, dynamic>? datosCrearRubro = null;
+          try{
+            datosCrearRubro = await httpDatosRepository.updateDatosParaCrearRubro(urlServidorLocal, anioAcademicoId, programaEducativoId, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, empleadoId,sessionAprendizajeId);
+          }catch(e){
+            offlineServidor = true;
+          }
+
+          controller.add(UpdateDatosCrearRubroResponse(offlineServidor, errorServidor, true));
+          return datosCrearRubro;
+        }
+
+        updateDatosParaCrearRubro().then((value)async {
+          try{
+            String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
+            errorServidor = value == null;
+            if (!errorServidor) {
+              await rubroRepository.saveDatosCrearRubros(value!, params?.silaboEventoId??0, params?.calendarioPeriodoId??0,sessionAprendizajeId);
+              List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
+              Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId, rubrosNoEnviados,false, anioAcademicoId, programaEducativoId, empleadoId);
+              errorServidor = datosRubro == null;
+              if (!errorServidor) {
+                await rubroRepository.saveDatosRubrosEval(value, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId);
+              }
+            }
+          }catch(e){
+            offlineServidor = true;
+          }
+
+          controller.add(UpdateDatosCrearRubroResponse(offlineServidor, errorServidor, false));
+          controller.close();
+
+
+        });
+
+
+      } else if (params?.casoTarea ?? false) {
+
+        try{
+
+          String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
+
           List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
-          Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId, rubrosNoEnviados,false, anioAcademicoId, programaEducativoId, empleadoId);
+          Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, params?.tareaId, rubrosNoEnviados, true, anioAcademicoId, programaEducativoId, empleadoId);
           errorServidor = datosRubro == null;
           if (!errorServidor) {
-            await rubroRepository.saveDatosRubrosEval(datosRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId);
+            await rubroRepository.saveDatosRubrosEval(datosRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, params?.tareaId);
           }
+
+          if((rubroEvaltareaId??"").isEmpty){
+            Map<String, dynamic>? datosCrearRubro = await httpDatosRepository.updateDatosParaCrearRubro(urlServidorLocal, anioAcademicoId, programaEducativoId, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, empleadoId,sessionAprendizajeId);
+            errorServidor = datosCrearRubro == null;
+            if (!errorServidor) {
+              await rubroRepository.saveDatosCrearRubros(datosCrearRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0,sessionAprendizajeId);
+            }
+          }
+        }catch(e){
+          offlineServidor = true;
         }
 
-      }else{
+        controller.add(UpdateDatosCrearRubroResponse(offlineServidor, errorServidor, false));
+        controller.close();
 
-        List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
-        Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, params?.tareaId, rubrosNoEnviados, true, anioAcademicoId, programaEducativoId, empleadoId);
-        errorServidor = datosRubro == null;
-        if (!errorServidor) {
-          await rubroRepository.saveDatosRubrosEval(datosRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, params?.tareaId);
-        }
+      } else {
 
-        String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
-
-        if((rubroEvaltareaId??"").isEmpty){
+        try{
+          String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
           Map<String, dynamic>? datosCrearRubro = await httpDatosRepository.updateDatosParaCrearRubro(urlServidorLocal, anioAcademicoId, programaEducativoId, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, empleadoId,sessionAprendizajeId);
           errorServidor = datosCrearRubro == null;
           if (!errorServidor) {
             await rubroRepository.saveDatosCrearRubros(datosCrearRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0,sessionAprendizajeId);
+            List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
+            Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId, rubrosNoEnviados,false, anioAcademicoId, programaEducativoId, empleadoId);
+            errorServidor = datosRubro == null;
+            if (!errorServidor) {
+              await rubroRepository.saveDatosRubrosEval(datosRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId);
+            }
           }
+        }catch(e){
+          offlineServidor = true;
         }
-      }
-    }catch(e){
-      offlineServidor = true;
-      logger.severe('UpdateDatosCrearRubro unsuccessful: '+e.toString());
-    }
 
-    controller.add(UpdateDatosCrearRubroResponse(offlineServidor, errorServidor));
-    controller.close();
+        controller.add(UpdateDatosCrearRubroResponse(offlineServidor, errorServidor, false));
+        controller.close();
+
+      }
+
+
+    }else{
+      controller.add(UpdateDatosCrearRubroResponse(offlineServidor, errorServidor, false));
+      controller.close();
+    }
 
     return controller.stream;
 
   }
+
+
 
 }
 class UpdateDatosCrearRubroParams{
@@ -92,14 +153,16 @@ class UpdateDatosCrearRubroParams{
   SesionUi? sesionUi;
   String? tareaId;
   bool? casoTarea;
+  bool? casoSesion;
 
-  UpdateDatosCrearRubroParams(this.calendarioPeriodoId, this.silaboEventoId, this.sesionUi, this.tareaId, this.casoTarea);
+  UpdateDatosCrearRubroParams(this.calendarioPeriodoId, this.silaboEventoId, this.sesionUi, this.tareaId, this.casoTarea, this.casoSesion);
 
 }
 class UpdateDatosCrearRubroResponse{
   bool errorConexion;
   bool errorServidor;
+  bool successAprendizaje;
 
-  UpdateDatosCrearRubroResponse(this.errorConexion, this.errorServidor);
+  UpdateDatosCrearRubroResponse(this.errorConexion, this.errorServidor, this.successAprendizaje);
 }
 

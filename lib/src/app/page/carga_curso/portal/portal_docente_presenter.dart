@@ -6,6 +6,8 @@ import 'package:ss_crmeducativo_2/src/domain/usecase/get_anio_academico.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_cursos.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_programas_educativos.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_usuario.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_session_anio_academico.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_session_programa_academico.dart';
 
 class PortalDocentePresenter extends Presenter{
   late Function getUserOnNext, getUserOnComplete, getUserOnError;
@@ -16,10 +18,14 @@ class PortalDocentePresenter extends Presenter{
   late Function getProgramasEducativosOnComplete, getProgramasEducativosOnError;
   GetCursos _getCursos;
   late Function getCursosOnComplete, getCursosOnError;
+  UpdateSessionAnioAcademico _updateSessionAnioAcademico;
+  UpdateSessionProgramaAcademico _updateSessionProgramaAcademico;
 
   PortalDocentePresenter(ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo)
       : this._getSessionUsuario = new GetSessionUsuarioCase(configuracionRepo), _getAnioAcademico = new GetAnioAcademico(configuracionRepo),
         _updateProgramasEducativos = new UpdateProgramasEducativos(configuracionRepo, httpDatosRepo),
+        _updateSessionAnioAcademico = new UpdateSessionAnioAcademico(configuracionRepo),
+        _updateSessionProgramaAcademico = new UpdateSessionProgramaAcademico(configuracionRepo),
         _getCursos = new GetCursos(configuracionRepo);
 
   @override
@@ -39,8 +45,16 @@ class PortalDocentePresenter extends Presenter{
     _updateProgramasEducativos.execute(_GetProgramaEducativoCase(this), GetProgramasEducativosParams());
   }
 
-  void getCursos(ProgramaEducativoUi programaEducativoUi){
+  void getCursos(ProgramaEducativoUi? programaEducativoUi){
     _getCursos.execute(_GetCursosCase(this), GetCursosParams(programaEducativoUi!=null?programaEducativoUi.idPrograma??0:0));
+  }
+
+  void updateSessionAnioAcademicoId(int anioAcademicoId) {
+    _updateSessionAnioAcademico.execute(anioAcademicoId);
+  }
+
+  void updateSessionProgramaAcademicoId(int programaAcademicoId) {
+    _updateSessionProgramaAcademico.execute(programaAcademicoId);
   }
 
 }
@@ -89,7 +103,7 @@ class _GetAnioAcademicoCase extends Observer<GetAnioAcademicoResponse>{
   @override
   void onNext(GetAnioAcademicoResponse? response) {
     assert(presenter.getAnioAcadOnComplete != null);
-    presenter.getAnioAcadOnComplete(response?.anioAcademicoList, response?.anioAcademicoUi);
+    presenter.getAnioAcadOnComplete(response?.georeferenciaUiList, response?.anioAcademicoUi);
   }
 
 }

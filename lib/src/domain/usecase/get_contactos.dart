@@ -19,7 +19,7 @@ class GetContactos extends UseCase<GetContactosCaseResponse, GetContactosCasePar
     int docenteId = await configuracionRepository.getSessionEmpleadoId();
     List<ContactoUi> contactoUIList = await configuracionRepository.getListContacto(docenteId, anioAcademicoId);
     controller.add(GetContactosCaseResponse(agregarCabecera(contactoUIList, ConfiguracionRepository.CONTACTO_ALUMNO), agregarCabecera(contactoUIList, ConfiguracionRepository.CONTACTO_DOCENTE), agregarCabecera(contactoUIList, ConfiguracionRepository.CONTACTO_DIRECTIVO)));
-
+    controller.close();
     return controller.stream;
   }
 

@@ -123,7 +123,7 @@ class ItemRubroState extends State<ItemRubro>{
                         borderRadius: BorderRadius.all(Radius.circular(10)) // use instead of BorderRadius.all(Radius.circular(20))
                     ),
                   ),
-                  widget.calendarioPeriodoUI?.habilitado==1?Container():
+                  widget.calendarioPeriodoUI?.habilitadoProceso==1?Container():
                   Positioned(
                       top: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),
                       right: ColumnCountProvider.aspectRatioForWidthRubro(context, 8),

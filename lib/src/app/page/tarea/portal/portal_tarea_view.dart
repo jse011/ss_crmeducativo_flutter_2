@@ -524,7 +524,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView, PortalTareaContro
                                         Container(
                                           margin: EdgeInsets.only(top:  24, left: 24, right: 24),
                                           alignment: Alignment.centerLeft,
-                                          child: Text("Comentarios privados (Sólo los ve le alumno)", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 10),),
+                                          child: Text("Comentarios privados (Sólo los ve le foto_alumno)", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 10),),
                                         ),
                                         Container(
                                           margin: EdgeInsets.only(top:  4, left: 24, right: 24),

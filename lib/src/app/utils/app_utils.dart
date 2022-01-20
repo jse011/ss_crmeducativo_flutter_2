@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 
 class AppUtils {
 
-  static TimeOfDay horaTimeOfDay(String? hora_minuto){
+  static TimeOfDay? horaTimeOfDay(String? hora_minuto){//is 00:00:00 is null
+    print("hora_minuto: ${hora_minuto}");
     int hour = 0;
     int minuto = 0;
     try{
 
       List<String>? list = hora_minuto?.split(":");
-      if(list?.isEmpty??false){
+
+      if(list?.isNotEmpty??false){
         hour = int.parse(list![0]);
 
         if(list.length>1){
@@ -16,10 +18,11 @@ class AppUtils {
         }
 
       }
+
     }catch(e){
 
     }
-    return TimeOfDay(hour: hour, minute: minuto);
+    return hour>0||minuto>0?TimeOfDay(hour: hour, minute: minuto):null;
   }
 
   static DateTime timeOfDayDateTime(TimeOfDay timeOfDay){
@@ -38,6 +41,7 @@ class AppUtils {
     return vobj_abc[index];
 
   }
+
 
 
 }

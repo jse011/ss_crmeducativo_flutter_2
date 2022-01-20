@@ -33,9 +33,8 @@ class ResultadoView extends View{
 }
 
 class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with TickerProviderStateMixin{
-  late Animation<double> topBarAnimation;
+
   late final ScrollController scrollController = ScrollController();
-  late AnimationController animationController;
   late final ScrollControllers scrollControllers = ScrollControllers();
   Key? key;
 
@@ -43,12 +42,7 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
 
@@ -60,15 +54,6 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
       }
     });
 
-    animationController.reset();
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-    // Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
     super.initState();
   }
 
@@ -97,143 +82,126 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(0),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * 0),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context!).padding.top,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
-                            right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
-                            top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 16 - 8.0 ),
-                            bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 12 - 8.0)
-                        ),
-                        child: ControlledWidgetBuilder<ResultadoController>(
-                          builder: (context, controller) {
-                            return Stack(
-                              children: <Widget>[
-                                Positioned(
-                                    child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back,
-                                        color: AppTheme.nearlyBlack,
-                                        size: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 22 + 6 - 6)
-                                      ),
-                                      onPressed: () {
-                                        animationController.reverse().then<dynamic>((data) {
-                                          if (!mounted) {
-                                            return;
-                                          }
-                                          Navigator.of(this.context).pop();
-                                        });
-                                      },
-                                    )
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
-                                      bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
-                                      left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
-                                      right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_nota_final,
-                                        height: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 30),
-                                        width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 30),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 12),
-                                            top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 0)
-                                        ),
-                                        child: Text(
-                                          'Resultado',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 22) ,
-                                            letterSpacing: 0.8,
-                                            color: AppTheme.darkerText,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                  top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
-                                  right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
-                                  child:  InkWell(
-                                    onTap: ()=> controller.onClicPrecision(),
-                                    child: Container(
-                                      width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 95),
-                                      padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)),
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 6))),
-                                          color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(AppIcon.ic_presicion,
-                                            color: controller.precision? AppTheme.white :AppTheme.greyDarken1,
-                                            height:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 14),
-                                            width:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 14),
-                                          ),
-                                          Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 2)),),
-                                          Text("Precisión",
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                                letterSpacing: 0.5,
-                                                color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
-                                                fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(0),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * 0),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
               ),
-            );
-          },
+              Padding(
+                padding: EdgeInsets.only(
+                    left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                    right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                    top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 16 - 8.0 ),
+                    bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 12 - 8.0)
+                ),
+                child: ControlledWidgetBuilder<ResultadoController>(
+                  builder: (context, controller) {
+                    return Stack(
+                      children: <Widget>[
+                        Positioned(
+                            child:  IconButton(
+                              icon: Icon(Ionicons.arrow_back,
+                                  color: AppTheme.nearlyBlack,
+                                  size: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 22 + 6 - 6)
+                              ),
+                              onPressed: () {
+                                Navigator.of(this.context).pop();
+                              },
+                            )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                              bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                              left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 52),
+                              right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(AppIcon.ic_curso_nota_final,
+                                height: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 30),
+                                width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 30),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 12),
+                                    top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 0)
+                                ),
+                                child: Text(
+                                  'Resultado',
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 22) ,
+                                    letterSpacing: 0.8,
+                                    color: AppTheme.darkerText,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          top: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8),
+                          right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 10),
+                          child:  InkWell(
+                            onTap: ()=> controller.onClicPrecision(),
+                            child: Container(
+                              width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 95),
+                              padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 8)),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 6))),
+                                  color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(AppIcon.ic_presicion,
+                                    color: controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                    height:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 14),
+                                    width:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 14),
+                                  ),
+                                  Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 2)),),
+                                  Text("Precisión",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 0.5,
+                                        color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                        fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                                      )),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
         )
       ],
     );

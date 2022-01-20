@@ -67,22 +67,14 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
 
   RubroViewState(cursosUi) : super(RubroController(cursosUi, MoorCalendarioPeriodoRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorRubroRepository(), MoorResultadoRepository()));
 
-  late Animation<double> topBarAnimation;
   late final ScrollControllers scrollControllersProceso = ScrollControllers();
   late final ScrollControllers scrollControllersResultado = ScrollControllers();
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
-  late AnimationController animationController;
   int? _seletedItem = 0;
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
         if (topBarOpacity != 1.0) {
@@ -106,22 +98,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
       }
     });
 
-    animationController.reset();
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-// Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
-
     super.initState();
   }
 
   @override
   void dispose() {
-    animationController.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -450,330 +431,317 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context!).padding.top,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
-                        child:   ControlledWidgetBuilder<RubroController>(
-                          builder: (context, controller) {
-                            return Stack(
-                              children: <Widget>[
-                                Positioned(
-                                    child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size:  controller.seletedItem == 0 ?(22 + 6 - 6 * topBarOpacity): 22,),
-                                      onPressed: () {
-                                        animationController.reverse().then<dynamic>((data) {
-                                          if (!mounted) {
-                                            return;
-                                          }
-                                          Navigator.of(context).pop();
-                                        });
-                                      },
-                                    )
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 0, bottom: 8, left: 8, right: 0),
-                                  child:
-                                  topBarOpacity >= 1  && controller.seletedItem == 0 ?
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 8),
-                                    child:  Row(
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                    top: 16 - 8.0 * topBarOpacity,
+                    bottom: 12 - 8.0 * topBarOpacity),
+                child:   ControlledWidgetBuilder<RubroController>(
+                  builder: (context, controller) {
+                    return Stack(
+                      children: <Widget>[
+                        Positioned(
+                            child:  IconButton(
+                              icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size:  controller.seletedItem == 0 ?(22 + 6 - 6 * topBarOpacity): 22,),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 0, bottom: 8, left: 8, right: 0),
+                          child:
+                          topBarOpacity >= 1  && controller.seletedItem == 0 ?
+                          Padding(
+                            padding: EdgeInsets.only(top: 8),
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                    onTap: (){
+                                      showDialogButtom(controller);
+                                    },
+                                    child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        InkWell(
-                                            onTap: (){
-                                              showDialogButtom(controller);
-                                            },
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Text(_getnombreFiltro(controller.origenRubroUi, sesion: controller.listar_eval_sesiones),
-                                                    textAlign: TextAlign.left,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: TextStyle(
-                                                      fontFamily: AppTheme.fontTTNorms,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: 16 + 6 - 1 * topBarOpacity,
-                                                      color: HexColor("#35377A"),
-                                                    )
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.only(right: 8),
-                                                ),
-                                                Icon(Icons.keyboard_arrow_down_rounded,
-                                                  color: HexColor("#35377A"),
-                                                  size: 24 + 4 - 1 * topBarOpacity,)
-                                              ],
+                                        Text(_getnombreFiltro(controller.origenRubroUi, sesion: controller.listar_eval_sesiones),
+                                            textAlign: TextAlign.left,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16 + 6 - 1 * topBarOpacity,
+                                              color: HexColor("#35377A"),
                                             )
-                                        )
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 8),
+                                        ),
+                                        Icon(Icons.keyboard_arrow_down_rounded,
+                                          color: HexColor("#35377A"),
+                                          size: 24 + 4 - 1 * topBarOpacity,)
                                       ],
+                                    )
+                                )
+                              ],
+                            ),
+                          ):
+                          controller.seletedItem==0?
+                          Padding(
+                            padding: EdgeInsets.only(top: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 12, top: 8),
+                                  child: Text(
+                                    'Evaluación',
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16 + 6 - 6 * topBarOpacity,
+                                      letterSpacing: 0.8,
+                                      color: AppTheme.darkerText,
                                     ),
-                                  ):
-                                  controller.seletedItem==0?
+                                  ),
+                                )
+                              ],
+                            ),
+                          ): controller.seletedItem==1?Stack(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  //SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 , width: 35 +  6,),
                                   Padding(
-                                      padding: EdgeInsets.only(top: 8),
+                                    padding: EdgeInsets.only(left: 12, top: 8),
+                                    child: Text(
+                                      'Evaluación',
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16 + 6,
+                                        letterSpacing: 0.8,
+                                        color: AppTheme.white.withOpacity(0),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    left: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 48),
+                                    top: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14)
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: ()=> controller.onClicPrecision(),
+                                      child: Container(
+                                        width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
+                                        padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
+                                            color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(AppIcon.ic_presicion,
+                                              color: controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                              height:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
+                                              width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
+                                            ),
+                                            Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
+                                            Text("Precisión",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  letterSpacing: 0.5,
+                                                  color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
+                                                  fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
+                                    InkWell(
+                                      onTap: ()=> controller.onClickShowDialogInformar(),
+                                      child: Container(
+                                        width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
+                                        padding: EdgeInsets.only(
+                                            left:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16) ,
+                                            right:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
+                                            top:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8),
+                                            bottom:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)
+                                        ),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
+                                            color: HexColor(controller.cursosUi.color2)
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(Ionicons.send ,color: AppTheme.white, size:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 7 + 6 - 2 * topBarOpacity ), ),
+                                            Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
+                                            Text("Informar",
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  letterSpacing: 0.5,
+                                                  color:AppTheme.white,
+                                                  fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
+                                    InkWell(
+                                      //onTap: ()=> controller.onClicPrecision(),
+                                      child: Container(
+                                        width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 110),
+                                        padding: EdgeInsets.only(
+                                            left:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 12) ,
+                                            right:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 12),
+                                            top:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8),
+                                            bottom:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)
+                                        ),
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
+                                            color: HexColor(controller.cursosUi.color2)
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.find_in_page ,color: AppTheme.white, size:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14), ),
+                                            Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
+                                            FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text("Comprobar",
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    letterSpacing: 0.5,
+                                                    color:AppTheme.white,
+                                                    fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity) ,
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ):
+                          Container(
+                            margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 24),
+                            child: Stack(
+                              children: [
+                                Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SvgPicture.asset(AppIcon.ic_curso_nota_final, height: 28 +  6 - 10 * topBarOpacity, width: 28 +  6 - 10 * topBarOpacity),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 12, top: 4),
+                                        child: Text(
+                                          'Resultado',
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontFamily: AppTheme.fontTTNorms,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12 + 6 - 6 * topBarOpacity,
+                                            letterSpacing: 0.8,
+                                            color: AppTheme.darkerText,
+                                          ),
+                                        ),
+                                      ),
+
+                                    ]
+                                ),
+                                Positioned(
+                                  child:  InkWell(
+                                    onTap: ()=> controller.onClicPrecisionResultado(),
+                                    child: Container(
+                                      width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
+                                      padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
+                                          color:  controller.precisionResultado?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
+                                      ),
+                                      alignment: Alignment.center,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 12, top: 8),
-                                            child: Text(
-                                              'Evaluación',
-                                              textAlign: TextAlign.center,
+                                          SvgPicture.asset(AppIcon.ic_presicion,
+                                            color: controller.precisionResultado? AppTheme.white :AppTheme.greyDarken1,
+                                            height:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
+                                            width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
+                                          ),
+                                          Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
+                                          Text("Precisión",
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                fontFamily: AppTheme.fontTTNorms,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16 + 6 - 6 * topBarOpacity,
-                                                letterSpacing: 0.8,
-                                                color: AppTheme.darkerText,
-                                              ),
-                                            ),
-                                          )
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: 0.5,
+                                                color:  controller.precisionResultado? AppTheme.white :AppTheme.greyDarken1,
+                                                fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
+                                              )),
                                         ],
                                       ),
-                                  ): controller.seletedItem==1?Stack(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          //SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 35 +  6 , width: 35 +  6,),
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 12, top: 8),
-                                            child: Text(
-                                              'Evaluación',
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontFamily: AppTheme.fontTTNorms,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16 + 6,
-                                                letterSpacing: 0.8,
-                                                color: AppTheme.white.withOpacity(0),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            left: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 48),
-                                            top: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14)
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            InkWell(
-                                              onTap: ()=> controller.onClicPrecision(),
-                                              child: Container(
-                                                width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
-                                                padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
-                                                    color:  controller.precision?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    SvgPicture.asset(AppIcon.ic_presicion,
-                                                      color: controller.precision? AppTheme.white :AppTheme.greyDarken1,
-                                                      height:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
-                                                      width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
-                                                    ),
-                                                    Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
-                                                    Text("Precisión",
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w500,
-                                                          letterSpacing: 0.5,
-                                                          color:  controller.precision? AppTheme.white :AppTheme.greyDarken1,
-                                                          fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
-                                                        )),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
-                                            InkWell(
-                                              onTap: ()=> controller.onClickShowDialogInformar(),
-                                              child: Container(
-                                                width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
-                                                padding: EdgeInsets.only(
-                                                    left:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16) ,
-                                                    right:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
-                                                    top:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8),
-                                                    bottom:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)
-                                                ),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
-                                                    color: HexColor(controller.cursosUi.color2)
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(Ionicons.send ,color: AppTheme.white, size:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 7 + 6 - 2 * topBarOpacity ), ),
-                                                    Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
-                                                    Text("Informar",
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.w500,
-                                                          letterSpacing: 0.5,
-                                                          color:AppTheme.white,
-                                                          fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
-                                                        )),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
-                                            InkWell(
-                                              //onTap: ()=> controller.onClicPrecision(),
-                                              child: Container(
-                                                width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 110),
-                                                padding: EdgeInsets.only(
-                                                    left:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 12) ,
-                                                    right:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 12),
-                                                    top:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8),
-                                                    bottom:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)
-                                                ),
-                                                decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
-                                                    color: HexColor(controller.cursosUi.color2)
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    Icon(Icons.find_in_page ,color: AppTheme.white, size:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14), ),
-                                                    Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
-                                                    FittedBox(
-                                                      fit: BoxFit.scaleDown,
-                                                      child: Text("Comprobar",
-                                                          overflow: TextOverflow.ellipsis,
-                                                          style: TextStyle(
-                                                            fontWeight: FontWeight.w500,
-                                                            letterSpacing: 0.5,
-                                                            color:AppTheme.white,
-                                                            fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity) ,
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ):
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 24),
-                                    child: Stack(
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(AppIcon.ic_curso_nota_final, height: 28 +  6 - 10 * topBarOpacity, width: 28 +  6 - 10 * topBarOpacity),
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 12, top: 4),
-                                              child: Text(
-                                                'Resultado',
-                                                textAlign: TextAlign.center,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontFamily: AppTheme.fontTTNorms,
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 12 + 6 - 6 * topBarOpacity,
-                                                  letterSpacing: 0.8,
-                                                  color: AppTheme.darkerText,
-                                                ),
-                                              ),
-                                            ),
-
-                                          ]
-                                        ),
-                                       Positioned(
-                                         child:  InkWell(
-                                         onTap: ()=> controller.onClicPrecisionResultado(),
-                                         child: Container(
-                                           width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
-                                           padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8)),
-                                           decoration: BoxDecoration(
-                                               borderRadius: BorderRadius.all(Radius.circular( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 6))),
-                                               color:  controller.precisionResultado?HexColor(controller.cursosUi.color2) : AppTheme.greyLighten3
-                                           ),
-                                           alignment: Alignment.center,
-                                           child: Row(
-                                             mainAxisAlignment: MainAxisAlignment.center,
-                                             crossAxisAlignment: CrossAxisAlignment.center,
-                                             children: [
-                                               SvgPicture.asset(AppIcon.ic_presicion,
-                                                 color: controller.precisionResultado? AppTheme.white :AppTheme.greyDarken1,
-                                                 height:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
-                                                 width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
-                                               ),
-                                               Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 2)),),
-                                               Text("Precisión",
-                                                   overflow: TextOverflow.ellipsis,
-                                                   style: TextStyle(
-                                                     fontWeight: FontWeight.w500,
-                                                     letterSpacing: 0.5,
-                                                     color:  controller.precisionResultado? AppTheme.white :AppTheme.greyDarken1,
-                                                     fontSize:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 5 + 6 - 1 * topBarOpacity ),
-                                                   )),
-                                             ],
-                                           ),
-                                         ),
-                                       ),
-                                         right: 0,
-                                       )
-                                      ],
                                     ),
                                   ),
-                                ),
-                                /*Positioned(
+                                  right: 0,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        /*Positioned(
                                   right: 10,
                                   child: ClipOval(
                                     child: Material(
@@ -790,17 +758,13 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                     ),
                                   ),
                                 )*/
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                      ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
+              )
+            ],
+          ),
         )
       ],
     );
@@ -1033,7 +997,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
           nombre = "Rúbricas de pregunta";
           break;
         case OrigenRubroUi.CREADO_DOCENTE:
-          nombre = "Rúbricas del curso";
+          nombre = "Rúbricas del carga_curso";
           break;
         case OrigenRubroUi.TODOS:
           nombre = "Mostrar todos";
@@ -1055,11 +1019,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
         if(s is ContactoUi){
           tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 100));
         } else if(s is CalendarioPeriodoUI){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70)*3);
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 75)*3);
         }else if(s is CapacidadUi){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 75));
         }else{
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 75));
         }
       }
 
@@ -1421,7 +1385,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                       ),
                       child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
                     ),
-                    if(controller.calendarioPeriodoUI?.habilitado != 1)
+                    if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
                     Positioned(
                         bottom: 4,
                         right: 4,
@@ -1444,7 +1408,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                     ),
                     child: _getTipoNota(controller.tipoNotaUi,o.valorTipoNotaUi, o.nota, controller.precision),
                   ),
-                  if(controller.calendarioPeriodoUI?.habilitado != 1)
+                  if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
                   Positioned(
                       bottom: 4,
                       right: 4,
@@ -1470,7 +1434,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                             ),
                             child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
                           ),
-                          if(controller.calendarioPeriodoUI?.habilitado != 1)
+                          if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
                           Positioned(
                               bottom: 4,
                               right: 4,
@@ -1540,7 +1504,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
         padding: EdgeInsets.only(left: 24, right: 48),
         child: Stack(
           children: [
-            (controller.rubricaEvaluacionUiList?.isEmpty??false)?
+            controller.calendarioPeriodoUI==null||(controller.calendarioPeriodoUI??0)==0?
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -1549,7 +1513,20 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 ),
                 Padding(padding: EdgeInsets.all(4)),
                 Center(
-                  child: Text("Sin evaluaciones", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                  child: Text("Seleciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                )
+              ],
+            ):
+            controller.rubricaEvaluacionUiList?.isEmpty??false?
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                ),
+                Padding(padding: EdgeInsets.all(4)),
+                Center(
+                  child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                 )
               ],
             ):Container(),
@@ -1559,7 +1536,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 SliverList(
                     delegate: SliverChildListDelegate(
                       [
-                        controller.calendarioPeriodoUI==null || (controller.calendarioPeriodoUI?.habilitado??0)==1?
+                        controller.calendarioPeriodoUI==null || (controller.calendarioPeriodoUI?.habilitadoProceso??0)==1?
                         Padding(padding: EdgeInsets.only( top: 32)):
                         Container(
                           margin: EdgeInsets.only(top:24, bottom: 16),
@@ -1690,42 +1667,56 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
-                                    fontFamily: AppTheme.fontTTNorms
-                                ),
-                              ),
-                            ),
-                            (unidadUi.sesionUiList?.length??0)>0?
                             Row(
                               children: [
-                                Expanded(child: Container()),
-                                InkWell(
-                                  onTap: ()=> controller.onClickMostrarTodo(unidadUi),
-                                  child: Container(
-                                    padding: EdgeInsets.only(left: 4 , right: 4, top: 4, bottom: 4),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                                        color: AppTheme.colorSesion
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Icon((unidadUi.toogle??false)?Ionicons.contract: Ionicons.expand,color: AppTheme.white, size: 16),
-                                      ],
+                                Expanded(
+                                    child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
+                                    color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                  ),
+                                  margin: EdgeInsets.only(
+                                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+                                      bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 10)
+                                  ),
+                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthSesion(context, 16)),
+                                  child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
+                                    style: TextStyle(
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppTheme.fontTTNorms
                                     ),
                                   ),
                                 )
+                                ),
+                                (unidadUi.sesionUiList?.length??0)>0?
+                                  Padding(
+                                      padding: EdgeInsets.only(left: 16),
+                                      child: InkWell(
+                                        onTap: ()=> controller.onClickMostrarTodo(unidadUi),
+                                        child: Container(
+                                          padding: EdgeInsets.only(left: 4 , right: 4, top: 4, bottom: 4),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                                              color: AppTheme.colorSesion
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              Icon((unidadUi.toogle??false)?Ionicons.contract: Ionicons.expand,color: AppTheme.white, size: 16),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  )
+                                    :Container(),
                               ],
-                            ):Container(),
+                            ),
                             (unidadUi.sesionUiList?.length??0)>0?
                             ListView.builder(
-                              padding: EdgeInsets.only(top: 16),
+                              padding: EdgeInsets.only(top: 10, left: 12, right: 4, bottom: 16),
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: unidadUi.sesionUiList?.length,
@@ -1756,7 +1747,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                   }
                                 }
                                 return Container(
-                                  padding: EdgeInsets.only(bottom: 10),
+                                  padding: EdgeInsets.only(bottom: 16),
                                   child: Column(
                                     children: [
                                       InkWell(
@@ -1766,7 +1757,20 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                         child: Container(
                                           child:  Container(
                                             padding: EdgeInsets.all(8),
-                                            color: AppTheme.colorSesion.withOpacity(0.1),
+                                            decoration: BoxDecoration(
+                                              color: AppTheme.colorSesion.withOpacity(0.1),
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8)),
+                                                  topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8)),
+
+                                                  bottomLeft: Radius.circular(
+                                                      sesionUi.toogle2??false?0:ColumnCountProvider.aspectRatioForWidthSesion(context, 8)
+                                                  ),
+                                                  bottomRight: Radius.circular(
+                                                      sesionUi.toogle2??false?0:ColumnCountProvider.aspectRatioForWidthSesion(context, 8)
+                                                  ),
+                                              )
+                                            ),
                                             child: Row(
                                               children: [
                                                 Container(

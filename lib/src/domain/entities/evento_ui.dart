@@ -27,10 +27,12 @@ class EventoUi {
   DateTime? fechaPublicacion;
   bool? publicado;
   String? horaEvento;
-  int? cargaCursoId;
   EventosListaEnvioUi? listaEnvioUi;
   DateTime? fecaCreacion;
   int? estadoId;
+  String? nombreCalendario;
+  int? cargaCursoId;
+  int? cargaAcademicaId;
   DateTime getFecha() {
     return this.fecha??DateTime(1900);
   }

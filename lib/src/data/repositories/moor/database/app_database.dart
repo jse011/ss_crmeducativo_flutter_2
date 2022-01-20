@@ -67,9 +67,13 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_u
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipo_evaluacion_rubro.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipos.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tipos_rubro.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/actividad_sesion.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/campotematico_sesion.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/competencia_sesion.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/desempenio_icd_sesion.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/instrumento_evaluacion_sesion.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/recursos_actividad_sesion.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/recursos_sesion.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/rel_unidad_evento_tipo.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/sesion_evento.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/unidad_sesion/unidad_evento.dart';
@@ -85,7 +89,8 @@ part 'app_database.g.dart';
   CalendarioAcademico, Usuario, WebConfigs, Criterio, TipoEvaluacionRubro, TiposRubro, TipoNotaRubro, ValorTipoNotaRubro, RubroEvaluacionProceso, ArchivoRubro, EquipoEvaluacion,
   EvaluacionProceso, RubroCampotematico, RubroComentario, RubroEvalRNPFormula, ContactoDocente, CriterioRubroEvaluacion, Calendario, CalendarioListaUsuario, Evento, EventoPersona,
   ListaUsuarioDetalle, ListaUsuarios, PersonaEvento, RelacionesEvento, TipoEvento, UsuarioEvento, UnidadEvento, SesionEvento, RelUnidadEvento, RubroUpdateServidor, CalendarioPeriodoCargaCurso,
-  TipoNotaResultado, ValorTipoNotaResultado, Tarea, TareaUnidad, TareaAlumno, TareaAlumnoArchivo, TareaRecursoDidactico, EventoAdjunto, TareaEvalDetalle, CompetenciaSesion, DesempenioIcdSesion, CampotematicoSesion])
+  TipoNotaResultado, ValorTipoNotaResultado, Tarea, TareaUnidad, TareaAlumno, TareaAlumnoArchivo, TareaRecursoDidactico, EventoAdjunto, TareaEvalDetalle, CompetenciaSesion, DesempenioIcdSesion, CampotematicoSesion,
+  ActividadSesion, InstrumentoEvaluacionSesion, RecursosActividadSesion, RecursoSesion])
 class AppDataBase extends _$AppDataBase {
   @override
   int get schemaVersion => 1;
@@ -105,6 +110,18 @@ class AppDataBase extends _$AppDataBase {
     return query;
   }
 
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (m, from, to) async {
+        // create missing tables that were missing in version 1
+        if (from == 1) {
+          await m.createTable(tareaAlumno);
+          // you also need this line for every other table not created in the first version
+        }
+      },
+    );
+  }
 }
 
 /*

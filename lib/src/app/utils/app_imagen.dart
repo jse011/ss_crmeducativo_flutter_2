@@ -32,5 +32,8 @@ class AppImagen {
   static final String splash_educar = "assets/educar/logo_educar.png";
   static final String splash_icrm = "assets/docentementor/logo_docente_mentor.png";
 
-
+  static final String fondo_sesion12 = "assets/images/fondosesion12.png";
+  static final String fondo_sesion13 = "assets/images/fondosesion13.png";
+  static final String usuario_default = "assets/images/user_default.png";
 }
+

@@ -24,36 +24,25 @@ class GetUnidadSesion extends UseCase<GetUnidadSesionResponse, GetUnidadSesionPa
       executeServidor() async{
         bool offlineServidor = false;
         bool errorServidor = false;
-        try{
-          String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
-          Map<String, dynamic>? unidadSesion = await httpRepository.getUnidadSesion(urlServidorLocal, usuarioId,  params?.calendarioPeridoId??0,  params?.silaboEventoId??0, params?.rolId??0);
-          errorServidor = unidadSesion==null;
-          if(!errorServidor){
-            await unidadSesionRepository.saveUnidadSesion(unidadSesion, usuarioId,  params?.calendarioPeridoId??0,  params?.silaboEventoId??0, params?.rolId??0);
+        List<UnidadUi> eventoUIList = [];
+        if((params?.calendarioPeridoId??0)>0){
+          try{
+            String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
+            Map<String, dynamic>? unidadSesion = await httpRepository.getUnidadSesion(urlServidorLocal, usuarioId,  params?.calendarioPeridoId??0,  params?.silaboEventoId??0, params?.rolId??0);
+            errorServidor = unidadSesion==null;
+            if(!errorServidor){
+              await unidadSesionRepository.saveUnidadSesion(unidadSesion, usuarioId,  params?.calendarioPeridoId??0,  params?.silaboEventoId??0, params?.rolId??0);
+            }
+          }catch(e){
+            offlineServidor = true;
           }
-        }catch(e){
-          offlineServidor = true;
-        }
-        print("unidadUIList int: ");
-        List<UnidadUi> eventoUIList = await unidadSesionRepository.getUnidadSesion(usuarioId, params?.calendarioPeridoId??0,  params?.silaboEventoId??0, params?.rolId??0);
-        for(UnidadUi unidadUi in eventoUIList){
-          unidadUi.cantSesionesVisibles = 3;
-          for(SesionUi sesionUi in unidadUi.sesionUiList??[]){
-             if(sesionUi.estadoEjecucionId == 315){
-               sesionUi.estadoEjecucion = "Creado";
-               sesionUi.colorSesion = "#1E88E5";
-             }else if(sesionUi.estadoEjecucionId == 316){
-               sesionUi.estadoEjecucion = "Programado";
-               sesionUi.colorSesion = "#FB8C00";
-             }else if(sesionUi.estadoEjecucionId == 317){
-               sesionUi.estadoEjecucion = "Hecho";
-               sesionUi.colorSesion = "#4caf50";
-             }else if(sesionUi.estadoEjecucionId == 318){
-               sesionUi.estadoEjecucion = "Pendiente";
-               sesionUi.colorSesion = "#F44336";
-             }
+          print("unidadUIList rolId: ${params?.rolId}");
+          eventoUIList = await unidadSesionRepository.getUnidadSesion(usuarioId, params?.calendarioPeridoId??0,  params?.silaboEventoId??0, params?.rolId??0);
+          for(UnidadUi unidadUi in eventoUIList){
+            unidadUi.cantSesionesVisibles = 3;
           }
         }
+
         controller.add(GetUnidadSesionResponse(errorServidor, offlineServidor, eventoUIList));
         controller.close();
       }

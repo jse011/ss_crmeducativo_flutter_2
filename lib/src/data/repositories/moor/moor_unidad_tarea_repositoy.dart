@@ -13,6 +13,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tipos.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_youtube_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
@@ -197,28 +198,28 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       TareaRecusoUi tareaRecusoUi = TareaRecusoUi();
       tareaRecusoUi.recursoDidacticoId = item.recursoDidacticoId;
       switch(item.tipoId) {
-        case UnidadTareaRepository.TIPO_RECURSO_AUDIO:
+        case DomainTipos.TIPO_RECURSO_AUDIO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_AUDIO;
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_DIAPOSITIVA:
+        case DomainTipos.TIPO_RECURSO_DIAPOSITIVA:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_DIAPOSITIVA;
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_DOCUMENTO:
+        case DomainTipos.TIPO_RECURSO_DOCUMENTO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_DOCUMENTO;
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_HOJA_CALUCLO:
+        case DomainTipos.TIPO_RECURSO_HOJA_CALUCLO:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_HOJA_CALCULO;
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_IMAGEN:
+        case DomainTipos.TIPO_RECURSO_IMAGEN:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_IMAGEN;
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_PDF:
+        case DomainTipos.TIPO_RECURSO_PDF:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_PDF;
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_VIDEO:
-        case UnidadTareaRepository.TIPO_RECURSO_VINCULO:
+        case DomainTipos.TIPO_RECURSO_VIDEO:
+        case DomainTipos.TIPO_RECURSO_VINCULO:
 
-          if(item.tipoId == UnidadTareaRepository.TIPO_RECURSO_VINCULO && (tareaRecusoUi.driveId??"").isNotEmpty){
+          if(item.tipoId == DomainTipos.TIPO_RECURSO_VINCULO && (tareaRecusoUi.driveId??"").isNotEmpty){
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VIDEO;
             break;
           }
@@ -235,10 +236,10 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
           }
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_YOUTUBE:
+        case DomainTipos.TIPO_RECURSO_YOUTUBE:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
           break;
-        case UnidadTareaRepository.TIPO_RECURSO_MATERIALES:
+        case DomainTipos.TIPO_RECURSO_MATERIALES:
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_RECURSO;
           break;
         default:
@@ -420,29 +421,29 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
     switch(tipoRecursosUi){
 
       case TipoRecursosUi.TIPO_VIDEO:
-        return UnidadTareaRepository.TIPO_RECURSO_VIDEO;
+        return DomainTipos.TIPO_RECURSO_VIDEO;
       case TipoRecursosUi.TIPO_VINCULO:
-        return UnidadTareaRepository.TIPO_RECURSO_VINCULO;
+        return DomainTipos.TIPO_RECURSO_VINCULO;
       case TipoRecursosUi.TIPO_DOCUMENTO:
-        return UnidadTareaRepository.TIPO_RECURSO_DOCUMENTO;
+        return DomainTipos.TIPO_RECURSO_DOCUMENTO;
       case TipoRecursosUi.TIPO_IMAGEN:
-        return UnidadTareaRepository.TIPO_RECURSO_IMAGEN;
+        return DomainTipos.TIPO_RECURSO_IMAGEN;
       case TipoRecursosUi.TIPO_AUDIO:
-        return UnidadTareaRepository.TIPO_RECURSO_AUDIO;
+        return DomainTipos.TIPO_RECURSO_AUDIO;
       case TipoRecursosUi.TIPO_HOJA_CALCULO:
-        return UnidadTareaRepository.TIPO_RECURSO_HOJA_CALUCLO;
+        return DomainTipos.TIPO_RECURSO_HOJA_CALUCLO;
       case TipoRecursosUi.TIPO_DIAPOSITIVA:
-        return UnidadTareaRepository.TIPO_RECURSO_DIAPOSITIVA;
+        return DomainTipos.TIPO_RECURSO_DIAPOSITIVA;
       case TipoRecursosUi.TIPO_PDF:
-        return UnidadTareaRepository.TIPO_RECURSO_PDF;
+        return DomainTipos.TIPO_RECURSO_PDF;
       case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
-        return UnidadTareaRepository.TIPO_RECURSO_YOUTUBE;
+        return DomainTipos.TIPO_RECURSO_YOUTUBE;
       case TipoRecursosUi.TIPO_VINCULO_DRIVE:
-        return UnidadTareaRepository.TIPO_RECURSO_VINCULO;
+        return DomainTipos.TIPO_RECURSO_VINCULO;
       case TipoRecursosUi.TIPO_RECURSO:
-        return UnidadTareaRepository.TIPO_RECURSO_MATERIALES;
+        return DomainTipos.TIPO_RECURSO_MATERIALES;
       case TipoRecursosUi.TIPO_ENCUESTA:
-        return UnidadTareaRepository.TIPO_RECURSO_MATERIALES;
+        return DomainTipos.TIPO_RECURSO_MATERIALES;
         break;
     }
   }

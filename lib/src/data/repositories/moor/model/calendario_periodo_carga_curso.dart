@@ -13,6 +13,9 @@ class CalendarioPeriodoCargaCurso extends Table{
    TextColumn get nombre => text().nullable()();
    IntColumn get habilitado => integer().nullable()();
    IntColumn get cargaCursoId => integer()();
+   IntColumn get habilitadoProceso => integer().nullable()();
+   IntColumn get habilitadoResultado => integer().nullable()();
+
    @override
    Set<Column> get primaryKey => {calendarioPeriodoId, cargaCursoId};
   

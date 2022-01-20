@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:ss_crmeducativo_2/src/domain/entities/drive_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 abstract class HttpDatosRepository{
 
@@ -34,6 +35,10 @@ abstract class HttpDatosRepository{
   Future<HttpStream> getUrlDownloadTareaEvaluacion(String urlServidorLocal, int? silaboEventoId, int? unidadAprendizajeId, String? tareaId, int? personaId, String? archivo, HttpSuccessValue2 httpSuccess);
   Future<List<dynamic>?> getSesionesHoy(String urlServidorLocal, int? anioAcademicoId, int? docenteId);
   Future<Map<String, dynamic>?> getAprendizajeSesion(String urlServidorLocal, int? sesionAprendizajeId);
+  Future<HttpStream?> uploadFilePersona(String urlServidorLocal, PersonaUi? personaUi, File? foto, bool? soloCambiarFoto, bool? removeFoto, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen);
+  Future<bool?> saveEstadoSesion(String urlServidorLocal, int? sesionAprendizajeId, int estado_hecho, int usuarioId);
+  Future<List<dynamic>?> getActividadesSesion(String urlServidorLocal, int? sesionAprendizajeId);
+  Future<Map<String, dynamic>?> updateUsuario(String urlServidorLocal, int usuarioId);
 
 }
 

@@ -6,6 +6,7 @@ class CalendarioPeriodoUI{
   DateTime? fechaFin;
   int? estadoId;
   int? tipoId;
-  int? habilitado;
+  int? habilitadoProceso;
+  int? habilitadoResultado;
 
 }

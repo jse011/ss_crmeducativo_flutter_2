@@ -112,7 +112,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _rowList2.add(""); //Espacio
     _rowList2.add(""); //Espacio
 
-    _columnList2.add(ContactoUi()); //Titulo alumno
+    _columnList2.add(ContactoUi()); //Titulo foto_alumno
 
     _columnList2.addAll(rubricaEvaluacionUi?.rubrosDetalleList??[]);
     _columnList2.add(EvaluacionUi()); //Titulo Nota Final
@@ -130,13 +130,13 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
         evaluacionUiCabecera = rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
         if (evaluacionUiCabecera == null){
-          evaluacionUiCabecera = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
+          evaluacionUiCabecera = EvaluacionUi(); //Una evaluacion vasia significa que el foto_alumno no tiene evaluacion
           evaluacionUiCabecera.rubroEvaluacionUi = rubricaEvaluacionUi;
           row.soloApareceEnElCurso = true;
           evaluacionUiCabecera.alumnoId = row.personaId;
           rubricaEvaluacionUi?.evaluacionUiList?.add(evaluacionUiCabecera);
         }
-        evaluacionUiCabecera.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
+        evaluacionUiCabecera.personaUi = row; //se remplasa la persona con la lista de foto_alumno del carga_curso por que contiene informacion de vigencia
 
         //cellList.add(evaluacionUiCabecera);
         evaluacionPublicadoUi = EvaluacionPublicadoUi(evaluacionUiCabecera);
@@ -164,12 +164,12 @@ class EvaluacionIndicadorMultipleController extends Controller {
         if (row is PersonaUi) {
           EvaluacionUi? evaluacionUi = rubricaEvaluacionUi.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
           if (evaluacionUi == null){
-            evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el alumno no tiene evaluacion
+            evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el foto_alumno no tiene evaluacion
             evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
             evaluacionUi.rubroEvaluacionId = rubricaEvaluacionUi.rubroEvaluacionId;
             row.soloApareceEnElCurso = true;
           }
-          evaluacionUi.personaUi = row; //se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
+          evaluacionUi.personaUi = row; //se remplasa la persona con la lista de foto_alumno del carga_curso por que contiene informacion de vigencia
           cellList.add(evaluacionUi);
         } else {
           cellList.add(""); //Espacio
@@ -519,7 +519,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   bool isCalendarioDesactivo() {
-    return calendarioPeriodoUI?.habilitado != 1;
+    return calendarioPeriodoUI?.habilitadoProceso != 1;
   }
 
   void onSaveTecladoPresicion(nota, EvaluacionUi? evaluacionUi) {

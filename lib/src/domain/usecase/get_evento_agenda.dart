@@ -47,7 +47,7 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
         List<TipoEventoUi> tiposUiList = await agendaRepository.getTiposEvento();
         print("tipoEventoUiList jse size: " + tiposUiList.length.toString());
         for(TipoEventoUi tipoEventoUi in tiposUiList)tipoEventoUi.disable = false;
-        List<EventoUi> eventoUIList = await agendaRepository.getEventosAgenda(usuarioId, georeferenciaId,params?.tipoEventoId??0);
+        List<EventoUi> eventoUIList = await agendaRepository.getEventosAgenda(usuarioId, georeferenciaId,params?.tipoEventoId??0, params?.cargaCursoId);
 
 
         eventoUIList.sort((o1, o2){
@@ -119,7 +119,8 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
 class GetEventoAgendaParams {
   int? tipoEventoId;
   bool? traerTipos;
-  GetEventoAgendaParams(this.tipoEventoId, this.traerTipos);
+  int? cargaCursoId;
+  GetEventoAgendaParams(this.tipoEventoId, this.traerTipos, this.cargaCursoId);
 }
 
 class GetEvaluacionCaseResponse {

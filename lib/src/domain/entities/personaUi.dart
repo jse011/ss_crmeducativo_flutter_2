@@ -10,4 +10,7 @@ class PersonaUi{
   bool? contratoVigente;
   bool? soloApareceEnElCurso;
   PersonaUi? apoderadoUi;
+  String? correo;
+  String? fechaNacimiento;
+  String? fechaNacimiento2;
 }

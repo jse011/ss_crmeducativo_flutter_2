@@ -54,12 +54,11 @@ class RubroCrearView extends View{
 
 }
 class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController> with TickerProviderStateMixin{
-  late Animation<double> topBarAnimation;
+
   late final ScrollController scrollController = ScrollController();
   late final ScrollController verticalscrollController = ScrollController();
   late final ScrollControllers crollControllers = ScrollControllers();
   late double topBarOpacity = 0.0;
-  late AnimationController animationController;
 
   RubroCrearController? controller;
 
@@ -88,13 +87,6 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
   @override
   void initState() {
 
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
         if (topBarOpacity != 1.0) {
@@ -117,15 +109,6 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
         }
       }
     });
-    animationController.reset();
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-// Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
 
     super.initState();
 
@@ -531,122 +514,110 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: ControlledWidgetBuilder<RubroCrearController>(
-                    builder: (context, controller) {
-                      if(controller.mensaje!=null&&controller.mensaje!.isNotEmpty){
-                        Fluttertoast.showToast(
-                          msg: controller.mensaje!,
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                        );
-                        controller.successMsg();
-                      }
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: ControlledWidgetBuilder<RubroCrearController>(
+            builder: (context, controller) {
+              if(controller.mensaje!=null&&controller.mensaje!.isNotEmpty){
+                Fluttertoast.showToast(
+                  msg: controller.mensaje!,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                );
+                controller.successMsg();
+              }
 
-                      return Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).padding.top,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 8,
-                                right: 24,
-                                top: 16 - 8.0 * topBarOpacity,
-                                bottom: 12 - 8.0 * topBarOpacity),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Icon(Icons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                  onPressed: () async {
-                                    bool? respuesta = await _showMaterialDialog(controller);
-                                    if(respuesta??false){
-                                      Navigator.of(context).pop(true);
-                                    }
-                                  },
-                                ),
-                                Expanded(
-                                  flex: 4,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Evaluación',
-                                      textAlign: TextAlign.left,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontFamily: AppTheme.fontTTNormsMedium,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16 + 6 - 6 * topBarOpacity,
-                                        letterSpacing: 1.2,
-                                        color: AppTheme.darkerText,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Material(
-                                  color: getColorCurso(controller),
-                                  borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                  child: InkWell(
-                                    focusColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    hoverColor: Colors.transparent,
-                                    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                    splashColor: AppTheme.grey.withOpacity(0.4),
-                                    onTap: ()  {
-                                      print("guardar");
-                                      controller.onSave();
-                                    },
-                                    child:
-                                    Container(
-                                        padding: const EdgeInsets.only(top: 10, left: 8, bottom: 8, right: 8),
-                                        child: Row(
-                                          children: [
-                                            Text("GUARDAR",
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: AppTheme.white,
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: AppTheme.fontName,
-                                              ),),
-                                          ],
-                                        )
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      );
-                    },
+              return Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.top,
                   ),
-                ),
-              ),
-            );
-          },
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 8,
+                        right: 24,
+                        top: 16 - 8.0 * topBarOpacity,
+                        bottom: 12 - 8.0 * topBarOpacity),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                          onPressed: () async {
+                            bool? respuesta = await _showMaterialDialog(controller);
+                            if(respuesta??false){
+                              Navigator.of(context).pop(true);
+                            }
+                          },
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Evaluación',
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: AppTheme.fontTTNormsMedium,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16 + 6 - 6 * topBarOpacity,
+                                letterSpacing: 1.2,
+                                color: AppTheme.darkerText,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Material(
+                          color: getColorCurso(controller),
+                          borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                          child: InkWell(
+                            focusColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                            splashColor: AppTheme.grey.withOpacity(0.4),
+                            onTap: ()  {
+                              print("guardar");
+                              controller.onSave();
+                            },
+                            child:
+                            Container(
+                                padding: const EdgeInsets.only(top: 10, left: 8, bottom: 8, right: 8),
+                                child: Row(
+                                  children: [
+                                    Text("GUARDAR",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: AppTheme.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: AppTheme.fontName,
+                                      ),),
+                                  ],
+                                )
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
         )
       ],
     );
@@ -665,328 +636,316 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                     MediaQuery.of(context).padding.top +
                     0,
               ),
-              child:  AnimatedBuilder(
-                animation: animationController,
-                builder: (BuildContext? context, Widget? child) {
-                  return FadeTransition(
-                    opacity: topBarAnimation,
-                    child: Transform(
-                      transform: Matrix4.translationValues(
-                          0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                      child:  Form(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        child: CustomScrollView(
-                            controller: scrollController,
-                            slivers: <Widget>[
-                              SliverList(
-                                  delegate: SliverChildListDelegate([
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
-                                      child:  TextFormField(
-                                        autofocus: false,
-                                        controller: _tiuloRubricacontroller,
-                                        textAlign: TextAlign.start,
-                                        style: Theme.of(context!).textTheme.caption?.copyWith(
-                                          fontFamily: AppTheme.fontName,
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: "Título de la rúbrica *",
-                                          labelStyle: TextStyle(
-                                              color:  getColorCurso(controller),
-                                              fontFamily: AppTheme.fontTTNormsMedium
-                                          ),
-                                          helperText: " ",
-                                          contentPadding: EdgeInsets.all(15.0),
-                                          prefixIcon: Icon(
-                                            Ionicons.apps_outline,
-                                            color: getColorCurso(controller),
-                                          ),
+              child:  Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: CustomScrollView(
+                    controller: scrollController,
+                    slivers: <Widget>[
+                      SliverList(
+                          delegate: SliverChildListDelegate([
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
+                              child:  TextFormField(
+                                autofocus: false,
+                                controller: _tiuloRubricacontroller,
+                                textAlign: TextAlign.start,
+                                style: Theme.of(context).textTheme.caption?.copyWith(
+                                  fontFamily: AppTheme.fontName,
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: "Título de la rúbrica *",
+                                  labelStyle: TextStyle(
+                                      color:  getColorCurso(controller),
+                                      fontFamily: AppTheme.fontTTNormsMedium
+                                  ),
+                                  helperText: " ",
+                                  contentPadding: EdgeInsets.all(15.0),
+                                  prefixIcon: Icon(
+                                    Ionicons.apps_outline,
+                                    color: getColorCurso(controller),
+                                  ),
 
-                                          suffixIcon:(controller.tituloRubrica?.isNotEmpty??false) ?
-                                          IconButton(
-                                            onPressed: (){
-                                              controller.clearTitulo();
-                                              _tiuloRubricacontroller.clear();
-                                            },
-                                            icon: Icon(
-                                              Ionicons.close_circle,
-                                              color: getColorCurso(controller),
-                                            ),
-                                          ):null,
-                                          errorStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: getColorCurso(controller),
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: getColorCurso(controller).withOpacity(0.5),
-                                            ),
-                                          ),
-                                          focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: getColorCurso(controller)
-                                            ),
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: getColorCurso(controller),
-                                            ),
-                                          ),
-                                          hintText: "Ingrese un título",
-                                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontSize: 14,
-                                            color: getColorCurso(controller).withOpacity(0.5),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: getColorCurso(controller),
-                                            ),
-                                          ),
-                                          focusColor: AppTheme.colorAccent,
-                                        ),
-                                        onChanged: (str) {
-                                          controller.changeTituloRubrica(str);
-                                        },
-                                        onSaved: (str) {
-                                          //  To do
-                                        },
-                                      ),
+                                  suffixIcon:(controller.tituloRubrica?.isNotEmpty??false) ?
+                                  IconButton(
+                                    onPressed: (){
+                                      controller.clearTitulo();
+                                      _tiuloRubricacontroller.clear();
+                                    },
+                                    icon: Icon(
+                                      Ionicons.close_circle,
+                                      color: getColorCurso(controller),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
-                                      child: DropDownFormField2<FormaEvaluacionUi>(
-                                        inputDecoration: InputDecoration(
-                                          labelText: "Forma de evaluación",
-                                          labelStyle: TextStyle(
-                                            color:  getColorCurso(controller),
-                                            fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontSize: 14,
-                                          ),
-                                          helperText: " ",
-                                          contentPadding: EdgeInsets.all(15.0),
-                                          prefixIcon: Icon(
-                                            Icons.people_alt_outlined,
-                                            color: getColorCurso(controller),
-                                          ),
-
-                                          suffixIcon:  IconButton(
-                                            onPressed: (){
-                                              controller.clearTitulo();
-                                              _tiuloRubricacontroller.clear();
-                                            },
-                                            icon: Icon(
-                                              Ionicons.caret_down,
-                                              color: getColorCurso(controller),
-                                            ),
-                                            iconSize: 15,
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: getColorCurso(controller).withOpacity(0.5),
-                                            ),
-                                          ),
-                                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontSize: 14,
-                                            color: getColorCurso(controller).withOpacity(0.5),
-                                          ),
-                                        ),
-                                        onChanged: (item){
-                                          controller.onSelectFormaEvaluacion(item);
-                                        },
-                                        menuItems: controller.formaEvaluacionUiList.map<DropdownMenuItem<FormaEvaluacionUi>>((item) {
-                                          return DropdownMenuItem<FormaEvaluacionUi>(child:
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 32),
-                                            child: Text(item.nombre??"", style: TextStyle(
-                                              fontFamily: AppTheme.fontName,
-                                              fontSize: 15,
-                                              color: Colors.black,),),
-                                          )
-                                            , value: item,);
-                                        }).toList(),
-                                        value: controller.formaEvaluacionUi,
-                                      ),
+                                  ):null,
+                                  errorStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: getColorCurso(controller),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
-                                      child: DropDownFormField2<TipoEvaluacionUi>(
-                                        inputDecoration: InputDecoration(
-                                          labelText: "Tipo de evaluación",
-                                          labelStyle: TextStyle(
-                                            color:  getColorCurso(controller),
-                                            fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontSize: 14,
-                                          ),
-                                          helperText: " ",
-                                          contentPadding: EdgeInsets.all(15.0),
-                                          prefixIcon: Icon(
-                                            Ionicons.apps_outline,
-                                            color: getColorCurso(controller),
-                                          ),
-
-                                          suffixIcon:  IconButton(
-                                            onPressed: (){
-                                              controller.clearTitulo();
-                                              _tiuloRubricacontroller.clear();
-                                            },
-                                            icon: Icon(
-                                              Ionicons.caret_down,
-                                              color: getColorCurso(controller),
-                                            ),
-                                            iconSize: 15,
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: getColorCurso(controller).withOpacity(0.5),
-                                            ),
-                                          ),
-                                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontSize: 14,
-                                            color: getColorCurso(controller).withOpacity(0.5),
-                                          ),
-                                        ),
-                                        onChanged: (item){
-                                          controller.onSelectTipoEvaluacion(item);
-                                        },
-                                        menuItems: controller.tipoEvaluacionUiList.map<DropdownMenuItem<TipoEvaluacionUi>>((item) {
-                                          return DropdownMenuItem<TipoEvaluacionUi>(child:
-                                          Padding(
-                                            padding: EdgeInsets.only(left: 32),
-                                            child: Text(item.nombre??"", style: TextStyle(
-                                              fontFamily: AppTheme.fontName,
-                                              fontSize: 15,
-                                              color: Colors.black,
-                                            ),),
-                                          )
-                                            , value: item,);
-                                        }).toList(),
-                                        value: controller.tipoEvaluacionUi,
-                                      ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: getColorCurso(controller).withOpacity(0.5),
                                     ),
-                                    Row(
-                                      children: [
-                                        Expanded(child: Container(),),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 8, top: 4,right: 24),
-                                          child: Icon(
-                                            Ionicons.help_circle_outline,
-                                            color: getColorCurso(controller),
-                                          ),
-                                        )
-
-                                      ],
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                        color: getColorCurso(controller)
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 4),
-                                      child:  InkWell(
-                                        onTap: (){
-                                          showDialogTipos(controller);
-                                        },
-                                        child: InputDecorator(
-                                          textAlign: TextAlign.start,
-                                          decoration:  InputDecoration(
-                                            labelText: "Promedio de logro",
-                                            labelStyle: TextStyle(
-                                              color:  getColorCurso(controller),
-                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 14,
-                                            ),
-                                            helperText: "Opcional, puede dar clic en la interrogación para conocer más del promedio de logro seleccionado.",
-                                            helperMaxLines: 3,
-                                            helperStyle: TextStyle(
-                                              fontFamily: AppTheme.fontName,
-                                              fontSize: 10,
-                                            ),
-                                            contentPadding: EdgeInsets.all(15.0),
-                                            prefixIcon: Container(padding: EdgeInsets.all(12), height: 15, width:15, child: SvgPicture.asset(AppIcon.ic_evaluar, color: getColorCurso(controller)),),
-                                            suffixIcon:  IconButton(
-                                              onPressed: (){
-                                                controller.clearTitulo();
-                                                _tiuloRubricacontroller.clear();
-                                              },
-                                              icon: Icon(
-                                                Ionicons.ellipsis_vertical,
-                                                color: getColorCurso(controller),
-                                              ),
-                                              iconSize: 15,
-                                            ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(8.0),
-                                              borderSide: BorderSide(
-                                                color: getColorCurso(controller).withOpacity(0.5),
-                                              ),
-                                            ),
-                                            hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 14,
-                                              color: getColorCurso(controller).withOpacity(0.5),
-                                            ),
-                                          ),
-                                          child: Text(controller.tipoNotaUi?.nombre??"", style: TextStyle(
-                                            fontFamily: AppTheme.fontName,
-                                            fontSize: 15,
-                                            color: Colors.black,
-                                          ),),
-                                        ),
-                                      ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: getColorCurso(controller),
                                     ),
-                                    Row(
-                                      children: [
-                                        Padding(padding: EdgeInsets.only(left: 24, top: 16),
-                                          child:  ElevatedButton.icon(
-                                            style: ElevatedButton.styleFrom(
-                                              primary: getColorCurso(controller), // background
-                                              onPrimary: Colors.white, // foreground
-                                            ),
-                                            onPressed: () {
-                                              showCamposAccion(controller);
-                                            },
-                                            icon: SvgPicture.asset(AppIcon.ic_velocimetro, color: AppTheme.white, width: 18, height: 18,),
-                                            label: Text("AGREGAR CRITERIO"),
-                                          ),
-                                        )
-                                      ],
+                                  ),
+                                  hintText: "Ingrese un título",
+                                  hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: AppTheme.fontTTNormsMedium,
+                                    fontSize: 14,
+                                    color: getColorCurso(controller).withOpacity(0.5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: getColorCurso(controller),
                                     ),
-
-                                  ])
+                                  ),
+                                  focusColor: AppTheme.colorAccent,
+                                ),
+                                onChanged: (str) {
+                                  controller.changeTituloRubrica(str);
+                                },
+                                onSaved: (str) {
+                                  //  To do
+                                },
                               ),
-                              SliverToBoxAdapter(
-                                child: showTableTipoNota(controller),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
+                              child: DropDownFormField2<FormaEvaluacionUi>(
+                                inputDecoration: InputDecoration(
+                                  labelText: "Forma de evaluación",
+                                  labelStyle: TextStyle(
+                                    color:  getColorCurso(controller),
+                                    fontFamily: AppTheme.fontTTNormsMedium,
+                                    fontSize: 14,
+                                  ),
+                                  helperText: " ",
+                                  contentPadding: EdgeInsets.all(15.0),
+                                  prefixIcon: Icon(
+                                    Icons.people_alt_outlined,
+                                    color: getColorCurso(controller),
+                                  ),
+
+                                  suffixIcon:  IconButton(
+                                    onPressed: (){
+                                      controller.clearTitulo();
+                                      _tiuloRubricacontroller.clear();
+                                    },
+                                    icon: Icon(
+                                      Ionicons.caret_down,
+                                      color: getColorCurso(controller),
+                                    ),
+                                    iconSize: 15,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: getColorCurso(controller).withOpacity(0.5),
+                                    ),
+                                  ),
+                                  hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: AppTheme.fontTTNormsMedium,
+                                    fontSize: 14,
+                                    color: getColorCurso(controller).withOpacity(0.5),
+                                  ),
+                                ),
+                                onChanged: (item){
+                                  controller.onSelectFormaEvaluacion(item);
+                                },
+                                menuItems: controller.formaEvaluacionUiList.map<DropdownMenuItem<FormaEvaluacionUi>>((item) {
+                                  return DropdownMenuItem<FormaEvaluacionUi>(child:
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 32),
+                                    child: Text(item.nombre??"", style: TextStyle(
+                                      fontFamily: AppTheme.fontName,
+                                      fontSize: 15,
+                                      color: Colors.black,),),
+                                  )
+                                    , value: item,);
+                                }).toList(),
+                                value: controller.formaEvaluacionUi,
                               ),
-                              SliverList(
-                                  delegate: SliverChildListDelegate([
-                                    Container(
-                                      height: 100,
-                                    )
-                                  ])
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
+                              child: DropDownFormField2<TipoEvaluacionUi>(
+                                inputDecoration: InputDecoration(
+                                  labelText: "Tipo de evaluación",
+                                  labelStyle: TextStyle(
+                                    color:  getColorCurso(controller),
+                                    fontFamily: AppTheme.fontTTNormsMedium,
+                                    fontSize: 14,
+                                  ),
+                                  helperText: " ",
+                                  contentPadding: EdgeInsets.all(15.0),
+                                  prefixIcon: Icon(
+                                    Ionicons.apps_outline,
+                                    color: getColorCurso(controller),
+                                  ),
+
+                                  suffixIcon:  IconButton(
+                                    onPressed: (){
+                                      controller.clearTitulo();
+                                      _tiuloRubricacontroller.clear();
+                                    },
+                                    icon: Icon(
+                                      Ionicons.caret_down,
+                                      color: getColorCurso(controller),
+                                    ),
+                                    iconSize: 15,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: getColorCurso(controller).withOpacity(0.5),
+                                    ),
+                                  ),
+                                  hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: AppTheme.fontTTNormsMedium,
+                                    fontSize: 14,
+                                    color: getColorCurso(controller).withOpacity(0.5),
+                                  ),
+                                ),
+                                onChanged: (item){
+                                  controller.onSelectTipoEvaluacion(item);
+                                },
+                                menuItems: controller.tipoEvaluacionUiList.map<DropdownMenuItem<TipoEvaluacionUi>>((item) {
+                                  return DropdownMenuItem<TipoEvaluacionUi>(child:
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 32),
+                                    child: Text(item.nombre??"", style: TextStyle(
+                                      fontFamily: AppTheme.fontName,
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                    ),),
+                                  )
+                                    , value: item,);
+                                }).toList(),
+                                value: controller.tipoEvaluacionUi,
                               ),
-                            ]
-                        ),
+                            ),
+                            Row(
+                              children: [
+                                Expanded(child: Container(),),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 8, top: 4,right: 24),
+                                  child: Icon(
+                                    Ionicons.help_circle_outline,
+                                    color: getColorCurso(controller),
+                                  ),
+                                )
+
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 4),
+                              child:  InkWell(
+                                onTap: (){
+                                  showDialogTipos(controller);
+                                },
+                                child: InputDecorator(
+                                  textAlign: TextAlign.start,
+                                  decoration:  InputDecoration(
+                                    labelText: "Promedio de logro",
+                                    labelStyle: TextStyle(
+                                      color:  getColorCurso(controller),
+                                      fontFamily: AppTheme.fontTTNormsMedium,
+                                      fontSize: 14,
+                                    ),
+                                    helperText: "Opcional, puede dar clic en la interrogación para conocer más del promedio de logro seleccionado.",
+                                    helperMaxLines: 3,
+                                    helperStyle: TextStyle(
+                                      fontFamily: AppTheme.fontName,
+                                      fontSize: 10,
+                                    ),
+                                    contentPadding: EdgeInsets.all(15.0),
+                                    prefixIcon: Container(padding: EdgeInsets.all(12), height: 15, width:15, child: SvgPicture.asset(AppIcon.ic_evaluar, color: getColorCurso(controller)),),
+                                    suffixIcon:  IconButton(
+                                      onPressed: (){
+                                        controller.clearTitulo();
+                                        _tiuloRubricacontroller.clear();
+                                      },
+                                      icon: Icon(
+                                        Ionicons.ellipsis_vertical,
+                                        color: getColorCurso(controller),
+                                      ),
+                                      iconSize: 15,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                        color: getColorCurso(controller).withOpacity(0.5),
+                                      ),
+                                    ),
+                                    hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppTheme.fontTTNormsMedium,
+                                      fontSize: 14,
+                                      color: getColorCurso(controller).withOpacity(0.5),
+                                    ),
+                                  ),
+                                  child: Text(controller.tipoNotaUi?.nombre??"", style: TextStyle(
+                                    fontFamily: AppTheme.fontName,
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Padding(padding: EdgeInsets.only(left: 24, top: 16),
+                                  child:  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: getColorCurso(controller), // background
+                                      onPrimary: Colors.white, // foreground
+                                    ),
+                                    onPressed: () {
+                                      showCamposAccion(controller);
+                                    },
+                                    icon: SvgPicture.asset(AppIcon.ic_velocimetro, color: AppTheme.white, width: 18, height: 18,),
+                                    label: Text("AGREGAR CRITERIO"),
+                                  ),
+                                )
+                              ],
+                            ),
+
+                          ])
                       ),
-                    ),
-                  );
-                },
+                      SliverToBoxAdapter(
+                        child: showTableTipoNota(controller),
+                      ),
+                      SliverList(
+                          delegate: SliverChildListDelegate([
+                            Container(
+                              height: 100,
+                            )
+                          ])
+                      ),
+                    ]
+                ),
               )
           );
         });

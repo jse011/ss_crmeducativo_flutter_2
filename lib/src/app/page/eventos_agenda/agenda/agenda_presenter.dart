@@ -1,4 +1,5 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/agenda_evento_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
@@ -17,8 +18,8 @@ class AgendaPresenter extends Presenter{
         _getEventoAgenda = GetEventoAgenda(agendaEventoRepo, configuracionRepo, httpDatosRepo),
         _changeEstadoEventoDocente = ChangeEstadoEventoDocente(httpDatosRepo, configuracionRepo, agendaEventoRepo);
 
-  void getEventoAgenda(){
-    _getEventoAgenda.execute(_GetEventoAgendaCase(this), GetEventoAgendaParams(620, false));//620 = tipo Agenda
+  void getEventoAgenda(CursosUi? cursosUi){
+    _getEventoAgenda.execute(_GetEventoAgendaCase(this), GetEventoAgendaParams(620, false, cursosUi?.cargaCursoId));//620 = tipo Agenda
   }
 
   @override

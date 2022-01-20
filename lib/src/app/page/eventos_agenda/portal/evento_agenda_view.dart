@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter/animation.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/fancy_shimmer_image.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/close_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
@@ -42,8 +44,10 @@ import 'evento_agenda_controller_2.dart';
 class EventoAgendaView extends View{
   UsuarioUi? usuarioUi;
   final AnimationController animationController;
+  final MenuBuilder? menuBuilder;
+  final CloseSession closeSessionHandler;
 
-  EventoAgendaView(this.usuarioUi, {required this.animationController});
+  EventoAgendaView(this.usuarioUi, {required this.animationController, this.menuBuilder, required this.closeSessionHandler});
 
   @override
   _EventoAgendaViewState createState() => _EventoAgendaViewState(this.usuarioUi);
@@ -89,7 +93,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
       }
     });
 
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
 // Here you can write your code
       setState(() {
         widget.animationController.forward();
@@ -103,141 +107,153 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
   @override
   Widget get view =>  ControlledWidgetBuilder<EventoAgendaController2>(
       builder: (context, controller){
+        SchedulerBinding.instance?.addPostFrameCallback((_) {
+          widget.menuBuilder?.call(getMenuView(controller));
+        });
+
         return WillPopScope(
           onWillPop: () async {
-            controller.onBackPress();
-            return false;
+            bool salir = controller.onBackPress();
+            if(salir){
+              return await widget.closeSessionHandler.closeSession()??false;
+            }
+            return salir;
           },
-          child: Stack(
-            children: <Widget>[
-              getMainTab(),
-              getAppBarUI(),
-              (controller.msgConexion??"").isNotEmpty?
-              Positioned(
-                bottom: 100.0,
-                right: 1,
-                left: 1,
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        //color:
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: AppTheme.black.withOpacity(0.5),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
-                          child: Text(controller.msgConexion??"", style: TextStyle(color: AppTheme.white),),
-                        ),
-                      )
-                    ],
+          child:  AnnotatedRegion<SystemUiOverlayStyle>(
+            value: AppSystemUi.getSystemUiOverlayStyleOscuro(),
+            child: Stack(
+              children: <Widget>[
+                getMainTab(),
+                getAppBarUI(),
+                (controller.msgConexion??"").isNotEmpty?
+                Positioned(
+                  bottom: 100.0,
+                  right: 1,
+                  left: 1,
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          //color:
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            color: AppTheme.black.withOpacity(0.5),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
+                            child: Text(controller.msgConexion??"", style: TextStyle(color: AppTheme.white),),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ):Container(),
-              controller.isLoading?
-              ArsProgressWidget(
-                  blur: 2,
-                  backgroundColor: Color(0x33000000),
-                  animationDuration: Duration(milliseconds: 500)):
-              Container(),
-              if(controller.showDialogEliminar)
-                ArsProgressWidget(
+                ):Container(),
+                controller.isLoading?
+                controller.eventoUiList!=null? ArsProgressWidget(
                     blur: 2,
                     backgroundColor: Color(0x33000000),
-                    animationDuration: Duration(milliseconds: 500),
-                    loadingWidget: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16), // if you need this
-                        side: BorderSide(
-                          color: Colors.grey.withOpacity(0.2),
-                          width: 1,
+                    animationDuration: Duration(milliseconds: 500)):
+                Center(
+                  child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.colorPrimary,),
+                ):Container(),
+                if(controller.showDialogEliminar)
+                  ArsProgressWidget(
+                      blur: 2,
+                      backgroundColor: Color(0x33000000),
+                      animationDuration: Duration(milliseconds: 500),
+                      loadingWidget: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16), // if you need this
+                          side: BorderSide(
+                            color: Colors.grey.withOpacity(0.2),
+                            width: 1,
+                          ),
                         ),
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.all(16),
-                        constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  child: Icon(Ionicons.trash, size: 35, color: AppTheme.white,),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppTheme.colorAccent),
-                                ),
-                                Padding(padding: EdgeInsets.all(8)),
-                                Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(padding: EdgeInsets.all(8),
-                                          child: Text("Eliminar evento", style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: AppTheme.fontTTNormsMedium
-                                          ),),
-                                        ),
-                                        Padding(padding: EdgeInsets.all(4),),
-                                        Text("¿Está seguro de eliminar el evento? Recuerde que si elimina se borrará permanentemente el evento.",
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              height: 1.5
-                                          ),),
-                                        Padding(padding: EdgeInsets.all(4),),
-                                      ],
-                                    )
-                                )
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: OutlinedButton(
-                                      onPressed: () {
-                                        controller.onClickCancelarEliminar();
-                                      },
-                                      child: Text('Cancelar'),
-                                      style: OutlinedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    )
-                                ),
-                                Padding(padding: EdgeInsets.all(8)),
-                                Expanded(child: ElevatedButton(
-                                  onPressed: () async {
-                                    bool? result = await controller.onClickAceptarEliminar();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.red,
-                                    onPrimary: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
+                        child: Container(
+                          padding: EdgeInsets.all(16),
+                          constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 50,
+                                    height: 50,
+                                    child: Icon(Ionicons.trash, size: 35, color: AppTheme.white,),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppTheme.colorAccent),
                                   ),
-                                  child: Padding(padding: EdgeInsets.all(4), child: Text('Eliminar'),),
-                                )),
-                              ],
-                            )
-                          ],
+                                  Padding(padding: EdgeInsets.all(8)),
+                                  Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(padding: EdgeInsets.all(8),
+                                            child: Text("Eliminar evento", style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: AppTheme.fontTTNormsMedium
+                                            ),),
+                                          ),
+                                          Padding(padding: EdgeInsets.all(4),),
+                                          Text("¿Está seguro de eliminar el evento? Recuerde que si elimina se borrará permanentemente el evento.",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                height: 1.5
+                                            ),),
+                                          Padding(padding: EdgeInsets.all(4),),
+                                        ],
+                                      )
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: OutlinedButton(
+                                        onPressed: () {
+                                          controller.onClickCancelarEliminar();
+                                        },
+                                        child: Text('Cancelar'),
+                                        style: OutlinedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      )
+                                  ),
+                                  Padding(padding: EdgeInsets.all(8)),
+                                  Expanded(child: ElevatedButton(
+                                    onPressed: () async {
+                                      bool? result = await controller.onClickAceptarEliminar();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.red,
+                                      onPrimary: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                    ),
+                                    child: Padding(padding: EdgeInsets.all(4), child: Text('Eliminar'),),
+                                  )),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                ),
-              controller.dialogAdjuntoDownload?
-              dialogAdjuntoDownload(controller):
-              Container(),
-            ],
+                      )
+                  ),
+                controller.dialogAdjuntoDownload?
+                dialogAdjuntoDownload(controller):
+                Container(),
+              ],
+            ),
           ),
         );
       });
@@ -283,9 +299,9 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
     return Container(
       //margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
       height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,65),
-      width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,82),
+      width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 78),
       decoration: BoxDecoration(
-        color: color.withOpacity(tipo.toogle??false?1:0.5),
+        color: color.withOpacity(tipo.toogle??false?1:1),
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,8.0)),
             bottomLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,8.0)),
@@ -293,8 +309,8 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
             topRight:Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,8.0))),
         boxShadow: <BoxShadow>[
           BoxShadow(
-              color: AppTheme.grey.withOpacity(0.4),
-              offset: const Offset(1.1, 1.1),
+              color: color.withOpacity(tipo.toogle??false?1:0.3),
+              offset: Offset(0, tipo.toogle??false?3:1),
               blurRadius: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,10.0)),
         ],
       ),
@@ -354,8 +370,6 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
       color: Colors.transparent,
     );
   }
-
-
 
   Widget getAppBarUI() {
     return Column(
@@ -426,10 +440,9 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                     controller: scrollController,
                     headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                       return <Widget>[
-
                         SliverAppBar(
                           toolbarHeight: 65 - 5 * topBarOpacity,
-                          expandedHeight: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 210.0) + MediaQuery.of(context).padding.top,
+                          expandedHeight: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 225.0) + MediaQuery.of(context).padding.top,
                           backgroundColor: AppTheme.white,
                           //brightness: Brightness.light,
                           systemOverlayStyle: AppSystemUi.getSystemUiOverlayStyleOscuro(),
@@ -438,6 +451,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                           automaticallyImplyLeading: false,
                           floating: false,
                           pinned: true,
+
                           shape: ContinuousRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(80), bottomRight: Radius.circular(0))),
@@ -452,12 +466,12 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                             //minWidth: 200.0,
                                             maxWidth: 450.0,
                                           ),
-                                          padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 45) + MediaQuery.of(context).padding.top,
+                                          padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 55) + MediaQuery.of(context).padding.top,
                                               right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10),
                                               left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10)),
                                           child: Wrap(
-                                            spacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
-                                            runSpacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
+                                            spacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                                            runSpacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
                                             direction: Axis.horizontal,
                                             alignment: WrapAlignment.center,
                                             children: <Widget>[
@@ -475,15 +489,16 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                 }),
                           ),
                         )
-
                       ];
                     },
                     body: ControlledWidgetBuilder<EventoAgendaController2>(
                       builder: (context, controller){
                         return Stack(
                           children: [
-                            if(controller.eventoUiList.isEmpty)
-                              Column(
+                            controller.eventoUiList == null?
+                            Container():
+                            controller.eventoUiList!.isEmpty?
+                            Column(
                                 children: [
                                   Expanded(
                                       flex: 5,
@@ -504,7 +519,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                       child: Container()
                                   )
                                 ],
-                              ),
+                              ):Container(),
                             CustomScrollView(
                               slivers: <Widget>[
                                 if(controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA)
@@ -528,7 +543,15 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                                   padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)),
                                                   decoration: BoxDecoration(
                                                     color:  HexColor("#71bb74").withOpacity(1),
-                                                    borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)), // use instead of BorderRadius.all(Radius.circular(20))
+                                                    borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)), // use instead of BorderRadius.all(Radius.circular(20)),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                          color: (Color(0XFF71bb74)).withOpacity(0.4),
+                                                          offset:  Offset(0,3),
+                                                          blurRadius: 6.0,
+                                                          spreadRadius: 0
+                                                      ),
+                                                    ],
                                                   ),
                                                   width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 410),
                                                   height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 70),
@@ -544,7 +567,8 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                                       alignment: Alignment.center,
                                                       child: Text("Crear un evento",  style: TextStyle(
                                                           fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 18),
-                                                          fontWeight: FontWeight.w500,
+                                                          fontWeight: FontWeight.w700,
+                                                          fontFamily: AppTheme.fontTTNorms,
                                                           color:  AppTheme.white
                                                       ),),
                                                     ),
@@ -560,7 +584,8 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                 SliverList(
                                     delegate: SliverChildBuilderDelegate(
                                             (BuildContext context, int index){
-                                          EventoUi eventoUi = controller.eventoUiList[index];
+                                          EventoUi? eventoUi = controller.eventoUiList?[index];
+
                                           return ItemEventoView(eventoUi, tipoEditar: controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA,
                                             onClickMoreEventoAdjuntoDowload:(eventoUi) {
                                             controller.onClickMoreEventoAdjuntoDowload(eventoUi);
@@ -586,7 +611,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                             },
                                           );
                                         },
-                                        childCount: controller.eventoUiList.length
+                                        childCount: controller.eventoUiList?.length??0
                                     )
                                 ),
                                 SliverList(
@@ -611,7 +636,6 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
       },
     );
   }
-
 
   String getImagen(TipoRecursosUi? tipoRecursosUi){
     switch(tipoRecursosUi??TipoRecursosUi.TIPO_VINCULO){
@@ -767,5 +791,55 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
     );
   }
 
+  Widget getMenuView(EventoAgendaController2 controller) {
+    return Container(
+      margin: EdgeInsets.only(
+          top: 16,
+          left: 24,
+          right: 24,
+          bottom: 64
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Filtrar publicaciones",
+            style: TextStyle(
+              fontFamily: AppTheme.fontTTNorms,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: AppTheme.colorPrimary
+            ),
+          ),
+          Padding(padding: EdgeInsets.all(6)),
+          Container(
+            color: AppTheme.darkerText,
+            height: 2,
+          ),
+          Padding(padding: EdgeInsets.all(12)),
+          Container(
+            alignment: Alignment.center,
+            child:  Wrap(
+              spacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
+              runSpacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
+              direction: Axis.horizontal,
+              alignment: WrapAlignment.start,
+              children: <Widget>[
+                for(var item in controller.tipoEventoList)
+                  chip(item, (tipoEvento){
+                    controller.onSelectedTipoEvento(tipoEvento);
+                  }),
+                //chipEspacio()
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
 }
 
+typedef MenuBuilder = void Function(Widget menuView);

@@ -47,7 +47,7 @@ class AgendaController extends Controller{
     super.onInitState();
     _progress = true;
     refreshUI();
-    _presenter.getEventoAgenda();
+    _presenter.getEventoAgenda(cursosUi);
   }
 
   @override
@@ -59,7 +59,7 @@ class AgendaController extends Controller{
   void cambiosEvento() {
     _progress = true;
     refreshUI();
-    _presenter.getEventoAgenda();
+    _presenter.getEventoAgenda(cursosUi);
   }
 
   void onClickCancelarEliminar() {

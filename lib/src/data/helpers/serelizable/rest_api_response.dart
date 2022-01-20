@@ -665,6 +665,8 @@ class CalendarioCargaCursoSerial {
   String? nombre;
   int? habilitado;
   int? cargaCursoId;
+  int? habilitadoProceso;
+  int? habilitadoResultado;
 
   CalendarioCargaCursoSerial(
       {this.calendarioPeriodoId,
@@ -676,7 +678,10 @@ class CalendarioCargaCursoSerial {
         this.diazPlazo,
         this.habilitado,
         this.nombre,
-        this.cargaCursoId});
+        this.cargaCursoId,
+        this.habilitadoProceso,
+        this.habilitadoResultado
+      });
 
   factory CalendarioCargaCursoSerial.fromJson(Map<String, dynamic> json) => _$CalendarioCargaCursoSerialFromJson(json);
 
@@ -2463,7 +2468,7 @@ class BESesionHoyDocenteSerial {
   String? color3;
   String? color2;
   String? color1;
-
+  bool? habilitadoProceso;
 
   BESesionHoyDocenteSerial(
       {this.sesionAprendizajeId,
@@ -2506,7 +2511,8 @@ class BESesionHoyDocenteSerial {
       this.path,
       this.color3,
       this.color2,
-      this.color1});
+      this.color1,
+      this.habilitadoProceso});
 
   factory BESesionHoyDocenteSerial.fromJson(Map<String, dynamic> json) => _$BESesionHoyDocenteSerialFromJson(json);
 

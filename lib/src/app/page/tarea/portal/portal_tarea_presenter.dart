@@ -81,7 +81,7 @@ class PortalTareaPresenter extends Presenter{
 
   void onActualizarRubro(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi? cursosUi, SesionUi? sesionUi, TareaUi? tareaUi) {
     _getDatosCrearRubro.dispose();
-    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi?.silaboEventoId??0, sesionUi, tareaUi?.tareaId, true));
+    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi?.silaboEventoId??0, sesionUi, tareaUi?.tareaId, true, false));
   }
 
   void getRubroEvaluacion(String? tareaId, CursosUi? cursosUi ){

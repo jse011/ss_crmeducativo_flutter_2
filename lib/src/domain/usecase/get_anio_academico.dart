@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/anio_acemico_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/georeferencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 
@@ -18,28 +19,35 @@ class GetAnioAcademico extends UseCase<GetAnioAcademicoResponse, GetAnioAcademic
       int usuarioId = await repository.getSessionUsuarioId();
       AnioAcademicoUi? anioAcademicoUiSelected = null;
 
+      List<GeoreferenciaUi> georeferenciaUiList = await repository.getGeoreferenciaList(usuarioId);
+      int anioAcademicoId = await repository.getSessionAnioAcademicoId();
+      for(GeoreferenciaUi georeferenciaUi in georeferenciaUiList){
 
-
-      List<AnioAcademicoUi> anioAcademicoUiList = await repository.getAnioAcademicoList(usuarioId);
-
-      for (AnioAcademicoUi anioAcademicoUi in anioAcademicoUiList) {
-        if (anioAcademicoUi.toogle??false) {
-          anioAcademicoUiSelected = anioAcademicoUi;
-        }
-      }
-
-      if(anioAcademicoUiSelected==null)
-        for (AnioAcademicoUi anioAcademicoUi in anioAcademicoUiList) {
-          if (anioAcademicoUi.vigente??false) {
-              anioAcademicoUiSelected = anioAcademicoUi;
-              repository.updateSessionAnioAcademicoId(anioAcademicoUi.anioAcademicoId??0);
+        for(AnioAcademicoUi anioAcademicoUi in georeferenciaUi.anioAcademicoUiList??[]){
+          anioAcademicoUi.toogle = anioAcademicoUi.anioAcademicoId == anioAcademicoId;
+          if(anioAcademicoUi.toogle??false){
+            anioAcademicoUiSelected = anioAcademicoUi;
           }
         }
 
-      if(anioAcademicoUiSelected == null && anioAcademicoUiList.isNotEmpty){
-        anioAcademicoUiSelected = anioAcademicoUiList[0];
+        if(anioAcademicoUiSelected==null){
+          for (AnioAcademicoUi anioAcademicoUi in georeferenciaUi.anioAcademicoUiList??[]) {
+            if (anioAcademicoUi.vigente??false) {
+              anioAcademicoUiSelected = anioAcademicoUi;
+              repository.updateSessionAnioAcademicoId(anioAcademicoUi.anioAcademicoId??0);
+            }
+          }
+        }
+
+        if(anioAcademicoUiSelected == null && (georeferenciaUi.anioAcademicoUiList??[]).isNotEmpty){
+          anioAcademicoUiSelected = georeferenciaUi.anioAcademicoUiList![0];
+        }
+
       }
-      controller.add(GetAnioAcademicoResponse(anioAcademicoUiList, anioAcademicoUiSelected));
+
+
+
+      controller.add(GetAnioAcademicoResponse(georeferenciaUiList, anioAcademicoUiSelected));
       logger.finest('GetAnioAcademico successful.');
       controller.close();
     } catch (e) {
@@ -50,8 +58,6 @@ class GetAnioAcademico extends UseCase<GetAnioAcademicoResponse, GetAnioAcademic
     return controller.stream;
   }
 
-
-
 }
 
 class GetAnioAcademicoParams {
@@ -59,9 +65,8 @@ class GetAnioAcademicoParams {
 }
 
 class GetAnioAcademicoResponse {
-  List<AnioAcademicoUi> anioAcademicoList;
+  List<GeoreferenciaUi> georeferenciaUiList;
   AnioAcademicoUi? anioAcademicoUi;
-
-  GetAnioAcademicoResponse(this.anioAcademicoList, this.anioAcademicoUi);
+  GetAnioAcademicoResponse(this.georeferenciaUiList, this.anioAcademicoUi);
 
 }

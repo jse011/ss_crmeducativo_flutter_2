@@ -30,8 +30,8 @@ class ItemEventoView extends StatefulWidget{
   OnClickEditar? onClickEditar;
   OnClickPublicar? onClickPublicar;
   OnClickMegusta? onClickMegusta;
-
-  ItemEventoView(this.eventoUi, {this.tipoEditar, this.onClickMoreEventoAdjuntoDowload, this.onClickPreview, this.onClickPreviewComplejo, this.onClickEditar, this.onClickMegusta, this.onClickEliminar, this.onClickPublicar});
+  Color? color;
+  ItemEventoView(this.eventoUi, {this.tipoEditar, this.onClickMoreEventoAdjuntoDowload, this.onClickPreview, this.onClickPreviewComplejo, this.onClickEditar, this.onClickMegusta, this.onClickEliminar, this.onClickPublicar, this.color = const Color(0XFF71bb74)});
 
   @override
   State<StatefulWidget> createState()  => _ItemEventoState();
@@ -43,6 +43,7 @@ class _ItemEventoState extends State<ItemEventoView>{
 
   @override
   Widget build(BuildContext context) {
+
    return Stack(
      children: [
        Center(
@@ -51,7 +52,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-               bottom: 0),
+               bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)),
            padding: EdgeInsets.only(
                top: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
                left: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
@@ -60,7 +61,15 @@ class _ItemEventoState extends State<ItemEventoView>{
            ),
            decoration: BoxDecoration(
                borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16)),
-               color: HexColor("#71bb74").withOpacity(0.5)
+               color: widget.color?.withOpacity(0.5),
+             boxShadow: [
+               BoxShadow(
+                   color: (widget.color??AppTheme.grey).withOpacity(0.2),
+                   offset:  Offset(0,2),
+                   blurRadius: 6.0,
+                   spreadRadius: 0
+               ),
+             ],
            ),
            child: Column(
              children: [
@@ -85,7 +94,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
                            decoration: BoxDecoration(
                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                               color: HexColor("#71bb74")
+                               color: widget.color
                            ),
                            alignment: Alignment.center,
                            child: Row(
@@ -93,16 +102,17 @@ class _ItemEventoState extends State<ItemEventoView>{
                              crossAxisAlignment: CrossAxisAlignment.center,
                              children: [
                                Icon(Icons.edit ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,15), ),
-                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
+                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,4)),),
                                FittedBox(
                                  fit: BoxFit.scaleDown,
                                  child: Text("Editar",
                                      overflow: TextOverflow.ellipsis,
                                      style: TextStyle(
-                                       fontWeight: FontWeight.w500,
+                                       fontWeight: FontWeight.w700,
+                                       fontFamily: AppTheme.fontTTNorms,
                                        letterSpacing: 0.5,
                                        color:AppTheme.white,
-                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,11),
+                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
                                      )),
                                ),
                              ],
@@ -123,7 +133,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                            ),
                            decoration: BoxDecoration(
                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                               color: HexColor("#71bb74")
+                               color: widget.color
                            ),
                            alignment: Alignment.center,
                            child: Row(
@@ -131,16 +141,17 @@ class _ItemEventoState extends State<ItemEventoView>{
                              crossAxisAlignment: CrossAxisAlignment.center,
                              children: [
                                Icon(Ionicons.trash ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,14)),
-                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
+                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,4)),),
                                FittedBox(
                                  fit: BoxFit.scaleDown,
                                  child: Text("Elimnar",
                                      overflow: TextOverflow.ellipsis,
                                      style: TextStyle(
-                                       fontWeight: FontWeight.w500,
+                                       fontWeight: FontWeight.w700,
+                                       fontFamily: AppTheme.fontTTNorms,
                                        letterSpacing: 0.5,
                                        color:AppTheme.white,
-                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,11),
+                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
                                      )),
                                ),
                              ],
@@ -156,7 +167,15 @@ class _ItemEventoState extends State<ItemEventoView>{
                Container(
                  decoration: BoxDecoration(
                      borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10)),
-                     color: AppTheme.white
+                     color: AppTheme.white,
+                   boxShadow: <BoxShadow>[
+                     BoxShadow(
+                         color: AppTheme.grey.withOpacity(0.2),
+                         offset:  Offset(0,5),
+                         blurRadius: 10.0,
+                         spreadRadius: 0
+                     ),
+                   ],
                  ),
                  constraints: BoxConstraints(
                    //minWidth: 200.0,
@@ -183,14 +202,20 @@ class _ItemEventoState extends State<ItemEventoView>{
                                  right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
                                  bottom: 0),
                              child: CachedNetworkImage(
-                                 placeholder: (context, url) => CircularProgressIndicator(),
+                                 placeholder: (context, url) => Container(
+                                   height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
+                                   width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
+                                   child: Center(
+                                     child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.colorPrimary,),
+                                   ),
+                                 ),
                                  imageUrl: widget.eventoUi?.fotoEntidad??'',
                                  errorWidget: (context, url, error) => Container(),
                                  imageBuilder: (context, imageProvider) => Container(
                                      height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
                                      width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
                                      decoration: BoxDecoration(
-                                       borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 50))),
+                                       borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30))),
                                        image: DecorationImage(
                                          image: imageProvider,
                                          fit: BoxFit.cover,
@@ -243,6 +268,32 @@ class _ItemEventoState extends State<ItemEventoView>{
                        color: HexColor("#33979797"),
                        height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 1),
                      ),
+                     widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA?
+                     Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Container(
+                           margin: EdgeInsets.only(
+                             left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                             right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                             top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
+                             bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
+                           ),
+                           child: Text(widget.eventoUi?.nombreCalendario??"",
+                             style: TextStyle(
+                                 fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
+                                 fontFamily: AppTheme.fontTTNorms,
+                                 fontWeight: FontWeight.w700,
+                                 color: HexColor("#346081")
+                             ),
+                           ),
+                         ),
+                         Container(
+                           color: HexColor("#33979797"),
+                           height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 1),
+                         ),
+                       ],
+                     ):Container(),
                      Container(
                        margin: EdgeInsets.only(
                            top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
@@ -1008,7 +1059,7 @@ class _ItemEventoState extends State<ItemEventoView>{
               height: 20,
               padding: EdgeInsets.only(left: 8, right: 8),
               child: Center(
-                child: Text("${eventoUi?.tipoEventoUi?.nombre??""} ${eventoUi?.nombreFecha??""}",
+                child: Text("${eventoUi?.nombreFecha??""}",
                   style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,

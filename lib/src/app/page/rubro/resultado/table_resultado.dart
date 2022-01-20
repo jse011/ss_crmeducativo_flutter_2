@@ -401,7 +401,7 @@ class _TableResultadoState extends State<TableResultado>{
                       ),
                       child: _getTipoNota(o, widget.precision),
                     ),
-                    if(widget.calendarioPeriodoUI?.habilitado != 1)
+                    if(widget.calendarioPeriodoUI?.habilitadoProceso != 1)
                       Positioned(
                           bottom: 4,
                           right: 4,
@@ -423,7 +423,7 @@ class _TableResultadoState extends State<TableResultado>{
                       ),
                       child: _getTipoNota(o, widget.precision),
                     ),
-                    if(widget.calendarioPeriodoUI?.habilitado != 1)
+                    if(widget.calendarioPeriodoUI?.habilitadoProceso != 1)
                       Positioned(
                           bottom: 4,
                           right: 4,
@@ -449,7 +449,7 @@ class _TableResultadoState extends State<TableResultado>{
                               ),
                               child:  _getTipoNota(o, widget.precision),
                             ),
-                            if(widget.calendarioPeriodoUI?.habilitado != 1)
+                            if(widget.calendarioPeriodoUI?.habilitadoProceso != 1)
                               Positioned(
                                   bottom: 4,
                                   right: 4,
@@ -723,7 +723,7 @@ class TableResultadoUtils{
     _rows.add("");//Espacio
 
 
-    _columns.add(PersonaUi());//Titulo alumno
+    _columns.add(PersonaUi());//Titulo foto_alumno
 
     //Competencia Base
     for(ResultadoCompetenciaUi competenciaUi in matrizResultadoUi?.competenciaUiList??[]){

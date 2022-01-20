@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:ss_crmeducativo_2/libs/sticky-headers-table/example/main.dart';
-import 'package:ss_crmeducativo_2/src/app/page/curso/curso_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/carga_curso/curso/curso_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/cerrar_cesion/cerrar_cesion_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/editar_usuario/editar_usuario_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/agenda/agenda_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/crear_agenda/crear_agenda_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_info_complejo_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_info_simple_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/foto_alumno/foto_alumno_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/home/home_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/login/login_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/login/login_view_2.dart';
@@ -27,12 +29,14 @@ import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_view_2.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_view_2.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/wrap_widget_demo.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_adjunto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -60,7 +64,9 @@ class AppRouter {
   static final String EVENTO_INFO_COMPLEJO = 'Evento/InfoComplejo';
   static final String CREAR_EVENTO = 'Evento/CrearEvento';
   static final String AGENDA_PORTAL = 'Evento/Agenda';
-
+  static final String CERRAR_SESION = '/CerrarSesion';
+  static final String LISTA_ALUMNO = 'Curso/ListaAlumno';
+  static final String EDITAR_USUARIO = '/EditarPersona';
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     LOGIN: (BuildContext context) => LoginView5(),
@@ -75,8 +81,9 @@ class AppRouter {
         builder: (context) {
           UsuarioUi? usuarioUi = arguments['usuarioUi'];
           CursosUi cursosUi = arguments['cursoUi'];
+          AnioAcademicoUi anioAcademicoUi = arguments['anioAcademicoUi'];
 
-          return CursoView(cursosUi, usuarioUi);
+          return CursoView(cursosUi, usuarioUi, anioAcademicoUi);
         },
       );
     }else if (settings.name == RUBRO) {
@@ -133,7 +140,7 @@ class AppRouter {
           TareaUi? tareaUi = arguments['tareaUi'];
           CalendarioPeriodoUI? calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
           UnidadUi? unidadUi = arguments["unidadUi"];
-          SesionUi? sesionUi = arguments["sesionAprendizajeId"];
+          SesionUi? sesionUi = arguments["sesionUi"];
           return TareaCrearView(usuarioUi, cursosUi, calendarioPeriodoUI, tareaUi, unidadUi, sesionUi);
         },
       );
@@ -258,7 +265,29 @@ class AppRouter {
           return AgendaView(cursosUi);
         },
       );
+    }else if(settings.name == CERRAR_SESION){
+      return PageRouteBuilder(
+        opaque: false, // set to false
+        pageBuilder: (_, __, ___) => CerrarSesionView(),
+      );
+    }else if(settings.name == LISTA_ALUMNO){
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi? cursosUi = arguments['cursosUi'];
+          return FotoAlumnoView(cursosUi);
+        },
+      );
+    }else if(settings.name == EDITAR_USUARIO){
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          UsuarioUi? usuarioUi = arguments['usuarioUi'];
+          return EditarUsuarioView(usuarioUi);
+        },
+      );
     }
+
 
 
 
@@ -276,6 +305,11 @@ class AppRouter {
     );*/
   }
 
+  static void createRouteCerrarSesion(BuildContext context) {
+    Navigator.pushNamed(context, CERRAR_SESION);
+  }
+
+
   static void createRouteLogin(BuildContext context) {
     Navigator.of(context).pushNamedAndRemoveUntil(
         LOGIN, (Route<dynamic> route) => false);
@@ -288,11 +322,22 @@ class AppRouter {
     );*/
   }
 
+  static void createRouteMain(BuildContext context) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        HOME, (Route<dynamic> route) => false);
+    //Navigator.of(context).pushReplacementNamed('/login');
+    //Navigator.of(context).pushReplacement();
 
-  static void createRouteCursosRouter(BuildContext context, UsuarioUi? usuarioUi, CursosUi cursosUi) {
+
+    /*return new MaterialPageRoute(
+      builder: (BuildContext context) => new LoginView(),
+    );*/
+  }
+
+  static void createRouteCursosRouter(BuildContext context, UsuarioUi? usuarioUi, CursosUi cursosUi, AnioAcademicoUi? anioAcademicoUi) {
     Navigator.pushNamed(context,
         CURSO,
-        arguments: {'usuarioUi': usuarioUi, 'cursoUi': cursosUi}
+        arguments: {'usuarioUi': usuarioUi, 'cursoUi': cursosUi, 'anioAcademicoUi': anioAcademicoUi}
     );
   }
 
@@ -412,6 +457,20 @@ class AppRouter {
     );
   }
 
+  static Future<dynamic> showListaAlumnoView(BuildContext context, CursosUi? cursosUi) {
+    return Navigator.pushNamed(context,
+        LISTA_ALUMNO,
+        arguments: {'cursosUi': cursosUi
+        }
+    );
+  }
+
+  static Future<dynamic> showEditarUsuarioView(BuildContext context, UsuarioUi? usuarioUi) {
+    return Navigator.pushNamed(context,
+        EDITAR_USUARIO,
+        arguments: {'usuarioUi': usuarioUi}
+    );
+  }
 
 
 }

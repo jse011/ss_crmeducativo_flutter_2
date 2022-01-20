@@ -20,6 +20,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_utils.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/dropdown_formfield_2.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/image_picker/image_picker_handler.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/progress_bar.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_agenda_evento_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
@@ -44,11 +45,10 @@ class CrearAgendaView extends View{
 
 }
 
-class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaController> with TickerProviderStateMixin{
-  late Animation<double> topBarAnimation;
+class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaController> with TickerProviderStateMixin, ImagePickerListener{
+
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
-  late AnimationController animationController;
   final Color colorTipoAgenda = AppTheme.colorPrimaryDark;
   
   var _TituloEventocontroller = TextEditingController();
@@ -61,17 +61,14 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
   late bool isCollapsedSlidingSheet = true;
   final _debouncer = Debouncer(milliseconds: 500);
   List<dynamic>? filteredUsers = null;
+  late AnimationController _imagePickerAnimationcontroller;
+  late ImagePickerHandler imagePicker;
+  GlobalKey globalKey = GlobalKey();
 
   _CrearAgendaViewState(EventoUi? eventoUi, CursosUi? cursosUi) : super(CrearAgendaController(eventoUi, cursosUi, MoorConfiguracionRepository(), MoorAgendaEventoRepository(), DeviceHttpDatosRepositorio()));
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -95,19 +92,20 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
         }
       }
     });
-    animationController.reset();
 
-    Future.delayed(const Duration(milliseconds: 500), () {
-// Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
     super.initState();
     _TituloEventocontroller.text = widget.eventoUi?.titulo??"";
     _Informacioncontroller.text = widget.eventoUi?.descripcion??"";
     _Horacontroller.text = widget.eventoUi?.horaEvento??"";
+
+    _imagePickerAnimationcontroller = new AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    imagePicker=new ImagePickerHandler(this,_imagePickerAnimationcontroller, false);
+    imagePicker.init(documento: true);
+
   }
 
 
@@ -136,6 +134,7 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
             }
           },
           child: Stack(
+            key: globalKey,
             children: [
               Scaffold(
                 extendBody: true,
@@ -625,179 +624,167 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: ControlledWidgetBuilder<CrearAgendaController>(
+            builder: (context, controller) {
+              return Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.top,
                   ),
-                  child: ControlledWidgetBuilder<CrearAgendaController>(
-                    builder: (context, controller) {
-                      return Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).padding.top,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 8,
-                                right: 24,
-                                top: 16 - 8.0 * topBarOpacity,
-                                bottom: 12 - 8.0 * topBarOpacity),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Icon(Icons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                  onPressed: () async {
-                                    if(_sheetController.state?.isExpanded??false){
-                                      FocusScope.of(context).unfocus();
-                                      _sheetController.collapse();
-                                    } else{
-                                      bool? respuesta = await _showMaterialDialog();
-                                      if(respuesta??false){
-                                        Navigator.of(context).pop(true);
-                                      }
-                                    }
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 8,
+                        right: 24,
+                        top: 16 - 8.0 * topBarOpacity,
+                        bottom: 12 - 8.0 * topBarOpacity),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                          onPressed: () async {
+                            if(_sheetController.state?.isExpanded??false){
+                              FocusScope.of(context).unfocus();
+                              _sheetController.collapse();
+                            } else{
+                              bool? respuesta = await _showMaterialDialog();
+                              if(respuesta??false){
+                                Navigator.of(context).pop(true);
+                              }
+                            }
 
-                                  },
-                                ),
-                                Expanded(
-                                  child:  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      //SvgPicture.asset(AppIcon.ic_curso_tarea, height: 32 +  6 - 10 * topBarOpacity , width: 35 +  6 - 10 * topBarOpacity ,),
-                                      Expanded(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'Evento',
-                                              textAlign: TextAlign.left,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontFamily: AppTheme.fontTTNormsMedium,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16 + 6 - 6 * topBarOpacity,
-                                                letterSpacing: 1.2,
-                                                color: AppTheme.darkerText,
-                                              ),
-                                            ),
-                                          )
-                                      ),
-                                    ],
-                                  ),
-                                ),Row(
-                                  children: [
-                                    Material(
-                                      color: colorTipoAgenda.withOpacity(0.1),
-                                      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                      child: InkWell(
-                                        focusColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        hoverColor: Colors.transparent,
-                                        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                        splashColor: AppTheme.colorPrimary.withOpacity(0.4),
-                                        onTap: () async {
-                                          dynamic succes = await controller.onClickPublicarEvento();
-                                          if(succes is int){
-                                            print("show");
-                                            if(succes == 1){
-                                              _sheetController.expand();
-                                            }else{
-                                              _sheetController.collapse();
-                                            }
-                                          }else{
-                                            if(succes)Navigator.of(context).pop(1);
-                                          }
-                                        },
-                                        child:
-                                        Container(
-                                            padding: const EdgeInsets.only(top: 10, left: 8, bottom: 8, right: 8),
-                                            child: Row(
-                                              children: [
-                                                Text("PUBLICAR",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: colorTipoAgenda,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontFamily: AppTheme.fontName,
-                                                  ),),
-                                              ],
-                                            )
-                                        ),
+                          },
+                        ),
+                        Expanded(
+                          child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              //SvgPicture.asset(AppIcon.ic_curso_tarea, height: 32 +  6 - 10 * topBarOpacity , width: 35 +  6 - 10 * topBarOpacity ,),
+                              Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Evento',
+                                      textAlign: TextAlign.left,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: AppTheme.fontTTNormsMedium,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16 + 6 - 6 * topBarOpacity,
+                                        letterSpacing: 1.2,
+                                        color: AppTheme.darkerText,
                                       ),
                                     ),
-                                    Padding(padding: EdgeInsets.all(6)),
-                                    Material(
-                                      color:colorTipoAgenda,
-                                      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                      child: InkWell(
-                                        focusColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        hoverColor: Colors.transparent,
-                                        borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                        splashColor: AppTheme.colorPrimary.withOpacity(0.4),
-                                        onTap: () async {
-                                          print("guardar");
-                                          dynamic succes = await controller.onClickGuardarEvento();
-                                          if(succes is int){
-                                            print("show");
-                                            if(succes == 1){
-                                              _sheetController.expand();
-                                            }else{
-                                              _sheetController.collapse();
-                                            }
-                                          }else{
-                                            if(succes)Navigator.of(context).pop(1);
-                                          }
-                                        },
-                                        child:
-                                        Container(
-                                            padding: const EdgeInsets.only(top: 10, left: 8, bottom: 8, right: 8),
-                                            child: Row(
-                                              children: [
-                                                Text("GUARDAR",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: AppTheme.white,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontFamily: AppTheme.fontName,
-                                                  ),),
-                                              ],
-                                            )
-                                        ),
-                                      ),
+                                  )
+                              ),
+                            ],
+                          ),
+                        ),Row(
+                          children: [
+                            Material(
+                              color: colorTipoAgenda.withOpacity(0.1),
+                              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                              child: InkWell(
+                                focusColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                splashColor: AppTheme.colorPrimary.withOpacity(0.4),
+                                onTap: () async {
+                                  dynamic succes = await controller.onClickPublicarEvento();
+                                  if(succes is int){
+                                    print("show");
+                                    if(succes == 1){
+                                      _sheetController.expand();
+                                    }else{
+                                      _sheetController.collapse();
+                                    }
+                                  }else{
+                                    if(succes)Navigator.of(context).pop(1);
+                                  }
+                                },
+                                child:
+                                Container(
+                                    padding: const EdgeInsets.only(top: 10, left: 8, bottom: 8, right: 8),
+                                    child: Row(
+                                      children: [
+                                        Text("PUBLICAR",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: colorTipoAgenda,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: AppTheme.fontName,
+                                          ),),
+                                      ],
                                     )
-                                  ],
-                                )
-                              ],
+                                ),
+                              ),
                             ),
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
+                            Padding(padding: EdgeInsets.all(6)),
+                            Material(
+                              color:colorTipoAgenda,
+                              borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                              child: InkWell(
+                                focusColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                hoverColor: Colors.transparent,
+                                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                splashColor: AppTheme.colorPrimary.withOpacity(0.4),
+                                onTap: () async {
+                                  print("guardar");
+                                  dynamic succes = await controller.onClickGuardarEvento();
+                                  if(succes is int){
+                                    print("show");
+                                    if(succes == 1){
+                                      _sheetController.expand();
+                                    }else{
+                                      _sheetController.collapse();
+                                    }
+                                  }else{
+                                    if(succes)Navigator.of(context).pop(1);
+                                  }
+                                },
+                                child:
+                                Container(
+                                    padding: const EdgeInsets.only(top: 10, left: 8, bottom: 8, right: 8),
+                                    child: Row(
+                                      children: [
+                                        Text("GUARDAR",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppTheme.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: AppTheme.fontName,
+                                          ),),
+                                      ],
+                                    )
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
         )
       ],
     );
@@ -813,512 +800,493 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
                     MediaQuery.of(context).padding.top +
                     0,
               ),
-              child: AnimatedBuilder(
-                animation: animationController,
-                builder: (BuildContext? context, Widget? child) {
-                  return FadeTransition(
-                    opacity: topBarAnimation,
-                    child: Transform(
-                      transform: Matrix4.translationValues(
-                          0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                      child:  Form(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        child: CustomScrollView(
-                            controller: scrollController,
-                            slivers: <Widget>[
-                              SliverList(
-                                  delegate: SliverChildListDelegate([
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
-                                      child:  TextFormField(
-                                        autofocus: false,
-                                        controller: _TituloEventocontroller,
-                                        textAlign: TextAlign.start,
-                                        style: Theme.of(context!).textTheme.caption?.copyWith(
-                                          fontSize: 16,
-                                          color: Colors.black,
+              child: Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: CustomScrollView(
+                    controller: scrollController,
+                    slivers: <Widget>[
+                      SliverList(
+                          delegate: SliverChildListDelegate([
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
+                              child:  TextFormField(
+                                autofocus: false,
+                                controller: _TituloEventocontroller,
+                                textAlign: TextAlign.start,
+                                style: Theme.of(context).textTheme.caption?.copyWith(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                maxLines: null,
+                                decoration: InputDecoration(
+                                  labelText: "Título *",
+                                  labelStyle: TextStyle(
+                                      color:  colorTipoAgenda,
+                                      fontFamily: AppTheme.fontTTNormsMedium,
+                                      fontSize: 18
+                                  ),
+                                  helperText: " ",
+                                  contentPadding: EdgeInsets.all(15.0),
+                                  suffixIcon:(controller.tituloEvento?.isNotEmpty??false) ?
+                                  IconButton(
+                                    onPressed: (){
+                                      controller.clearTitulo();
+                                      _TituloEventocontroller.clear();
+                                    },
+                                    icon: Icon(
+                                      Ionicons.close_circle,
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ):null,
+                                  errorStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  hintText: "Ingrese un título",
+                                  hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: AppTheme.greyLighten1,
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusColor: AppTheme.colorAccent,
+                                ),
+                                onChanged: (str) {
+                                  controller.changeTitulo(str);
+                                },
+                                onSaved: (str) {
+                                  //  To do
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
+                              child:  TextFormField(
+                                autofocus: false,
+                                controller: _Informacioncontroller,
+                                textAlign: TextAlign.start,
+                                style: Theme.of(context).textTheme.caption?.copyWith(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                maxLines: null,
+                                decoration: InputDecoration(
+                                  labelText: "Información (Opcional)",
+                                  labelStyle: TextStyle(
+                                      color:  colorTipoAgenda,
+                                      fontFamily: AppTheme.fontTTNormsMedium,
+                                      fontSize: 18
+                                  ),
+                                  helperText: " ",
+                                  contentPadding: EdgeInsets.all(15.0),
+                                  suffixIcon:(controller.informacion?.isNotEmpty??false) ?
+                                  IconButton(
+                                    onPressed: (){
+                                      controller.clearInformacion();
+                                      _Informacioncontroller.clear();
+                                    },
+                                    icon: Icon(
+                                      Ionicons.close_circle,
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ):null,
+                                  errorStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  hintText: "",
+                                  hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: AppTheme.colorPrimary.withOpacity(0.5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusColor: AppTheme.colorAccent,
+                                ),
+                                onChanged: (str) {
+                                  controller.changeInformacion(str);
+                                },
+                                onSaved: (str) {
+                                  //  To do
+                                },
+                              ),
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
+                              child: DateTimeField(
+                                initialValue: controller.fechaEvento,
+                                format: format,
+                                autofocus: false,
+                                textAlign: TextAlign.start,
+                                resetIcon: Icon(
+                                  Ionicons.close_circle,
+                                  color: colorTipoAgenda,
+                                ),
+                                style: Theme.of(context).textTheme.caption?.copyWith(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: "Fecha del evento",
+                                  labelStyle: TextStyle(
+                                      color: colorTipoAgenda,
+                                      fontFamily: AppTheme.fontTTNormsMedium,
+                                      fontSize: 18
+                                  ),
+                                  helperText: " ",
+                                  contentPadding: EdgeInsets.all(15.0),
+                                  prefixIcon: Icon(
+                                    Icons.web_asset_rounded,
+                                    color: colorTipoAgenda,
+                                  ),
+                                  errorStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  hintText: "",
+                                  hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: AppTheme.colorPrimary.withOpacity(0.5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusColor: AppTheme.colorAccent,
+                                ),
+                                onChanged: (DateTime? value){
+                                  controller.changeFecha(value);
+                                },
+                                onShowPicker: (context, currentValue) {
+                                  return showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(1900),
+                                      initialDate: currentValue ?? DateTime.now(),
+                                      lastDate: DateTime(2100));
+                                },
+                              ),
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
+                              child: DateTimeField(
+                                initialValue: (controller.horaEvento??"").isNotEmpty?DateTimeField.convert(AppUtils.horaTimeOfDay(controller.horaEvento)):null,
+                                format: formatHour,
+                                autofocus: false,
+                                textAlign: TextAlign.start,
+                                resetIcon: Icon(
+                                  Ionicons.close_circle,
+                                  color: colorTipoAgenda,
+                                ),
+                                style: Theme.of(context).textTheme.caption?.copyWith(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                decoration: InputDecoration(
+                                  labelText: "Hora del evento",
+                                  labelStyle: TextStyle(
+                                      color: colorTipoAgenda,
+                                      fontFamily: AppTheme.fontTTNormsMedium,
+                                      fontSize: 18
+                                  ),
+                                  helperText: " ",
+                                  contentPadding: EdgeInsets.all(15.0),
+                                  prefixIcon: Icon(
+                                    Icons.alarm,
+                                    color: colorTipoAgenda,
+                                  ),
+                                  errorStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusedErrorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  errorBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  hintText: "",
+                                  hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                    color: AppTheme.colorPrimary.withOpacity(0.5),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    borderSide: BorderSide(
+                                      color: colorTipoAgenda,
+                                    ),
+                                  ),
+                                  focusColor: AppTheme.colorAccent,
+                                ),
+                                onChanged: (DateTime? value){
+                                  if(value!=null){
+                                    controller.changeHora(DomainTools.dataTimeHourMinute(value));
+                                  }else{
+                                    controller.changeHora(null);
+                                  }
+                                },
+                                onShowPicker: (context, currentValue) async {
+                                  final time = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
+                                  );
+                                  return DateTimeField.convert(time);
+                                },
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
+                              child: Text("Adjuntar",
+                                style: TextStyle(fontSize: 16, color: AppTheme.black, fontWeight: FontWeight.w500),),
+                            ),
+
+                            Container(
+                              padding: const EdgeInsets.only(left: 24, right: 24, top: 16,),
+                              child: Stack(
+                                children: [
+                                  Center(
+                                    child: InkWell(
+                                      onTap: () async{
+                                        imagePicker.showDialog(context);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: colorTipoAgenda.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
                                         ),
-                                        maxLines: null,
-                                        decoration: InputDecoration(
-                                          labelText: "Título *",
-                                          labelStyle: TextStyle(
-                                              color:  colorTipoAgenda,
-                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 18
+                                        width: 450,
+                                        height: 60,
+                                        child: FDottedLine(
+                                          color: colorTipoAgenda.withOpacity(0.6),
+                                          strokeWidth: 2.0,
+                                          dottedLength: 10.0,
+                                          space: 2.0,
+                                          corner: FDottedLineCorner.all(14.0),
+
+                                          /// add widget
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            child: Text("Adjuntar archivo",  style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: colorTipoAgenda.withOpacity(0.8)
+                                            ),),
                                           ),
-                                          helperText: " ",
-                                          contentPadding: EdgeInsets.all(15.0),
-                                          suffixIcon:(controller.tituloEvento?.isNotEmpty??false) ?
-                                          IconButton(
-                                            onPressed: (){
-                                              controller.clearTitulo();
-                                              _TituloEventocontroller.clear();
-                                            },
-                                            icon: Icon(
-                                              Ionicons.close_circle,
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ):null,
-                                          errorStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          hintText: "Ingrese un título",
-                                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                            color: AppTheme.greyLighten1,
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusColor: AppTheme.colorAccent,
                                         ),
-                                        onChanged: (str) {
-                                          controller.changeTitulo(str);
-                                        },
-                                        onSaved: (str) {
-                                          //  To do
-                                        },
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
-                                      child:  TextFormField(
-                                        autofocus: false,
-                                        controller: _Informacioncontroller,
-                                        textAlign: TextAlign.start,
-                                        style: Theme.of(context).textTheme.caption?.copyWith(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                        maxLines: null,
-                                        decoration: InputDecoration(
-                                          labelText: "Información (Opcional)",
-                                          labelStyle: TextStyle(
-                                              color:  colorTipoAgenda,
-                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 18
-                                          ),
-                                          helperText: " ",
-                                          contentPadding: EdgeInsets.all(15.0),
-                                          suffixIcon:(controller.informacion?.isNotEmpty??false) ?
-                                          IconButton(
-                                            onPressed: (){
-                                              controller.clearInformacion();
-                                              _Informacioncontroller.clear();
-                                            },
-                                            icon: Icon(
-                                              Ionicons.close_circle,
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ):null,
-                                          errorStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          hintText: "",
-                                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                            color: AppTheme.colorPrimary.withOpacity(0.5),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusColor: AppTheme.colorAccent,
-                                        ),
-                                        onChanged: (str) {
-                                          controller.changeInformacion(str);
-                                        },
-                                        onSaved: (str) {
-                                          //  To do
-                                        },
-                                      ),
-                                    ),
-
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
-                                      child: DateTimeField(
-                                        initialValue: controller.fechaEvento,
-                                        format: format,
-                                        autofocus: false,
-                                        textAlign: TextAlign.start,
-                                        resetIcon: Icon(
-                                          Ionicons.close_circle,
-                                          color: colorTipoAgenda,
-                                        ),
-                                        style: Theme.of(context).textTheme.caption?.copyWith(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: "Fecha del evento",
-                                          labelStyle: TextStyle(
-                                              color: colorTipoAgenda,
-                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 18
-                                          ),
-                                          helperText: " ",
-                                          contentPadding: EdgeInsets.all(15.0),
-                                          prefixIcon: Icon(
-                                            Icons.web_asset_rounded,
-                                            color: colorTipoAgenda,
-                                          ),
-                                          errorStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          hintText: "",
-                                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                            color: AppTheme.colorPrimary.withOpacity(0.5),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusColor: AppTheme.colorAccent,
-                                        ),
-                                        onChanged: (DateTime? value){
-                                          controller.changeFecha(value);
-                                        },
-                                        onShowPicker: (context, currentValue) {
-                                          return showDatePicker(
-                                              context: context,
-                                              firstDate: DateTime(1900),
-                                              initialDate: currentValue ?? DateTime.now(),
-                                              lastDate: DateTime(2100));
-                                        },
-                                      ),
-                                    ),
-
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
-                                      child: DateTimeField(
-                                        initialValue: (controller.horaEvento??"").isNotEmpty?DateTimeField.convert(AppUtils.horaTimeOfDay(controller.horaEvento)):null,
-                                        format: formatHour,
-                                        autofocus: false,
-                                        textAlign: TextAlign.start,
-                                        resetIcon: Icon(
-                                          Ionicons.close_circle,
-                                          color: colorTipoAgenda,
-                                        ),
-                                        style: Theme.of(context).textTheme.caption?.copyWith(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                          labelText: "Hora del evento",
-                                          labelStyle: TextStyle(
-                                              color: colorTipoAgenda,
-                                              fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 18
-                                          ),
-                                          helperText: " ",
-                                          contentPadding: EdgeInsets.all(15.0),
-                                          prefixIcon: Icon(
-                                            Icons.alarm,
-                                            color: colorTipoAgenda,
-                                          ),
-                                          errorStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            color: Colors.red,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          disabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusedErrorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          errorBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          hintText: "",
-                                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                            color: AppTheme.colorPrimary.withOpacity(0.5),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: BorderSide(
-                                              color: colorTipoAgenda,
-                                            ),
-                                          ),
-                                          focusColor: AppTheme.colorAccent,
-                                        ),
-                                        onChanged: (DateTime? value){
-                                          if(value!=null){
-                                            controller.changeHora(DomainTools.dataTimeHourMinute(value));
-                                          }else{
-                                            controller.changeHora(null);
-                                          }
-                                        },
-                                        onShowPicker: (context, currentValue) async {
-                                          final time = await showTimePicker(
-                                            context: context,
-                                            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-                                          );
-                                          return DateTimeField.convert(time);
-                                        },
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
-                                      child: Text("Adjuntar",
-                                        style: TextStyle(fontSize: 16, color: AppTheme.black, fontWeight: FontWeight.w500),),
-                                    ),
-
-                                    Container(
-                                      padding: const EdgeInsets.only(left: 24, right: 24, top: 16,),
-                                      child: Stack(
-                                        children: [
-                                          Center(
-                                            child: InkWell(
-                                              onTap: () async{
-                                                FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
-
-                                                if (result != null) {
-                                                  List<File?> files = result.paths.map((path) => path!=null?File(path):null).toList();
-                                                  controller.addEventoAdjunto(files);
-                                                } else {
-                                                  // User canceled the picker
-                                                }
-                                              },
-                                              child: Container(
-                                                padding: EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                  color: colorTipoAgenda.withOpacity(0.1),
-                                                  borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                                ),
-                                                width: 450,
-                                                height: 60,
-                                                child: FDottedLine(
-                                                  color: colorTipoAgenda.withOpacity(0.6),
-                                                  strokeWidth: 2.0,
-                                                  dottedLength: 10.0,
-                                                  space: 2.0,
-                                                  corner: FDottedLineCorner.all(14.0),
-
-                                                  /// add widget
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    child: Text("Adjuntar archivo",  style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: colorTipoAgenda.withOpacity(0.8)
-                                                    ),),
-                                                  ),
-                                                ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            ListView.builder(
+                                padding: EdgeInsets.only(left: 24, right: 24, top: 16.0, bottom: 110),
+                                itemCount: controller.eventoAdjuntoUiList.length,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index){
+                                  EventoAdjuntoUi eventoAdjuntoUi = controller.eventoAdjuntoUiList[index];
+                                  return Stack(
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                              border:  Border.all(
+                                                  width: 1,
+                                                  color: colorTipoAgenda
                                               ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    ListView.builder(
-                                        padding: EdgeInsets.only(left: 24, right: 24, top: 16.0, bottom: 110),
-                                        itemCount: controller.eventoAdjuntoUiList.length,
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemBuilder: (context, index){
-                                          EventoAdjuntoUi eventoAdjuntoUi = controller.eventoAdjuntoUiList[index];
-                                          return Stack(
+                                              color: eventoAdjuntoUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
+                                          ),
+                                          margin: EdgeInsets.only(bottom: 8),
+                                          width: 450,
+                                          height: 50,
+                                          child: Stack(
                                             children: [
-                                              Center(
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                                      border:  Border.all(
-                                                          width: 1,
-                                                          color: colorTipoAgenda
+                                              Container(
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(right: 16),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.only(
+                                                          bottomLeft: Radius.circular(8),
+                                                          topLeft: Radius.circular(8),
+                                                        ), // use instead of BorderRadius.all(Radius.circular(20))
+                                                        color: AppTheme.greyLighten2,
                                                       ),
-                                                      color: eventoAdjuntoUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
-                                                  ),
-                                                  margin: EdgeInsets.only(bottom: 8),
-                                                  width: 450,
-                                                  height: 50,
-                                                  child: Stack(
-                                                    children: [
-                                                      Container(
-                                                        child: Row(
-                                                          children: [
-                                                            Container(
-                                                              margin: EdgeInsets.only(right: 16),
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.only(
-                                                                  bottomLeft: Radius.circular(8),
-                                                                  topLeft: Radius.circular(8),
-                                                                ), // use instead of BorderRadius.all(Radius.circular(20))
-                                                                color: AppTheme.greyLighten2,
-                                                              ),
-                                                              width: 50,
-                                                              child: Center(
-                                                                child: Image.asset(getImagen(eventoAdjuntoUi)??"",
-                                                                  height: 30.0,
-                                                                  fit: BoxFit.cover,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              child: Column(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: [
-                                                                  Text("${eventoAdjuntoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            eventoAdjuntoUi.success == false?
-                                                            InkWell(
-                                                              onTap: (){
-                                                                controller.refreshEventoAdjuntoUi(eventoAdjuntoUi);
-                                                              },
-                                                              child: Container(
-                                                                margin: EdgeInsets.only(right: 16),
-                                                                child: Icon(Icons.refresh),
-                                                              ),
-                                                            ):Container(),
-                                                            InkWell(
-                                                              onTap: (){
-                                                                controller.removeEventoAdjuntoUi(eventoAdjuntoUi);
-                                                              },
-                                                              child: Container(
-                                                                margin: EdgeInsets.only(right: 16),
-                                                                child: Icon(Icons.close),
-                                                              ),
-                                                            )
-                                                          ],
+                                                      width: 50,
+                                                      child: Center(
+                                                        child: Image.asset(getImagen(eventoAdjuntoUi)??"",
+                                                          height: 30.0,
+                                                          fit: BoxFit.cover,
                                                         ),
                                                       ),
-                                                      !(eventoAdjuntoUi.success != null)&&(eventoAdjuntoUi.progress??0)>0?
-                                                      Column(
+                                                    ),
+                                                    Expanded(
+                                                      child: Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
-                                                          Expanded(child: Container()),
-                                                          ProgressBar(
-                                                            current: eventoAdjuntoUi.progress??0,
-                                                            max: 100,
-                                                            borderRadiusGeometry:BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
-                                                            color: colorTipoAgenda,
-                                                          )
+                                                          Text("${eventoAdjuntoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
                                                         ],
-                                                      ):Container()
-                                                    ],
-                                                  ),
+                                                      ),
+                                                    ),
+                                                    eventoAdjuntoUi.success == false?
+                                                    InkWell(
+                                                      onTap: (){
+                                                        controller.refreshEventoAdjuntoUi(eventoAdjuntoUi);
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(right: 16),
+                                                        child: Icon(Icons.refresh),
+                                                      ),
+                                                    ):Container(),
+                                                    InkWell(
+                                                      onTap: (){
+                                                        controller.removeEventoAdjuntoUi(eventoAdjuntoUi);
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(right: 16),
+                                                        child: Icon(Icons.close),
+                                                      ),
+                                                    )
+                                                  ],
                                                 ),
                                               ),
+                                              !(eventoAdjuntoUi.success != null)&&(eventoAdjuntoUi.progress??0)>0?
+                                              Column(
+                                                children: [
+                                                  Expanded(child: Container()),
+                                                  ProgressBar(
+                                                    current: eventoAdjuntoUi.progress??0,
+                                                    max: 100,
+                                                    borderRadiusGeometry:BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
+                                                    color: colorTipoAgenda,
+                                                  )
+                                                ],
+                                              ):Container()
                                             ],
-                                          );
-                                        }
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.only(bottom: 100),
-                                    )
-                                  ])
-                              ),
-                            ]
-                        ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(bottom: 100),
+                            )
+                          ])
                       ),
-                    ),
-                  );
-                },
+                    ]
+                ),
               )
           );
         });
@@ -1462,6 +1430,29 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
         barrierColor: Colors.transparent,
         transitionDuration:
         const Duration(milliseconds: 150));
+  }
+
+  @override
+  userImage(File? _image) {
+    if(globalKey.currentContext!=null){
+      CrearAgendaController controller =
+      FlutterCleanArchitecture.getController<CrearAgendaController>(globalKey.currentContext!, listen: false);
+      List<File?> files = [];
+      files.add(_image);
+      controller.addEventoAdjunto(files);
+
+    }
+
+  }
+
+  @override
+  userDocument(List<File?> _documents) {
+    if(globalKey.currentContext!=null){
+      CrearAgendaController controller =
+      FlutterCleanArchitecture.getController<CrearAgendaController>(globalKey.currentContext!, listen: false);
+      controller.addEventoAdjunto(_documents);
+
+    }
   }
 
 }

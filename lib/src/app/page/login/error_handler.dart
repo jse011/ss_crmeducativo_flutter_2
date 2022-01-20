@@ -7,6 +7,8 @@ import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 class ErrorHandler {
   //Error Dialogs
   Future<dynamic>? errorDialog(BuildContext context, String? mensaje) async {
+    var sp = mensaje?.split("|");
+    print("errorDialog ${sp}");
      return await showGeneralDialog(
          context: context,
          pageBuilder: (BuildContext buildContext,
@@ -49,14 +51,14 @@ class ErrorHandler {
                                  crossAxisAlignment: CrossAxisAlignment.start,
                                  children: [
                                    Padding(padding: EdgeInsets.all(4),),
-                                   Text("Usuario o contraseña incorrecta",
+                                   Text("${sp?[0]??""}",//
                                      style: TextStyle(
                                          fontSize: 18,
                                          fontWeight: FontWeight.w700,
                                          fontFamily: AppTheme.fontTTNormsMedium
                                      ),),
                                    Padding(padding: EdgeInsets.all(4),),
-                                   Text("Por favor, asegúrete que sus datos sean los correctos e inténtealo de nuevo.",
+                                   Text("${(sp?.length??0)>1?sp![1]:"Por favor, asegúrete que sus datos sean los correctos e inténtealo de nuevo."}",
                                      style: TextStyle(
                                          fontSize: 14,
                                          height: 1.5

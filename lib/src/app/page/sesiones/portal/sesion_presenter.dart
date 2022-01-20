@@ -8,6 +8,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_sesion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_actividades_sesion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_aprendizaje_sesion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_rubro_evaluacion_sesion_list.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_datos_crear_rubros.dart';
@@ -19,7 +20,7 @@ class SesionPresenter extends Presenter{
   late Function getUnidadTareaOnComplete, getUnidadTareaOnError;
 
   UpdateDatosCrearRubro _getDatosCrearRubro;
-  late Function updateDatosCrearRubroOnNext, updateDatosCrearRubroOnError;
+  late Function updateDatosCrearRubroOnNext, updateDatosCrearRubroOnError, updateAprendizajeOnNext;
 
   GetRubroEvaluacionSesionList _getSesionRubroEval;
   late Function getSesionRubroEvalOnNext, getSesionRubroEvalOnError;
@@ -27,11 +28,15 @@ class SesionPresenter extends Presenter{
   GetAprendizaje _getAprendizaje;
   late Function getAprendizajeOnNext, getAprendizajeOnError;
 
+  GetActividadesSesion _getActividadesSesion;
+  late Function getActividadesSesionOnNext, getActividadesSesionOnError;
+
   SesionPresenter(ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, RubroRepository rubroRepo, UnidadSesionRepository unidadSesionRepo):
         _getSesionTarea = UpdateSesionTarea(httpDatosRepo, configuracionRepo, unidadTareaRepo),
         _getDatosCrearRubro = UpdateDatosCrearRubro(httpDatosRepo, configuracionRepo, rubroRepo),
         _getSesionRubroEval = GetRubroEvaluacionSesionList(rubroRepo),
         _getAprendizaje = GetAprendizaje(httpDatosRepo, configuracionRepo, unidadSesionRepo),
+        _getActividadesSesion = GetActividadesSesion(httpDatosRepo, configuracionRepo, unidadSesionRepo),
         super();
 
   @override
@@ -46,7 +51,7 @@ class SesionPresenter extends Presenter{
 
   void onActualizarCurso(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi cursosUi, SesionUi sesionUi) {
     _getDatosCrearRubro.dispose();
-    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, sesionUi, null, false));
+    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, sesionUi, null, false, true));
   }
 
   void onGetSesionRubroEval(CursosUi cursosUi, CalendarioPeriodoUI calendarioPeriodoUI, SesionUi sesionUi) {
@@ -58,7 +63,9 @@ class SesionPresenter extends Presenter{
     _getAprendizaje.execute(_GetAprendizajeCase(this), GetAprendizajeParams(sesionUi.sesionAprendizajeId));
   }
 
-
+  void onGetActividades(SesionUi sesionUi) {
+    _getActividadesSesion.execute(GetActividadesSesionCase(this), GetActividadesSesionParams(sesionUi.sesionAprendizajeId));
+  }
 
 }
 
@@ -107,7 +114,12 @@ class _GetDatosCrearRubroCase extends Observer<UpdateDatosCrearRubroResponse>{
   @override
   void onNext(UpdateDatosCrearRubroResponse? response) {
     assert(presenter.updateDatosCrearRubroOnNext!=null);
-    presenter.updateDatosCrearRubroOnNext(response?.errorConexion, response?.errorServidor);
+
+    if(response?.successAprendizaje??false){
+      presenter.updateAprendizajeOnNext();
+    }else{
+      presenter.updateDatosCrearRubroOnNext(response?.errorConexion, response?.errorServidor);
+    }
   }
 
 }
@@ -155,7 +167,31 @@ class _GetAprendizajeCase extends Observer<GetAprendizajeResponse>{
   @override
   void onNext(GetAprendizajeResponse? response) {
     assert(presenter.getAprendizajeOnNext!=null);
-    presenter.getAprendizajeOnNext(response?.errorServidor, response?.datosOffline, response?.competenciaUiList, response?.temaCriterioUiList);
+    presenter.getAprendizajeOnNext(response?.errorServidor, response?.datosOffline, response?.competenciaUiList, response?.temaCriterioUiList, response?.sesionRecursoUiList);
+  }
+
+}
+
+class GetActividadesSesionCase extends Observer<GetActividadesSesionResponse>{
+  SesionPresenter presenter;
+
+  GetActividadesSesionCase(this.presenter);
+
+  @override
+  void onComplete() {
+
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.getAprendizajeOnError!=null);
+    presenter.getActividadesSesionOnError(e);
+  }
+
+  @override
+  void onNext(GetActividadesSesionResponse? response) {
+    assert(presenter.getAprendizajeOnNext!=null);
+    presenter.getActividadesSesionOnNext(response?.errorServidor, response?.datosOffline, response?.sesionUi?.actividadUiList, response?.sesionUi?.instrumentoEvaluacionUiList);
   }
 
 }

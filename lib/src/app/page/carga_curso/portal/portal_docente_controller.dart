@@ -1,7 +1,8 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:ss_crmeducativo_2/src/app/page/portal_docente/portal_docente_presenter.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/anio_acemico_ui.dart';
+import 'package:ss_crmeducativo_2/src/app/page/carga_curso/portal/portal_docente_presenter.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/georeferencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/programa_educativo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
@@ -9,8 +10,10 @@ class PortalDocenteController extends Controller{
   PortalDocentePresenter presenter;
   UsuarioUi? _usuarioUi = null;
   UsuarioUi? get usuarioUi => _usuarioUi;
-  List<AnioAcademicoUi> _anioAcademicoUiList = [];
-  List<AnioAcademicoUi> get anioAcademicoUiList => _anioAcademicoUiList;
+  List<GeoreferenciaUi> _georeferenciaUiList = [];
+  List<GeoreferenciaUi> get georeferenciaUiList => _georeferenciaUiList;
+  GeoreferenciaUi? _georeferenciaUi = null;
+  GeoreferenciaUi? get georeferenciaUi => _georeferenciaUi;
   AnioAcademicoUi? _anioAcademicoUi = null;
   AnioAcademicoUi? get anioAcademicoUi => _anioAcademicoUi;
   List<ProgramaEducativoUi> _programaEducativoUiList = [];
@@ -42,9 +45,10 @@ class PortalDocenteController extends Controller{
       refreshUI(); // Refreshes the UI manually
     };
 
-    presenter.getAnioAcadOnComplete = (anioAcademicoList, anioAcademicoSelected){
+    presenter.getAnioAcadOnComplete = (georeferenciaUiList, anioAcademicoSelected){
       _anioAcademicoUi = anioAcademicoSelected;
-      _anioAcademicoUiList = anioAcademicoUiList;
+      _georeferenciaUi = _anioAcademicoUi?.georeferenciaUi;
+      _georeferenciaUiList = georeferenciaUiList;
       _isLoading = true;
       refreshUI();
       presenter.updateProgramaEducativo();
@@ -52,13 +56,13 @@ class PortalDocenteController extends Controller{
 
     presenter.getAnioAcadOnError = (e){
       _anioAcademicoUi = null;
-      _anioAcademicoUiList = [];
+      _georeferenciaUiList = [];
       refreshUI();
     };
 
-    presenter.getProgramasEducativosOnComplete = (ProgramaEducativoUi programaEducativoUi, List<ProgramaEducativoUi> programaEducativoList, bool datosOffline, bool errorServidor){
+    presenter.getProgramasEducativosOnComplete = (ProgramaEducativoUi? programaEducativoUi, List<ProgramaEducativoUi>? programaEducativoList, bool? datosOffline, bool? errorServidor){
       _programaEducativoUi = programaEducativoUi;
-      _programaEducativoUiList = programaEducativoList;
+      _programaEducativoUiList = programaEducativoList??[];
       _isLoading = false;
       refreshUI();
       presenter.getCursos(programaEducativoUi);
@@ -93,6 +97,38 @@ class PortalDocenteController extends Controller{
     _programaEducativoUi = programaEducativoUi;
     refreshUI();
     presenter.getCursos(programaEducativoUi);
+  }
+
+  void onSelectAnioAcademico(item) {
+    _anioAcademicoUi = item;
+    presenter.updateSessionAnioAcademicoId(anioAcademicoUi?.anioAcademicoId??0);
+    _isLoading = true;
+    refreshUI();
+    presenter.updateProgramaEducativo();
+  }
+
+  void onSelectPrograma(item) {
+    _programaEducativoUi = item;
+    _isLoading = false;
+    presenter.updateSessionProgramaAcademicoId(anioAcademicoUi?.anioAcademicoId??0);
+    refreshUI();
+    presenter.getCursos(_programaEducativoUi);
+  }
+
+  void onSelectGeoreferencia(item) {
+    _georeferenciaUi = item;
+    _anioAcademicoUi = null;
+    for (AnioAcademicoUi anioAcademicoUi in georeferenciaUi?.anioAcademicoUiList??[]) {
+      if (anioAcademicoUi.vigente??false) {
+        _anioAcademicoUi = anioAcademicoUi;
+      }
+    }
+
+    if(_anioAcademicoUi == null && (georeferenciaUi?.anioAcademicoUiList??[]).isNotEmpty){
+      _anioAcademicoUi = georeferenciaUi?.anioAcademicoUiList![0];
+    }
+
+    onSelectAnioAcademico(_anioAcademicoUi);
   }
 
 }

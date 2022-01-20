@@ -676,6 +676,8 @@ CalendarioCargaCursoSerial _$CalendarioCargaCursoSerialFromJson(
       habilitado: json['habilitado'] as int?,
       nombre: json['nombre'] as String?,
       cargaCursoId: json['cargaCursoId'] as int?,
+      habilitadoProceso: json['habilitadoProceso'] as int?,
+      habilitadoResultado: json['habilitadoResultado'] as int?,
     );
 
 Map<String, dynamic> _$CalendarioCargaCursoSerialToJson(
@@ -691,6 +693,8 @@ Map<String, dynamic> _$CalendarioCargaCursoSerialToJson(
       'nombre': instance.nombre,
       'habilitado': instance.habilitado,
       'cargaCursoId': instance.cargaCursoId,
+      'habilitadoProceso': instance.habilitadoProceso,
+      'habilitadoResultado': instance.habilitadoResultado,
     };
 
 TiposSerial _$TiposSerialFromJson(Map<String, dynamic> json) => TiposSerial(
@@ -2441,6 +2445,7 @@ BESesionHoyDocenteSerial _$BESesionHoyDocenteSerialFromJson(
       color3: json['color3'] as String?,
       color2: json['color2'] as String?,
       color1: json['color1'] as String?,
+      habilitadoProceso: json['habilitadoProceso'] as bool?,
     );
 
 Map<String, dynamic> _$BESesionHoyDocenteSerialToJson(
@@ -2488,4 +2493,5 @@ Map<String, dynamic> _$BESesionHoyDocenteSerialToJson(
       'color3': instance.color3,
       'color2': instance.color2,
       'color1': instance.color1,
+      'habilitadoProceso': instance.habilitadoProceso,
     };

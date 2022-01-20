@@ -69,8 +69,9 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
           SchedulerBinding.instance?.addPostFrameCallback((_) {
             // fetch data
             ErrorHandler().errorDialog(context, controller.mensaje);
+            controller.clearMensaje();
           });
-          controller.clearMensaje();
+
         }
 
         double size = MediaQuery.of(context).size.width;
@@ -232,7 +233,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                         width: ColumnCountProvider.aspectRatioForWidthLogin(context, 350),
                         child: Stack(
                           children: [
-                            Text(ChangeAppTheme.getApp() == App.EDUCAR?'Educar':'Docente',
+                            Text(ChangeAppTheme.getApp() == AppType.EDUCAR?'Educar':'Docente',
                                 style: TextStyle(
                                     fontFamily: AppTheme.fontTTNorms,
                                     color: AppTheme.colorPrimary,
@@ -244,7 +245,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                 top: ColumnCountProvider.aspectRatioForWidthLogin(context, 50),
                                 child: Column(
                                   children: [
-                                    Text(ChangeAppTheme.getApp() == App.EDUCAR?'Teacher':'Mentor',
+                                    Text(ChangeAppTheme.getApp() == AppType.EDUCAR?'Teacher':'Mentor',
                                         style:
                                         TextStyle(
                                             color: AppTheme.colorPrimary,
@@ -261,7 +262,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                 top: ColumnCountProvider.aspectRatioForWidthLogin(context, 115),
                                 child: Column(
                                   children: [
-                                    Text(ChangeAppTheme.getApp() == App.EDUCAR?'Centro de Aprendizaje Virtual':'Social iCRM Educativo Móvil',
+                                    Text(ChangeAppTheme.getApp() == AppType.EDUCAR?'Centro de Aprendizaje Virtual':'Social iCRM Educativo Móvil',
                                         style:
                                         TextStyle(
                                             fontFamily: AppTheme.fontTTNorms,
@@ -275,7 +276,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                             ),
                             Positioned(
                                 top: ColumnCountProvider.aspectRatioForWidthLogin(context, 97),
-                                left: ColumnCountProvider.aspectRatioForWidthLogin(context, ChangeAppTheme.getApp() == App.EDUCAR?230:210),
+                                left: ColumnCountProvider.aspectRatioForWidthLogin(context, ChangeAppTheme.getApp() == AppType.EDUCAR?230:210),
                                 child: Container(
                                     height: ColumnCountProvider.aspectRatioForWidthLogin(context, 10),
                                     width: ColumnCountProvider.aspectRatioForWidthLogin(context, 10),
@@ -506,6 +507,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                 )),
           ),
           SizedBox(height: 25.0),*/
+                    /*
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text('Nuevo en iCRM ?'),
                       SizedBox(width: ColumnCountProvider.aspectRatioForWidthLogin(context, 5)),
@@ -519,7 +521,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                   color: greenColor,
                                   fontFamily: AppTheme.fontTTrueno,
                                   decoration: TextDecoration.underline)))
-                    ]),
+                    ]),*/
                     SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 30)),
                     Row(
                       children: [

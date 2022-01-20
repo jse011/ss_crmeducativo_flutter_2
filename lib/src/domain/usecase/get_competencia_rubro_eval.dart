@@ -110,7 +110,7 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
             for(PersonaUi alumnoCurso in alumnoCursoList){
 
               EvaluacionUi? evaluacionUi = rubricaEvaluacionUi.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == alumnoCurso.personaId);
-              //Una evaluacion vasia significa que el alumno no tiene evaluacion
+              //Una evaluacion vasia significa que el foto_alumno no tiene evaluacion
               if(evaluacionUi==null){
                 evaluacionUi = EvaluacionUi();
                 alumnoCurso.soloApareceEnElCurso = true;
@@ -123,7 +123,7 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
               //Crear y calcular la nueva evaluacion transformada a la nota del resultado
               EvaluacionTransformadaUi evaluacionTransformadaUi = EvaluacionTransformadaUi();
               evaluacionTransformadaUi.alumnoId = evaluacionUi.alumnoId;
-              evaluacionTransformadaUi.personaUi = alumnoCurso;  // Buscar el alumno que pertenece al curso para saver si esta con el contrato vigente
+              evaluacionTransformadaUi.personaUi = alumnoCurso;  // Buscar el foto_alumno que pertenece al carga_curso para saver si esta con el contrato vigente
               evaluacionTransformadaUi.publicado = evaluacionUi.publicado;
               evaluacionTransformadaUi.evaluacionId = evaluacionUi.evaluacionId;
               evaluacionTransformadaUi.rubroEvaluacionId = evaluacionUi.rubroEvaluacionId;

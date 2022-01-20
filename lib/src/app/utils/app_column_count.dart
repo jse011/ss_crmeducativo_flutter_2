@@ -30,17 +30,17 @@ class ColumnCountProvider{
     double widthPx = context.widthPx;
 
     if (widthPx >= 1010) {
-      return (pixcel) / 1.1;
+      return (pixcel) / 1.2;
     }else if (widthPx >= 900) {
       return (pixcel) / 1.2;
     } else if (widthPx >= 720) {
-      return (pixcel) / 1.35;
+      return (pixcel) / 1.15;
     } else if (widthPx >= 600) {
-      return (pixcel) / 1.25;
+      return (pixcel) / 1.1;
     } else if (widthPx >= 480) {
-      return (pixcel) / 1.35;
+      return (pixcel) / 1.05;
     } else if (widthPx >= 320) {
-      return (pixcel) / 1.25;
+      return (pixcel) / 1;
     } else {
       return (pixcel) / 1.1;
     }

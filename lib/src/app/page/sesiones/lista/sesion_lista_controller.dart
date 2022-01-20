@@ -22,10 +22,13 @@ class SesionListaController extends Controller{
   Map<UnidadUi, List<dynamic>> get unidadItemsMap => _unidadItemsMap;
   bool _progressDocente = false;
   bool get progressDocente => _progressDocente;
+  bool _sesionEstadoOffLine = false;
+  bool get sesionEstadoOffLine => _sesionEstadoOffLine;
+  bool _sesionEstadoError = false;
+  bool get sesionEstadoError => _sesionEstadoError;
 
   bool _datosOffline = false;
   bool get datosOffline => _datosOffline;
-
 
   SesionListaController(this.usuarioUi, this.cursosUi, configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo):
       presenter = SesionListaPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo);
@@ -52,7 +55,8 @@ class SesionListaController extends Controller{
       _unidadUiDocenteList = unidadUiList??[];
       _progressDocente = false;
       _datosOffline = datosOffline??false;
-
+      _sesionEstadoError = false;
+      _sesionEstadoOffLine = false;
 
       unidadItemsMap.clear();
       for(UnidadUi unidadUi in unidadUiList??[]){
@@ -75,6 +79,12 @@ class SesionListaController extends Controller{
     presenter.getUnidadSesionDocenteOnError = (e){
       _unidadUiDocenteList = [];
       _progressDocente = false;
+      refreshUI();
+    };
+
+    presenter.updateSesionEstadoOnMessage = (bool? offline, bool? success){
+      _sesionEstadoError = !(success??false);
+      _sesionEstadoOffLine = offline??false;
       refreshUI();
     };
 
@@ -118,4 +128,26 @@ class SesionListaController extends Controller{
     unidadUi.toogle = !(unidadUi.toogle??false);
     refreshUI();
   }
+
+  Future<bool> onClickSessionHecho(SesionUi? sesionUi) async{
+    _progressDocente = true;
+    refreshUI();
+    var response = await presenter.onUpdateSesionEstado(sesionUi);
+    _progressDocente = false;
+    if(response){
+      refreshUI();
+    }
+    return response;
+  }
+
+  void hideMsgOfflineSesion() {
+    _sesionEstadoOffLine = false;
+    refreshUI();
+  }
+
+  void hideMsgErrorSesion() {
+    _sesionEstadoOffLine = false;
+    refreshUI();
+  }
+
 }

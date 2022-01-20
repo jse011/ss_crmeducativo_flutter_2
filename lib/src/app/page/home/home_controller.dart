@@ -11,6 +11,8 @@ class HomeController extends Controller{
   UsuarioUi? get usuario => _userioSession; // data used by the View
   int _showLoggin = 0;// 0 cargando, 1 show Loggin, -1 nada
   int get showLoggin => _showLoggin;
+  String? _logoApp = null;
+  String? get logoApp => _logoApp;
 
   VistaIndex get vistaActual => _vistaActual;
 
@@ -24,6 +26,7 @@ class HomeController extends Controller{
   void initListeners() {
     homePresenter.getUserOnNext = (UsuarioUi user) {
       _userioSession = user;
+      homePresenter.updateUsuario();
       refreshUI(); // Refreshes the UI manually
     };
 
@@ -40,7 +43,7 @@ class HomeController extends Controller{
 
 
     homePresenter.validarUsuarioOnComplete = () {
-      homePresenter.getUserSession();
+      homePresenter.getUserSession(false);
       _showLoggin = -1;
       print('HomeView validarUsuarioOnComplete');
       refreshUI();
@@ -64,13 +67,47 @@ class HomeController extends Controller{
 
     };
 
+    homePresenter.updateUsuarioOnComplete = (bool? datosOffline, bool? errorServidor){
+      print("updateUsuarioOnComplete");
+      homePresenter.getUserSession(true);
+    };
+
+    homePresenter.updateUsuarioOnError = (e){
+
+    };
+
+    homePresenter.getUpdateUserOnNext =  (UsuarioUi user) {
+      print("getUpdateUserOnNext ${user.personaUi?.foto}");
+      _userioSession?.personaUi?.fechaNacimiento = user.personaUi?.fechaNacimiento;
+      _userioSession?.personaUi?.fechaNacimiento2 = user.personaUi?.fechaNacimiento2;
+      _userioSession?.personaUi?.correo = user.personaUi?.correo;
+      _userioSession?.personaUi?.telefono = user.personaUi?.telefono;
+      _userioSession?.personaUi?.nombres = user.personaUi?.nombres;
+      _userioSession?.personaUi?.nombreCompleto = user.personaUi?.nombreCompleto;
+      _userioSession?.personaUi?.apellidoMaterno = user.personaUi?.apellidoMaterno;
+      _userioSession?.personaUi?.apellidoPaterno = user.personaUi?.apellidoPaterno;
+      _userioSession?.personaUi?.foto = user.personaUi?.foto;
+      refreshUI();
+    };
+
+
+    homePresenter.getUpdateUserOnError = (e) {
+
+    };
+
   }
 
   @override
   void onInitState() {
     homePresenter.validarUsuario();
     homePresenter.updateContactoDocente();
+    getIconoServidor();
     super.onInitState();
+  }
+
+  void getIconoServidor() async{
+    _logoApp =await homePresenter.getIconoServidor();
+    refreshUI();
   }
 
   void onSelectedVistaAbout() {

@@ -9,7 +9,7 @@ abstract class AgendaEventoRepository {
 
   Future<void> saveEventoAgenda(Map<String, dynamic> eventoAgenda, int usuarioId, int georeferenciaId, int tipoEventoId);
 
-  Future<List<EventoUi>> getEventosAgenda(int usuarioId, int georeferenciaId, int tipoEventoId);
+  Future<List<EventoUi>> getEventosAgenda(int usuarioId, int georeferenciaId, int tipoEventoId, int? cargaCursoId);
 
   Future<List<EventosListaEnvioUi>> getListaAlumnos(int empleadoId);
 

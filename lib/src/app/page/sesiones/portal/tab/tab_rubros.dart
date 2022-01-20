@@ -12,6 +12,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/Item_rubro.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/Item_tarea.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -32,9 +33,32 @@ class _TabRubrosState extends State<TabRubros>{
 
     return  Stack(
       children: [
+        controller.calendarioPeriodoUI==null || (controller.calendarioPeriodoUI.habilitadoProceso??0)==1?
+        Container():
+        Container(
+          width: double.infinity,
+          margin: EdgeInsets.only(top:16, bottom: 16, right: 24, left: 24),
+          padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+          decoration: BoxDecoration(
+            color: AppTheme.redLighten1,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text("El ${controller.calendarioPeriodoUI.nombre??"período"} no se encuentra vigente.", textAlign: TextAlign.center,style: TextStyle(color: AppTheme.white, fontSize: 14),),
+        ),
+
        controller.progressEvaluacion?
-          Center(
-            child: CircularProgressIndicator(),
+          Padding(padding: EdgeInsets.only(top: 4),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16)
+              ),
+              child: ArsProgressWidget(
+                blur: 2,
+                backgroundColor: Color(0x33000000),
+                animationDuration: Duration(milliseconds: 500),
+              ),
+            ),
           ):
         controller.rubricaEvaluacionUiList.isEmpty?
         Column(
@@ -49,82 +73,87 @@ class _TabRubrosState extends State<TabRubros>{
             )
           ],
         ):Container(),
-        CustomScrollView(
-            //controller: scrollController,
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.only(top: 24, right: 24, left: 24),
-                sliver:  SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: ColumnCountProvider.columnsForWidthRubro(context),
-                    mainAxisSpacing: 24.0,
-                    crossAxisSpacing: 24.0,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index){
-                        dynamic o =  controller.rubricaEvaluacionUiList[index];
+        Column(
+          children: [
+            Padding(padding: EdgeInsets.only(top: controller.calendarioPeriodoUI==null || (controller.calendarioPeriodoUI.habilitadoProceso??0)==1?24:88)),
+            Expanded(child: CustomScrollView(
+              //controller: scrollController,
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.only(top: 0, right: 24, left: 24),
+                    sliver:  SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: ColumnCountProvider.columnsForWidthRubro(context),
+                        mainAxisSpacing: 24.0,
+                        crossAxisSpacing: 24.0,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index){
+                            dynamic o =  controller.rubricaEvaluacionUiList[index];
 
-                        if(o is String){
-                          return InkWell(
-                            onTap: () async{
-                               _guardarRubroyRetornar(context, controller);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: AppTheme.colorSesion,
-                                borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                              ),
-                              child: FDottedLine(
-                                color: AppTheme.white,
-                                strokeWidth: 3.0,
-                                dottedLength: 10.0,
-                                space: 3.0,
-                                corner: FDottedLineCorner.all(14.0),
-
-                                /// add widget
+                            if(o is String){
+                              return InkWell(
+                                onTap: () async{
+                                  _guardarRubroyRetornar(context, controller);
+                                },
                                 child: Container(
-                                  alignment: Alignment.center,
-                                  child:  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Ionicons.add, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthRubro(context, 40),),
-                                      Padding(padding: EdgeInsets.only(top: 4)),
-                                      Text("Crear\nevaluación",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.5,
-                                            color: AppTheme.white
-                                        ),
-                                      )
-                                    ],
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.colorSesion,
+                                    borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                  ),
+                                  child: FDottedLine(
+                                    color: AppTheme.white,
+                                    strokeWidth: 3.0,
+                                    dottedLength: 10.0,
+                                    space: 3.0,
+                                    corner: FDottedLineCorner.all(14.0),
+
+                                    /// add widget
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      child:  Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Ionicons.add, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthRubro(context, 40),),
+                                          Padding(padding: EdgeInsets.only(top: 4)),
+                                          Text("Crear\nevaluación",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: 0.5,
+                                                color: AppTheme.white
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }else if(o is RubricaEvaluacionUi){
-                          //int position = (controller.rubricaEvaluacionUiList?.length??0) - index;
-                          return ItemRubro(rubricaEvalProcesoUi: o,
-                            calendarioPeriodoUI: controller.calendarioPeriodoUI,
-                            cursosUi: controller.cursosUi,
-                            onTap: (){
-                              if((o.cantidadRubroDetalle??0) > 1){
-                                _evaluacionMultipleRetornar(context, controller, o);
-                              }else{
-                                _evaluacionSimpleRetornar(context, controller, o, controller.calendarioPeriodoUI);
-                              }
-                            },
-                          );;
-                        }
-                      },
-                      childCount: controller.rubricaEvaluacionUiList.length
-                  ),
-                ),
-              )
-            ]),
+                              );
+                            }else if(o is RubricaEvaluacionUi){
+                              //int position = (controller.rubricaEvaluacionUiList?.length??0) - index;
+                              return ItemRubro(rubricaEvalProcesoUi: o,
+                                calendarioPeriodoUI: controller.calendarioPeriodoUI,
+                                cursosUi: controller.cursosUi,
+                                onTap: (){
+                                  if((o.cantidadRubroDetalle??0) > 1){
+                                    _evaluacionMultipleRetornar(context, controller, o);
+                                  }else{
+                                    _evaluacionSimpleRetornar(context, controller, o, controller.calendarioPeriodoUI);
+                                  }
+                                },
+                              );;
+                            }
+                          },
+                          childCount: controller.rubricaEvaluacionUiList.length
+                      ),
+                    ),
+                  )
+                ]))
+          ],
+        ),
       ],
     );
   }

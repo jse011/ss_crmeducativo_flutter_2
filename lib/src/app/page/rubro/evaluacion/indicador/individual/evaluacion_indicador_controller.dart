@@ -84,7 +84,7 @@ class EvaluacionIndicadorController extends Controller{
     _rowList2.add("");//Espacio
     _rowList2.add("");//Espacio
 
-    _columnList2.add(ContactoUi());//Titulo alumno
+    _columnList2.add(ContactoUi());//Titulo foto_alumno
 
     print("tipoNotaUi ${rubroEvaluacionUi?.tipoNotaUi?.nombre}");
     //rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
@@ -119,7 +119,7 @@ class EvaluacionIndicadorController extends Controller{
         }
 
         EvaluacionUi? evaluacionUi = rubricaEvaluacionUiCebecera2?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
-        //Una evaluacion vasia significa que el alumno no tiene evaluacion
+        //Una evaluacion vasia significa que el foto_alumno no tiene evaluacion
         if(evaluacionUi==null){
           evaluacionUi = EvaluacionUi();
           row.soloApareceEnElCurso = true;
@@ -127,7 +127,7 @@ class EvaluacionIndicadorController extends Controller{
           evaluacionUi.alumnoId = row.personaId;
           rubroEvaluacionUi?.evaluacionUiList?.add(evaluacionUi);
         }
-        evaluacionUi.personaUi = row;//se remplasa la persona con la lista de alumno del curso por que contiene informacion de vigencia
+        evaluacionUi.personaUi = row;//se remplasa la persona con la lista de foto_alumno del carga_curso por que contiene informacion de vigencia
 
 
         if(rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||rubricaEvaluacionUiCebecera2?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
@@ -382,7 +382,7 @@ class EvaluacionIndicadorController extends Controller{
   }
 
   bool isCalendarioDesactivo() {
-    return calendarioPeriodoUI?.habilitado != 1;
+    return calendarioPeriodoUI?.habilitadoProceso != 1;
   }
 
   void onSaveTecladoPresicion(nota, EvaluacionUi? evaluacionUi) {

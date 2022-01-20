@@ -87,7 +87,7 @@ class DomainTools {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(fecha ?? 1995);
 
       String day = dateTime.day.toString();
-      String month = dateTime.month.toString();
+      String month = "${(dateTime.month>9)?"":"0"}${dateTime.month}";
       String year = dateTime.year.toString();
 
       if (hora != null && hora.length > 0) {
@@ -218,14 +218,14 @@ class DomainTools {
           if ((hora == 0) && minuto == 0) {
             return "Para el " + f_fecha_letras(fecha);
           } else {
-            return "Para el " + f_fecha_letras(fecha) +
+            return "Para el " + f_fecha_letras(fecha) +" " +
                 changeTime12Hour(hora, minuto);
           }
         } else {
           if ((hora == 0) && minuto == 0) {
             return "Para el " + getFechaDiaMesAnho(fecha);
           } else {
-            return "Para el " + getFechaDiaMesAnho(fecha) +
+            return "Para el " + getFechaDiaMesAnho(fecha) +" " +
                 changeTime12Hour(hora, minuto);
           }
         }
@@ -418,6 +418,18 @@ class DomainTools {
   static Map<String, dynamic> removeNull(Map<String, dynamic> map) {
     map.removeWhere((key, value) => key == null || value == null);
     return map;
+  }
+
+  static bool esValidaUrl(String? value) {
+    String pattern = r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
+    RegExp regExp = new RegExp(pattern);
+    if ((value?.length??0) == 0) {
+      return false;
+    }
+    else if (!regExp.hasMatch(value!)) {
+      return false;
+    }
+    return true;
   }
 
 }

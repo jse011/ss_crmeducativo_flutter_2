@@ -18,12 +18,9 @@ class EventoAgendaPresenter2 extends Presenter{
         this._changeEstadoEventoDocente = ChangeEstadoEventoDocente(httpRepo, configuracionRepo, agendaEventoRepo);
 
   void getEventoAgenda(TipoEventoUi? tipoEventoUi, bool traerTipos){
-    _getEventoAgenda.execute(_GetEventoAgendaCase(this), GetEventoAgendaParams(tipoEventoUi?.id, traerTipos));
+    _getEventoAgenda.execute(_GetEventoAgendaCase(this), GetEventoAgendaParams(tipoEventoUi?.id, traerTipos, null));
   }
 
-  void onInitState() {
-    getEventoAgenda(null, true);
-  }
 
   @override
   void dispose() {

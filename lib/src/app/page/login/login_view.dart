@@ -494,9 +494,9 @@ class _LoginViewState extends ViewState<LoginView, LoginController>{
                             children: [
                               Expanded(
                                   flex: 3,
-                                  child: ChangeAppTheme.getApp() != App.ICRM?
+                                  child: ChangeAppTheme.getApp() != AppType.ICRM?
                                   Image.asset(
-                                    ChangeAppTheme.loginBanner(app: App.ICRM),
+                                    ChangeAppTheme.loginBanner(app: AppType.ICRM),
                                     height: 70.0,
                                   ): Container()
                               ),

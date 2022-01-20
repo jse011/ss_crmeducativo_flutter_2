@@ -15,8 +15,8 @@ class EventoAgendaController2 extends Controller{
   List<TipoEventoUi> get tipoEventoList => _tipoEventoList;
   TipoEventoUi? _selectedTipoEventoUi = null;
   TipoEventoUi? get selectedTipoEventoUi => _selectedTipoEventoUi;
-  List<EventoUi> _eventoUilIst = [];
-  List<EventoUi> get eventoUiList => _eventoUilIst;
+  List<EventoUi>? _eventoUilIst = null;
+  List<EventoUi>? get eventoUiList => _eventoUilIst;
   bool _isLoading = false;
   get isLoading => _isLoading;
 
@@ -45,13 +45,13 @@ class EventoAgendaController2 extends Controller{
       }
 
       _eventoUilIst = [];
-      hideProgress();
-      _msgConexion = "!Oops! Al parecer ocurrió un error involuntario.";
+      _isLoading = false;
+      _msgConexion = "Al parecer ocurrió un error involuntario.";
       refreshUI();
     };
+
     presenter.getEventoAgendaOnNext = (List<TipoEventoUi>? tipoEvantoList, List<EventoUi>? eventoList, bool errorServidor, bool datosOffline) {
-      print("tipoEventoUiList :3 size: " + (tipoEvantoList?.length??0).toString());
-      print("eventoUIList :3 size: " + (eventoList?.length??0).toString());
+
       _tipoEventoList = tipoEvantoList??[];
       _msgConexion = errorServidor? "!Oops! Al parecer ocurrió un error involuntario.":null;
       _msgConexion = datosOffline? "No hay Conexión a Internet...":null;
@@ -71,11 +71,12 @@ class EventoAgendaController2 extends Controller{
           }
         }
       }
+
+      _eventoUilIst = eventoList;
+
       if(_eventoUilIst!=null){
-        hideProgress();
-        print("isLoading");
+        _isLoading = false;
       }
-      _eventoUilIst = eventoList??[];
 
       refreshUI();
     };
@@ -83,8 +84,10 @@ class EventoAgendaController2 extends Controller{
 
   @override
   void onInitState() {
-    showProgress();
-    presenter.onInitState();
+    _isLoading = true;
+    refreshUI();
+    presenter.getEventoAgenda(null, true);
+
   }
 
   @override
@@ -97,36 +100,30 @@ class EventoAgendaController2 extends Controller{
 
   void onSelectedTipoEvento(TipoEventoUi tipoEvento) {
     if(tipoEvento.disable??false)return;
-    showProgress();
+    _isLoading = true;
     _selectedTipoEventoUi = tipoEvento;
     for(var item in _tipoEventoList)item.toogle = false;
     tipoEvento.toogle = true;
     refreshUI();
+
    selectedTipoEventoTimer?.cancel();
     selectedTipoEventoTimer = Timer(Duration(milliseconds: 500), () {
-      showProgress();
+      _isLoading = true;
+      refreshUI();
       presenter.getEventoAgenda(tipoEvento, false);
     });
 
   }
 
-  void showProgress(){
-    _isLoading = true;
-    print("jse showProgress");
-  }
 
-  void hideProgress(){
-    _isLoading = false;
-    print("jse hideProgress");
-  }
-
-
-  void onBackPress() {
+  bool onBackPress() {
     if(_dialogAdjuntoDownload){
       _dialogAdjuntoDownload = false;
       _eventoUiSelected = null;
-      refreshUI(); 
+      refreshUI();
+      return false;
     }
+    return true;
   }
 
   void onClickAtrasDialogEventoAdjuntoDownload() {
@@ -142,7 +139,8 @@ class EventoAgendaController2 extends Controller{
   }
 
   void cambiosEvento() {
-    showProgress();
+    _isLoading = true;
+    refreshUI();
     presenter.getEventoAgenda(_selectedTipoEventoUi, false);
   }
   void onClickElimarEvento(EventoUi? eventoUi) {
@@ -170,7 +168,7 @@ class EventoAgendaController2 extends Controller{
     refreshUI();
     bool? result = await presenter.eliminarEvento(_eventoUiSelected);
     if(result??false){
-      _eventoUilIst.remove(_eventoUiSelected);
+      _eventoUilIst?.remove(_eventoUiSelected);
       _showDialogEliminar = false;
     }else{
 

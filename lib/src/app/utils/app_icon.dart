@@ -10,6 +10,7 @@ class AppIcon {
   static const String ic_curso_nota_final = "assets/icons/pack1/020-diploma.svg";
   static const String ic_curso_agenda = "assets/icons/pack1/049-mortarboard.svg";
   static const String ic_curso_foto_alumno = "assets/icons/pack1/039-id card.svg";
+  static const String ic_curso_editar_usuario = "assets/icons/pack1/028-sculpture.svg";
 
   //static const String ic_curso_exam = "assets/icons/ic_documento.svg";
   //https://www.flaticon.es/packs/project-management-50
@@ -39,6 +40,10 @@ class AppIcon {
 
 
   static const String ic_tipo_actividad_conecta = "assets/icons/tipo_actividad/tipoact_ico_1.svg";
+  static const String ic_tipo_actividad_teoria = "assets/icons/tipo_actividad/tipoact_ico_2.svg";
+  static const String ic_tipo_actividad_aprendizaje = "assets/icons/tipo_actividad/tipoact_ico_3.svg";
+  static const String ic_tipo_actividad_practica = "assets/icons/tipo_actividad/tipoact_ico_4.svg";
+  static const String ic_tipo_actividad_instrumento = "assets/icons/tipo_actividad/tipoact_ico_5.svg";
 
   static const String ic_procesear_nota = "assets/icons/ic_procesar.svg";
   static const String ic_cerrar_curso = "assets/icons/ic_cerrar_curso.svg";

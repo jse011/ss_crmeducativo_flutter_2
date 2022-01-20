@@ -50,6 +50,8 @@ class TareaCrearController extends Controller{
 
   @override
   void initListeners() {
+    print("sesionAprendizajeId ${sesionUi?.sesionAprendizajeId}");
+
       presenter.getCalendarioPeridoOnProgress = (double? progress,  TareaRecusoUi? tareaRecusoUi){
         tareaRecusoUi?.progress = progress;
         refreshUI();
@@ -204,7 +206,7 @@ class TareaCrearController extends Controller{
         tareaUi.horaTarea = horaTarea;
         tareaUi.recursos = tareaRecursoList;
 
-        tareaUi.docente = usuarioUi?.nombre;
+        tareaUi.docente = usuarioUi?.personaUi?.nombreCompleto;
         tareaUi.nroSesion = sesionUi?.nroSesion;
         tareaUi.tipoPeriodoId = calendarioPeriodoUI?.tipoId;
         tareaUi.silaboEventoId = unidadUi?.silaboEventoId;
@@ -227,7 +229,7 @@ class TareaCrearController extends Controller{
       tareaUi?.horaTarea = horaTarea;
       tareaUi?.recursos = tareaRecursoList;
 
-      tareaUi?.docente = usuarioUi?.nombre;
+      tareaUi?.docente = usuarioUi?.personaUi?.nombreCompleto;
       tareaUi?.nroSesion = sesionUi?.nroSesion;
       tareaUi?.tipoPeriodoId = calendarioPeriodoUI?.tipoId;
       tareaUi?.silaboEventoId = unidadUi?.silaboEventoId;

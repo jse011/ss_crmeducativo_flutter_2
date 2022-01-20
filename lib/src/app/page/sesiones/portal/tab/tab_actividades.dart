@@ -1,15 +1,28 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_controller.dart';
+import 'package:ss_crmeducativo_2/src/app/page/tarea/multimedia/tarea_multimedia_view.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_imagen.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_url_launcher.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/actividad_recurso_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/actividad_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/instrumento_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_youtube_tools.dart';
 
 class TabActividades extends StatefulWidget{
   @override
@@ -23,421 +36,566 @@ class _TabActividadesSatate extends State<TabActividades>{
   Widget build(BuildContext context) {
     SesionController controller =
     FlutterCleanArchitecture.getController<SesionController>(context, listen: false);
-    return CustomScrollView(
-      slivers: [
-
-        SliverPadding(
-            padding: EdgeInsets.only(left: 24, right: 24, top: 8),
-            sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  GestureDetector(
-                    onTap: () =>  {
-                      showActivdadDocente(context)
-                    },
-                    child: Container(
-                      height: 90,
-                      margin: EdgeInsets.only(top: 16,left: 0, right: 0, bottom: 20),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                              width: 2
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: EdgeInsets.only(
+              top: 16,
+              left: 24,
+              right: 24,
+            bottom: 100
+          ),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(8))
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.only(
+                          top: 16,
+                          bottom: 16,
+                          left: 32,
+                          right: 16
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                            decoration: BoxDecoration(
-                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                borderRadius: BorderRadius.all(Radius.circular(16))
-                            ),
-                            width: 65,
-                            height: 65,
-                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                          ),
-                          Padding(padding: EdgeInsets.only(left: 8)),
-                          Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("CONECTA TU MENTE",
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontFamily: AppTheme.fontTTNorms,
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 14,
-                                        letterSpacing: 0.8,
-                                        color: AppTheme.darkerText,
-                                      )),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("Inicio",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        letterSpacing: 0.8,
-                                        color: AppTheme.darkerText,
-                                      ))
-                                ],
-                              )
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(25)),
-                                color: Colors.white,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: true
-                                    ? Icon(
-                                  Icons.check_outlined,
-                                  size: 25.0,
-                                  color: HexColor(controller.cursosUi.color1),
-                                )
-                                    : Container(width: 25, height: 25,),
-                              ),
-                            ),
-                          ),
+                      child: Text("Sesión ${controller.sesionUi.nroSesion??""}: ${controller.sesionUi.titulo??""}",
+                          style: TextStyle(
+                            fontFamily: AppTheme.fontTTNorms,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            letterSpacing: 0.4,
+                            color: HexColor(controller.cursosUi.color1),
+                          )),
 
-                        ],
-                      ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () =>  {
-                      showActivdadDocente(context)
-                    },
-                    child: Container(
-                      height: 90,
-                      margin: EdgeInsets.only(top: 4,left: 0, right: 0, bottom: 20),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                              width: 2
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                            decoration: BoxDecoration(
-                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                borderRadius: BorderRadius.all(Radius.circular(16))
-                            ),
-                            width: 65,
-                            height: 65,
-                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                          ),
-                          Padding(padding: EdgeInsets.only(left: 8)),
-                          Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("EXPLORANDO Y EXPLICANDO",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily: AppTheme.fontTTNorms,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 14,
-                                      letterSpacing: 0.8,
-                                      color: AppTheme.darkerText,
-                                    ),),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("Desarrollo",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        letterSpacing: 0.8,
-                                        color: AppTheme.darkerText,
-                                      ))
-                                ],
-                              )
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(25)),
-                                color: Colors.white,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: true
-                                    ? Icon(
-                                  Icons.check_outlined,
-                                  size: 25.0,
-                                  color: HexColor(controller.cursosUi.color1),
-                                )
-                                    : Container(width: 25, height: 25,),
-                              ),
-                            ),
-                          ),
-
-                        ],
-                      ),
+                    Container(
+                      height: 2,
+                      color: HexColor(controller.cursosUi.color1),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () =>  {
-                      showActivdadDocente(context)
-                    },
-                    child: Container(
-                      height: 90,
-                      margin: EdgeInsets.only(top: 8,left: 0, right: 0, bottom: 20),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
-                              width: 2
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: HexColor(controller.cursosUi.color2).withOpacity(0.5)
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                            decoration: BoxDecoration(
-                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                borderRadius: BorderRadius.all(Radius.circular(16))
-                            ),
-                            width: 65,
-                            height: 65,
-                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                          ),
-                          Padding(padding: EdgeInsets.only(left: 8)),
-                          Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("APLICA/REFLEXIONA",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily: AppTheme.fontTTNorms,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 14,
-                                      letterSpacing: 0.8,
-                                      color: AppTheme.darkerText,
-                                    ),),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("Desarrollo",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        letterSpacing: 0.8,
-                                        color: AppTheme.darkerText,
-                                      ))
-                                ],
-                              )
-                          ),
-                          Container(
-                            margin: EdgeInsets.all(1),
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(25)),
-                                border: Border.all(
-                                    color: HexColor(controller.cursosUi.color1).withOpacity(0.5),
-                                    width: 2
+                    ListView.builder(
+                        padding: EdgeInsets.only(top: 0, bottom: 0),
+                        itemCount: controller.actividadUiList.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index){
+                          ActividadUi actividadUi = controller.actividadUiList[index];
+                          return  Container(
+                            child: Column(
+                              children: [
+                                InkWell(
+                                  onTap: (){
+                                    controller.onClickActividad(actividadUi);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 4),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.only(right: 8, left: 24, top: 8, bottom: 8),
+                                          decoration: BoxDecoration(
+                                              color: HexColor(controller.cursosUi.color1),
+                                              shape: BoxShape.circle
+                                          ),
+                                          width: 40,
+                                          height: 40,
+                                          child: Padding(padding: EdgeInsets.all(8),
+                                            child: SvgPicture.asset(
+                                                    (){
+                                                  switch(actividadUi.tipo){
+                                                    case ActividadTipo.APRENDIZAJE:
+                                                      return AppIcon.ic_tipo_actividad_aprendizaje;
+                                                    case ActividadTipo.CONECTA:
+                                                      return AppIcon.ic_tipo_actividad_conecta;
+                                                    case ActividadTipo.TEORIA:
+                                                      return AppIcon.ic_tipo_actividad_teoria;
+                                                    case ActividadTipo.PRACTICA:
+                                                      return AppIcon.ic_tipo_actividad_practica;
+                                                    default:
+                                                      return AppIcon.ic_tipo_actividad_conecta;
+                                                  }
+                                                }()
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(padding: EdgeInsets.only(left: 8)),
+                                        Expanded(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("${actividadUi.actividad??""}",
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontFamily: AppTheme.fontTTNorms,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontSize: 12,
+                                                      letterSpacing: 0.4,
+                                                      color: HexColor(controller.cursosUi.color1),
+                                                    )),
+                                                Padding(padding: EdgeInsets.all(0),),
+                                                Text("${actividadUi.secuencia}",
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      letterSpacing: 0.4,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: AppTheme.fontTTNorms,
+                                                      color: AppTheme.darkerText,
+                                                    ))
+                                              ],
+                                            )
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                color: Colors.white,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: true
-                                    ? Icon(
-                                  Icons.check_outlined,
-                                  size: 25.0,
-                                  color: HexColor(controller.cursosUi.color1),
-                                )
-                                    : Icon(
-                                  Icons.check_box_outline_blank,
-                                  size: 20.0,
-                                  color: Colors.blue,
-                                ),
-                              ),
+                                actividadUi.toogle??false?
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 1,
+                                      color: AppTheme.colorLine,
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.only(
+                                          top: 16,
+                                          left: 32,
+                                          right: 24,
+                                          bottom: 0
+                                      ),
+                                      child: Text("${actividadUi.descripcion}",
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: AppTheme.darkerText,
+                                          fontFamily: AppTheme.fontTTNorms,
+                                          height: 1.5,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                    ListView.builder(
+                                        padding: EdgeInsets.only(top: 8, bottom: 0),
+                                        itemCount: actividadUi.subActividades?.length??0,
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, subindex){
+                                          ActividadUi subActividadUi = actividadUi.subActividades![subindex];
+                                          return  Container(
+                                            padding: EdgeInsets.only(
+                                                top: 8,
+                                                left: 32,
+                                                right: 24,
+                                                bottom: 0
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("${index+1}.${subindex+1}  ",
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        color: AppTheme.darkerText,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        height: 1.5,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    Expanded(child: Text("${subActividadUi.descripcion}",
+                                                      style: TextStyle(
+                                                        fontSize: 12.0,
+                                                        color: AppTheme.darkerText,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        height: 1.5,
+                                                        fontWeight: FontWeight.w400,
+                                                      ),
+                                                    ))
+                                                  ],
+                                                ),
+                                                Container(
+                                                  padding: EdgeInsets.only(
+                                                    left: 24
+                                                  ),
+                                                  child: getListaRecursos(subActividadUi.recursos, controller),
+                                                ),
+                                                subActividadUi.instrumentoEvaluacionUi!=null?
+                                                 Container(
+                                                   margin: EdgeInsets.only(
+                                                       left: 24,
+                                                      bottom: 8
+                                                   ),
+                                                   child: Column(
+                                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                                     children: [
+                                                       Padding(padding: EdgeInsets.only(top: 16)),
+                                                       Text("Evaluación de la Sub-Actividad",
+                                                         style: TextStyle(
+                                                           fontSize: 11.0,
+                                                           color: AppTheme.darkerText,
+                                                           fontFamily: AppTheme.fontTTNorms,
+                                                           fontWeight: FontWeight.w400,
+                                                           fontStyle: FontStyle.italic
+                                                         ),
+                                                       ),
+                                                       Padding(padding: EdgeInsets.only(top: 4)),
+                                                       getItemInstumento(subActividadUi.instrumentoEvaluacionUi, controller)
+                                                     ],
+                                                   ),
+                                                 ):Container()
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                    ),
+                                    getListaRecursos(actividadUi.recursos, controller),
+                                    Padding(padding: EdgeInsets.only(bottom: 32)),
+                                  ],
+                                ):Container(),
+                                controller.actividadUiList.length>index+1 || controller.instrumentoEvaluacionUiList.isNotEmpty?
+                                Container(
+                                  height: 1,
+                                  color: AppTheme.colorLine,
+                                ):Container(),
+                              ],
                             ),
-                          ),
-
-                        ],
-                      ),
+                          );
+                        }
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () =>  {
-                      showActivdadDocente(context)
-                    },
-                    child: Container(
-                      height: 90,
-                      margin: EdgeInsets.only(top: 8,left: 0, right: 0, bottom: 20),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                              width: 2
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                      ),
-                      child: Row(
+                    controller.instrumentoEvaluacionUiList.isNotEmpty?
+                    Container(
+                      child: Column(
                         children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                            decoration: BoxDecoration(
-                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                borderRadius: BorderRadius.all(Radius.circular(16))
-                            ),
-                            width: 65,
-                            height: 65,
-                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                          ),
-                          Padding(padding: EdgeInsets.only(left: 8)),
-                          Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          InkWell(
+                            onTap: (){
+                              controller.onClickContenedorInstrumentos();
+                            },
+                            child:  Container(
+                              padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 4),
+                              child: Row(
                                 children: [
-                                  Text("INSTRUMENTO DE EVALUACIÓN",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily: AppTheme.fontTTNorms,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 14,
-                                      letterSpacing: 0.8,
-                                      color: AppTheme.darkerText,
-                                    ),),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("Desarrollo",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        letterSpacing: 0.8,
-                                        color: AppTheme.darkerText,
-                                      ))
+                                  Container(
+                                    margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
+                                    decoration: BoxDecoration(
+                                        color: HexColor(controller.cursosUi.color1),
+                                        shape: BoxShape.circle
+                                    ),
+                                    width: 40,
+                                    height: 40,
+                                    child: Padding(padding: EdgeInsets.all(8),
+                                      child: SvgPicture.asset(AppIcon.ic_tipo_actividad_instrumento),
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(left: 8)),
+                                  Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Instrumentos de Evaluación".toUpperCase(),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 12,
+                                                letterSpacing: 0.4,
+                                                color: HexColor(controller.cursosUi.color1),
+                                              )),
+                                          Padding(padding: EdgeInsets.all(0),),
+                                          Text("Evaluación",
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                letterSpacing: 0.4,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                color: AppTheme.darkerText,
+                                              ))
+                                        ],
+                                      )
+                                  ),
                                 ],
-                              )
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(25)),
-                                color: Colors.white,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: false
-                                    ? Icon(
-                                  Icons.check_outlined,
-                                  size: 25.0,
-                                  color: HexColor(controller.cursosUi.color1),
-                                )
-                                    : Container(width: 25, height: 25,),
                               ),
                             ),
-
                           ),
-
+                          controller.contenedorInstrumentos?
+                          Column(
+                            children: [
+                              Container(
+                                height: 1,
+                                color: AppTheme.colorLine,
+                              ),
+                              ListView.builder(
+                                  padding: EdgeInsets.only(top: 0, bottom: 0),
+                                  itemCount: controller.instrumentoEvaluacionUiList.length,
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index){
+                                    InstrumentoEvaluacionUi instrumentoEvaluacionUi = controller.instrumentoEvaluacionUiList[index];
+                                    return  Container(
+                                      padding: EdgeInsets.only(
+                                          top: 16,
+                                          left: 32,
+                                          right: 24,
+                                          bottom: 0
+                                      ),
+                                      child: getItemInstumento(instrumentoEvaluacionUi, controller),
+                                    );
+                                  }
+                              ),
+                              Padding(padding: EdgeInsets.only(bottom: 24)),
+                            ],
+                          ):Container()
                         ],
                       ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () =>  {
-                      showActivdadDocente(context)
-                    },
-                    child: Container(
-                      height: 90,
-                      margin: EdgeInsets.only(top: 8,left: 0, right: 0, bottom: 20),
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                              width: 2
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: HexColor(controller.cursosUi.color3).withOpacity(0.1)
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 8, left: 16, top: 8, bottom: 8),
-                            decoration: BoxDecoration(
-                                color: HexColor(controller.cursosUi.color1).withOpacity(1),
-                                borderRadius: BorderRadius.all(Radius.circular(16))
-                            ),
-                            width: 65,
-                            height: 65,
-                            child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_tipo_actividad_conecta),),
-                          ),
-                          Padding(padding: EdgeInsets.only(left: 8)),
-                          Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("EVALUACIÓN",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontFamily: AppTheme.fontTTNorms,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 14,
-                                      letterSpacing: 0.8,
-                                      color: AppTheme.darkerText,
-                                    ),),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("Cierre",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        letterSpacing: 0.8,
-                                        color: AppTheme.darkerText,
-                                      ))
-                                ],
-                              )
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(25)),
-                                color: Colors.white,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: false
-                                    ? Icon(
-                                  Icons.check_outlined,
-                                  size: 25.0,
-                                  color: HexColor(controller.cursosUi.color1),
-                                )
-                                    : Container(width: 25, height: 25,),
-                              ),
-                            ),
-
-                          ),
-
-                        ],
-                      ),
-                    ),
-                  ),
-                ])
+                    )
+                   :Container()
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        if(controller.progressActividad)
+          Padding(padding: EdgeInsets.only(top: 4),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16)
+              ),
+              child: ArsProgressWidget(
+                blur: 2,
+                backgroundColor: Color(0x33000000),
+                animationDuration: Duration(milliseconds: 500),
+              ),
             ),
-        ),
-        SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Padding(padding: EdgeInsets.only( top: 150)),
-              ],
-            )
-        ),
+          ),
       ],
+    );;
+  }
+
+  Widget getListaRecursos(List<ActividadRecursoUi>? recursosUiList, SesionController controller){
+    return ListView.builder(
+        padding: EdgeInsets.only(top: 0, bottom: 0),
+        itemCount: recursosUiList?.length??0,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index){
+          ActividadRecursoUi actividadRecursoUi = recursosUiList![index];
+
+          return InkWell(
+            onTap: () async {
+
+              switch(actividadRecursoUi.tipoRecurso){
+                case TipoRecursosUi.TIPO_DOCUMENTO:
+                case TipoRecursosUi.TIPO_IMAGEN:
+                case TipoRecursosUi.TIPO_AUDIO:
+                case TipoRecursosUi.TIPO_HOJA_CALCULO:
+                case TipoRecursosUi.TIPO_DIAPOSITIVA:
+                case TipoRecursosUi.TIPO_PDF:
+                case TipoRecursosUi.TIPO_VINCULO:
+                  await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(actividadRecursoUi.driveId), webview: false);
+                  break;
+                case TipoRecursosUi.TIPO_ENCUESTA:
+                  await AppUrlLauncher.openLink(actividadRecursoUi.descripcion, webview: false);
+                  break;
+                case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+                //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+                  await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(actividadRecursoUi.driveId), webview: false);
+                  break;
+                case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+                  print("youtube: ${actividadRecursoUi.descripcion}");
+                  TareaMultimediaView.showDialog(context, YouTubeUrlParser.getYoutubeVideoId(actividadRecursoUi.descripcion), TareaMultimediaTipoArchivo.YOUTUBE);
+                  break;
+                case TipoRecursosUi.TIPO_RECURSO:
+                //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+
+                  break;
+                default:
+                  await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(actividadRecursoUi.driveId), webview: false);
+                  break;
+              }
+
+
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4), // use instead of BorderRadius.all(Radius.circular(20))
+                border:  Border.all(
+                    width: 1,
+                    color: AppTheme.colorLine
+                ),
+                color: AppTheme.greyLighten2,
+              ),
+              margin: EdgeInsets.only(bottom: 0, top: 8),
+              width: 450,
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(3)),
+                child: Container(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 50,
+                        child: Center(
+                          child: Image.asset(getImagen(actividadRecursoUi.tipoRecurso),
+                            height: 30.0,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          color: AppTheme.white,
+                          padding: EdgeInsets.only(left:16, top: 8, bottom: 8, right: 8),
+                          child:  Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("${actividadRecursoUi.titulo??""}",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: AppTheme.greyDarken3,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: AppTheme.fontTTNorms
+                                )
+                              ),
+                              Padding(padding: EdgeInsets.all(2)),
+                              Text("${actividadRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE ||
+                                  actividadRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE ||
+                                  actividadRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
+                                  actividadRecursoUi.descripcion:getDescripcion(actividadRecursoUi.tipoRecurso)}",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: DomainTools.esValidaUrl(actividadRecursoUi.descripcion)?AppTheme.blue:null,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontSize: 11
+                                  )
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
     );
+  }
+
+  Widget getItemInstumento(InstrumentoEvaluacionUi? instrumentoEvaluacionUi, SesionController controller){
+    return  Container(
+      decoration: BoxDecoration(
+          color: AppTheme.greyLighten4,
+          borderRadius: BorderRadius.all(Radius.circular(4))
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            margin: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.all(Radius.circular(2))
+            ),
+            child: Icon(Icons.school, color: HexColor(controller.cursosUi.color1),),
+          ),
+          Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${instrumentoEvaluacionUi?.nombre??""}",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: HexColor(controller.cursosUi.color1),
+                      fontFamily: AppTheme.fontTTNorms,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.all(3)),
+                  Text("${(instrumentoEvaluacionUi?.cantidadPreguntas??0)==0?"":instrumentoEvaluacionUi?.cantidadPreguntas==1?"1 pregunta":"${instrumentoEvaluacionUi?.cantidadPreguntas} preguntas"}",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: AppTheme.darkerText,
+                      fontFamily: AppTheme.fontTTNorms,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              )
+          )
+        ],
+      ),
+    );
+  }
+
+  String getImagen(TipoRecursosUi? tipoRecursosUi){
+    switch(tipoRecursosUi??TipoRecursosUi.TIPO_VINCULO){
+      case TipoRecursosUi.TIPO_VIDEO:
+        return AppImagen.archivo_video;
+      case TipoRecursosUi.TIPO_VINCULO:
+        return AppImagen.archivo_link;
+      case TipoRecursosUi.TIPO_DOCUMENTO:
+        return AppImagen.archivo_documento;
+      case TipoRecursosUi.TIPO_IMAGEN:
+        return AppImagen.archivo_imagen;
+      case TipoRecursosUi.TIPO_AUDIO:
+        return AppImagen.archivo_audio;
+      case TipoRecursosUi.TIPO_HOJA_CALCULO:
+        return AppImagen.archivo_hoja_calculo;
+      case TipoRecursosUi.TIPO_DIAPOSITIVA:
+        return AppImagen.archivo_diapositiva;
+      case TipoRecursosUi.TIPO_PDF:
+        return AppImagen.archivo_pdf;
+      case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+        return AppImagen.archivo_youtube;
+      case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+        return AppImagen.archivo_drive;
+      case TipoRecursosUi.TIPO_RECURSO:
+        return AppImagen.archivo_recurso;
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return AppImagen.archivo_recurso;
+    }
+  }
+
+  String getDescripcion(TipoRecursosUi? tipoRecursosUi){
+    switch(tipoRecursosUi??TipoRecursosUi.TIPO_VINCULO){
+      case TipoRecursosUi.TIPO_VIDEO:
+        return "Video";
+      case TipoRecursosUi.TIPO_VINCULO:
+        return "Link";
+      case TipoRecursosUi.TIPO_DOCUMENTO:
+        return "Documento";
+      case TipoRecursosUi.TIPO_IMAGEN:
+        return "Imagen";
+      case TipoRecursosUi.TIPO_AUDIO:
+        return "Audio";
+      case TipoRecursosUi.TIPO_HOJA_CALCULO:
+        return "Hoja cálculo";
+      case TipoRecursosUi.TIPO_DIAPOSITIVA:
+        return "Presentación";
+      case TipoRecursosUi.TIPO_PDF:
+        return "Documento Portátil";
+      case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+        return "Youtube";
+      case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+        return "Drive";
+      case TipoRecursosUi.TIPO_RECURSO:
+        return "Recurso";
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return "Recurso";
+    }
   }
 
   void showActivdadDocente(BuildContext context) {
@@ -519,14 +677,14 @@ class _TabActividadesSatate extends State<TabActividades>{
                                                       fontFamily: AppTheme.fontTTNorms,
                                                       fontWeight: FontWeight.w800,
                                                       fontSize: 14,
-                                                      letterSpacing: 0.8,
+                                                      letterSpacing: 0.4,
                                                       color: AppTheme.darkerText,
                                                     )),
                                                 Padding(padding: EdgeInsets.all(4),),
                                                 Text("Inicio - 10 min.",
                                                     style: TextStyle(
                                                       fontSize: 12,
-                                                      letterSpacing: 0.8,
+                                                      letterSpacing: 0.4,
                                                       color: AppTheme.darkerText,
                                                     ))
                                               ],

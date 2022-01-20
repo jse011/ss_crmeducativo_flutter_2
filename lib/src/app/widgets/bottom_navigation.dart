@@ -2,13 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 class BottomNavigationView extends StatefulWidget {
 
    final TapBuilder? builder;
+   final Function(int index)? changeIndex;
    final String icono;
-   const BottomNavigationView({Key? key, required this.icono,this.builder}) : super(key: key);
+   const BottomNavigationView({Key? key, required this.icono,this.builder, this.changeIndex}) : super(key: key);
 
   @override
   _BottomNavigationViewState createState() => _BottomNavigationViewState();
@@ -82,9 +84,16 @@ class _BottomNavigationViewState extends State<BottomNavigationView>
     ));
 
     animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    if(widget.builder!=null)
-            tabBody = widget.builder!(context, 0, animationController);
+        duration: const Duration(milliseconds: 400), vsync: this);
+
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+       widget.changeIndex?.call(0);
+        if(widget.builder!=null)
+        setState(() {
+          tabBody = widget.builder!(context, 0, animationController);
+        });
+      });
+
     super.initState();
   }
 
@@ -120,7 +129,7 @@ class _BottomNavigationViewState extends State<BottomNavigationView>
   }
 
   Future<bool> getData() async {
-    await Future<dynamic>.delayed(const Duration(milliseconds: 200));
+    await Future<dynamic>.delayed(const Duration(milliseconds: 300));
     return true;
   }
 
@@ -135,49 +144,16 @@ class _BottomNavigationViewState extends State<BottomNavigationView>
           tabIconsList: tabIconsList,
           addClick: () {},
           changeIndex: (int index) {
-            if (index == 0) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  if(widget.builder!=null)
-                        tabBody = widget.builder!(context, 0, animationController);
-                });
+            widget.changeIndex?.call(index);
+            animationController?.reverse().then<dynamic>((data) {
+              if (!mounted) {
+                return;
+              }
+              setState(() {
+                if(widget.builder!=null)
+                  tabBody = widget.builder!(context, index, animationController);
               });
-            } else if (index == 1) {
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  if(widget.builder!=null)
-                    tabBody = widget.builder!(context, 1, animationController);
-                });
-              });
-            }else if(index == 2){
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  if(widget.builder!=null)
-                      tabBody = widget.builder!(context, 2, animationController);
-                });
-              });
-
-            }else if(index == 3){
-              animationController?.reverse().then<dynamic>((data) {
-                if (!mounted) {
-                  return;
-                }
-                setState(() {
-                  if(widget.builder!=null)
-                      tabBody = widget.builder!(context, 3, animationController);
-                });
-              });
-
-            }
+            });
           },
         ),
       ],

@@ -57,11 +57,18 @@ class CrearAgendaController extends Controller{
   void initListeners() {
     presenter.getAlumnosOnResponse = (List<EventosListaEnvioUi> salonUiList){
       _eventosListaEnvioUiList = salonUiList;
-      print("cursosUi?.cargaCursoId ${cursosUi?.cargaCursoId}");
+      //cursosUi Solo para los colores
+      print("horaEvento: ${eventoUi?.horaEvento}");
+
       for(EventosListaEnvioUi salonUi in salonUiList){
-        if(cursosUi?.cargaCursoId!=null && salonUi.cargaCursoId == cursosUi?.cargaCursoId){
+        if(eventoUi?.cargaCursoId==null || eventoUi?.cargaCursoId == 0 ){
+          if(eventoUi?.cargaAcademicaId!=null && salonUi.cargaAdemicaId == eventoUi?.cargaAcademicaId && (salonUi.cargaCursoId == null || salonUi.cargaCursoId == 0)){
+            _eventosListaEnvioUi = salonUi;
+          }
+        }else if(eventoUi?.cargaCursoId!=null && salonUi.cargaCursoId == eventoUi?.cargaCursoId){
           _eventosListaEnvioUi = salonUi;
         }
+
         if(_eventosListaEnvioUi==null)_eventosListaEnvioUi = salonUi;
       }
 
@@ -313,7 +320,6 @@ class CrearAgendaController extends Controller{
       eventoUi.publicado = publicar;
       eventoUi.eventoAdjuntoUiList = eventoAdjuntoUiList;
       eventoUi.listaEnvioUi = eventosListaEnvioUi;
-      eventoUi.cargaCursoId = cursosUi?.cargaCursoId;
       _progress = true;
       refreshUI();
 
@@ -334,7 +340,7 @@ class CrearAgendaController extends Controller{
       eventoUi?.listaEnvioUi = eventosListaEnvioUi;
       _progress = false;
       refreshUI();
-
+      print("horaEvento: ${eventoUi?.horaEvento}");
       bool respuesta = await presenter.saveAgendaDocente(eventoUi, true);
       if(!respuesta) _mensaje = "Error al actualizar";
       _progress = false;

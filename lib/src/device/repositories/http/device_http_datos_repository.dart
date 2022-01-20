@@ -4,10 +4,14 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/io_client.dart';
+import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/device/utils/http_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   static const  TAG = "DeviceHttpDatosRepositorio";
@@ -46,9 +50,9 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   @override
   Future<Map<String, dynamic>?> getUsuario(String urlServidor, int usuarioId) async {
     Map<String, dynamic> parameters = Map<String, dynamic>();
-    parameters["UsuarioId"] = usuarioId;
+    parameters["vint_usuarioId"] = usuarioId;
 
-    final response = await http.post(Uri2.parse(urlServidor), body: getBody("fobj_ObtenerUsuario_By_Id",parameters));
+    final response = await http.post(Uri2.parse(urlServidor), body: getBody("fobj_ObtenerUsuarioComplejo",parameters));
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -682,6 +686,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     ).then((Response response) async{
       if (response.statusCode == 200) {
         Map<String,dynamic> body = response.data;
+        print("Response success");
         if(body.containsKey("Successful")&&body.containsKey("Value")){
           dioCancellation.finishesd = true;
           httpSuccessListen.call(true, body["Value"]);
@@ -1025,7 +1030,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_AnioAcademicoId"] = anioAcademicoId;
     parameters["vint_DocenteId"] = docenteId;
     final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getSesionesHoy",parameters))
-        .timeout(Duration(seconds: 10), onTimeout: (){throw Exception('Failed to load getSesionesHoy');});
+        .timeout(Duration(seconds: 15), onTimeout: (){throw Exception('Failed to load getSesionesHoy');});
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -1049,6 +1054,134 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_SesionAprendizajeId"] = sesionAprendizajeId;
     final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getAprendizajeSesion",parameters))
         .timeout(Duration(seconds: 10), onTimeout: (){throw Exception('Failed to load getAprendizajeSesion');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load crear_agenda 0');
+    }
+  }
+
+  @override
+  Future<HttpStream?> uploadFilePersona(String urlServidorLocal, PersonaUi? personaUi, File? foto, bool? soloCambiarFoto, bool? removeFoto, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen) async {
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["bEPersona"] = DomainTools.removeNull( PersonaSerial(
+      personaId: personaUi?.personaId??0,
+      celular: personaUi?.telefono,
+      correo: personaUi?.correo,
+    ).toJson());
+    parameters["vbol_soloCambiarFoto"] = soloCambiarFoto??false;
+    parameters["vbol_removeFoto"] = removeFoto??false;
+
+    var formData;
+
+    if(foto!=null){
+      formData = FormData.fromMap({
+        'body': getBody("uploadPersonaDocente", parameters),
+        'file': await MultipartFile.fromFile(foto.path, filename: ""),
+      });
+    }else{
+      formData = getBody("uploadPersonaDocente", parameters);
+    }
+
+    Dio dio = new Dio();
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: formData,
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+          print("${progress}%");
+          progressListen.call(progress);
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        print("Response ${body.toString()}");
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(true, body["Value"]);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, null);
+          print("Response null ${response.data}");
+        }
+      }
+    });
+
+    return dioCancellation;
+  }
+
+  @override
+  Future<bool?> saveEstadoSesion(String urlServidorLocal, int? sesionAprendizajeId, int estado_hecho, int usuarioId)async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_SesionAprendizajeId"] = sesionAprendizajeId;
+    parameters["vint_EstadoId"] = estado_hecho;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("saveEstadoSesion", parameters))
+        .timeout(Duration(seconds: 20), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<List?> getActividadesSesion(String urlServidorLocal, int? sesionAprendizajeId) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_SesionAprendizajeId"] = sesionAprendizajeId;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getActividadesSesion",parameters))
+        .timeout(Duration(seconds: 15), onTimeout: (){throw Exception('Failed to load getActividadesSesion');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load crear_agenda 0');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> updateUsuario(String urlServidorLocal, int usuarioId)async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_usuarioId"] = usuarioId;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("fobj_ObtenerUsuarioSimple",parameters))
+        .timeout(Duration(seconds: 10), onTimeout: (){throw Exception('Failed to load updateUsuario');});
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -1116,6 +1249,8 @@ class Uri2{
     } else {
       // Will be tree-shaked on release builds.
       url = url.replaceAll("CRMMovil", "CRMMovil2");
+      url = modificarServidorLocalCata(url);
+      print("modificarServidorLocalCata3: ${url}");
       return Uri.parse(url);
     }
 
@@ -1126,10 +1261,21 @@ class Uri2{
       return url;
     } else {
       // Will be tree-shaked on release builds.
+      // jessica.galvis	jessicacolombia1
       url = url.replaceAll("CRMMovil", "CRMMovil2");
+      url = modificarServidorLocalCata(url);
+      print("modificarServidorLocalCata4: ${url}");
       return url;
     }
 
+  }
+
+  static String modificarServidorLocalCata(String url){
+    print("modificarServidorLocalCata: ${url}");
+    url = url.replaceAll("https", "http");
+    url = url.replaceAll("cata.icrmedu.com", "192.168.0.6");
+    print("modificarServidorLocalCata2: ${url}");
+    return url;
   }
 
 }

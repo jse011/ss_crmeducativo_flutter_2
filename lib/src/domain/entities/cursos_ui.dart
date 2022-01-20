@@ -1,3 +1,5 @@
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+
 class CursosUi{
   int? cargaCursoId;
   int? cargaAcademicaId;
@@ -14,6 +16,7 @@ class CursosUi{
   int? cantidadPersonas;
   bool? tutor;
   String? nivelAcademico;
+  List<PersonaUi>? alumnoUiList;
 
 }
 

@@ -1,14 +1,22 @@
+import 'dart:collection';
+
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/aula.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/carga_cursos.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/contacto_docente.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/persona.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/session_user.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/usuario.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/serializable_convert.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/anio_acemico_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/entidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_lista_envio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/georeferencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/login_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/programa_educativo_ui.dart';
@@ -46,10 +54,6 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
       await SQL.transaction(() async {
         // you only need this if you've manually enabled foreign keys
         // await customStatement('PRAGMA foreign_keys = OFF');
-        for (final table in SQL.allTables) {
-          await SQL.delete(table).go();
-        }
-
         for (final table in SQL.allTables) {
           await SQL.delete(table).go();
         }
@@ -225,59 +229,18 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
       await SQL.batch((batch) async {
 
 
-        int usuarioId = 0;
-        int personaId = 0;
-        String usuario = "";
-        String password = "";
-        bool estado = false;
-        String numDoc = "";
-        bool habilitarAcceso = false;
-        String nombres = "";
-        String apellidoPaterno = "";
-        String apellidoMaterno = "";
-        String fotoPersona = "";
-        String fotoEntidad = "";
-
-        if(datosUsuario.containsKey("usuarioId")){
-            usuarioId = datosUsuario["usuarioId"];
-        }
-        if(datosUsuario.containsKey("personaId")){
-          personaId = datosUsuario["personaId"];
-        }
-        if(datosUsuario.containsKey("usuario")){
-          usuario = datosUsuario["usuario"];
-        }
-        if(datosUsuario.containsKey("password")){
-          password = datosUsuario["password"];
-        }
-        if(datosUsuario.containsKey("estado")){
-          estado = datosUsuario["estado"];
-        }
-        if(datosUsuario.containsKey("numDoc")){
-          numDoc = datosUsuario["numDoc"];
-        }
-        if(datosUsuario.containsKey("habilitarAcceso")){
-          habilitarAcceso = datosUsuario["habilitarAcceso"];
-        }
-        if(datosUsuario.containsKey("nombres")){
-          nombres = datosUsuario["nombres"];
-        }
-        if(datosUsuario.containsKey("apellidoPaterno")){
-          apellidoPaterno = datosUsuario["apellidoPaterno"];
-        }
-        if(datosUsuario.containsKey("apellidoMaterno")){
-          apellidoMaterno = datosUsuario["apellidoMaterno"];
-        }
-        if(datosUsuario.containsKey("fotoPersona")){
-          fotoPersona = datosUsuario["fotoPersona"];
-        }
-        if(datosUsuario.containsKey("fotoEntidad")){
-          fotoEntidad = datosUsuario["fotoEntidad"];
-        }
         batch.deleteWhere(SQL.usuario, (row) => const Constant(true));
         batch.deleteWhere(SQL.persona, (row) => const Constant(true));
-        batch.insert(SQL.usuario, UsuarioData(usuarioId: usuarioId, personaId: personaId, usuario: usuario, estado: estado, habilitarAcceso: habilitarAcceso));
-        batch.insert(SQL.persona, PersonaData(personaId: personaId, nombres: nombres, apellidoPaterno: apellidoPaterno, apellidoMaterno: apellidoMaterno,foto: fotoPersona));
+
+        UsuarioData usuarioData = UsuarioData.fromJson(datosUsuario);
+        batch.insert(SQL.usuario, usuarioData);
+        print("usuariojse: ${usuarioData}");
+        if(datosUsuario.containsKey("persona")){
+          PersonaData personaUpdate = SerializableConvert.converSerializePersona(datosUsuario["persona"]);
+          print("usuariojse2: ${personaUpdate}");
+          batch.insert(SQL.persona, personaUpdate);
+        }
+
 
 
         if(datosUsuario.containsKey("entidades")){
@@ -483,24 +446,26 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     }
 
     UsuarioUi usuarioUi = UsuarioUi();
-    usuarioUi.personaId = personaData.personaId;
-    usuarioUi.nombre = '${DomainTools.capitalize(personaData.nombres??"")} ${DomainTools.capitalize(personaData.apellidoPaterno??"")} ${DomainTools.capitalize(personaData.apellidoMaterno??"")}';
-    usuarioUi.foto = '${personaData.foto??""}';
-    usuarioUi.correo = personaData.correo??"";
-    usuarioUi.celular = personaData.celular??personaData.telefono??"";
-    usuarioUi.fechaNacimiento = fechaNacimiento;
-    usuarioUi.nombreSimple = DomainTools.capitalize(personaData.nombres??"");
-    usuarioUi.fechaNacimiento2 = personaData.fechaNac??"";
-
+    usuarioUi.usuarioId = usuarioId;
+    PersonaUi personaUi = PersonaUi();
+    personaUi.personaId = personaData.personaId;
+    personaUi.nombreCompleto = '${DomainTools.capitalize(personaData.nombres??"")} ${DomainTools.capitalize(personaData.apellidoPaterno??"")} ${DomainTools.capitalize(personaData.apellidoMaterno??"")}';
+    personaUi.foto = '${personaData.foto??""}';
+    personaUi.correo = personaData.correo??"";
+    personaUi.telefono = personaData.celular??personaData.telefono??"";
+    personaUi.fechaNacimiento = fechaNacimiento;
+    personaUi.nombres = DomainTools.capitalize(personaData.nombres??"");
+    personaUi.fechaNacimiento2 = (personaData.fechaNac??"").replaceAll(RegExp(' 00:00:00'), '');
+    usuarioUi.personaUi = personaUi;
     return usuarioUi;
 
 
   }
 
   @override
-  Future<List<AnioAcademicoUi>> getAnioAcademicoList(int usuarioId) async {
+  Future<List<GeoreferenciaUi>> getGeoreferenciaList(int usuarioId) async {
     AppDataBase SQL = AppDataBase();
-    List<AnioAcademicoUi> anioAcademicoUis =[];
+    List<GeoreferenciaUi> georeferenciaUiList =[];
 
     List<UsuarioRolGeoreferenciaData> usuarioRolGeoreferenciaList = await (SQL.select(SQL.usuarioRolGeoreferencia)..where((tbl) => tbl.usuarioId.equals(usuarioId))).get();
 
@@ -509,35 +474,53 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
       gereferenciaIdList.add(usuarioRolGeoreferencia.geoReferenciaId??0);
     }
 
-    List<AnioAcademicoData> anioAcademicoList = await (SQL.select(SQL.anioAcademico)..where((tbl) => tbl.georeferenciaId.isIn(gereferenciaIdList))).get();
-    anioAcademicoList.sort((o2, o1) {
 
-      int sComp =  DomainTools.convertDateTimePtBR(o2.fechaFin, null).compareTo(DomainTools.convertDateTimePtBR(o1.fechaFin, null));
-      if (sComp != 0) {
-        return sComp;
+    List<GeoreferenciaData> georeferenciaList = await (SQL.select(SQL.georeferencia)..where((tbl) => tbl.georeferenciaId.isIn(gereferenciaIdList))).get();
+
+    for(GeoreferenciaData georeferenciaData in georeferenciaList){
+
+      GeoreferenciaUi georeferenciaUi = GeoreferenciaUi();
+      georeferenciaUi.georeferenciaId = georeferenciaData.georeferenciaId;
+      georeferenciaUi.nombre = georeferenciaData.nombre;
+      georeferenciaUi.alias = georeferenciaData.geoAlias;
+      georeferenciaUi.anioAcademicoUiList = [];
+      EntidadData? entidadData = await (SQL.select(SQL.entidad)..where((tbl) => tbl.entidadId.equals(georeferenciaData.entidadId))).getSingleOrNull();
+      EntidadUi entidadUi = EntidadUi();
+      entidadUi.entidadId = georeferenciaData.entidadId;
+      entidadUi.nombre = entidadData?.nombre;
+      entidadUi.foto = entidadData?.foto;
+      georeferenciaUi.entidadUi = entidadUi;
+      List<AnioAcademicoData> anioAcademicoList = await (SQL.select(SQL.anioAcademico)..where((tbl) => tbl.georeferenciaId.equals(georeferenciaData.georeferenciaId))).get();
+      anioAcademicoList.sort((o2, o1) {
+
+        int sComp =  DomainTools.convertDateTimePtBR(o2.fechaFin, null).compareTo(DomainTools.convertDateTimePtBR(o1.fechaFin, null));
+        if (sComp != 0) {
+          return sComp;
+        }
+
+        int x1 = o1.georeferenciaId??0;
+        int x2 = o2.georeferenciaId??0;
+        return x1.compareTo(x2);
+
+      });
+
+
+
+      for (AnioAcademicoData anioAcademico in anioAcademicoList){
+        AnioAcademicoUi anioAcademicoUi = new AnioAcademicoUi();
+        anioAcademicoUi.anioAcademicoId = anioAcademico.idAnioAcademico;
+        anioAcademicoUi.nombre = anioAcademico.nombre;
+        if(anioAcademico.estadoId== ANIO_ACADEMICO_ACTIVO){
+          anioAcademicoUi.vigente = true;
+        }
+        anioAcademicoUi.georeferenciaUi =  georeferenciaUi;
+        georeferenciaUi.anioAcademicoUiList?.add(anioAcademicoUi);
       }
-
-      int x1 = o1.georeferenciaId??0;
-      int x2 = o2.georeferenciaId??0;
-      return x1.compareTo(x2);
-
-    });
-
-    int anioAcademicoId = await getSessionAnioAcademicoId();
-
-    for (AnioAcademicoData anioAcademico in anioAcademicoList){
-      AnioAcademicoUi anioAcademicoUi = new AnioAcademicoUi();
-      anioAcademicoUi.anioAcademicoId = anioAcademico.idAnioAcademico;
-      anioAcademicoUi.nombre = anioAcademico.nombre;
-      anioAcademicoUi.georeferenciaId = anioAcademico.georeferenciaId;
-      if(anioAcademico.estadoId== ANIO_ACADEMICO_ACTIVO){
-        anioAcademicoUi.vigente = true;
-      }
-      anioAcademicoUi.toogle = anioAcademico.idAnioAcademico == anioAcademicoId;
-      anioAcademicoUis.add(anioAcademicoUi);
+      georeferenciaUiList.add(georeferenciaUi);
     }
 
-    return anioAcademicoUis;
+
+    return georeferenciaUiList;
   }
 
   @override
@@ -747,7 +730,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
       cursosUi.tutor = cargaAcademicaData.idEmpleadoTutor == empleadoId;
       cursosUiList.add(cursosUi);
     }
-
+    cursosUiList.sort((o1,o2)=> (o1.nombreCurso??"").compareTo((o2.nombreCurso??"")));
     return cursosUiList;
 
   }
@@ -770,6 +753,65 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     }catch(e){
       throw Exception(e);
     }
+  }
+
+  @override
+  Future<List<CursosUi>> getFotoAlumnos(int empleadoId, int anioAcademicoIdSelec) async {
+    AppDataBase SQL = AppDataBase();
+
+    var query = SQL.select(SQL.contactoDocente)..where((tbl) => tbl.idEmpleadoTutor.equals(empleadoId));
+    query.where((tbl) => tbl.tipo.equals(ConfiguracionRepository.CONTACTO_ALUMNO));
+    List<CursosUi> cursoUiList = [];
+
+    for(ContactoDocenteData contactoData in await query.get()){
+
+    CursosUi? cursosUiTutorUi = cursoUiList.firstWhereOrNull((element) => element.cargaAcademicaId == contactoData.cargaAcademicaId);
+      if(cursosUiTutorUi==null){
+        cursosUiTutorUi = CursosUi();
+        cursosUiTutorUi.cargaAcademicaId = contactoData.cargaAcademicaId;
+        cursosUiTutorUi.tutor = true;
+        cursosUiTutorUi.nombreCurso = "${contactoData.periodoNombre??""} ${contactoData.grupoNombre??""} - ${contactoData.programaNombre??""}";
+        cursosUiTutorUi.alumnoUiList = [];
+        cursoUiList.add(cursosUiTutorUi);
+      }
+
+    CursosUi? cursosUi = cursoUiList.firstWhereOrNull((element) => element.cargaAcademicaId == contactoData.cargaAcademicaId && element.cargaCursoId == contactoData.cargaCursoId);
+      if(cursosUi==null){
+        cursosUi = CursosUi();
+        cursosUi.cargaAcademicaId = contactoData.cargaAcademicaId;
+        cursosUi.cargaCursoId = contactoData.cargaCursoId;
+        cursosUi.nombreCurso = "${contactoData.cursoNombre} ${contactoData.periodoNombre??""} ${contactoData.grupoNombre??""} - ${contactoData.programaNombre??""}";
+        cursosUi.alumnoUiList = [];
+        cursoUiList.add(cursosUi);
+      }
+
+      PersonaUi? personaUi = cursosUiTutorUi.alumnoUiList?.firstWhereOrNull((element) => element.personaId == contactoData.personaId);
+      if(personaUi == null){
+        personaUi = transformarPersona(contactoData);
+        cursosUiTutorUi.alumnoUiList?.add(personaUi);
+      }
+
+    PersonaUi? personaUi2 = cursosUi.alumnoUiList?.firstWhereOrNull((element) => element.personaId == contactoData.personaId);
+      if(personaUi2 == null){
+        personaUi2 = transformarPersona(contactoData);
+        cursosUi.alumnoUiList?.add(personaUi2);
+      }
+    }
+
+    return cursoUiList;
+  }
+
+
+  PersonaUi transformarPersona(ContactoDocenteData contactoData){
+    PersonaUi personaUi = new PersonaUi();
+    personaUi.personaId = contactoData.personaId;
+    personaUi.foto = contactoData.foto;
+    personaUi.nombreCompleto = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}, ${DomainTools.capitalize(contactoData.nombres??"")}';
+    personaUi.nombres = DomainTools.capitalize(contactoData.nombres??"");
+    personaUi.apellidos  = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
+    personaUi.contratoVigente =  contactoData.contratoVigente;
+    personaUi.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
+    return personaUi;
   }
 
   @override
@@ -895,6 +937,89 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     }catch(e){
       return false;
     }
+  }
+
+  @override
+  Future<String?> getServerIcono() async{
+    AppDataBase SQL = AppDataBase();
+    WebConfig? webConfig = await(SQL.select(SQL.webConfigs)..where((tbl) => tbl.nombre.equals("wstr_icono_padre"))).getSingleOrNull();
+
+
+    return webConfig?.content;
+  }
+
+  @override
+  Future<void> updatePersona(PersonaUi? personaUi) async{
+    AppDataBase SQL = AppDataBase();
+    PersonaData personaData = await (SQL.selectSingle(SQL.persona)..where((tbl) => tbl.personaId.equals(personaUi?.personaId))).getSingle();
+    print("personaUi save ${personaUi?.foto}");
+    if(personaData!=null)await SQL.update(SQL.persona).replace(personaData.copyWith(celular: personaUi?.telefono, correo: personaUi?.correo, foto: personaUi?.foto??personaData.foto));
+  }
+
+  @override
+  PersonaUi transformarUpdatePersona(Map<String, dynamic> jsonPersona) {
+    PersonaSerial personaSerial = PersonaSerial.fromJson(jsonPersona);
+    PersonaUi personaUi = PersonaUi();
+    personaUi.personaId = personaSerial.personaId;
+    personaUi.correo = personaSerial.correo;
+    personaUi.telefono = personaSerial.celular;
+    personaUi.foto = personaSerial.foto;
+    return personaUi;
+  }
+
+  @override
+  Future<void> udpateUsuario(int usuarioId, Map<String, dynamic> usuarioJson) async{
+    AppDataBase SQL = AppDataBase();
+    UsuarioUi usuarioUi = UsuarioUi();
+    UsuarioData usuarioData = UsuarioData.fromJson(usuarioJson);
+    PersonaData? personaUpdate = null;
+    if(usuarioJson.containsKey("persona")){
+      personaUpdate = SerializableConvert.converSerializePersona(usuarioJson["persona"]);
+    }
+
+
+    if(usuarioData.usuarioId == usuarioId){
+      SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
+      if(sessionUserData!=null){
+
+        /*habilitarAcceso = null  se habilita el acceso
+      * habilitarAcceso = true  se habilita el acceso
+      * habilitarAcceso = false se desabilita el acceso*/
+        bool desabilitar = false;
+        if(usuarioData.habilitarAcceso==null){
+          desabilitar = false;
+        }else if(usuarioData.habilitarAcceso == true){
+          desabilitar = false;
+        }else if(usuarioData.habilitarAcceso == false){
+          desabilitar = true;
+        }
+
+        SQL.update(SQL.sessionUser).replace(sessionUserData.copyWith(
+            desabilitar: desabilitar
+        ));
+        usuarioUi.desabilitar = desabilitar;
+      }
+
+      print("personaData: ${personaUpdate?.personaId}");
+      PersonaData? personaData =  await (SQL.select(SQL.persona)..where((tbl) => tbl.personaId.equals(personaUpdate?.personaId))).getSingleOrNull();
+      if(personaData!=null && personaUpdate!=null){
+        print("personaData: ${personaUpdate.foto}");
+        SQL.update(SQL.persona).replace(personaData.copyWith(
+           foto: personaUpdate.foto,
+           correo:  personaUpdate.correo,
+            telefono: personaUpdate.telefono,
+            celular: personaData.celular,
+            fechaNac: personaData.fechaNac,
+
+        ));
+
+      }
+    }
+    
+  
+    
+
+
   }
 
 

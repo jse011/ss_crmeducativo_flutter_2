@@ -58,18 +58,12 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
   ScrollControllers crollControllers = ScrollControllers();
 
   _PesoCriterioViewState(capacidadUi, cursosUi) : super(PesoCriterioController(capacidadUi, cursosUi, MoorConfiguracionRepository(), MoorRubroRepository(), DeviceHttpDatosRepositorio()));
-  late Animation<double> topBarAnimation;
+
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
-  late AnimationController animationController;
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
         if (topBarOpacity != 1.0) {
@@ -93,21 +87,11 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
       }
     });
 
-    animationController.reset();
-
-    Future.delayed(const Duration(milliseconds: 200), () {
-// Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
     super.initState();
   }
 
   @override
   void dispose() {
-    animationController.dispose();
     super.dispose();
   }
 
@@ -151,94 +135,82 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context!).padding.top,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
-                        child:   ControlledWidgetBuilder<PesoCriterioController>(
-                          builder: (context, controller) {
-                            return Stack(
-                              children: <Widget>[
-                                Positioned(
-                                    child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                      onPressed: () async{
-                                        bool?  se_a_modicado = await controller.onSave();
-                                        if(se_a_modicado){
-                                          Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
-                                        }else{
-                                          Navigator.of(context).pop(true);
-                                        }
-                                      },
-                                    )
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 52),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 32 +  6 - 10 * topBarOpacity , width: 35 +  6 - 10 * topBarOpacity ,),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 8, top: 8),
-                                        child: Text(
-                                          "Capacidad",
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 14 + 6 - 6 * topBarOpacity ,
-                                            letterSpacing: 0.8,
-                                            color: AppTheme.darkerText,
-                                          ),
-                                        ),
-                                      ),
-
-                                    ],
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                    top: 16 - 8.0 * topBarOpacity,
+                    bottom: 12 - 8.0 * topBarOpacity),
+                child:   ControlledWidgetBuilder<PesoCriterioController>(
+                  builder: (context, controller) {
+                    return Stack(
+                      children: <Widget>[
+                        Positioned(
+                            child:  IconButton(
+                              icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                              onPressed: () async{
+                                bool?  se_a_modicado = await controller.onSave();
+                                if(se_a_modicado){
+                                  Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                                }else{
+                                  Navigator.of(context).pop(true);
+                                }
+                              },
+                            )
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 52),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(AppIcon.ic_curso_evaluacion, height: 32 +  6 - 10 * topBarOpacity , width: 35 +  6 - 10 * topBarOpacity ,),
+                              Padding(
+                                padding: EdgeInsets.only(left: 8, top: 8),
+                                child: Text(
+                                  "Capacidad",
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14 + 6 - 6 * topBarOpacity ,
+                                    letterSpacing: 0.8,
+                                    color: AppTheme.darkerText,
                                   ),
                                 ),
+                              ),
 
-                              ],
-                            );
-                          },
+                            ],
+                          ),
                         ),
-                      )
-                    ],
-                  ),
+
+                      ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
+              )
+            ],
+          ),
         )
       ],
     );

@@ -6,14 +6,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 //import 'package:sqlite_viewer/sqlite_viewer.dart';
 import 'package:ss_crmeducativo_2/libs/new_version.dart';
+import 'package:ss_crmeducativo_2/src/app/page/carga_curso/portal/portal_docente_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/contactos/contactos_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/escritorio/portal/escritorio_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/portal/evento_agenda_view.dart';
-import 'package:ss_crmeducativo_2/src/app/page/portal_docente/portal_docente_view.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/close_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/barra_navegacion.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/bottom_navigation.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/splash.dart';
@@ -34,6 +37,8 @@ class HomeView extends View{
 
 class _HomePageState extends ViewState<HomeView, HomeController> with TickerProviderStateMixin{
   late Widget _screenView;
+  Widget _menuScreenView = Container();
+  late CloseSession closeSessionHandler;
   _HomePageState() :
         super(HomeController(MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
 
@@ -64,13 +69,12 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
 
 
   @override
-  Widget get view =>
-      Container(
-        //color: AppTheme.nearlyWhite,
-        child: SafeArea(
-          top: false,
-          bottom: false,
-          child: Scaffold(
+  Widget get view => Container(
+    //color: AppTheme.nearlyWhite,
+    child: SafeArea(
+        top: false,
+        bottom: false,
+        child: Scaffold(
           //  backgroundColor: AppTheme.nearlyWhite,
           /*appBar: AppBar(
                 title: Text('DBDEBUG'),
@@ -106,71 +110,88 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
                     return Stack(
                         children:[
                           DrawerUserController(
-                            photoUser: controller.usuario == null ? '' : '${controller.usuario?.foto??""}',
-                            nameUser: controller.usuario == null ? '' : '${controller.usuario?.nombreSimple??""}',
-                            correo: controller.usuario == null ? '' : controller.usuario?.correo??"",
+                            photoUser: controller.usuario == null ? '' : '${controller.usuario?.personaUi?.foto??""}',
+                            nameUser: controller.usuario == null ? '' : '${controller.usuario?.personaUi?.nombreCompleto??""}',
+                            correo: '',
                             screenView: _screenView,
+                            menuListaView: _menuScreenView,
                             drawerWidth: MediaQuery
                                 .of(context)
                                 .size
                                 .width * 0.70,
                             onClickCerrarCession: () async{
-                              bool success = await controller.onClickCerrarCession();
-                              if(success){
-                                AppRouter.createRouteLogin(context);
-                              }else{
-                                Fluttertoast.showToast(
-                                  msg: "Error Cerrar Sesion",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                );
-                              }
+                              AppRouter.createRouteCerrarSesion(context);
                             },
-                            menuListaView: Container(
-
-                            ),
                             drawerIsOpen: (bool ) { },
+                            onTapImagePerfil: () {
+                              AppRouter.showEditarUsuarioView(context, controller.usuario);
+                            },
                           ),
                         ]
                     );
                   }
                 }
             )
-          )
-        ),
+        )
+    ),
 
-      );
+  );
 
   void changeIndex(VistaIndex vistaIndex, HomeController controller) {
+
     switch (vistaIndex) {
       case VistaIndex.Principal:
         _screenView = BottomNavigationView(
-            icono: "http://cata.icrmedu.com/Academico/Images/Entidades/ic_logo_cata.png",
+            icono: controller.logoApp??"",
               builder: (context, position, animationController) {
                     switch(position){
                       case 2:
-                        return EscritorioView(animationController: animationController!,);
+                        return EscritorioView(animationController: animationController!, menuBuilder: (menuView) {
+                          setState(() {
+                            _menuScreenView = menuView;
+                          });
+                        }, closeSessionHandler: CloseSession(context));
                       case 1:
-                        return PortalDocenteView(animationController: animationController!,);
+                        return PortalDocenteView(animationController: animationController!, menuBuilder: (menuView) {
+                          setState(() {
+                            _menuScreenView = menuView;
+                          });
+                        }, closeSessionHandler: CloseSession(context));
                       case 0:
-                        return EventoAgendaView(controller.usuario,animationController: animationController!);
+                        return EventoAgendaView(controller.usuario,animationController: animationController!, menuBuilder: (menuView) {
+                          setState(() {
+                            _menuScreenView = menuView;
+                          });
+                        }, closeSessionHandler: CloseSession(context));
                       default:
-                        return ContactosView(animationController: animationController!);
+                        return ContactosView(animationController: animationController!, menuBuilder: (menuView) {
+                          setState(() {
+                            _menuScreenView = menuView;
+                          });
+                        }, closeSessionHandler: CloseSession(context));
                     }
-
               },
         );
         break;
       case VistaIndex.EditarUsuario:
+        _menuScreenView = Container(
+          color: Colors.red,
+        );
         //_screenView = EditarUsuarioView();
         break;
       case VistaIndex.Sugerencia:
+        _menuScreenView = Container(
+          color: Colors.red,
+        );
         //_screenView = HelpScreen();
         break;
       case VistaIndex.SobreNosotros:
+        _menuScreenView = Container(
+          color: Colors.red,
+        );
         //_screenView = InviteFriend();
         break;
     }
   }
+
 }

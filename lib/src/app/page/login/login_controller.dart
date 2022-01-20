@@ -40,11 +40,11 @@ class LoginController extends Controller{
 
       _mensaje = null;
       if(errorServidor){
-        _mensaje = "!Oops! Al parecer ocurrió un error involuntario.";
+        _mensaje = "Error interno del servidor|";
       }else{
         if(_loginUi == LoginUi.INVALIDO){
           if(typeView == LoginTypeView.USUARIO){
-            _mensaje = "Credenciales incorrectos";
+            _mensaje = "Usuario o contraseña incorrecta";
           }else if(typeView == LoginTypeView.CORREO){
             _mensaje = "Ingresar su correo electrónico";
           }else{
@@ -68,7 +68,7 @@ class LoginController extends Controller{
 
     presenter.loginOnNextDatos = (bool errorServidor, bool rolValidado){
       if(errorServidor){
-        _mensaje = "!Oops! Al parecer ocurrió un error involuntario.";
+        _mensaje = "Error interno del servidor|";
         //_typeView = LoginTypeView.USUARIO;
         _progressData = false;
       }else{
@@ -76,7 +76,7 @@ class LoginController extends Controller{
           _dismis = true;
         }else{
           _progressData = false;
-          _mensaje = "Usuario sin acceso";
+          _mensaje = "Usuario sin acceso a esta aplicación";
         }
       }
 
@@ -92,7 +92,7 @@ class LoginController extends Controller{
       _loginUi = null;
       _progress = false;
       _progressData = false;
-      _mensaje = "No hay Conexión a Internet...";
+      _mensaje = "Sin conexión a internet|";
       refreshUI();
     };
   }

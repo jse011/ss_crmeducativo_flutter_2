@@ -24,7 +24,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
    static const int TIPO_VIDEO = 379, TIPO_VINCULO = 380, TIPO_DOCUMENTO = 397, TIPO_IMAGEN = 398, TIPO_AUDIO = 399, TIPO_HOJA_CALCULO = 400, TIPO_DIAPOSITIVA = 401, TIPO_PDF = 402,  TIPO_YOUTUBE = 581,TIPO_ENCUESTA = 630;
    static const int CONTACTO_DOCENTE = 3, CONTACTO_DIRECTIVO = 4, CONTACTO_ALUMNO = 1, CONTACTO_PADRE = 2, CONTACTO_APODERADO = 5;
   @override
-  Future<List<EventoUi>> getEventosAgenda(int usuarioId, int georeferenciaId, int tipoEventoId) async{
+  Future<List<EventoUi>> getEventosAgenda(int usuarioId, int georeferenciaId, int tipoEventoId, int? cargaCursoId) async{
     AppDataBase SQL = AppDataBase();
 
 
@@ -35,6 +35,9 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
       leftOuterJoin(SQL.tipoEvento, SQL.evento.tipoEventoId.equalsExp(SQL.tipoEvento.tipoId))
     ]);
     eventoWhere.where(SQL.calendario.usuarioId.equals(usuarioId));
+    if(cargaCursoId != null){
+      eventoWhere.where(SQL.calendario.cargaCursoId.equals(cargaCursoId));
+    }
     //eventoWhere.where(SQL.calendario.usuarioId.equals(19));
     eventoWhere.where(SQL.calendario.georeferenciaId.equals(georeferenciaId));
     //eventoWhere.orderBy([ OrderingTerm(expression: SQL.evento.fechaEvento, mode: OrderingMode.desc)]);
@@ -50,7 +53,9 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
     eventoWhereExterno.where(SQL.listaUsuarioDetalle.usuarioId.equals(usuarioId));
     //eventoWhereExterno.where(SQL.listaUsuarioDetalle.usuarioId.equals(19));
     //eventoWhereExterno.orderBy([OrderingTerm(expression: SQL.evento.fechaEvento, mode: OrderingMode.desc)]);
-
+    if(cargaCursoId != null){
+      eventoWhereExterno.where(SQL.calendario.cargaCursoId.equals(cargaCursoId));
+    }
     if(tipoEventoId>0){
       eventoWhere.where(SQL.evento.tipoEventoId.equals(tipoEventoId));
       eventoWhereExterno.where(SQL.evento.tipoEventoId.equals(tipoEventoId));
@@ -90,11 +95,15 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
     eventoUi.id = eventoData.eventoId;
     eventoUi.nombreEntidad = eventoData.nombreEntidad;
     eventoUi.fotoEntidad = calendarioData.nFoto;
+    eventoUi.nombreCalendario = calendarioData.nombre;
+    eventoUi.cargaCursoId = calendarioData.cargaCursoId;
+    eventoUi.cargaAcademicaId = calendarioData.cargaAcademicaId;
     eventoUi.cantLike =  eventoData.likeCount;
     eventoUi.titulo = eventoData.titulo;
     eventoUi.descripcion = eventoData.descripcion;
-    eventoUi.fecha =  eventoData.fechaEvento!=null?DomainTools.convertDateTimePtBR2(eventoData.fechaEvento, eventoData.horaEvento):null;
+    eventoUi.fecha =  DomainTools.convertDateTimePtBR2(eventoData.fechaEvento, eventoData.horaEvento);
     eventoUi.fechaEvento =  DateTime.fromMillisecondsSinceEpoch(eventoData.fechaEvento??0);
+
     eventoUi.horaEvento = eventoData.horaEvento;
     eventoUi.foto = eventoData.pathImagen;
     eventoUi.tipoEventoUi = TipoEventoUi();
@@ -609,6 +618,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
       usuarioAccionId: usuarioId,
       usuarioCreacionId: usuarioId,
     ).toJson());
+
 
     Map<String, dynamic> calendario = DomainTools.removeNull(CalendarioSerial(
       cargaAcademicaId: eventoUi?.listaEnvioUi?.cargaAdemicaId,

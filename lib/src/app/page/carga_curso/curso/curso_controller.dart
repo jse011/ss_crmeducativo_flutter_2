@@ -1,5 +1,6 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
-import 'package:ss_crmeducativo_2/src/app/page/curso/curso_presenter.dart';
+import 'package:ss_crmeducativo_2/src/app/page/carga_curso/curso/curso_presenter.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
@@ -13,7 +14,9 @@ class CursoController extends Controller{
   String? get fechaHoy => _fechaHoy;
   bool _progress = true;
   bool get progress => _progress;
-  CursoController(this.usuarioUi, cursosUi,configuracionRepo, calendarioPeriodoRepo, httpDatosRepo):
+  AnioAcademicoUi anioAcademicoUi;
+
+  CursoController(this.usuarioUi, this.anioAcademicoUi, cursosUi,configuracionRepo, calendarioPeriodoRepo, httpDatosRepo):
         this._cursosUi = cursosUi,
         this.cursoPresenter = CursoPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo);
 

@@ -5,12 +5,14 @@ import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/desempenio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/icd_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_recurso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tema_criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_sesion_repository.dart';
+import 'package:collection/collection.dart';
 
 class GetAprendizaje extends UseCase<GetAprendizajeResponse, GetAprendizajeParams>{
   ConfiguracionRepository configuracionRepository;
@@ -39,14 +41,16 @@ class GetAprendizaje extends UseCase<GetAprendizajeResponse, GetAprendizajeParam
         offlineServidor = true;
       }
 
-      List<CompetenciaUi> competenciaUiList =  await unidadSesionRepository.getAprendizajeSesion(params?.sesionAprendizajeId);
+      SesionUi sesionUi =  await unidadSesionRepository.getAprendizajeSesion(params?.sesionAprendizajeId);
+      List<CompetenciaUi> competenciaUiList = sesionUi.competenciaUiList??[];
       List<TemaCriterioUi>? temaCriterioUiList = [];
       for(CompetenciaUi competenciaUi in competenciaUiList){
         for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
           for(DesempenioUi desempenioUi in capacidadUi.desempenioUiList??[]){
             for(IcdUi icdUi in desempenioUi.icdUiList??[]){
               for(TemaCriterioUi temaCriterioUi in icdUi.temaCriterioUiList??[]){
-                temaCriterioUiList.add(temaCriterioUi);
+                TemaCriterioUi? filter = temaCriterioUiList.firstWhereOrNull((element) => element.campoTematicoId == temaCriterioUi.campoTematicoId);
+                if(filter==null)temaCriterioUiList.add(temaCriterioUi);
               }
 
             }
@@ -54,7 +58,7 @@ class GetAprendizaje extends UseCase<GetAprendizajeResponse, GetAprendizajeParam
 
         }
       }
-      controller.add(GetAprendizajeResponse(errorServidor, offlineServidor, competenciaUiList, temaCriterioUiList));
+      controller.add(GetAprendizajeResponse(errorServidor, offlineServidor, competenciaUiList, temaCriterioUiList, sesionUi.recursosUiList));
       controller.close();
 
     } catch (e) {
@@ -79,7 +83,8 @@ class GetAprendizajeResponse {
   bool errorServidor;
   List<CompetenciaUi>? competenciaUiList;
   List<TemaCriterioUi>? temaCriterioUiList;
+  List<SesionRecursoUi>? sesionRecursoUiList;
 
   GetAprendizajeResponse(
-      this.datosOffline, this.errorServidor, this.competenciaUiList, this.temaCriterioUiList);
+      this.datosOffline, this.errorServidor, this.competenciaUiList, this.temaCriterioUiList, this.sesionRecursoUiList);
 }

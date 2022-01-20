@@ -23,7 +23,7 @@ class GetCalendarioPerido extends UseCase<GetCalendarioPeridoResponse, GetCalend
       CalendarioPeriodoUI? calendarioPeriodoUI = null;
       final List<CalendarioPeriodoUI> calendarioPeriodoList = await repository.getCalendarioPerios(programaEducativoIdSelect, params?.cargaCursoId??0, anioAcademicoIdSelect);
       for(CalendarioPeriodoUI item in calendarioPeriodoList){
-        if((item.habilitado??0)==1){
+        if((item.habilitadoProceso??0)==1){
           calendarioPeriodoUI = item;
         }
       }

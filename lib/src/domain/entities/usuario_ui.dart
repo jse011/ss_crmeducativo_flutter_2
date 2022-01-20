@@ -1,18 +1,12 @@
 import 'dart:io';
 
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+
 class UsuarioUi {
-  int? personaId;
-  String? nombre;
-  String? nombreSimple;
-  String? foto;
+  int? usuarioId;
+  PersonaUi? personaUi;
   int? anioAcademicoIdSelected;
   int? empleadoId;
+  bool? desabilitar;
   //List<ProgramaEducativoUi> programaEducativoUiList;
-  String? celular;
-  String? correo;
-  String? fechaNacimiento;
-  String? fechaNacimiento2;
-  bool? change;
-  File? fotoFile;
-  String? image64;
 }

@@ -11,6 +11,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/tipo_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_periodo_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
@@ -34,22 +35,15 @@ class SesionListaView extends View{
 
 class _CursoListaViewState extends ViewState<SesionListaView, SesionListaController> with TickerProviderStateMixin{
 
-  late Animation<double> topBarAnimation;
+
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
-  late AnimationController animationController;
   Function()? statetDialogSesion;
 
   _CursoListaViewState(cursoUi, usuarioUi) : super(SesionListaController(usuarioUi, cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadSesionRepository()));
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
         if (topBarOpacity != 1.0) {
@@ -73,21 +67,12 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
       }
     });
 
-    animationController.reset();
 
-    Future.delayed(const Duration(milliseconds: 500), () {
-// Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
     super.initState();
   }
 
   @override
   void dispose() {
-    animationController.dispose();
     super.dispose();
   }
 
@@ -105,7 +90,193 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                   blur: 2,
                   backgroundColor: Color(0x33000000),
                   animationDuration: Duration(milliseconds: 500),
-                )
+                ),
+              controller.sesionEstadoError?
+              ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500),
+                  loadingWidget: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16), // if you need this
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                child: Icon(Ionicons.checkbox_outline, size: 35, color: AppTheme.white,),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppTheme.colorSesion),
+                              ),
+                              Padding(padding: EdgeInsets.all(8)),
+                              Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(padding: EdgeInsets.all(8),
+                                        child: Text("Sesión realizada Error", style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: AppTheme.fontTTNormsMedium
+                                        ),),
+                                      ),
+                                      Padding(padding: EdgeInsets.all(4),),
+                                      Text("¿Seguro de terminar la sesión? ",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            height: 1.5
+                                        ),),
+                                      Padding(padding: EdgeInsets.all(4),),
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      controller.hideMsgErrorSesion();
+                                    },
+                                    child: Text('Cancelar'),
+                                    style: OutlinedButton.styleFrom(
+                                      primary: AppTheme.colorSesion,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  )
+                              ),
+                              Padding(padding: EdgeInsets.all(8)),
+                              Expanded(child: ElevatedButton(
+                                onPressed: () async {
+
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: AppTheme.colorSesion,
+                                  onPrimary: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                child: Padding(padding: EdgeInsets.all(4), child: Text('Aceptar'),),
+                              )),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+              ):
+              controller.sesionEstadoOffLine?
+              ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500),
+                  loadingWidget: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16), // if you need this
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                child: Icon(Ionicons.checkbox_outline, size: 35, color: AppTheme.white,),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppTheme.colorSesion),
+                              ),
+                              Padding(padding: EdgeInsets.all(8)),
+                              Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(padding: EdgeInsets.all(8),
+                                        child: Text("Sesión realizada", style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: AppTheme.fontTTNormsMedium
+                                        ),),
+                                      ),
+                                      Padding(padding: EdgeInsets.all(4),),
+                                      Text("¿Seguro de terminar la sesión? ",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            height: 1.5
+                                        ),),
+                                      Padding(padding: EdgeInsets.all(4),),
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      controller.hideMsgOfflineSesion();
+                                    },
+                                    child: Text('Cancelar'),
+                                    style: OutlinedButton.styleFrom(
+                                      primary: AppTheme.colorSesion,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  )
+                              ),
+                              Padding(padding: EdgeInsets.all(8)),
+                              Expanded(child: ElevatedButton(
+                                onPressed: () async {
+
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: AppTheme.colorSesion,
+                                  onPrimary: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                child: Padding(padding: EdgeInsets.all(4), child: Text('Aceptar'),),
+                              )),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+              ):Container()
             ],
           ),
         );
@@ -115,92 +286,75 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context!).padding.top,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
-                        child: ControlledWidgetBuilder<SesionListaController>(
-                          builder: (context, controller) {
-                            return Stack(
-                              children: <Widget>[
-                                Positioned(
-                                    child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                      onPressed: () {
-                                        animationController.reverse().then<dynamic>((data) {
-                                          if (!mounted) {
-                                            return;
-                                          }
-                                          Navigator.of(this.context).pop();
-                                        });
-                                      },
-                                    )
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 1, bottom: 8, left: 8, right: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_sesion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 12, top: 8),
-                                        child: Text(
-                                          'Sesiones',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16 + 6 - 6 * topBarOpacity,
-                                            letterSpacing: 0.8,
-                                            color: AppTheme.darkerText,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                    top: 16 - 8.0 * topBarOpacity,
+                    bottom: 12 - 8.0 * topBarOpacity),
+                child: ControlledWidgetBuilder<SesionListaController>(
+                  builder: (context, controller) {
+                    return Stack(
+                      children: <Widget>[
+                        Positioned(
+                            child:  IconButton(
+                              icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                              onPressed: () {
+                                Navigator.of(this.context).pop();
+                              },
+                            )
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 1, bottom: 8, left: 8, right: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(AppIcon.ic_curso_sesion, height: 35 +  6 - 8 * topBarOpacity, width: 35 +  6 - 8 * topBarOpacity,),
+                              Padding(
+                                padding: EdgeInsets.only(left: 12, top: 8),
+                                child: Text(
+                                  'Sesiones',
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16 + 6 - 6 * topBarOpacity,
+                                    letterSpacing: 0.8,
+                                    color: AppTheme.darkerText,
                                   ),
                                 ),
-                              ],
-                            );
-                          },
+                              ),
+                            ],
+                          ),
                         ),
-                      )
-                    ],
-                  ),
+                      ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
+              )
+            ],
+          ),
         )
       ],
     );
@@ -308,6 +462,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Container(
+                                            width: double.infinity,
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
                                               color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
@@ -581,7 +736,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                           style: TextStyle(
                               fontFamily: AppTheme.fontTTNorms,
                               fontWeight: FontWeight.w600,
-                            color: HexColor(sesionUi.colorSesion),
+                            color: TipoSession(sesionUi.sesionEstado).color,
                             fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10)
                           )
                       )
@@ -599,7 +754,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                       style: TextStyle(
                           fontFamily: AppTheme.fontTTNorms,
                           fontWeight: FontWeight.w600,
-                        color: HexColor(sesionUi.colorSesion),
+                        color: TipoSession(sesionUi.sesionEstado).color,
                         fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 10)
                       )
                   ),
@@ -613,7 +768,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                   ),
                   child: Divider(
                     height: ColumnCountProvider.aspectRatioForWidthSesion(context, 2),
-                    color: HexColor(sesionUi.colorSesion),
+                    color: TipoSession(sesionUi.sesionEstado).color,
                   ),
                 ),
                 Padding(
@@ -640,32 +795,31 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
           Positioned(
             bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
             right: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
-            child: Material(
-              color:HexColor(sesionUi.colorSesion).withOpacity(0.8),
-              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
-              child: Container(
-                margin: EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                    color: AppTheme.white,
-                    borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 7)) // use instead of BorderRadius.all(Radius.circular(20))
-                ),
-                child: InkWell(
-                  onTap: () {
-
-                  },
-                  child:
-                  Container(
+            child: InkWell(
+              onTap: (){
+                _showRealizarSesion(context, controller, sesionUi);
+              },
+              child: Material(
+                color: TipoSession(sesionUi.sesionEstado).color.withOpacity(0.8),
+                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
+                child: Container(
+                  margin: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 7)) // use instead of BorderRadius.all(Radius.circular(20))
+                  ),
+                  child: Container(
                       padding: EdgeInsets.only(
                           top: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
                           left: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
                           bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
                           right: ColumnCountProvider.aspectRatioForWidthSesion(context, 4)),
-                      child: Text(sesionUi.estadoEjecucion??"",
+                      child: Text(TipoSession(sesionUi.sesionEstado).nombre,
                         style: TextStyle(
-                          fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 9),
-                          color: HexColor(sesionUi.colorSesion).withOpacity(0.9),
-                          fontFamily: AppTheme.fontTTNorms,
-                          fontWeight: FontWeight.w700
+                            fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 9),
+                            color: TipoSession(sesionUi.sesionEstado).color.withOpacity(0.9),
+                            fontFamily: AppTheme.fontTTNorms,
+                            fontWeight: FontWeight.w700
                         ),)
                   ),
                 ),
@@ -677,5 +831,119 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
     );
   }
 
+  Future<bool?> _showRealizarSesion(BuildContext context, SesionListaController controller, SesionUi? sesionUi) async {
+    return await showGeneralDialog(
+        context: context,
+        pageBuilder: (BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+              loadingWidget: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // if you need this
+                  side: BorderSide(
+                    color: Colors.grey.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            child: Icon(Ionicons.checkbox_outline, size: 35, color: AppTheme.white,),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppTheme.colorSesion),
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(padding: EdgeInsets.all(8),
+                                    child: Text("Sesión realizada", style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppTheme.fontTTNormsMedium
+                                    ),),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("¿Seguro de terminar la sesión? ",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        height: 1.5
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                ],
+                              )
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                                child: Text('Cancelar'),
+                                style: OutlinedButton.styleFrom(
+                                  primary: AppTheme.colorSesion,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              )
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(child: ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop(true);
+                              await controller.onClickSessionHecho(sesionUi);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: AppTheme.colorSesion,
+                              onPrimary: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Padding(padding: EdgeInsets.all(4), child: Text('Aceptar'),),
+                          )),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+          );
+        },
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context)
+            .modalBarrierDismissLabel,
+        barrierColor: Colors.transparent,
+        transitionDuration:
+        const Duration(milliseconds: 150));
+  }
+
+
+
+
 }
+
+
+
 

@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/fancy_shimmer_image.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -36,21 +38,14 @@ class AgendaView extends View{
 }
 
 class _AgendaViewState extends ViewState<AgendaView, AgendaController> with TickerProviderStateMixin{
-  late Animation<double> topBarAnimation;
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
-  late AnimationController animationController;
   
   _AgendaViewState(CursosUi? cursosUi) : super(AgendaController(cursosUi, MoorAgendaEventoRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: animationController,
-            curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
         if (topBarOpacity != 1.0) {
@@ -73,16 +68,6 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
         }
       }
     });
-
-    animationController.reset();
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-// Here you can write your code
-      setState(() {
-        animationController.forward();
-      });}
-
-    );
 
     super.initState();
   }
@@ -206,82 +191,69 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        AnimatedBuilder(
-          animation: animationController,
-          builder: (BuildContext? context, Widget? child) {
-            return FadeTransition(
-              opacity: topBarAnimation,
-              child: Transform(
-                transform: Matrix4.translationValues(
-                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          color: AppTheme.grey
-                              .withOpacity(0.4 * topBarOpacity),
-                          offset: const Offset(1.1, 1.1),
-                          blurRadius: 10.0),
-                    ],
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: MediaQuery.of(context!).padding.top,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
-                        child: ControlledWidgetBuilder<AgendaController>(
-                          builder: (context, controller) {
-                            return Stack(
-                              children: <Widget>[
-                                Positioned(
-                                    child:  IconButton(
-                                      icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
-                                      onPressed: () {
-                                        animationController.reverse().then<dynamic>((data) {
-                                          if (!mounted) {
-                                            return;
-                                          }
-                                          Navigator.of(this.context).pop();
-                                        });
-                                      },
-                                    )
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(AppIcon.ic_curso_agenda, height: 35 +  6 - 10 * topBarOpacity, width: 35 +  6 - 10 * topBarOpacity,),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 12, top: 8),
-                                        child: Text(
-                                          'Agenda',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16 + 6 - 6 * topBarOpacity,
-                                            letterSpacing: 0.8,
-                                            color: AppTheme.darkerText,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).padding.top,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 8,
+                    right: 8,
+                    top: 16 - 8.0 * topBarOpacity,
+                    bottom: 12 - 8.0 * topBarOpacity),
+                child: ControlledWidgetBuilder<AgendaController>(
+                  builder: (context, controller) {
+                    return Stack(
+                      children: <Widget>[
+                        Positioned(
+                            child:  IconButton(
+                              icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
+                              onPressed: () {
+                                Navigator.of(this.context).pop();
+                              },
+                            )
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(AppIcon.ic_curso_agenda, height: 35 +  6 - 10 * topBarOpacity, width: 35 +  6 - 10 * topBarOpacity,),
+                              Padding(
+                                padding: EdgeInsets.only(left: 12, top: 8),
+                                child: Text(
+                                  'Agenda',
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16 + 6 - 6 * topBarOpacity,
+                                    letterSpacing: 0.8,
+                                    color: AppTheme.darkerText,
                                   ),
                                 ),
-                                /*Positioned(
+                              ),
+                            ],
+                          ),
+                        ),
+                        /*Positioned(
                                   right: 10,
                                   child: ClipOval(
                                     child: Material(
@@ -298,17 +270,13 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                                     ),
                                   ),
                                 )*/
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                      ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
+              )
+            ],
+          ),
         )
       ],
     );
@@ -321,7 +289,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
             padding: EdgeInsets.only(
               top: AppBar().preferredSize.height +
                   MediaQuery.of(context).padding.top +
-                  24,
+                  0,
               left: 0,//24,
               right: 0,//48
             ),
@@ -343,6 +311,60 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                 CustomScrollView(
                   controller: scrollController,
                   slivers: <Widget>[
+
+                    SliverList(
+                        delegate: SliverChildListDelegate([
+                          controller.cursosUi!=null?
+                          Container(
+                            padding: EdgeInsets.only(
+                              left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                              right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                            ),
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text((controller.cursosUi?.nombreCurso??""),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                                color: AppTheme.darkText,
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: AppTheme.fontTTNorms
+                                            ),
+                                          ),
+                                          Padding(
+                                              padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 4))
+                                          ),
+                                          Text("${controller.cursosUi?.gradoSeccion??""}",
+                                              style: TextStyle(
+                                                  fontSize: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 16),
+                                                  color: AppTheme.darkText,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: AppTheme.fontTTNorms
+                                              )
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ):Container(
+                              padding: EdgeInsets.only(
+                                top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                              )
+                          ),
+                        ])
+                    ),
+
                     SliverList(
                         delegate: SliverChildListDelegate([
                           Container(
@@ -350,6 +372,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                               left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                               right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                               top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                              bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
                             ),
                             child: Stack(
                               children: [
@@ -362,8 +385,16 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                                     child: Container(
                                       padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)),
                                       decoration: BoxDecoration(
-                                        color:  HexColor("#71bb74"),
+                                        color: (controller.cursosUi!=null?HexColor(controller.cursosUi?.color2):Color(0XFF71bb74)),
                                         borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)), // use instead of BorderRadius.all(Radius.circular(20))
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: (controller.cursosUi!=null?HexColor(controller.cursosUi?.color2):Color(0XFF71bb74)).withOpacity(0.4),
+                                              offset:  Offset(0,3),
+                                              blurRadius: 6.0,
+                                              spreadRadius: 0
+                                          ),
+                                        ],
                                       ),
                                       width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 410),
                                       height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 80),
@@ -379,7 +410,8 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                                           alignment: Alignment.center,
                                           child: Text("Crear un evento",  style: TextStyle(
                                               fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 18),
-                                              fontWeight: FontWeight.w500,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: AppTheme.fontTTNorms,
                                               color:  AppTheme.white
                                           ),),
                                         ),
@@ -396,7 +428,9 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                         delegate: SliverChildBuilderDelegate(
                                 (BuildContext context, int index){
                               EventoUi eventoUi = controller.eventoUiList[index];
+
                               return ItemEventoView(eventoUi,
+                                color: controller.cursosUi!=null?HexColor(controller.cursosUi?.color1):Color(0XFF71bb74),
                                 tipoEditar: true,
                                 onClickMoreEventoAdjuntoDowload:(eventoUi) {
                                   controller.onClickMoreEventoAdjuntoDowload(eventoUi);
@@ -599,7 +633,6 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
 
   @override
   void dispose() {
-    animationController.dispose();
     super.dispose();
   }
 }

@@ -6,7 +6,7 @@ class DropDownFormField2<T> extends FormField<T> {
   final T? value;
   final Widget? hint;
   List<DropdownMenuItem<T>>? menuItems;
-  final Function onChanged;
+  final Function? onChanged;
 
 
 
@@ -37,10 +37,10 @@ class DropDownFormField2<T> extends FormField<T> {
                     icon: Container(),
                     hint: hint??Container(),
                     value: value == '' ? null : value,
-                    onChanged: (newValue) {
+                    onChanged: onChanged !=null? (newValue) {
                       state.didChange(newValue);
                       onChanged(newValue);
-                    },
+                    }:null,
                     items: menuItems,
                   ),
                 ),

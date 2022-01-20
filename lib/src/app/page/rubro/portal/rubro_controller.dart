@@ -83,7 +83,8 @@ class RubroController extends Controller{
 
   double _scrollRubroProcesoY = 0;
   double get scrollRubroProcesoY => _scrollRubroProcesoY;
-
+  bool _datosOffline = false;
+  bool get datosOffline => _datosOffline;
   RubroController(this.cursosUi, calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
       :this.presenter = RubroPresenter(calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
   , super();
@@ -131,7 +132,7 @@ class RubroController extends Controller{
 
     presenter.getRubroEvaluacionOnNext = (List<RubricaEvaluacionUi> rubricaEvalUiList){
       _rubricaEvaluacionUiList = [];
-      if(calendarioPeriodoUI!=null&&(calendarioPeriodoUI?.habilitado??0)==1){
+      if(calendarioPeriodoUI!=null&&(calendarioPeriodoUI?.habilitadoProceso??0)==1){
         _rubricaEvaluacionUiList?.add("add");
       }
 
@@ -158,14 +159,15 @@ class RubroController extends Controller{
     presenter.getUnidadRubroEvalOnNext = (List<UnidadUi> unidadUiList){
       _unidadUiList = unidadUiList;
       _sesionItemsMap.clear();
+      int count_unidadSesion = 0;
+
       for(UnidadUi unidadUi in unidadUiList){
-        int count_sesion = 0;
         for(SesionUi sesionUi in unidadUi.sesionUiList??[]){
           sesionUi.cantSesion = unidadUi.sesionUiList?.length;
-          //if(count_sesion==0)sesionUi.toogle2 = true;
+          if(count_unidadSesion==0)sesionUi.toogle2 = true;
           _sesionItemsMap[sesionUi] = [];
 
-          if(calendarioPeriodoUI?.habilitado==1)
+          if(calendarioPeriodoUI?.habilitadoProceso==1)
           _sesionItemsMap[sesionUi]?.add("");
 
           int  count = 0;
@@ -174,7 +176,7 @@ class RubroController extends Controller{
             _sesionItemsMap[sesionUi]?.add(rubroUi);
             count++;
           }
-          count_sesion ++;
+          count_unidadSesion ++;
         }
       }
       if(_seletedItem==0||_seletedItem==2)_progress = false;
@@ -206,7 +208,7 @@ class RubroController extends Controller{
 
       _cellListList.clear();
       _columnList2.clear();
-      _columnList2.add(ContactoUi());//Titulo alumno
+      _columnList2.add(ContactoUi());//Titulo foto_alumno
 
       //Competencia Base
       for(CompetenciaUi competenciaUi in competenciaUiList){
@@ -348,7 +350,7 @@ class RubroController extends Controller{
 
   void onSelectedCalendarioPeriodo(CalendarioPeriodoUI calendarioPeriodoUi) {
     this._calendarioPeriodoUI = calendarioPeriodoUi;
-    //_calendarioPeriodoUI?.habilitado = 1;
+    _calendarioPeriodoUI?.habilitadoProceso = 1;
     for(var item in  _calendarioPeriodoList){
       item.selected = false;
     }
@@ -424,7 +426,7 @@ class RubroController extends Controller{
 
   List<dynamic> getRubrosSesionDialog(SesionUi sesionUi) {
     List<dynamic> list = [];
-    if(calendarioPeriodoUI!=null&&(calendarioPeriodoUI?.habilitado??0)==1){
+    if(calendarioPeriodoUI!=null&&(calendarioPeriodoUI?.habilitadoProceso??0)==1){
       list.add("add");
     }
     list.addAll(sesionUi.rubricaEvaluacionUiList??[]);
