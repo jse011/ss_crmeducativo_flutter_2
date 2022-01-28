@@ -21,6 +21,7 @@ import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/peso_criterio/pe
 import 'package:ss_crmeducativo_2/src/app/page/rubro/portal/rubro_view_2.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/resultado_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/vista_previa/vista_previa_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/crear/tarea_crear_view.dart';
@@ -67,6 +68,7 @@ class AppRouter {
   static final String CERRAR_SESION = '/CerrarSesion';
   static final String LISTA_ALUMNO = 'Curso/ListaAlumno';
   static final String EDITAR_USUARIO = '/EditarPersona';
+  static final String VISTA_PREVIA_RUBRO = 'Curso/Rubro/VistaPrevia';
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     LOGIN: (BuildContext context) => LoginView5(),
@@ -286,6 +288,15 @@ class AppRouter {
           return EditarUsuarioView(usuarioUi);
         },
       );
+    }else if(settings.name == VISTA_PREVIA_RUBRO){
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi cursosUi = arguments['cursoUi'];
+          CalendarioPeriodoUI? calendarioPeriodoUI = arguments['calendarioPeriodoUI'];
+          return VistaPreviaView(cursosUi, calendarioPeriodoUI);
+        },
+      );
     }
 
 
@@ -360,6 +371,7 @@ class AppRouter {
     );
   }
   static Future<dynamic> createRouteRubroCrearRouter(BuildContext context, CursosUi? cursosUi,CalendarioPeriodoUI? calendarioPeriodoUI, SesionUi? sesionUi,TareaUi? tareaUi ,RubricaEvaluacionUi? rubroUi, bool online) async{
+    print("createRouteRubroCrearRouter");
    return await Navigator.pushNamed(context,
         RUBROCREAR,
         arguments: {'cursoUi': cursosUi, 'calendarioPeriodoUI':calendarioPeriodoUI ,'rubroUi': rubroUi, 'sesionUi': sesionUi, 'tareaUi':tareaUi, 'online': online}
@@ -466,11 +478,21 @@ class AppRouter {
   }
 
   static Future<dynamic> showEditarUsuarioView(BuildContext context, UsuarioUi? usuarioUi) {
+
     return Navigator.pushNamed(context,
         EDITAR_USUARIO,
         arguments: {'usuarioUi': usuarioUi}
     );
   }
+
+  static Future<dynamic> showVistaPreviaRubro(BuildContext context, CursosUi cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
+
+    return Navigator.pushNamed(context,
+        VISTA_PREVIA_RUBRO,
+        arguments: {'cursoUi': cursosUi,'calendarioPeriodoUI': calendarioPeriodoUI}
+    );
+  }
+
 
 
 }

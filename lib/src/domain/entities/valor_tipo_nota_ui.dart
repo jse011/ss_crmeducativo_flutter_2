@@ -17,4 +17,10 @@ class ValorTipoNotaUi{
    String? getSTime;
   TipoNotaUi? tipoNotaUi;
 
+  bool? incluidoLInferiorTransf;
+  bool? incluidoLSuperiorTransf;
+  double? valorNumericoTransf;
+  double? limiteInferiorTransf;
+  double? limiteSuperiorTransf;
+
 }

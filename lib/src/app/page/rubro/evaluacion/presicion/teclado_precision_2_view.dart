@@ -53,8 +53,10 @@ class _TecladoPresicionView2 extends State<TecladoPresicionView2> {
     if(entero.length>1){
       numeroDecena = int.parse(entero[0]);
       numeroUnidad = int.parse(entero[1]);
+
     }else{
       numeroUnidad = int.parse(entero[0]);
+
     }
 
     int decimals = 0;
@@ -460,9 +462,9 @@ class _TecladoPresicionView2 extends State<TecladoPresicionView2> {
       }else if(selectedUnidad){
         setState(() {
           numeroUnidad = int.parse(myText);
-          selectedDecena = false;
+          selectedDecena = true;
           selectedUnidad = false;
-          selectedDecimal = true;
+          selectedDecimal = false;
         });
       }else if(selectedDecimal){
         setState(() {

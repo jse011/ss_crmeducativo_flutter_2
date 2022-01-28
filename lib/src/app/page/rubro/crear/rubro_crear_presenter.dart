@@ -13,6 +13,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_reposito
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/crear_local_rubro_evaluacion.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/crear_server_update_rubro_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_forma_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_temas_criterio.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_tipo_evaluacion.dart';
@@ -31,6 +32,8 @@ class RubroCrearPresenter extends Presenter{
   CrearServerRubroEvaluacion _saveRubroEvaluacion;
   late Function saveRubroEvaluacionSucces, saveRubroEvaluacionSuccesError;
   CrearLocalRubroEvaluacion _saveRubroEvalLocal;
+  CrearServerUpdateRubroEvaluacion _updateRubroEvaluacion;
+
   Map<String, dynamic>? _dataBD;
 
   RubroCrearPresenter(RubroRepository rubroRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo):
@@ -40,6 +43,7 @@ class RubroCrearPresenter extends Presenter{
         _getTemaCriterios = new GetTemaCriterios(rubroRepo),
         _saveRubroEvaluacion = CrearServerRubroEvaluacion(configuracionRepo, rubroRepo, httpDatosRepo),
         _saveRubroEvalLocal = CrearLocalRubroEvaluacion(configuracionRepo, rubroRepo),
+        _updateRubroEvaluacion = CrearServerUpdateRubroEvaluacion(configuracionRepo, rubroRepo, httpDatosRepo),
         super();
 
   getFormaEvaluacion(){
@@ -63,7 +67,7 @@ class RubroCrearPresenter extends Presenter{
     _getTipoNota.execute(_GetTipoNotaCase(this), GetTipoNotaParms());
   }
 
-  void getTemaCriterios(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
+  void getTemaCriterios(RubricaEvaluacionUi? rubricaEvaluacionUi, CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
     _getTemaCriterios.execute(_GetTemaCriteriosCase(this), GetTemaCriteriosParms(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
   }
 
@@ -80,6 +84,17 @@ class RubroCrearPresenter extends Presenter{
 
   Future<void> saveLocal(RubricaEvaluacionUi? rubricaEvaluacionUi){
     return _saveRubroEvalLocal.execute(CrearLocalRubroEvaluacionParms(rubricaEvaluacionUi, _dataBD));;
+  }
+
+  Future<HttpStream?> update(RubricaEvaluacionUi? rubricaEvaluacionUi) async{
+    return await _updateRubroEvaluacion.execute(UpdateRubroEvaluacionParms(rubricaEvaluacionUi), (response){
+      if(response.success){
+        saveRubroEvaluacionSucces();
+      }else {
+        saveRubroEvaluacionSuccesError(response.errorServidor, response.offline, response.errorInterno);
+      }
+      _dataBD = response.dataBD;
+    });
   }
 
 }

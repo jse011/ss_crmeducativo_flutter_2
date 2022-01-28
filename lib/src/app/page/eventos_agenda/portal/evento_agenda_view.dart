@@ -39,7 +39,9 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
+import 'package:ss_crmeducativo_2/src/provider/homeProvider.dart';
 import 'evento_agenda_controller_2.dart';
+import 'package:provider/provider.dart';
 
 class EventoAgendaView extends View{
   UsuarioUi? usuarioUi;
@@ -56,19 +58,23 @@ class EventoAgendaView extends View{
 
 class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaController2> with TickerProviderStateMixin{
 
-  _EventoAgendaViewState(UsuarioUi? usuarioUi) : super(EventoAgendaController2(usuarioUi,DeviceHttpDatosRepositorio(), MoorConfiguracionRepository(), MoorAgendaEventoRepository()));
+  _EventoAgendaViewState(UsuarioUi? usuarioUi) :
+        super(EventoAgendaController2(usuarioUi,
+          DeviceHttpDatosRepositorio(), MoorConfiguracionRepository(), MoorAgendaEventoRepository()));
 
   late Animation<double> topBarAnimation;
-
-  final ScrollController scrollController = ScrollController();
+  late ScrollController scrollController;
   double topBarOpacity = 0.0;
 
   @override
   void initState() {
+    scrollController = ScrollController();
+
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -100,7 +106,6 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
       });
 
     });
-
     super.initState();
   }
 
@@ -110,7 +115,6 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
         SchedulerBinding.instance?.addPostFrameCallback((_) {
           widget.menuBuilder?.call(getMenuView(controller));
         });
-
         return WillPopScope(
           onWillPop: () async {
             bool salir = controller.onBackPress();
@@ -371,7 +375,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
     );
   }
 
-  Widget getAppBarUI() {
+  Widget getAppBarUI2() {
     return Column(
       children: <Widget>[
         AnimatedBuilder(
@@ -425,6 +429,77 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
     );
   }
 
+  Widget getAppBarUI() {
+    return Column(
+      children: <Widget>[
+        AnimatedBuilder(
+          animation: widget.animationController,
+          builder: (BuildContext? context, Widget? child) {
+            return FadeTransition(
+              opacity: topBarAnimation,
+              child: Transform(
+                transform: Matrix4.translationValues(
+                    0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppTheme.white.withOpacity(topBarOpacity),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(32.0),
+                    ),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                          color: AppTheme.grey
+                              .withOpacity(0.4 * topBarOpacity),
+                          offset: const Offset(1.1, 1.1),
+                          blurRadius: 10.0),
+                    ],
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: MediaQuery.of(context!).padding.top,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 0,
+                            right: 0,
+                            top: 16 - 8.0 * topBarOpacity,
+                            bottom: 12 - 8.0 * topBarOpacity),
+                        child: Container(
+                          child: Stack(
+                            children: <Widget>[
+                              Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 24, right: 24,top: 8 * topBarOpacity, bottom: 8),
+                                  child: Text(
+                                    'Agenda digital',
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 16 + 10 - 4 * topBarOpacity,
+                                      letterSpacing: 1.2,
+                                      color: AppTheme.darkerText,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        )
+      ],
+    );
+  }
+
   Widget getMainTab() {
     return  AnimatedBuilder(
       animation: widget.animationController,
@@ -436,7 +511,8 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                   0.0, 30 * (1.0 - topBarAnimation.value), 0.0),
               child: Container(
                 color: AppTheme.background,
-                child: NestedScrollView(
+                child:
+                /*NestedScrollView(
                     controller: scrollController,
                     headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
                       return <Widget>[
@@ -451,7 +527,6 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                           automaticallyImplyLeading: false,
                           floating: false,
                           pinned: true,
-
                           shape: ContinuousRectangleBorder(
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(80), bottomRight: Radius.circular(0))),
@@ -491,145 +566,163 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                         )
                       ];
                     },
-                    body: ControlledWidgetBuilder<EventoAgendaController2>(
-                      builder: (context, controller){
-                        return Stack(
-                          children: [
-                            controller.eventoUiList == null?
-                            Container():
-                            controller.eventoUiList!.isEmpty?
-                            Column(
-                                children: [
-                                  Expanded(
-                                      flex: 5,
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Center(
-                                            child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
-                                          ),
-                                          Padding(padding: EdgeInsets.all(4)),
-                                          Center(
-                                            child: Text("Lista vacía${(controller.msgConexion??"").isNotEmpty?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
-                                          )
-                                        ],
-                                      )
-                                  ),Expanded(
-                                      flex: 1,
-                                      child: Container()
-                                  )
-                                ],
-                              ):Container(),
-                            CustomScrollView(
-                              slivers: <Widget>[
-                                if(controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA)
-                                SliverList(
-                                    delegate: SliverChildListDelegate([
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                          left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-                                          right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-                                          top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-                                        ),
-                                        child: Stack(
-                                          children: [
-                                            Center(
-                                              child: InkWell(
-                                                onTap: () async{
-                                                  dynamic respuesta = await AppRouter.createCrearEventoRouter(context, null, null);
-                                                  if(respuesta is int) controller.cambiosEvento();
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)),
-                                                  decoration: BoxDecoration(
-                                                    color:  HexColor("#71bb74").withOpacity(1),
-                                                    borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)), // use instead of BorderRadius.all(Radius.circular(20)),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                          color: (Color(0XFF71bb74)).withOpacity(0.4),
-                                                          offset:  Offset(0,3),
-                                                          blurRadius: 6.0,
-                                                          spreadRadius: 0
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 410),
-                                                  height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 70),
-                                                  child: FDottedLine(
-                                                    color: AppTheme.white,
-                                                    strokeWidth: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 2),
-                                                    dottedLength: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10),
-                                                    space: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 2),
-                                                    corner: FDottedLineCorner.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 14)),
+                    body: Container()
 
-                                                    /// add widget
-                                                    child: Container(
-                                                      alignment: Alignment.center,
-                                                      child: Text("Crear un evento",  style: TextStyle(
-                                                          fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 18),
-                                                          fontWeight: FontWeight.w700,
-                                                          fontFamily: AppTheme.fontTTNorms,
-                                                          color:  AppTheme.white
-                                                      ),),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ])
-                                ),
-                                SliverList(
-                                    delegate: SliverChildBuilderDelegate(
-                                            (BuildContext context, int index){
-                                          EventoUi? eventoUi = controller.eventoUiList?[index];
+                ),*/
+               Container(
+                 padding: EdgeInsets.only(
+                   top: AppBar().preferredSize.height +
+                       MediaQuery.of(context!).padding.top +
+                       0),
+                 child:  ControlledWidgetBuilder<EventoAgendaController2>(
+                   builder: (context, controller){
+                     return Stack(
+                       children: [
+                         controller.eventoUiList == null?
+                         Container():
+                         controller.eventoUiList!.isEmpty?
+                         Column(
+                           children: [
+                             Expanded(
+                                 flex: 5,
+                                 child: Column(
+                                   mainAxisAlignment: MainAxisAlignment.center,
+                                   children: [
+                                     Center(
+                                       child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                                     ),
+                                     Padding(padding: EdgeInsets.all(4)),
+                                     Center(
+                                       child: Text("Lista vacía${(controller.msgConexion??"").isNotEmpty?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                                     )
+                                   ],
+                                 )
+                             ),Expanded(
+                                 flex: 1,
+                                 child: Container()
+                             )
+                           ],
+                         ):Container(),
+                         CustomScrollView(
+                           controller: scrollController,
+                           slivers: <Widget>[
+                             SliverList(
+                                 delegate: SliverChildListDelegate([
+                                   Container(
+                                     padding: EdgeInsets.only(
+                                       top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                                     ),
+                                   ),
+                                 ])
+                             ),
+                             if(controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA)
+                               SliverList(
+                                   delegate: SliverChildListDelegate([
+                                     Container(
+                                       padding: EdgeInsets.only(
+                                         left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                                         right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                                         top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 0),
+                                         bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                                       ),
+                                       child: Stack(
+                                         children: [
+                                           Center(
+                                             child: InkWell(
+                                               onTap: () async{
+                                                 dynamic respuesta = await AppRouter.createCrearEventoRouter(context, null, null);
+                                                 if(respuesta is int) controller.cambiosEvento();
+                                               },
+                                               child: Container(
+                                                 padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)),
+                                                 decoration: BoxDecoration(
+                                                   color:  HexColor("#71bb74").withOpacity(1),
+                                                   borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)), // use instead of BorderRadius.all(Radius.circular(20)),
+                                                   boxShadow: [
+                                                     BoxShadow(
+                                                         color: (Color(0XFF71bb74)).withOpacity(0.4),
+                                                         offset:  Offset(0,3),
+                                                         blurRadius: 6.0,
+                                                         spreadRadius: 0
+                                                     ),
+                                                   ],
+                                                 ),
+                                                 width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 410),
+                                                 height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 70),
+                                                 child: FDottedLine(
+                                                   color: AppTheme.white,
+                                                   strokeWidth: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 2),
+                                                   dottedLength: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10),
+                                                   space: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 2),
+                                                   corner: FDottedLineCorner.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 14)),
 
-                                          return ItemEventoView(eventoUi, tipoEditar: controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA,
-                                            onClickMoreEventoAdjuntoDowload:(eventoUi) {
-                                            controller.onClickMoreEventoAdjuntoDowload(eventoUi);
-                                          }, onClickPreview: (eventoUi, eventoAdjuntoUi) async{
-                                            if((eventoUi?.eventoAdjuntoUiPreviewList??[]).isNotEmpty&&(eventoUi?.eventoAdjuntoUiPreviewList??[]).length>1){
-                                              dynamic response = await AppRouter.createEventoInfoComplejoRouter(context, eventoUi);
-                                            }else{
-                                              dynamic response = await AppRouter.createEventoInfoSimpleRouter(context, eventoUi, eventoAdjuntoUi);
-                                            }
-                                          }, onClickPreviewComplejo: (eventoUi, eventoAdjuntoUi) async {
-                                            dynamic response = await AppRouter.createEventoInfoComplejoRouter(context, eventoUi);
-                                          },
-                                            onClickEditar: (eventoUi) async{
-                                              dynamic respuesta = await AppRouter.createCrearEventoRouter(context, eventoUi, null);
-                                              if(respuesta is int) controller.cambiosEvento();
-                                            },
-                                            onClickEliminar: (eventoUi) {
-                                              controller.onClickElimarEvento(eventoUi);
-                                            },
-                                            onClickPublicar: (eventoUi) async{
-                                              bool? result = await controller.onClickPublicar(eventoUi);
+                                                   /// add widget
+                                                   child: Container(
+                                                     alignment: Alignment.center,
+                                                     child: Text("Crear un evento",  style: TextStyle(
+                                                         fontSize: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 18),
+                                                         fontWeight: FontWeight.w700,
+                                                         fontFamily: AppTheme.fontTTNorms,
+                                                         color:  AppTheme.white
+                                                     ),),
+                                                   ),
+                                                 ),
+                                               ),
+                                             ),
+                                           )
+                                         ],
+                                       ),
+                                     ),
+                                   ])
+                               ),
+                             SliverList(
+                                 delegate: SliverChildBuilderDelegate(
+                                         (BuildContext context, int index){
+                                       EventoUi? eventoUi = controller.eventoUiList?[index];
 
-                                            },
-                                          );
-                                        },
-                                        childCount: controller.eventoUiList?.length??0
-                                    )
-                                ),
-                                SliverList(
-                                    delegate: SliverChildListDelegate(
-                                        [
-                                          Container(
-                                            height: 100,
-                                          )
-                                        ])
-                                )
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    )
+                                       return ItemEventoView(eventoUi, tipoEditar: controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA,
+                                         onClickMoreEventoAdjuntoDowload:(eventoUi) {
+                                           controller.onClickMoreEventoAdjuntoDowload(eventoUi);
+                                         }, onClickPreview: (eventoUi, eventoAdjuntoUi) async{
+                                           if((eventoUi?.eventoAdjuntoUiPreviewList??[]).isNotEmpty&&(eventoUi?.eventoAdjuntoUiPreviewList??[]).length>1){
+                                             dynamic response = await AppRouter.createEventoInfoComplejoRouter(context, eventoUi);
+                                           }else{
+                                             dynamic response = await AppRouter.createEventoInfoSimpleRouter(context, eventoUi, eventoAdjuntoUi);
+                                           }
+                                         }, onClickPreviewComplejo: (eventoUi, eventoAdjuntoUi) async {
+                                           dynamic response = await AppRouter.createEventoInfoComplejoRouter(context, eventoUi);
+                                         },
+                                         onClickEditar: (eventoUi) async{
+                                           dynamic respuesta = await AppRouter.createCrearEventoRouter(context, eventoUi, null);
+                                           if(respuesta is int) controller.cambiosEvento();
+                                         },
+                                         onClickEliminar: (eventoUi) {
+                                           controller.onClickElimarEvento(eventoUi);
+                                         },
+                                         onClickPublicar: (eventoUi) async{
+                                           bool? result = await controller.onClickPublicar(eventoUi);
 
-                ),
+                                         },
+                                       );
+                                     },
+                                     childCount: controller.eventoUiList?.length??0
+                                 )
+                             ),
+                             SliverList(
+                                 delegate: SliverChildListDelegate(
+                                     [
+                                       Container(
+                                         height: 100,
+                                       )
+                                     ])
+                             )
+                           ],
+                         ),
+                       ],
+                     );
+                   },
+                 ),
+               ),
               )
           ),
         );

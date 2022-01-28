@@ -25,9 +25,9 @@ import 'package:collection/collection.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/calcular_evaluacion_resultado.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
-
+/*
 class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCompetenciaRubroParams>{
-  RubroRepository rubroRepository;
+ RubroRepository rubroRepository;
   ConfiguracionRepository repository;
 
 
@@ -89,7 +89,7 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
 
             int cantidadEvaluados = 0;
             for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
-              if((rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_NUMERICO ||
+              if((rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS ||
                   rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES) ){
                   if(evaluacionUi.valorTipoNotaId != null){
                     cantidadEvaluados++;
@@ -218,7 +218,7 @@ class GetCompetenciaRubroEval extends UseCase<GetCompetenciaRubroResponse, GetCo
 
   //if (bETipoNota.tipoId == 409 || bETipoNota.tipoId == 412)
 
-}
+}*/
 
 class GetCompetenciaRubroResponse {
   List<CompetenciaUi> competenciaUiList;

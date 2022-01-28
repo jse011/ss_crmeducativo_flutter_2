@@ -199,21 +199,32 @@ class EvaluacionIndicadorController extends Controller{
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, double nota) {
     if(isCalendarioDesactivo())return;
-    for(List cellList in cellListList){
-      for(var cell in cellList){
-        if(cell is EvaluacionRubricaValorTipoNotaUi){
-          if(cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-              && cell != evaluacionRubricaValorTipoNotaUi){
-            cell.toggle = false;
+    ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi, nota);
+      print("valorTipoNotaUi: ${valorTipoNotaUi?.titulo}");
+
+      for (List cellList in _cellListList) {
+        for (var cell in cellList) {
+          if (cell is EvaluacionRubricaValorTipoNotaUi) {
+
+            if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
+                //&& cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = true;
+            }
+
+            if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
+                //&& cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = false;
+            }
+
           }
         }
       }
-    }
 
-    evaluacionRubricaValorTipoNotaUi.toggle = true;
     evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = nota;//actualizar la nota solo cuando no esta selecionado
-    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
-    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
+    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = valorTipoNotaUi?.valorTipoNotaId;
+    evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
     //evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
     refreshUI();
     _modificado = true;
@@ -388,8 +399,8 @@ class EvaluacionIndicadorController extends Controller{
   void onSaveTecladoPresicion(nota, EvaluacionUi? evaluacionUi) {
     if(isCalendarioDesactivo())return;
     if (evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
-      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi, nota??0);
-
+      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi, nota);
+      print("valorTipoNotaUi: ${valorTipoNotaUi?.titulo}");
       for (List cellList in _cellListList) {
         for (var cell in cellList) {
           if (cell is EvaluacionRubricaValorTipoNotaUi) {

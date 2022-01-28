@@ -30,6 +30,7 @@ class GetTemaCriterios extends UseCase<GetTemaCriteriosResponse, GetTemaCriterio
 }
 
 class GetTemaCriteriosParms{
+    String? rubricaEvaluacionId;
     int? calendarioPeriodoId;
     int? silaboEventoId;
 

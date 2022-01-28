@@ -10,11 +10,14 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart'
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_alumno_curso.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_calendario_periodo.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_competencia_rubro_eval.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_competencia_rubro_eval_2.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_resultados.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_cerrar_curso.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_datos_crear_rubros.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_rubro_evaluacion_list.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_tipo_nota_resultado.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_unidad_rubro_eval.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_resultado_curso.dart';
 
 class RubroPresenter extends Presenter{
   GetCalendarioPerido _getCalendarioPerido;
@@ -27,20 +30,26 @@ class RubroPresenter extends Presenter{
   GetUnidadRubroEval _getUnidadRubroEval;
   late Function getUnidadRubroEvalOnNext, getUnidadRubroEvalOnError;
 
-  GetCompetenciaRubroEval _getCompetenciaRubroEval;
+  GetCompetenciaRubroEval2 _getCompetenciaRubroEval;
   late Function getCompetenciaRubroEvalOnNext, getCompetenciaRubroEvalOnError;
 
 
   GetResultados _getResultados;
   late Function getResultadosOnComplete, getResultadosOnError;
 
+  UpdateCerrarCurso _updateCerrarSesion;
+  UpdateResultadoCurso _updateResultadoCurso;
+  late Function UpdateCursoOnMessage;
+
   RubroPresenter(CalendarioPeriodoRepository calendarioPeriodoRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, RubroRepository rubroRepo, ResultadoRepository resultadoRepo) :
                           _getCalendarioPerido = new GetCalendarioPerido(configuracionRepo, calendarioPeriodoRepo),
                           _getDatosCrearRubro = new UpdateDatosCrearRubro(httpDatosRepo, configuracionRepo, rubroRepo),
                           _getRubroEvaluacion = GetRubroEvaluacionList(rubroRepo),
                           _getUnidadRubroEval = GetUnidadRubroEval(rubroRepo),
-                          _getCompetenciaRubroEval = GetCompetenciaRubroEval(rubroRepo, configuracionRepo),
-                          _getResultados = GetResultados(httpDatosRepo, configuracionRepo, resultadoRepo);
+                          _getCompetenciaRubroEval = GetCompetenciaRubroEval2(rubroRepo, configuracionRepo),
+                          _getResultados = GetResultados(httpDatosRepo, configuracionRepo, resultadoRepo),
+                          _updateCerrarSesion = UpdateCerrarCurso(configuracionRepo, httpDatosRepo),
+                          _updateResultadoCurso = UpdateResultadoCurso(configuracionRepo, httpDatosRepo, rubroRepo);
 
   void getCalendarioPerido(CursosUi? cursosUi){
     _getCalendarioPerido.execute(_GetCalendarioPeriodoCase(this), GetCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
@@ -73,12 +82,24 @@ class RubroPresenter extends Presenter{
 
   void onGetCompetenciaRubroEval(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
     _getCompetenciaRubroEval.dispose();
-    _getCompetenciaRubroEval.execute(GetCompetenciaRubroEvalCase(this), GetCompetenciaRubroParams(calendarioPeriodoUI, cursosUi?.silaboEventoId, cursosUi?.cargaCursoId));
+    _getCompetenciaRubroEval.execute(GetCompetenciaRubroEvalCase(this), GetCompetenciaRubro2Params(calendarioPeriodoUI, cursosUi?.silaboEventoId, cursosUi?.cargaCursoId));
   }
 
   void getResultados(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
     _getResultados.dispose();
     _getResultados.execute(_GetResultadosCase(this), GetResultadosParams(cursosUi, calendarioPeriodoUI?.id));
+  }
+
+  Future<bool> onUpdateEstadoCursoCerrado(CursosUi cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
+    var response = await _updateCerrarSesion.execute(cursosUi, calendarioPeriodoUI);
+    UpdateCursoOnMessage(response.offline, response.success);
+    return response.success??false;
+  }
+
+  Future<bool> updateResultado(CursosUi cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI)async {
+    var response = await _updateResultadoCurso.execute(cursosUi, calendarioPeriodoUI);
+    UpdateCursoOnMessage(response.offline, response.success);
+    return response.success??false;
   }
 
 }
@@ -180,7 +201,7 @@ class _GetUnidadRubroEvalCase extends Observer<GetUnidadRubroEvalResponse>{
 
 }
 
-class GetCompetenciaRubroEvalCase extends Observer<GetCompetenciaRubroResponse>{
+class GetCompetenciaRubroEvalCase extends Observer<GetCompetenciaRubro2Response>{
   RubroPresenter presenter;
 
   GetCompetenciaRubroEvalCase(this.presenter);
@@ -197,7 +218,7 @@ class GetCompetenciaRubroEvalCase extends Observer<GetCompetenciaRubroResponse>{
   }
 
   @override
-  void onNext(GetCompetenciaRubroResponse? response) {
+  void onNext(GetCompetenciaRubro2Response? response) {
     assert(presenter.getCompetenciaRubroEvalOnNext!=null);
     presenter.getCompetenciaRubroEvalOnNext(response?.competenciaUiList, response?.personaUiList, response?.evaluacionCompetenciaUiList, response?.evaluacionCalendarioPeriodoUiList, response?.tipoNotaUi);
   }

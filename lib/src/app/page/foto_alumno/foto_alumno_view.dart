@@ -437,7 +437,7 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
   }
 
   @override
-  userImage(File? _image) {
+  userImage(File? _image, String? newname) {
     if(globalKey.currentContext!=null){
       FotoAlumnoController controller =
       FlutterCleanArchitecture.getController<FotoAlumnoController>(globalKey.currentContext!, listen: false);

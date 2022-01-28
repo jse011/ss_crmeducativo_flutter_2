@@ -13,6 +13,7 @@ import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/peso_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_2_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_view.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
@@ -93,9 +94,6 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
   @override
   Widget get view => ControlledWidgetBuilder<EvaluacionCapacidadController>(
       builder: (context, controller) {
-
-
-
 
         return WillPopScope(
             onWillPop: () async {
@@ -1556,11 +1554,11 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (ctx) {
-          return TecladoPresicionView(
+          return TecladoPresicionView2(
             valorMaximo: tipoNotaUi?.escalavalorMaximo,
             valorMinimo: tipoNotaUi?.escalavalorMinimo,
+            valor: evaluacionUi?.nota??0,
             onSaveInput: (nota) {
-
               Navigator.pop(context, nota);
             },
             onCloseButton: () {

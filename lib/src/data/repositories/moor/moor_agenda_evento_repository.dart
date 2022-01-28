@@ -453,35 +453,33 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
   @override
   Future<List<EventosListaEnvioUi>> getListaAlumnos(int empleadoId) async{
     AppDataBase appSQL = AppDataBase();
+    List<EventosListaEnvioUi> eventosListaEnvioUiListTutoria = [];
     List<EventosListaEnvioUi> eventosListaEnvioUiList = [];
+    var queryTutor = appSQL.select(appSQL.contactoDocente)..where((tbl) => appSQL.contactoDocente.contratoVigente.equals(true));
+    //query..where((tbl) => tbl.a.equals(CONTACTO_ALUMNO));
+    queryTutor.where((tbl) => tbl.idEmpleadoTutor.equals(empleadoId));
+    //queryTutor.where((tbl) => tbl.cargaCursoId.equals(0));
+    queryTutor..where((tbl) => tbl.tipo.equals(CONTACTO_ALUMNO));
+    queryTutor.orderBy([(tbl)=> OrderingTerm.asc(tbl.apellidoPaterno), (tbl)=> OrderingTerm.asc(tbl.cursoNombre), (tbl)=> OrderingTerm.asc(tbl.grupoNombre), (tbl)=> OrderingTerm.asc(tbl.programaNombre)]);
+
+
     var query = appSQL.select(appSQL.contactoDocente)..where((tbl) => appSQL.contactoDocente.contratoVigente.equals(true));
     //query..where((tbl) => tbl.a.equals(CONTACTO_ALUMNO));
+    //queryTutor.where((tbl) => tbl.idEmpleadoTutor.equals(empleadoId));
     query..where((tbl) => tbl.tipo.equals(CONTACTO_ALUMNO));
     query.orderBy([(tbl)=> OrderingTerm.asc(tbl.apellidoPaterno), (tbl)=> OrderingTerm.asc(tbl.cursoNombre), (tbl)=> OrderingTerm.asc(tbl.grupoNombre), (tbl)=> OrderingTerm.asc(tbl.programaNombre)]);
 
 
-    List<ContactoDocenteData> contactoDocenteList = await query.get();
+    for(ContactoDocenteData contactoData  in await queryTutor.get()){
 
-    for(ContactoDocenteData contactoData  in contactoDocenteList){
-
-      EventosListaEnvioUi? eventosListaTutorUi = eventosListaEnvioUiList.firstWhereOrNull((element) => element.cargaAdemicaId == contactoData.cargaAcademicaId && element.empleadoTutorId == empleadoId);
+      EventosListaEnvioUi? eventosListaTutorUi = eventosListaEnvioUiListTutoria.firstWhereOrNull((element) => element.cargaAdemicaId == contactoData.cargaAcademicaId);
       if(eventosListaTutorUi==null){
         eventosListaTutorUi = EventosListaEnvioUi();
         eventosListaTutorUi.cargaAdemicaId = contactoData.cargaAcademicaId;
         eventosListaTutorUi.empleadoTutorId = contactoData.idEmpleadoTutor;
         eventosListaTutorUi.nombre = "${contactoData.periodoNombre??""} ${contactoData.grupoNombre??""} - ${contactoData.programaNombre??""}";
         eventosListaTutorUi.personasUiList = [];
-        eventosListaEnvioUiList.add(eventosListaTutorUi);
-      }
-
-      EventosListaEnvioUi? eventosListaEnvioUi = eventosListaEnvioUiList.firstWhereOrNull((element) => element.cargaAdemicaId == contactoData.cargaAcademicaId && element.cargaCursoId == contactoData.cargaCursoId);
-      if(eventosListaEnvioUi==null){
-        eventosListaEnvioUi = EventosListaEnvioUi();
-        eventosListaEnvioUi.cargaAdemicaId = contactoData.cargaAcademicaId;
-        eventosListaEnvioUi.cargaCursoId = contactoData.cargaCursoId;
-        eventosListaEnvioUi.nombre = "${contactoData.cursoNombre} ${contactoData.periodoNombre??""} ${contactoData.grupoNombre??""} - ${contactoData.programaNombre??""}";
-        eventosListaEnvioUi.personasUiList = [];
-        eventosListaEnvioUiList.add(eventosListaEnvioUi);
+        eventosListaEnvioUiListTutoria.add(eventosListaTutorUi);
       }
 
       EventoPersonaUi? eventoPersonaUi = eventosListaTutorUi.personasUiList?.firstWhereOrNull((element) => element.personaId == contactoData.personaId);
@@ -498,6 +496,20 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
         eventoPersonaUi.personaUi?.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
         eventoPersonaUi.personaUi?.apoderadoUi = await getApoderado(contactoData.personaId);
         eventosListaTutorUi.personasUiList?.add(eventoPersonaUi);
+      }
+
+    }
+
+    for(ContactoDocenteData contactoData  in await query.get()){
+
+      EventosListaEnvioUi? eventosListaEnvioUi = eventosListaEnvioUiList.firstWhereOrNull((element) => element.cargaAdemicaId == contactoData.cargaAcademicaId && element.cargaCursoId == contactoData.cargaCursoId);
+      if(eventosListaEnvioUi==null){
+        eventosListaEnvioUi = EventosListaEnvioUi();
+        eventosListaEnvioUi.cargaAdemicaId = contactoData.cargaAcademicaId;
+        eventosListaEnvioUi.cargaCursoId = contactoData.cargaCursoId;
+        eventosListaEnvioUi.nombre = "${contactoData.cursoNombre} ${contactoData.periodoNombre??""} ${contactoData.grupoNombre??""} - ${contactoData.programaNombre??""}";
+        eventosListaEnvioUi.personasUiList = [];
+        eventosListaEnvioUiList.add(eventosListaEnvioUi);
       }
 
       EventoPersonaUi? eventoPersonaUi2 = eventosListaEnvioUi.personasUiList?.firstWhereOrNull((element) => element.personaId == contactoData.personaId);
@@ -519,10 +531,10 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
     }
 
 
+    eventosListaEnvioUiList.sort((o1, o2)=> (o1.nombre??"").compareTo((o2.nombre??"")));
+    eventosListaEnvioUiListTutoria.addAll(eventosListaEnvioUiList);
 
-
-
-    return eventosListaEnvioUiList;
+    return eventosListaEnvioUiListTutoria;
   }
 
   Future<PersonaUi> getApoderado(int personaId)async{

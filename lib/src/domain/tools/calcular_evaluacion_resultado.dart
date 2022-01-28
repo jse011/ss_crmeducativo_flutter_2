@@ -17,8 +17,7 @@ class CalcularEvaluacionResultados {
 
     double notaCapacidad = 0;
 
-    bool existenRubros = false;
-
+    bool fueCalificado = false;
     for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi?.rubricaEvalUiList??[]){
       int totalPeso = (capacidadUi?.total_peso??0);
       EvaluacionTransformadaUi? evaluacionTransformadaUi = rubricaEvaluacionUi.evaluacionTransformadaUiList?.firstWhereOrNull((element) => element.alumnoId == alumnoId);
@@ -29,19 +28,28 @@ class CalcularEvaluacionResultados {
           //si ninguna evaluacion tiene calificacion la nota ponderada es 0
           evaluacionTransformadaUi?.nota_ponderada = 0;
         }else{
-          existenRubros = true;
           evaluacionTransformadaUi?.nota_ponderada = (evaluacionTransformadaUi.nota??0) * (rubricaEvaluacionUi.peso??0)/(totalPeso!=0?totalPeso:1);
         }
       }
 
       notaCapacidad += evaluacionTransformadaUi?.nota_ponderada??0;
+
+      if(tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||
+          tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+         if(evaluacionTransformadaUi?.valorTipoNotaUi!=null){
+           fueCalificado = true;
+         }
+      }else{
+        if((evaluacionTransformadaUi?.nota_ponderada??0)>0){
+          fueCalificado = true;
+        }
+      }
     }
 
-    if(existenRubros){
-
+    if(fueCalificado){
       evaluacionCapacidadUi?.nota = notaCapacidad;
       if (tipoNotaUiResultado?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
-        ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(tipoNotaUiResultado, notaCapacidad);
+        ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(tipoNotaUiResultado, notaCapacidad);
         evaluacionCapacidadUi?.valorTipoNotaUi = valorTipoNotaUi;
       }
 
@@ -53,38 +61,28 @@ class CalcularEvaluacionResultados {
 
   }
 
+  //A 20 a A1 resultado
   static actualizarEvaluacionTransformada(EvaluacionTransformadaUi? evaluacionTransformadaUi, TipoNotaUi? tipoNotaUiResultado){
     EvaluacionUi? evaluacionUi =  evaluacionTransformadaUi?.evaluacionUiOriginal;
     TipoNotaUi? tipoNotaUi = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi;
-    int notaMaxRubro = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo??0;
-    int notaMinRubro = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo??0;
-    TransformarValoTipoNotaResponse response = TransformarValoTipoNota.execute(TransformarValoTipoNotaParams(evaluacionUi?.nota, notaMinRubro, notaMaxRubro, tipoNotaUiResultado));
-    evaluacionTransformadaUi?.nota = response.nota;
-    //Si el valor TipoNotaId es null la transformada tambien es null
-    if((evaluacionUi?.valorTipoNotaId??"").isNotEmpty && (tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS)){
-      evaluacionTransformadaUi?.valorTipoNotaId = response.valorTipoNotaUi?.valorTipoNotaId;
-      evaluacionTransformadaUi?.valorTipoNotaUi = response.valorTipoNotaUi;
-    }else{
-      evaluacionTransformadaUi?.evaluacionId = null;
-      evaluacionTransformadaUi?.valorTipoNotaUi = null;
-    }
+
+    evaluacionTransformadaUi?.nota = TransformarValoTipoNota.transformarNota(evaluacionUi?.nota, tipoNotaUi, evaluacionUi?.valorTipoNotaUi, tipoNotaUiResultado);
+    ValorTipoNotaUi? valorTipoNotaUiResultado = TransformarValoTipoNota.transformarTipoNota(evaluacionUi?.nota, tipoNotaUi, evaluacionUi?.valorTipoNotaUi, tipoNotaUiResultado);
+
+    evaluacionTransformadaUi?.valorTipoNotaId = valorTipoNotaUiResultado?.valorTipoNotaId;
+    evaluacionTransformadaUi?.valorTipoNotaUi = valorTipoNotaUiResultado;
 
   }
 
   static actualizarEvaluacionOriginal(EvaluacionTransformadaUi? evaluacionTransformadaUi,  TipoNotaUi? tipoNotaUiResultado){
-    EvaluacionUi? evaluacionUi =  evaluacionTransformadaUi?.evaluacionUiOriginal;
-    int notaMaxResultado = tipoNotaUiResultado?.escalavalorMaximo??0;
-    int notaMinResultado = tipoNotaUiResultado?.escalavalorMinimo??0;
-    TransformarValoTipoNotaResponse response = TransformarValoTipoNota.execute(TransformarValoTipoNotaParams(evaluacionTransformadaUi?.nota, notaMinResultado, notaMaxResultado, evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi));
-    evaluacionUi?.nota = response.nota;
+    EvaluacionUi? evaluacionUi =   evaluacionTransformadaUi?.evaluacionUiOriginal;;
+    print("actualizarEvaluacionOriginal");
+    evaluacionUi?.nota = TransformarValoTipoNota.transformarNota(evaluacionTransformadaUi?.nota, tipoNotaUiResultado, evaluacionTransformadaUi?.valorTipoNotaUi, evaluacionUi.rubroEvaluacionUi?.tipoNotaUi);
+    print("actualizarEvaluacionOriginal ${ evaluacionUi?.nota}");
+    ValorTipoNotaUi? valorTipoNotaUiProceso = TransformarValoTipoNota.transformarTipoNota(evaluacionTransformadaUi?.nota, tipoNotaUiResultado, evaluacionTransformadaUi?.valorTipoNotaUi, evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi);
 
-    if((evaluacionTransformadaUi?.valorTipoNotaId??"").isNotEmpty && (tipoNotaUiResultado?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS)){
-      evaluacionUi?.valorTipoNotaId = response.valorTipoNotaUi?.valorTipoNotaId;
-      evaluacionUi?.valorTipoNotaUi = response.valorTipoNotaUi;
-    }else{
-      evaluacionUi?.valorTipoNotaId = null;
-      evaluacionUi?.valorTipoNotaUi = null;
-    }
+    evaluacionUi?.valorTipoNotaId = valorTipoNotaUiProceso?.valorTipoNotaId;
+    evaluacionUi?.valorTipoNotaUi = valorTipoNotaUiProceso;
 
   }
 

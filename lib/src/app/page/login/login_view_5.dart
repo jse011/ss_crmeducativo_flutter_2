@@ -17,6 +17,7 @@ import 'package:ss_crmeducativo_2/src/app/page/login/signup.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_imagen.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_lottie.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_system_ui.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
@@ -36,7 +37,8 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
   late final formKey = new GlobalKey<FormState>();
   String? email, password;
 
-  Color greenColor = AppTheme.nearlyDarkBlue;
+
+  //Color greenColor = Color(0XFF68BDFC);
   //Color greenColor = AppTheme.colorPrimaryDark;
   //Color greenColor = Color(0xFF00AF19);
 
@@ -83,19 +85,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
 
         return Scaffold(
             body: Container(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
-                    ],
-                    //stops: [0.1, 0.5],
-                  )
-              ),
+
               child: Row(
                 children: [
                   isLargeScreen?
@@ -141,13 +131,17 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                     ColumnCountProvider.isTablet(MediaQuery.of(context))?
                                     Container():
                                     Positioned(
-                                        bottom: 0,
                                         top: 0,
-                                        child:  Transform.rotate(
-                                          angle: -0.5,
+                                        left: 0,
+                                        child:  Container(
+                                          height: MediaQuery.of(context).size.height/0.5,
+                                          width: MediaQuery.of(context).size.width/0.5,
+                                          child: Transform.rotate(
+                                          angle: -0.9,
                                           child: Container(
                                             child: Lottie.asset(ChangeAppTheme.splahLottieLoginBanner()),
                                           ),
+                                        ),
                                         )
                                     ),
                                     Container(
@@ -233,30 +227,18 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                         width: ColumnCountProvider.aspectRatioForWidthLogin(context, 350),
                         child: Stack(
                           children: [
-                            Text(ChangeAppTheme.getApp() == AppType.EDUCAR?'Educar':'Docente',
-                                style: TextStyle(
-                                    fontFamily: AppTheme.fontTTNorms,
-                                    color: AppTheme.colorPrimary,
-                                    fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 60),
-                                    fontWeight: FontWeight.w900
-                                )
-                            ),
-                            Positioned(
-                                top: ColumnCountProvider.aspectRatioForWidthLogin(context, 50),
-                                child: Column(
-                                  children: [
-                                    Text(ChangeAppTheme.getApp() == AppType.EDUCAR?'Teacher':'Mentor',
-                                        style:
-                                        TextStyle(
-                                            color: AppTheme.colorPrimary,
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 60),
-                                            fontWeight: FontWeight.w900
-                                        )
-                                    ),
-
-                                  ],
-                                )
+                            ChangeAppTheme.getApp() == AppType.EDUCAR?
+                            Container(
+                              child: Image.asset(
+                                AppImagen.login_educar,
+                              ),
+                              padding: EdgeInsets.only(bottom: 26, top: 14),
+                            ):
+                            Container(
+                              child: Image.asset(
+                                AppImagen.login_icrm,
+                              ),
+                              padding: EdgeInsets.only(bottom: 26, top: 20),
                             ),
                             Positioned(
                                 top: ColumnCountProvider.aspectRatioForWidthLogin(context, 115),
@@ -274,14 +256,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                   ],
                                 )
                             ),
-                            Positioned(
-                                top: ColumnCountProvider.aspectRatioForWidthLogin(context, 97),
-                                left: ColumnCountProvider.aspectRatioForWidthLogin(context, ChangeAppTheme.getApp() == AppType.EDUCAR?230:210),
-                                child: Container(
-                                    height: ColumnCountProvider.aspectRatioForWidthLogin(context, 10),
-                                    width: ColumnCountProvider.aspectRatioForWidthLogin(context, 10),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle, color: greenColor)))
+
                           ],
                         )),
                     SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 25)),
@@ -300,7 +275,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                   fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
                                   color: AppTheme.grey.withOpacity(0.5)),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: greenColor),
+                                borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
                               )),
                           onChanged: (value) {
                             controller.onChangeUsuario(value);
@@ -329,7 +304,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                 fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
                                 color: AppTheme.grey.withOpacity(0.5)),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: greenColor),
+                              borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
                             ),
                             suffixIcon: IconButton(
                               icon: Container(
@@ -370,7 +345,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                   fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
                                   color: AppTheme.grey.withOpacity(0.5)),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: greenColor),
+                                borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
                               )),
                           onChanged: (value) {
                             controller.onChangeDni(value);
@@ -396,7 +371,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                   fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
                                   color: AppTheme.grey.withOpacity(0.5)),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: greenColor),
+                                borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
                               )),
                           onChanged: (value) {
                             controller.onChangeCorreo(value);
@@ -419,7 +394,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                             child: InkWell(
                                 child: Text('Has olvidado tu contraseña',
                                     style: TextStyle(
-                                        color: greenColor,
+                                        color: AppTheme.colorPrimary,
                                         fontFamily: AppTheme.fontTTrueno,
                                         fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 11),
                                         decoration: TextDecoration.underline
@@ -441,7 +416,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                             child: InkWell(
                                 child: Text(controller.typeView==LoginTypeView.DNI?'Corregir usuario y contraseña':'Corregir el documento de identidad',
                                     style: TextStyle(
-                                        color: greenColor,
+                                        color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC),
                                         fontFamily: AppTheme.fontTTrueno,
                                         fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 11),
                                         decoration: TextDecoration.underline
@@ -461,8 +436,8 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                           height: ColumnCountProvider.aspectRatioForWidthLogin(context, 50),
                           child: Material(
                               borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthLogin(context, 25)),
-                              shadowColor: Colors.blueAccent,
-                              color: greenColor,
+                              shadowColor: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC),
+                              color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC),
                               elevation: 7.0,
                               child: Center(
                                   child: Text('INICIAR SESIÓN',

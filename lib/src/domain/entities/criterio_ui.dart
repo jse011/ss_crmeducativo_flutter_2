@@ -6,7 +6,7 @@ class CriterioUi {
 
   int? desempenioIcdId;
   String? desempenioDescripcion;
-  int? peso;
+  double? peso;
   String? codigo;
   int? tipoId;
   String? url;
@@ -21,4 +21,5 @@ class CriterioUi {
   List<TemaCriterioUi>? temaCriterioUiList;
   bool? toogle;
   String? icdTituloEditado;
+  String? rubroEvaluacionId;
 }

@@ -114,7 +114,7 @@ class MoorResultadoRepository extends ResultadoRepository{
             resultadoEvaluacionUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_VALORES;
             break;
           case TN_VALOR_NUMERICO:
-            resultadoEvaluacionUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_ICONOS;
+            resultadoEvaluacionUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_NUMERICO;
             break;
           case TN_VALOR_ASISTENCIA:
             resultadoEvaluacionUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_ASISTENCIA;

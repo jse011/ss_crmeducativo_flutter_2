@@ -11,5 +11,6 @@ class ResultadoCompetenciaUi{
   List<ResultadoCapacidadUi>? resulCapacidadUiList;
   int? valorMaximo;
   int? valorMinimo;
+  bool? round;
   
 }

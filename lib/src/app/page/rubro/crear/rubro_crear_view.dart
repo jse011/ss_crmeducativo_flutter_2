@@ -11,6 +11,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
+import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_scrolling.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
@@ -112,7 +113,9 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
 
     super.initState();
 
-    if((widget.tareaUi?.titulo??"").isNotEmpty){
+    if(widget.rubroUi!=null){
+      _tiuloRubricacontroller.text = widget.rubroUi?.titulo??"";
+    }else if((widget.tareaUi?.titulo??"").isNotEmpty){
       _tiuloRubricacontroller.text = widget.tareaUi?.titulo??"";
     }
 
@@ -568,7 +571,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              'Evaluación',
+                              controller.rubricaEvaluacionUi==null?'Evaluación':'Editar Evaluación',
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -745,7 +748,6 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                     Icons.people_alt_outlined,
                                     color: getColorCurso(controller),
                                   ),
-
                                   suffixIcon:  IconButton(
                                     onPressed: (){
                                       controller.clearTitulo();
@@ -753,14 +755,16 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                     },
                                     icon: Icon(
                                       Ionicons.caret_down,
-                                      color: getColorCurso(controller),
+                                      color: controller.rubricaEvaluacionUi == null?
+                                      getColorCurso(controller).withOpacity(0.5):
+                                      AppTheme.background,
                                     ),
                                     iconSize: 15,
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8.0),
                                     borderSide: BorderSide(
-                                      color: getColorCurso(controller).withOpacity(0.5),
+                                      color: getColorCurso(controller).withOpacity(0.5)
                                     ),
                                   ),
                                   hintStyle: Theme.of(context).textTheme.caption?.copyWith(
@@ -770,9 +774,9 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                     color: getColorCurso(controller).withOpacity(0.5),
                                   ),
                                 ),
-                                onChanged: (item){
+                                onChanged: controller.rubricaEvaluacionUi==null?(item){
                                   controller.onSelectFormaEvaluacion(item);
-                                },
+                                }:null,
                                 menuItems: controller.formaEvaluacionUiList.map<DropdownMenuItem<FormaEvaluacionUi>>((item) {
                                   return DropdownMenuItem<FormaEvaluacionUi>(child:
                                   Padding(
@@ -811,7 +815,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                     },
                                     icon: Icon(
                                       Ionicons.caret_down,
-                                      color: getColorCurso(controller),
+                                      color: getColorCurso(controller).withOpacity(0.5)
                                     ),
                                     iconSize: 15,
                                   ),
@@ -828,7 +832,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                     color: getColorCurso(controller).withOpacity(0.5),
                                   ),
                                 ),
-                                onChanged: (item){
+                                onChanged:(item){
                                   controller.onSelectTipoEvaluacion(item);
                                 },
                                 menuItems: controller.tipoEvaluacionUiList.map<DropdownMenuItem<TipoEvaluacionUi>>((item) {
@@ -862,9 +866,9 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                             Padding(
                               padding: const EdgeInsets.only(left: 24, right: 24, top: 4),
                               child:  InkWell(
-                                onTap: (){
+                                onTap: controller.rubricaEvaluacionUi==null?(){
                                   showDialogTipos(controller);
-                                },
+                                }:null,
                                 child: InputDecorator(
                                   textAlign: TextAlign.start,
                                   decoration:  InputDecoration(
@@ -889,7 +893,9 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                       },
                                       icon: Icon(
                                         Ionicons.ellipsis_vertical,
-                                        color: getColorCurso(controller),
+                                        color: controller.rubricaEvaluacionUi == null?
+                                        getColorCurso(controller).withOpacity(0.5):
+                                        AppTheme.background,
                                       ),
                                       iconSize: 15,
                                     ),
@@ -914,7 +920,8 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                 ),
                               ),
                             ),
-                            Row(
+                            controller.rubricaEvaluacionUi==null?
+                                Row(
                               children: [
                                 Padding(padding: EdgeInsets.only(left: 24, top: 16),
                                   child:  ElevatedButton.icon(
@@ -930,7 +937,8 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                   ),
                                 )
                               ],
-                            ),
+                            ):
+                                Container(),
 
                           ])
                       ),
@@ -1163,282 +1171,343 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
           return const SizedBox();
         } else {
           return  Padding(
-            padding: const EdgeInsets.only(left: 24, right: 0, top: 16),
+            padding: EdgeInsets.only(left: 0, right: 0, top: 16),
             child:  SingleChildScrollView(
-              child: StickyHeadersTableNotExpandedCustom(
-                  cellDimensions: CellDimensions.variableColumnWidth(
-                      stickyLegendHeight:35,
-                      stickyLegendWidth: 20,
-                      contentCellHeight: 60,
-                      columnWidths: controller.tableTipoNotacolumnWidths
-                  ),
-                  //cellAlignments: CellAlignments.,
-                  scrollControllers: crollControllers,
-                  columnsLength: controller.tableTipoNotaColumns.length,
-                  rowsLength: controller.criterioUiList.length,
-                  columnsTitleBuilder: (i) {
-                    //#region columnsTitleBuilder
-                    var obj = controller.tableTipoNotaColumns[i];
-                    if(obj is String){
-                      return Container(
-                          padding: EdgeInsets.only(left: 8),
-                          child: Row(
+              padding: EdgeInsets.only(left: 24, right: 0),
+              scrollDirection: Axis.horizontal,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Container(
+                  child: StickyHeadersTableNotExpandedNotScrolling(
+                      cellDimensions: CellDimensions.variableColumnWidth(
+                          stickyLegendHeight:35,
+                          stickyLegendWidth: 135,
+                          contentCellHeight: 60,
+                          columnWidths: controller.tableTipoNotacolumnWidths
+                      ),
+                      //cellAlignments: CellAlignments.,
+                      //scrollControllers: crollControllers,
+                      columnsLength: controller.tableTipoNotaColumns.length,
+                      rowsLength: controller.criterioUiList.length,
+
+                      columnsTitleBuilder: (i) {
+                        //#region columnsTitleBuilder
+                        var obj = controller.tableTipoNotaColumns[i];
+                        if(obj is String){
+                          return Container(
+                              padding: EdgeInsets.only(left: 8),
+                              child: Row(
+                                children: [
+                                  Text(obj, style: TextStyle(color: getColorCurso(controller), fontSize: 12),),
+                                ],
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  right: BorderSide(color: getColorCurso(controller)),
+                                  top: BorderSide(color: getColorCurso(controller)),
+                                  bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
+                                ),
+                              )
+                          );
+                        }else if(obj is bool){
+                          return Stack(
                             children: [
-                              Text(obj, style: TextStyle(color: getColorCurso(controller), fontSize: 12),),
+                              Container(
+                                  decoration: BoxDecoration(
+                                      color: getColorCurso(controller),
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(7))
+                                  )
+                              ),
+                              Container(
+                                  padding: EdgeInsets.only(top: 4),
+                                  child: Center(
+                                    child: Text("Peso", style: TextStyle(color: AppTheme.white, fontSize: 11),),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(color: getColorCurso(controller)),
+                                      bottom: BorderSide(color: getColorCurso(controller)),
+                                    ),
+                                  )
+                              ),
                             ],
+                          );
+                        }else if(obj is ValorTipoNotaUi){
+
+                          switch(obj.tipoNotaUi?.tipoNotaTiposUi??MoorRubroRepository.TN_VALOR_NUMERICO){
+                            case TipoNotaTiposUi.SELECTOR_VALORES:
+                              return Container(
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text("${obj.titulo??""}".trim(),
+                                          style: TextStyle(fontFamily: AppTheme.fontTTNormsMedium,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: getColor(i),
+                                          ),
+                                        ),
+                                        Text((obj.valorNumerico??0).toStringAsFixed(1),
+                                          style: TextStyle(fontFamily: AppTheme.fontTTNormsMedium,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: getColor(i)
+                                          ),),
+                                      ],
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      right: BorderSide(color: getColorCurso(controller)),
+                                      top: BorderSide(color: getColorCurso(controller)),
+                                      bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
+                                    ),
+                                  )
+                              );
+                            case TipoNotaTiposUi.SELECTOR_ICONOS:
+                              return Container(
+                                  child: Center(
+                                    child:  CachedNetworkImage(
+                                      height: 30,
+                                      width: 30,
+                                      imageUrl: obj.icono??"",
+                                      placeholder: (context, url) => CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) => Icon(Icons.error),
+                                    ),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      right: BorderSide(color: getColorCurso(controller)),
+                                      top: BorderSide(color: getColorCurso(controller)),
+                                      bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
+                                    ),
+                                  )
+                              );
+                            default:
+                              return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      right: BorderSide(color: getColorCurso(controller)),
+                                      top: BorderSide(color: getColorCurso(controller)),
+                                      bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
+                                    ),
+                                  )
+                              );
+
+                          }
+                        }else{
+                          return Container();
+                        }
+                        //#endregion
+                      },
+                      rowsTitleBuilder: (i){
+                        CriterioUi o = controller.criterioUiList[i];
+                        return InkWell(
+                            onTap: (){
+                          showCriterioEdit(controller, o);
+                          controller.showDialogEditCriterio(o);
+                        },
+                          child:  Container(
+                              child:  Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 8, right: 4),
+                                        child: Text((o.icdTituloEditado??o.icdTituloEditado??o.icdTitulo??"") ,
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(fontSize: 10)
+                                        ),
+                                      )
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4) ,
+                                      color: getColorCurso(controller),// use instead of BorderRadius.all(Radius.circular(20))
+                                    ),
+                                    margin: EdgeInsets.only(left: 4, right: 4 , top: 4, bottom: 4),
+                                    width: 12,
+                                    child:  Center(
+                                      child:  RotatedBox(
+                                        quarterTurns: -1,
+                                        child: Text("Modificar",
+                                            textAlign: TextAlign.center,
+                                            maxLines: 4,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 8,
+                                                color: AppTheme.white,
+                                                fontWeight: FontWeight.w500
+                                            )
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: getColorCurso(controller)),
+                                  right: BorderSide(color: getColorCurso(controller)),
+                                  left: BorderSide(color: getColorCurso(controller)),
+                                  bottom: BorderSide(color: (controller.criterioUiList.length -1 == i?getColorCurso(controller):AppTheme.white)),
+                                ),
+                              )
                           ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                                right: BorderSide(color: getColorCurso(controller)),
-                                top: BorderSide(color: getColorCurso(controller)),
-                                bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
+                        );
+                      },
+                      contentCellBuilder: (i, j){
+                        dynamic o = controller.tableTipoNotaCells[j][i];
+                        if(o is CriterioUi){
+                          return InkWell(
+                            onTap: (){
+                              showCriterioEdit(controller, o);
+                              controller.showDialogEditCriterio(o);
+                            },
+                            child: Stack(
+                              children: [
+                                Container(
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(left: 8, right: 4),
+                                              child: Text((o.icdTituloEditado??o.icdTituloEditado??o.icdTitulo??"") ,
+                                                  maxLines: 3,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(fontSize: 10)
+                                              ),
+                                            )
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(4) ,
+                                            color: getColorCurso(controller),// use instead of BorderRadius.all(Radius.circular(20))
+                                          ),
+                                          margin: EdgeInsets.only(left: 4, right: 4 , top: 4, bottom: 4),
+                                          width: 12,
+                                          child:  Center(
+                                            child:  RotatedBox(
+                                              quarterTurns: -1,
+                                              child: Text("Modificar",
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 4,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 8,
+                                                      color: AppTheme.white,
+                                                      fontWeight: FontWeight.w500
+                                                  )
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        top: BorderSide(color: getColorCurso(controller)),
+                                        right: BorderSide(color: getColorCurso(controller)),
+                                        bottom: BorderSide(color: (controller.tableTipoNotaCells.length - 1 == j?getColorCurso(controller):AppTheme.white)),
+                                      ),
+                                    )
+                                ),
+
+                              ],
                             ),
-                          )
-                      );
-                    }else if(obj is bool){
-                      return Stack(
+                          );
+                        }else if(o is CriterioPesoUi){
+                          return Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: (){
+                                      switch(o.criterioUi?.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
+                                        case TipoCompetenciaUi.BASE:
+                                          return CachedNetworkImage(
+                                            height: 16,
+                                            width: 16,
+                                            imageUrl: o.criterioUi?.url??"",
+                                            placeholder: (context, url) => CircularProgressIndicator(),
+                                            errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 16, height: 16,),
+                                          );
+                                        case TipoCompetenciaUi.TRANSVERSAL:
+                                          return SvgPicture.asset(AppIcon.ic_transversal, width: 16, height: 16,);
+                                        case TipoCompetenciaUi.ENFOQUE:
+                                          return SvgPicture.asset(AppIcon.ic_enfoque, width: 16, height: 16,);
+                                      }
+                                    }(),
+                                  ) ,
+                                  Padding(padding: EdgeInsets.all(2)),
+                                  Text((o.criterioUi?.peso??0).toString()+"%", style: TextStyle(fontSize: 11, color: AppTheme.black)),
+                                ],
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: getColorCurso(controller)),
+                                  right: BorderSide(color: getColorCurso(controller)),
+                                  bottom: BorderSide(color: (controller.tableTipoNotaCells.length - 1 == j?getColorCurso(controller):AppTheme.white)),
+                                ),
+                                color: AppTheme.greyLighten4,
+                              )
+                          );
+                        }else if(o is CriterioValorTipoNotaUi){
+                          return Container(
+                              child: Center(
+                                child: Text(""),
+                              ),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: getColorCurso(controller)),
+                                  right: BorderSide(color: getColorCurso(controller)),
+                                  bottom: BorderSide(color: (controller.tableTipoNotaCells.length - 1 == j?getColorCurso(controller):AppTheme.white)),
+                                ),
+                              )
+                          );
+                        }else{
+                          return Container();
+                        }
+                      },
+                      legendCell: Stack(
                         children: [
                           Container(
                               decoration: BoxDecoration(
                                   color: getColorCurso(controller),
-                                  borderRadius: BorderRadius.only(topRight: Radius.circular(7))
+                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
                               )
                           ),
                           Container(
-                              padding: EdgeInsets.only(top: 4),
+                              margin: EdgeInsets.only(left: 2),
                               child: Center(
-                                child: Text("Peso", style: TextStyle(color: AppTheme.white, fontSize: 11),),
+                                child: Text('Criterios',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: AppTheme.white,
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 12
+                                    )
+                                ),
                               ),
                               decoration: BoxDecoration(
                                 border: Border(
-                                    left: BorderSide(color: getColorCurso(controller)),
-                                    bottom: BorderSide(color: getColorCurso(controller)),
+                                  right: BorderSide(color: getColorCurso(controller)),
                                 ),
                               )
                           ),
+
                         ],
-                      );
-                    }else if(obj is ValorTipoNotaUi){
-
-                      switch(obj.tipoNotaUi?.tipoNotaTiposUi??MoorRubroRepository.TN_VALOR_NUMERICO){
-                        case TipoNotaTiposUi.SELECTOR_VALORES:
-                          return Container(
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(obj.titulo??"",
-                                      style: TextStyle(fontFamily: AppTheme.fontTTNormsMedium,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: getColor(i),
-                                      ),
-                                    ),
-                                    Text((obj.valorNumerico??0).toStringAsFixed(1),
-                                      style: TextStyle(fontFamily: AppTheme.fontTTNormsMedium,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: getColor(i)
-                                      ),),
-                                  ],
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    right: BorderSide(color: getColorCurso(controller)),
-                                    top: BorderSide(color: getColorCurso(controller)),
-                                  bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
-                                ),
-                              )
-                          );
-                        case TipoNotaTiposUi.SELECTOR_ICONOS:
-                          return Container(
-                              child: Center(
-                                child:  CachedNetworkImage(
-                                  height: 30,
-                                  width: 30,
-                                  imageUrl: obj.icono??"",
-                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) => Icon(Icons.error),
-                                ),
-                              ),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    right: BorderSide(color: getColorCurso(controller)),
-                                    top: BorderSide(color: getColorCurso(controller)),
-                                  bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
-                                ),
-                              )
-                          );
-                        default:
-                          return Container(
-                              decoration: BoxDecoration(
-                                border: Border(
-                                    right: BorderSide(color: getColorCurso(controller)),
-                                    top: BorderSide(color: getColorCurso(controller)),
-                                  bottom: BorderSide(color: (controller.criterioUiList.isEmpty?getColorCurso(controller):AppTheme.white)),
-                                ),
-                              )
-                          );
-
-                      }
-                    }else{
-                      return Container();
-                    }
-                    //#endregion
-                  },
-                  rowsTitleBuilder: (i) => Container(
-                      child: Center(
-                        child:  Text((i+1).toString() + "."),
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(color: getColorCurso(controller)),
-                          right: BorderSide(color: getColorCurso(controller)),
-                          left: BorderSide(color: getColorCurso(controller)),
-                          bottom: BorderSide(color: (controller.criterioUiList.length -1 == i?getColorCurso(controller):AppTheme.white)),
-                        ),
                       )
                   ),
-                  contentCellBuilder: (i, j){
-                    dynamic o = controller.tableTipoNotaCells[j][i];
-                    if(o is CriterioUi){
-                      return InkWell(
-                        onTap: (){
-                          showCriterioEdit(controller, o);
-                          controller.showDialogEditCriterio(o);
-                        },
-                        child: Stack(
-                          children: [
-                            Container(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 8, right: 4),
-                                          child: Text((o.icdTituloEditado??o.icdTituloEditado??o.icdTitulo??"") ,
-                                              maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(fontSize: 10)
-                                          ),
-                                        )
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4) ,
-                                        color: getColorCurso(controller),// use instead of BorderRadius.all(Radius.circular(20))
-                                      ),
-                                      margin: EdgeInsets.only(left: 4, right: 4 , top: 4, bottom: 4),
-                                      width: 12,
-                                      child:  Center(
-                                        child:  RotatedBox(
-                                          quarterTurns: -1,
-                                          child: Text("Modificar",
-                                              textAlign: TextAlign.center,
-                                              maxLines: 4,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontSize: 8,
-                                                  color: AppTheme.white,
-                                                  fontWeight: FontWeight.w500
-                                              )
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(color: getColorCurso(controller)),
-                                    right: BorderSide(color: getColorCurso(controller)),
-                                    bottom: BorderSide(color: (controller.tableTipoNotaCells.length - 1 == j?getColorCurso(controller):AppTheme.white)),
-                                  ),
-                                )
-                            ),
-
-                          ],
-                        ),
-                      );
-                    }else if(o is CriterioPesoUi){
-                      return Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                child: (){
-                                  switch(o.criterioUi?.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
-                                    case TipoCompetenciaUi.BASE:
-                                      return CachedNetworkImage(
-                                        height: 16,
-                                        width: 16,
-                                        imageUrl: o.criterioUi?.url??"",
-                                        placeholder: (context, url) => CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 16, height: 16,),
-                                      );
-                                    case TipoCompetenciaUi.TRANSVERSAL:
-                                      return SvgPicture.asset(AppIcon.ic_transversal, width: 16, height: 16,);
-                                    case TipoCompetenciaUi.ENFOQUE:
-                                      return SvgPicture.asset(AppIcon.ic_enfoque, width: 16, height: 16,);
-                                  }
-                                }(),
-                              ) ,
-                              Padding(padding: EdgeInsets.all(2)),
-                              Text((o.peso??0).toString()+"%", style: TextStyle(fontSize: 11, color: AppTheme.black)),
-                            ],
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: getColorCurso(controller)),
-                              right: BorderSide(color: getColorCurso(controller)),
-                              bottom: BorderSide(color: (controller.tableTipoNotaCells.length - 1 == j?getColorCurso(controller):AppTheme.white)),
-                            ),
-                            color: AppTheme.greyLighten4,
-                          )
-                      );
-                    }else if(o is CriterioValorTipoNotaUi){
-                      return Container(
-                          child: Center(
-                            child: Text(""),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: getColorCurso(controller)),
-                              right: BorderSide(color: getColorCurso(controller)),
-                              bottom: BorderSide(color: (controller.tableTipoNotaCells.length - 1 == j?getColorCurso(controller):AppTheme.white)),
-                            ),
-                          )
-                      );
-                    }else{
-                      return Container();
-                    }
-                  },
-                  legendCell: Stack(
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              color: getColorCurso(controller),
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
-                          )
-                      ),
-                      Container(
-                          margin: EdgeInsets.only(left: 2),
-                          child: Center(
-                            child: Text('N°', textAlign: TextAlign.center, style: TextStyle(color: AppTheme.white, fontSize: 11),),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              right: BorderSide(color: getColorCurso(controller)),
-                            ),
-                          )
-                      ),
-
-                    ],
-                  )
+                ),
               ),
             ),
 
@@ -1935,7 +2004,10 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                                   child:  InkWell(
                                                     onTap: (){
                                                       dialogState((){
-                                                        controller.onClickTemaCriterioEdit(childtemaCriterioUi);
+                                                        if(controller.rubricaEvaluacionUi==null){
+                                                          controller.onClickTemaCriterioEdit(childtemaCriterioUi);
+                                                        }
+
                                                       });
                                                     },
                                                     child: Row(
@@ -1945,16 +2017,16 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                                           width: ColumnCountProvider.aspectRatioForWidthEditarCriterio(context, 24),
                                                           child: Theme(
                                                             data: ThemeData(
-                                                              primarySwatch: Colors.red,
+                                                              primarySwatch: controller.rubricaEvaluacionUi==null?Colors.red:Colors.blueGrey,
                                                               unselectedWidgetColor: Colors.blueGrey, // Your color
                                                             ),
                                                             child: Checkbox(
                                                               value: childtemaCriterioUi.toogle??false,
-                                                              onChanged: (bool? value) {
+                                                              onChanged: controller.rubricaEvaluacionUi==null?(bool? value) {
                                                                 dialogState((){
                                                                   controller.onClickTemaCriterioEdit(childtemaCriterioUi);
                                                                 });
-                                                              },
+                                                              }:null,
                                                             ),
                                                           ),
                                                         ),

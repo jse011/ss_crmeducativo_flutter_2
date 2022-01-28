@@ -367,7 +367,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PersonaUi? personaUi, nota) {
     if(isCalendarioDesactivo())return;
-    for (List cellList in mapCellListList[personaUi] ?? []) {
+    /*for (List cellList in mapCellListList[personaUi] ?? []) {
       for (var cell in cellList) {
         if (cell is EvaluacionRubricaValorTipoNotaUi) {
           if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
@@ -377,9 +377,30 @@ class EvaluacionIndicadorMultipleController extends Controller {
           }
         }
       }
+    }*/
+
+    ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi, nota);
+
+    for (List cellList in _mapCellListList[evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi]??[]) {
+      for (var cell in cellList) {
+        if (cell is EvaluacionRubricaValorTipoNotaUi) {
+          if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+              && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
+            cell.toggle = true;
+          }
+
+          if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+              && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+            cell.toggle = false;
+          }
+
+        }
+      }
     }
 
-    evaluacionRubricaValorTipoNotaUi.toggle = true;
+    //evaluacionRubricaValorTipoNotaUi.toggle = true;
     evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota = nota;
     evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
     evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
@@ -525,19 +546,19 @@ class EvaluacionIndicadorMultipleController extends Controller {
   void onSaveTecladoPresicion(nota, EvaluacionUi? evaluacionUi) {
     if(isCalendarioDesactivo())return;
     if (evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
-      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi, nota??0);
+      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi, nota);
 
       for (List cellList in _mapCellListList[evaluacionUi?.personaUi]??[]) {
         for (var cell in cellList) {
           if (cell is EvaluacionRubricaValorTipoNotaUi) {
-            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
-                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
+            if (cell.evaluacionUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
                 && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
               cell.toggle = true;
             }
 
-            if (cell.evaluacionTransformadaUi?.alumnoId == evaluacionUi?.alumnoId
-                && cell.evaluacionTransformadaUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
+            if (cell.evaluacionUi?.alumnoId == evaluacionUi?.alumnoId
+                && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionUi?.rubroEvaluacionId
                 && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
               cell.toggle = false;
             }

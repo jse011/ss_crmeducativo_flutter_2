@@ -18,6 +18,7 @@ abstract class HttpDatosRepository{
   Future<bool?> crearRubroEvaluacion(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, Map<String, dynamic> dataSerial);
   Future<HttpStream> crearRubroEvaluacion2(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, Map<String, dynamic> dataSerial, HttpSuccess httpSuccessListen);
   Future<bool?> updateEvaluacionRubroFlutter(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, Map<String, dynamic> dataSerial);
+  Future<HttpStream> updateEvaluacionRubroFlutter2(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId, int georeferenciaId, int usuarioId, Map<String, dynamic> dataSerial, HttpSuccess httpSuccessListen);
   Future<bool?> updateCompetenciaRubroFlutter(String urlServidorLocal, int georeferenciaId, int usuarioId, List<Map<String, dynamic>?> rubrosEnviados);
   Future<Map<String, dynamic>?> getUnidadTarea(String urlServidorLocal, int calendarioPeriodoId, int silaboEventoId);
   Future<Map<String, dynamic>?> getInfoTareaDocente(String urlServidorLocal, String? tareaId, int? silaboEventoId, int? unidadEventoId);
@@ -39,6 +40,8 @@ abstract class HttpDatosRepository{
   Future<bool?> saveEstadoSesion(String urlServidorLocal, int? sesionAprendizajeId, int estado_hecho, int usuarioId);
   Future<List<dynamic>?> getActividadesSesion(String urlServidorLocal, int? sesionAprendizajeId);
   Future<Map<String, dynamic>?> updateUsuario(String urlServidorLocal, int usuarioId);
+  Future<bool?> cerrarCursoDocente(String urlServidorLocal, int? cargaCursoId, int? calendarioPeriodoId, int usuarioId);
+  Future<bool?> updResultadoFlutter(String urlServidorLocal, int? silaboEventoId, int? cargaCursoId, int? CalendarioPeriodoId, int usuarioId, List rubrosNoEnviados);
 
 }
 

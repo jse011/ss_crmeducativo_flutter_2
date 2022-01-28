@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_v2.dart';
+import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_rubro.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/resultado_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
@@ -222,6 +222,7 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                   calendarioPeriodoUI: controller.calendarioPeriodoUI,
                   rows: controller.rows,
                   cells: controller.cells,
+                  headers: controller.headers,
                   columns: controller.columns,
                   datosOffline: controller.datosOffline,
                   cursosUi: controller.cursosUi,

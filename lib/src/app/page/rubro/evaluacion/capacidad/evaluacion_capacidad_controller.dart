@@ -217,7 +217,7 @@ class EvaluacionCapacidadController extends Controller{
 
   void onSaveTecladoPresicion(double? nota, EvaluacionTransformadaUi? evaluacionUi) {
     if (tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
-      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNotaCalculado(tipoNotaUi, nota??0);
+      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(tipoNotaUi, nota);
 
       for (List cellList in _tableTipoNotaCells) {
         for (var cell in cellList) {
@@ -241,14 +241,19 @@ class EvaluacionCapacidadController extends Controller{
       evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
 
     }
+
     evaluacionUi?.nota = nota;
 
     CalcularEvaluacionResultados.actualizarEvaluacionOriginal(evaluacionUi, tipoNotaUi);
+
     _revisarSinRubroConEvaluacionSeModifico();
+
     CalcularEvaluacionResultados.calcularEvaluacionCapacidad(evaluacionCapacidadUi: evaluacionCapacidadUi, tipoNotaUiResultado: tipoNotaUi, alumnoId: evaluacionCapacidadUi.personaUi?.personaId);
+
     refreshUI();
 
     validacionModificacion(evaluacionUi?.rubroEvaluacionUi, Modifico_Evaluacion);
+
   }
 
   void hideMsgAlumnoNoVigente() {

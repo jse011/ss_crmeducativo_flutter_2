@@ -13,6 +13,7 @@ import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/individual/evaluacion_indicador_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_2_view.dart';
+import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
@@ -503,7 +504,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                               ),
                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                               InkWell(
-                                //onTap: ()=> controller.onClicPrecision(),
+                                onTap: ()=> AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false),
                                 child: Container(
                                   width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
                                   padding: EdgeInsets.only(
@@ -645,7 +646,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
       } else if(s is EvaluacionPublicadoUi){
         tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50));
       }else{
-        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50));
+        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 55));
       }
     }
 
@@ -669,9 +670,9 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
             child: SingleChildScrollView(
               child: StickyHeadersTableNotExpandedCustom(
                 cellDimensions: CellDimensions.variableColumnWidth(
-                    stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                    stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 65),
                     stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
-                    contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
+                    contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
                     columnWidths: tablecolumnWidths
                 ),
                 //cellAlignments: CellAlignments.,
@@ -1065,13 +1066,18 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
         break;
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         nota = Container(
-          padding: EdgeInsets.only(top: ver_detalle?4:0),
+          margin: EdgeInsets.only(top: ver_detalle?4:0),
           width: ver_detalle?
-          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 23):
-          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35),
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35):
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
           height: ver_detalle?
-          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 23):
-          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35),
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35):
+          ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
+          decoration: BoxDecoration(
+              color: AppTheme.white.withOpacity(0.3),
+              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)))
+          ),
+          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)),
           child: CachedNetworkImage(
             imageUrl: valorTipoNotaUi?.icono ?? "",
             placeholder: (context, url) => Stack(
@@ -1193,9 +1199,14 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
         break;
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         widget = Opacity(
-          opacity: (evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.5,
+          opacity: (evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.7,
           child: Container(
-            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration(
+                color: AppTheme.white.withOpacity(0.2),
+                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)))
+            ),
+            margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)),
+            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)),
             child:  CachedNetworkImage(
               imageUrl: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.icono??"",
               placeholder: (context, url) => Stack(
@@ -1262,10 +1273,12 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (ctx) {
-          return PresicionView(
-            valorTipoNotaUi: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi,
-            color: getPosition(position),
-            personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
+          return TecladoPresicionView2(
+            valorMaximo: evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
+            valorMinimo: evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
+            valor: (evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi)!=null?
+              evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota:
+            evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico,
             onSaveInput: (nota) {
 
               Navigator.pop(context, nota);

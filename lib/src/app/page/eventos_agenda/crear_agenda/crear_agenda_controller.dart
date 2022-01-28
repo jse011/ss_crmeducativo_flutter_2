@@ -84,7 +84,7 @@ class CrearAgendaController extends Controller{
       validarTodosPadre();
       validarTodosAlumno();
       changeNombresSelected ();
-
+      _progress = false;
       refreshUI();
     };
 
@@ -123,6 +123,8 @@ class CrearAgendaController extends Controller{
   @override
   void onInitState() {
     super.onInitState();
+    _progress = true;
+    refreshUI();
     presenter.getAlumnos(eventoUi);
   }
 

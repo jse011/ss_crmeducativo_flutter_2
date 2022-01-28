@@ -131,12 +131,12 @@ class TareaCrearController extends Controller{
     print(_horaTarea);
   }
 
-  void addTareaRecursos(List<File?> files) async {
+  void addTareaRecursos(List<File?> files, String? newName) async {
    for(File? file in files){
      if(file!=null){
        TareaRecusoUi tareaRecusoUi = TareaRecusoUi();
        tareaRecusoUi.recursoDidacticoId = null;
-       tareaRecusoUi.titulo = basename(file.path);
+       tareaRecusoUi.titulo = newName;
        tareaRecusoUi.tipoRecurso = DomainTools.getType(file.path);
        tareaRecusoUi.file = file;
        tareaRecusoUi.silaboEventoId = cursosUi?.silaboEventoId;

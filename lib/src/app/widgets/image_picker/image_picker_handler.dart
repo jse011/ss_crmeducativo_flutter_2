@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/image_picker/image_picker_dialog.dart';
 
 class ImagePickerHandler {
@@ -13,17 +14,18 @@ class ImagePickerHandler {
   ImagePickerListener _listener;
   final picker = ImagePicker();
   bool? cropScuared;
-
+  static const String prefiImage = "IMG-";
   ImagePickerHandler(this._listener, this._controller, this.cropScuared);
 
   openCamera() async {
     imagePicker.dismissDialog();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     final File image = File(pickedFile?.path??"");
+    final dateformat = DateFormat('yyyy-MM-dd-hh:mm');
     if(cropScuared??false){
-      cropImage(image);
+      cropImage(image, prefiImage+ dateformat.format(DateTime.now())+".jpg");
     }else{
-      _listener.userImage(image);
+      _listener.userImage(image, prefiImage+ dateformat.format(DateTime.now())+".jpg");
     }
   }
 
@@ -31,10 +33,12 @@ class ImagePickerHandler {
     imagePicker.dismissDialog();
     final  pickedFile = await picker.pickImage(source: ImageSource.gallery);
     final File image = File(pickedFile?.path??"");
+
+
     if(cropScuared??false){
-      cropImage(image);
+      cropImage(image, null);
     }else{
-      _listener.userImage(image);
+      _listener.userImage(image, null);
     }
   }
 
@@ -43,7 +47,7 @@ class ImagePickerHandler {
     imagePicker.initState();
   }
 
-  Future cropImage(File image) async {
+  Future cropImage(File image, String? name) async {
     File? croppedFile = await ImageCropper.cropImage(
       sourcePath: image.path,
       //ratioX: 1.0,
@@ -54,7 +58,7 @@ class ImagePickerHandler {
       maxWidth: 2300,
       maxHeight: 2300,
     );
-      _listener.userImage(croppedFile);
+    _listener.userImage(croppedFile, name);
   }
 
   showDialog(BuildContext context, {botonRemoverImagen}) {
@@ -73,6 +77,6 @@ class ImagePickerHandler {
 }
 
 abstract class ImagePickerListener {
-  userImage(File? _image);
+  userImage(File? _image, String? newName);
   userDocument( List<File?> _documents);
 }

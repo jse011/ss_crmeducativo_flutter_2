@@ -22,4 +22,6 @@ class TipoNotaUi{
 
   List<ValorTipoNotaUi>? valorTipoNotaList;
 
+  bool? resultado;
+
 }

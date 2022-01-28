@@ -737,7 +737,7 @@ class EditarUsuarioViewState extends ViewState<EditarUsuarioView, EditarUsuarioC
   }
 
   @override
-  userImage(File? _image) {
+  userImage(File? _image, String? newname) {
     if(globalKey.currentContext!=null){
       EditarUsuarioController controller =
       FlutterCleanArchitecture.getController<EditarUsuarioController>(globalKey.currentContext!, listen: false);

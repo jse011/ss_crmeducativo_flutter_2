@@ -30,6 +30,8 @@ class AppImagen {
   static final String patternimg = "assets/images/patterns.png";
 
   static final String splash_educar = "assets/educar/logo_educar.png";
+  static final String login_educar = "assets/educar/educar_login.png";
+  static final String login_icrm = "assets/docentementor/icrm_login.png";
   static final String splash_icrm = "assets/docentementor/logo_docente_mentor.png";
 
   static final String fondo_sesion12 = "assets/images/fondosesion12.png";

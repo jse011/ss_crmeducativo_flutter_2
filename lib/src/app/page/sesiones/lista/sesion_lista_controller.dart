@@ -22,10 +22,6 @@ class SesionListaController extends Controller{
   Map<UnidadUi, List<dynamic>> get unidadItemsMap => _unidadItemsMap;
   bool _progressDocente = false;
   bool get progressDocente => _progressDocente;
-  bool _sesionEstadoOffLine = false;
-  bool get sesionEstadoOffLine => _sesionEstadoOffLine;
-  bool _sesionEstadoError = false;
-  bool get sesionEstadoError => _sesionEstadoError;
 
   bool _datosOffline = false;
   bool get datosOffline => _datosOffline;
@@ -55,8 +51,7 @@ class SesionListaController extends Controller{
       _unidadUiDocenteList = unidadUiList??[];
       _progressDocente = false;
       _datosOffline = datosOffline??false;
-      _sesionEstadoError = false;
-      _sesionEstadoOffLine = false;
+
 
       unidadItemsMap.clear();
       for(UnidadUi unidadUi in unidadUiList??[]){
@@ -83,8 +78,7 @@ class SesionListaController extends Controller{
     };
 
     presenter.updateSesionEstadoOnMessage = (bool? offline, bool? success){
-      _sesionEstadoError = !(success??false);
-      _sesionEstadoOffLine = offline??false;
+
       refreshUI();
     };
 
@@ -140,14 +134,5 @@ class SesionListaController extends Controller{
     return response;
   }
 
-  void hideMsgOfflineSesion() {
-    _sesionEstadoOffLine = false;
-    refreshUI();
-  }
-
-  void hideMsgErrorSesion() {
-    _sesionEstadoOffLine = false;
-    refreshUI();
-  }
 
 }

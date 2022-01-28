@@ -1,11 +1,13 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/portal/rubro_presenter.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/table_resultado.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/error_handler.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/dialog_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_calendario_periodo_ui.dart';
@@ -40,6 +42,8 @@ class RubroController extends Controller{
   String? get msgToast => _msgToast;
   bool _progress = true;
   bool get progress => _progress;
+  List<dynamic> _headList2 = [];
+  List<dynamic> get headList2 => _headList2;
   List<dynamic> _columnList2 = [];
   List<dynamic> get columnList2 => _columnList2;
   List<dynamic> _rowList2 = [];
@@ -66,6 +70,8 @@ class RubroController extends Controller{
   List<dynamic> get rowsResultado =>_rowsResultado;
   List<dynamic> _columnsResultado = [];
   List<dynamic> get columnsResultado => _columnsResultado;
+  List<dynamic> _headersResultado = [];
+  List<dynamic> get headersResultado => _headersResultado;
   List<List<dynamic>> _cellsResultado = [];
   List<List<dynamic>> get cellsResultado => _cellsResultado;
   bool _precisionResultado = false;
@@ -85,11 +91,13 @@ class RubroController extends Controller{
   double get scrollRubroProcesoY => _scrollRubroProcesoY;
   bool _datosOffline = false;
   bool get datosOffline => _datosOffline;
+
+  DialogUi? _dialogUi = null;
+  DialogUi? get dialogUi => _dialogUi;
+
   RubroController(this.cursosUi, calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
       :this.presenter = RubroPresenter(calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
   , super();
-
-
 
   @override
   void initListeners() {
@@ -207,18 +215,20 @@ class RubroController extends Controller{
 
 
       _cellListList.clear();
+      _headList2.clear();
       _columnList2.clear();
       _columnList2.add(ContactoUi());//Titulo foto_alumno
-
+      _headList2.add(ContactoUi());
       //Competencia Base
       for(CompetenciaUi competenciaUi in competenciaUiList){
         if(competenciaUi.tipoCompetenciaUi == TipoCompetenciaUi.BASE){
           _columnList2.addAll(competenciaUi.capacidadUiList??[]);
           _columnList2.add(competenciaUi);
+          _headList2.add(competenciaUi);
         }
       }
       //Competencia Base
-
+     _headList2.add(calendarioPeriodoUI);
       _columnList2.add(calendarioPeriodoUI);
 
       //Competencia Enfoque Transversal
@@ -231,16 +241,19 @@ class RubroController extends Controller{
               CapacidadUi capacidadUi = competenciaUi.capacidadUiList![0];
               capacidadUi.round = true;
             }
+            print("round ${competenciaUi.nombre}");
+            competenciaUi.round = true;
           }
 
           _columnList2.addAll(competenciaUi.capacidadUiList??[]);
           _columnList2.add(competenciaUi);
+          _headList2.add(competenciaUi);
         }
       }
       //Competencia Enfoque Transversal
 
       _columnList2.add("");// espacio
-
+     _headList2.add("");
       for(dynamic column in _rowList2){
         List<dynamic>  cellList = [];
         cellList.add(column);
@@ -308,6 +321,7 @@ class RubroController extends Controller{
     presenter.getCompetenciaRubroEvalOnError = (e){
       _tipoNotaUi = null;
       _rowList2 = [];
+      _headList2.clear();
       _columnList2.clear();
       _cellListList.clear();
       if(_seletedItem==1||_seletedItem==2)_progress = false;//ocultar el progress cuando se esta en el tab competencia
@@ -320,11 +334,13 @@ class RubroController extends Controller{
       _rowsResultado = [];
       _columnsResultado = [];
       _cellsResultado = [];
+      _headersResultado = [];
 
       var result = TableResultadoUtils.getTableResulData(matrizResultadoUi, calendarioPeriodoUI);
       _rowsResultado.addAll(result.rows??[]);
       _columnsResultado.addAll(result.columns??[]);
       _cellsResultado.addAll(result.cells??[]);
+      _headersResultado.addAll(result.headers??[]);
 
       _progressResultado = false;
       print("_seletedItem: ${_seletedItem}");
@@ -339,8 +355,19 @@ class RubroController extends Controller{
       print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
-  }
 
+    presenter.UpdateCursoOnMessage = (bool? offline, bool? success){
+      print("show dialog ${success}");
+      if(offline??false){
+        _dialogUi = DialogUi.errorInternet();
+        refreshUI();
+      }else if(!(success??false)){
+        _dialogUi = DialogUi.errorServidor();
+        print("show dialog");
+        refreshUI();
+      }
+    };
+  }
 
   @override
   void onInitState() {
@@ -544,6 +571,33 @@ class RubroController extends Controller{
     _precisionResultado = !_precisionResultado;
     refreshUI();
   }
+
+  Future<bool?> onClickCerrarCurso() async{
+    _progress = true;
+    refreshUI();
+    var response = await presenter.onUpdateEstadoCursoCerrado(cursosUi, calendarioPeriodoUI);
+    _progress = false;
+    if(response){
+      refreshUI();
+    }
+    return response;
+  }
+
+  void clearDialog() {
+    _dialogUi = null;
+  }
+
+  Future<bool?> onClickProcesarNota() async{
+    _progress = true;
+    refreshUI();
+    var response = await presenter.updateResultado(cursosUi, calendarioPeriodoUI);
+    _progress = false;
+    if(response){
+      refreshUI();
+    }
+    return response;
+  }
+
   
 }
 

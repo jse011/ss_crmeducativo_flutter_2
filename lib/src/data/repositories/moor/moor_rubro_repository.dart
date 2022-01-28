@@ -277,10 +277,17 @@ class MoorRubroRepository extends RubroRepository{
     valorTipoNotaUi.valorNumerico = valorTipoNotaRubroData?.valorNumerico;
     valorTipoNotaUi.limiteInferior = valorTipoNotaRubroData?.limiteInferior;
     valorTipoNotaUi.limiteSuperior = valorTipoNotaRubroData?.limiteSuperior;
+
+
+    valorTipoNotaUi.incluidoLInferiorTransf = valorTipoNotaRubroData?.incluidoLInferiorTransf;
+    valorTipoNotaUi.incluidoLSuperiorTransf = valorTipoNotaRubroData?.incluidoLSuperiorTransf;
+    valorTipoNotaUi.valorNumericoTransf = valorTipoNotaRubroData?.valorNumericoTransf;
+    valorTipoNotaUi.limiteInferiorTransf = valorTipoNotaRubroData?.limiteInferiorTransf;
+    valorTipoNotaUi.limiteSuperiorTransf = valorTipoNotaRubroData?.limiteSuperiorTransf;
     return valorTipoNotaUi;
   }
   @override
-  Future<List<CompetenciaUi>> getTemasCriterios(int calendarioPeriodoId, int silaboEventoId) async{
+  Future<List<CompetenciaUi>> getTemasCriterios(int? calendarioPeriodoId, int? silaboEventoId) async{
     AppDataBase SQL = AppDataBase();
     var query = SQL.select(SQL.criterio)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
@@ -294,7 +301,6 @@ class MoorRubroRepository extends RubroRepository{
 
     List<CriterioData> criterioDataList = await query.get();
     for(CriterioData criterioData in criterioDataList){
-
 
       CompetenciaUi? competenciaUi = competenciaUiList.firstWhereOrNull((element) => element.competenciaId == criterioData.superCompetenciaId);
       if(competenciaUi==null){
@@ -344,7 +350,7 @@ class MoorRubroRepository extends RubroRepository{
         criterioUi.desempenioId = criterioData.desempenioId;
         criterioUi.icdId = criterioData.icdId;
         criterioUi.desempenioDescripcion = criterioData.DesempenioDescripcion;
-        criterioUi.peso = criterioData.peso;
+        criterioUi.peso = criterioData.peso?.toDouble();
         criterioUi.icdTitulo = criterioData.icdTitulo;
         criterioUi.icdDescripcion = criterioData.icdDescripcion;
         criterioUi.desempenioIcdDescripcion = criterioData.desempenioIcdDescripcion;
@@ -395,6 +401,7 @@ class MoorRubroRepository extends RubroRepository{
       }
 
     }
+
    // print("competenciaUiList size "+competenciaUiList.length.toString());
     return competenciaUiList;
   }
@@ -568,7 +575,7 @@ class MoorRubroRepository extends RubroRepository{
         }
 
       }
-      int? peso = criterioPesoUi.peso;
+      double? peso = criterioPesoUi.criterioUi?.peso;
 
       RubroEvalRNPFormulaData rubroEvalRNPFormula = RubroEvalRNPFormulaData(
         rubroFormulaId: IdGenerator.generateId(),
@@ -797,9 +804,13 @@ class MoorRubroRepository extends RubroRepository{
     rubricaEvaluacionUi.promedio = rubroEvaluacionProcesoData?.promedio;
     rubricaEvaluacionUi.desviacionEstandar = rubroEvaluacionProcesoData?.desviacionEstandar;
     rubricaEvaluacionUi.rubroGrupal = rubroEvaluacionProcesoData?.formaEvaluacionId == FORMA_EVAL_GRUPAL;
+    rubricaEvaluacionUi.formaEvaluacionId = rubroEvaluacionProcesoData?.formaEvaluacionId;
+    rubricaEvaluacionUi.tipoEvaluacionId = rubroEvaluacionProcesoData?.tipoEvaluacionId;
+    rubricaEvaluacionUi.tipoNotaId = rubroEvaluacionProcesoData?.tipoNotaId;
     rubricaEvaluacionUi.sesionAprendizajeId = rubroEvaluacionProcesoData?.sesionAprendizajeId;
     rubricaEvaluacionUi.competenciaId = rubroEvaluacionProcesoData?.competenciaId;
     rubricaEvaluacionUi.desempenioIcdId = rubroEvaluacionProcesoData?.desempenioIcdId;
+
     if((rubroEvaluacionProcesoData?.tareaId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_TAREA;
     else if( (rubroEvaluacionProcesoData?.instrumentoEvalId??0) > 0)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_INSTRUMENTO;
     else if((rubroEvaluacionProcesoData?.preguntaId??"").isNotEmpty)rubricaEvaluacionUi.origenRubroUi = OrigenRubroUi.GENERADO_PREGUNTA;
@@ -991,10 +1002,7 @@ class MoorRubroRepository extends RubroRepository{
             rubricaEvaluacionUi.tituloRubroCabecera = rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.titulo;
             rubricaEvaluacionUi.rubricaIdRubroCabecera = rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.rubroEvalProcesoId;
             rubricaEvaluacionUi.cantidadRubroDetalle = rubroPadresCountMap[rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.rubroEvalProcesoId??""];
-            print("tituloRubroCabecera: ${rubricaEvaluacionUi.tituloRubroCabecera}");
-            print("rubricaIdRubroCabecera: ${rubricaEvaluacionUi.rubricaIdRubroCabecera}");
-            print("cantidadRubroDetalle: ${rubricaEvaluacionUi.cantidadRubroDetalle}");
-            print("cantidadRubroDetalle: ${rubroPadresMap[rubroEvaluacionProcesoData.rubroEvalProcesoId]?.rubroEvalProcesoId}");
+
             rubricaEvaluacionUi.evaluacionUiList = [];
             TipoNotaUi? tipoNotaUi = tipoNotaUiList.firstWhereOrNull((element)=> element.tipoNotaId == rubricaEvaluacionUi.tipoNotaId);
             rubricaEvaluacionUi.tipoNotaUi = tipoNotaUi;
@@ -1036,7 +1044,7 @@ class MoorRubroRepository extends RubroRepository{
     tipoNotaUi.tiponombre = tipoNotaRubroData?.tiponombre;
     tipoNotaUi.tipoId = tipoNotaRubroData?.tipoId;
     tipoNotaUi.intervalo = tipoNotaRubroData?.intervalo;
-
+    tipoNotaUi.resultado = true;
     switch(tipoNotaRubroData?.tipoId??0){
       case TN_SELECTOR_ICONOS:
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_ICONOS;
@@ -1078,6 +1086,12 @@ class MoorRubroRepository extends RubroRepository{
       valorTipoNotaUi.limiteInferior = valorTipoNotaRubroData.limiteInferior;
       valorTipoNotaUi.limiteSuperior = valorTipoNotaRubroData.limiteSuperior;
 
+      valorTipoNotaUi.incluidoLInferiorTransf = valorTipoNotaRubroData.incluidoLInferiorTransf;
+      valorTipoNotaUi.incluidoLSuperiorTransf = valorTipoNotaRubroData.incluidoLSuperiorTransf;
+      valorTipoNotaUi.valorNumericoTransf = valorTipoNotaRubroData.valorNumericoTransf;
+      valorTipoNotaUi.limiteInferiorTransf = valorTipoNotaRubroData.limiteInferiorTransf;
+      valorTipoNotaUi.limiteSuperiorTransf = valorTipoNotaRubroData.limiteSuperiorTransf;
+
       valorTipoNotaUiList.add(valorTipoNotaUi);
     }
     print("valorTipoNotaList: " + (valorTipoNotaUiList.length).toString());
@@ -1118,7 +1132,7 @@ class MoorRubroRepository extends RubroRepository{
         tipoNotaUi.tipoNotaTiposUi = TipoNotaTiposUi.VALOR_ASISTENCIA;
         break;
     }
-    print("getTipoNota ${tipoNotaRubroData?.tipoId}");
+
     List<ValorTipoNotaUi> valorTipoNotaUiList = [];
     var queryValorTipoNota = SQL.select(SQL.valorTipoNotaRubro)..where((tbl) => tbl.tipoNotaId.equals(tipoNotaRubroData?.tipoNotaId));
     List<ValorTipoNotaRubroData> valorTipoNotaRubroList = await queryValorTipoNota.get();
@@ -1127,6 +1141,7 @@ class MoorRubroRepository extends RubroRepository{
     for(ValorTipoNotaRubroData valorTipoNotaRubroData in valorTipoNotaRubroList){
       ValorTipoNotaUi valorTipoNotaUi = convertValorTipoNotaUi(valorTipoNotaRubroData);
       valorTipoNotaUi.tipoNotaUi = tipoNotaUi;
+      print("getTipoNota ${valorTipoNotaUi.icono}");
       valorTipoNotaUiList.add(valorTipoNotaUi);
     }
 
@@ -1150,6 +1165,7 @@ class MoorRubroRepository extends RubroRepository{
       for(var row in await queryRubroDetalle.get()){
         RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
         RubroEvalRNPFormulaData rubroEvalRNPFormulaData = row.readTable(SQL.rubroEvalRNPFormula);
+        print("rubroEvalRNPFormulaData peso: ${rubroEvalRNPFormulaData.peso}");
         rubricaEvaluacionUiDetalleList.add(convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, rubroEvalRNPFormulaData.peso??0.0));
         count++;
       }
@@ -1570,6 +1586,77 @@ class MoorRubroRepository extends RubroRepository{
     AppDataBase SQL = AppDataBase();
     RubroEvaluacionProcesoData rubroEvaluacionProceso = await (SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.equals(rubroEvalProcesoId))).getSingle();
     return rubroEvaluacionProceso.syncFlag != EstadoSync.FLAG_ADDED && rubroEvaluacionProceso.syncFlag != EstadoSync.FLAG_UPDATED && rubroEvaluacionProceso.error_guardar != 1 && rubroEvaluacionProceso.error_guardar != 2;
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateRubroEvaluacionData(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId) async {
+    AppDataBase SQL = AppDataBase();
+    Map<String,dynamic> rubroEvaluacionData = Map();
+    rubroEvaluacionData["rubroEvaluacionProceso"] = null;
+    rubroEvaluacionData["criterioRubroEvaluacion"] = [];
+    rubroEvaluacionData["rubroCampotematico"] = [];
+    rubroEvaluacionData["rubroEvaluacionAsociado"] = [];
+    rubroEvaluacionData["rubroEvalRNPFormula"] = [];
+    //rubroEvaluacionId = IdGenerator.generateId();
+    RubroEvaluacionProcesoData? rubroEvaluacionProceso = await (SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubroEvaluacionId))).getSingleOrNull();
+
+    rubroEvaluacionProceso = rubroEvaluacionProceso?.copyWith(
+      titulo:  rubricaEvaluacionUi?.titulo??"",
+      syncFlag: EstadoSync.FLAG_UPDATED,
+      tipoEvaluacionId: rubricaEvaluacionUi?.tipoEvaluacionId,
+      fechaAccion: DateTime.now(),
+      usuarioAccionId: usuarioId,
+    );
+
+
+    rubroEvaluacionData["rubroEvaluacionProceso"] = rubroEvaluacionProceso;
+
+    if(rubricaEvaluacionUi?.tipoRubroEvaluacion != TipoRubroEvaluacion.UNIDIMENSIONAL){
+      for(CriterioPesoUi criterioPesoUi in rubricaEvaluacionUi?.criterioPesoUiList??[]){
+        print("criterioPesoUi ${criterioPesoUi.criterioUi?.rubroEvaluacionId}");
+        RubroEvaluacionProcesoData? procesoDetalle = await (SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.equals(criterioPesoUi.criterioUi?.rubroEvaluacionId))).getSingleOrNull();
+        procesoDetalle = rubroEvaluacionProceso?.copyWith(
+          titulo:  rubricaEvaluacionUi?.titulo??"",
+          syncFlag: EstadoSync.FLAG_UPDATED,
+          tipoEvaluacionId: rubricaEvaluacionUi?.tipoEvaluacionId,
+          fechaAccion: DateTime.now(),
+          usuarioAccionId: usuarioId,
+        );
+
+        rubroEvaluacionData["rubroEvaluacionAsociado"]?.add(procesoDetalle);
+
+        var query = SQL.select(SQL.rubroEvalRNPFormula)..where((tbl) => tbl.rubroEvaluacionPrimId.equals(rubricaEvaluacionUi?.rubroEvaluacionId));
+          query.where((tbl) => tbl.rubroEvaluacionSecId.equals(criterioPesoUi.criterioUi?.rubroEvaluacionId));
+
+        RubroEvalRNPFormulaData? rubroEvalRNPFormula = await (query).getSingleOrNull();
+        rubroEvalRNPFormula = rubroEvalRNPFormula?.copyWith(
+          peso: criterioPesoUi.criterioUi?.peso,
+          syncFlag: EstadoSync.FLAG_UPDATED,
+          fechaAccion: DateTime.now(),
+          usuarioAccionId: usuarioId,
+        );
+        rubroEvaluacionData["rubroEvalRNPFormula"]?.add(rubroEvalRNPFormula);
+        //batch.insert(SQL.rubroEvalRNPFormula, rubroEvalRNPFormula, mode: InsertMode.insertOrReplace);
+/*
+      for(CriterioValorTipoNotaUi criterioValorTipoNotaUi in rubricaEvaluacionUi?.criterioValorTipoNotaUiList??[]){
+        if(criterioValorTipoNotaUi.criterioUi?.desempenioIcdId == criterioPesoUi.criterioUi?.desempenioIcdId){
+          CriterioRubroEvaluacionData criterioRubroEvaluacionData = CriterioRubroEvaluacionData(
+              criteriosEvaluacionId: IdGenerator.generateId(),
+              rubroEvalProcesoId: rubroEvaluacionDetalleId,
+              valorTipoNotaId: criterioValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId,
+              descripcion: "");
+          rubroEvaluacionData["criterioRubroEvaluacion"]?.add(criterioRubroEvaluacionData);
+          //batch.insert(SQL.criterioRubroEvaluacion, criterioRubroEvaluacionData);
+        }
+      }*/
+
+
+
+      }
+    }
+
+
+    return rubroEvaluacionData;
   }
 
 }

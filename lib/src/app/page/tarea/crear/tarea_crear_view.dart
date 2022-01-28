@@ -1040,13 +1040,13 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
   }
 
   @override
-  userImage(File? _image) {
+  userImage(File? _image, String? newName) {
     if(globalKey.currentContext!=null){
       TareaCrearController controller =
       FlutterCleanArchitecture.getController<TareaCrearController>(globalKey.currentContext!, listen: false);
       List<File?> files = [];
       files.add(_image);
-      controller.addTareaRecursos(files);
+      controller.addTareaRecursos(files,newName);
 
     }
 
@@ -1057,7 +1057,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
     if(globalKey.currentContext!=null){
       TareaCrearController controller =
       FlutterCleanArchitecture.getController<TareaCrearController>(globalKey.currentContext!, listen: false);
-      controller.addTareaRecursos(_documents);
+      controller.addTareaRecursos(_documents, null);
 
     }
   }

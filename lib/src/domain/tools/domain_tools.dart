@@ -293,14 +293,14 @@ class DomainTools {
    * c = valor minimo transformado
    * d = valor maximo transformado
    */
-  static double transformacionInvariante(double a, double b, double x, double c,
-      double d) {
+  static double? transformacionInvariante(double a, double b, double? x, double c, double d) {
+    if(x == null)return null;
     try {
       double t = (1 - ((b - x) / (b - a))) * (d - c);
       //Log.d(TAG, "notaTransformada: " + "1 - ((" + b + "-" + x + ")/(" + b + "-" + a + "))) * (" + d + " - " + c + ") = " + t);
       return t;
     } catch (e) {
-      return 0.0;
+      return null;
     }
   }
 
@@ -379,7 +379,7 @@ class DomainTools {
     if (extencion.contains(".doc") || extencion.contains(".docx")) {
       // Word document
       return TipoRecursosUi.TIPO_DOCUMENTO;
-    } else if (extencion.contains(".pdf")) {
+    } else if (extencion.contains(".rubro_pdf")) {
       // PDF file
       return TipoRecursosUi.TIPO_PDF;
     } else if (extencion.contains(".ppt") || extencion.contains(".pptx")) {

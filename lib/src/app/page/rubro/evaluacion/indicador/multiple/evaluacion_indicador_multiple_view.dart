@@ -12,6 +12,7 @@ import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multip
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_2_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_view.dart';
+import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
@@ -302,7 +303,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                   ],
                                                 ),
                                               ),
-                                              Padding(padding: EdgeInsets.all(16)),
+                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12))),
                                               Container(
                                                 child: Row(
                                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -310,8 +311,8 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                   children: [
 
                                                     Container(
-                                                      width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
-                                                      height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                      width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 55),
+                                                      height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 55),
                                                       margin: EdgeInsets.only(bottom: 4),
                                                       child: FDottedLine(
                                                         color: AppTheme.greyLighten1,
@@ -347,6 +348,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                                 );
                                                               case TipoNotaTiposUi.SELECTOR_ICONOS:
                                                                 return Container(
+                                                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)),
                                                                   child: CachedNetworkImage(
                                                                     imageUrl: evaluacionGeneralUi?.valorTipoNotaUi?.icono ?? "",
                                                                     placeholder: (context, url) => Stack(
@@ -944,7 +946,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                     ),
                                     Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                                     InkWell(
-                                      //onTap: ()=> controller.onClicPrecision(),
+                                      onTap: ()=> AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false),
                                       child: Container(
                                         width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
                                         padding: EdgeInsets.only(
@@ -969,7 +971,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                             Padding(padding: EdgeInsets.all(2),),
                                             FittedBox(
                                               fit: BoxFit.scaleDown,
-                                              child: Text("Modificar",
+                                              child: Text("Editar",
                                                   overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w700,
@@ -1106,7 +1108,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                 cellDimensions: CellDimensions.variableColumnWidth(
                     stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 150),
                     stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 60),
-                    contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
+                    contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
                     columnWidths: tablecolumnWidths
                 ),
                 //cellAlignments: CellAlignments.,
@@ -1472,7 +1474,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
     return SingleChildScrollView(
       child: StickyHeadersTableNotExpandedCustom(
         cellDimensions: CellDimensions.variableColumnWidth(
-            stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
+            stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
             stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 120),
             contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 55),
             columnWidths: tablecolumnWidths
@@ -1827,7 +1829,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         if(evaluacionUi?.valorTipoNotaUi!=null){
           return Container(
-            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6)),
+            margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6)),
             child:  CachedNetworkImage(
               imageUrl: evaluacionUi?.valorTipoNotaUi?.icono??"",
               placeholder: (context, url) => Stack(
@@ -1955,9 +1957,13 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         break;
       case TipoNotaTiposUi.SELECTOR_ICONOS:
         widget = Opacity(
-          opacity: (evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.5,
+          opacity: (evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.7,
           child: Container(
-            padding: EdgeInsets.all(4),
+            margin: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)),
+            decoration: BoxDecoration(
+                color: AppTheme.white.withOpacity(0.2),
+                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)))
+            ),
             child:  CachedNetworkImage(
               imageUrl: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.icono??"",
               placeholder: (context, url) => Stack(
@@ -2065,6 +2071,10 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           height: ver_detalle?
           ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 23):
           ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 35),
+          decoration: BoxDecoration(
+              color: AppTheme.white.withOpacity(0.2),
+              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)))
+          ),
           child: CachedNetworkImage(
             imageUrl: valorTipoNotaUi?.icono ?? "",
             placeholder: (context, url) => Stack(
@@ -2117,10 +2127,13 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (ctx) {
-          return PresicionView(
-            valorTipoNotaUi: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi,
-            color: getPosition(position),
-            personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
+          return TecladoPresicionView2(
+            //valorTipoNotaUi: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi,
+            //color: getPosition(position),
+            //personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
+            valor: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota,
+            valorMaximo: evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
+            valorMinimo: evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
             onSaveInput: (nota) {
 
               Navigator.pop(context, nota);

@@ -13,5 +13,6 @@ class CompetenciaUi{
   bool? toogle;
   int? rubroResultadoId;
   bool? evaluable;
+  bool? round;
 
 }

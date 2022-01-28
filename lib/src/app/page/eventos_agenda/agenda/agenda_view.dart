@@ -229,7 +229,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                             )
                         ),
                         Container(
-                          margin: const EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
+                          margin: EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 32),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -311,7 +311,15 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                 CustomScrollView(
                   controller: scrollController,
                   slivers: <Widget>[
-
+                    SliverList(
+                        delegate: SliverChildListDelegate([
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                            ),
+                          ),
+                        ])
+                    ),
                     SliverList(
                         delegate: SliverChildListDelegate([
                           controller.cursosUi!=null?
@@ -319,7 +327,8 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                             padding: EdgeInsets.only(
                               left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                               right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 0),
+                              bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                             ),
                             child: Stack(
                               children: [
@@ -364,15 +373,14 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                           ),
                         ])
                     ),
-
                     SliverList(
                         delegate: SliverChildListDelegate([
                           Container(
                             padding: EdgeInsets.only(
                               left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                               right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-                              bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
+                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 0),
+                              bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                             ),
                             child: Stack(
                               children: [

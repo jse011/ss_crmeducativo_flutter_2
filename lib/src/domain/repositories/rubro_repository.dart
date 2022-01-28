@@ -61,4 +61,6 @@ abstract class RubroRepository{
 
   Future<bool> isRubroSincronizado(String? rubroEvalProcesoId);
 
+  Future<Map<String,dynamic>> updateRubroEvaluacionData(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId);
+
 }

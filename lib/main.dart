@@ -8,6 +8,9 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_system_ui.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/splash.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/splash_error.dart';
+import 'package:provider/provider.dart';
+import 'package:ss_crmeducativo_2/src/provider/homeProvider.dart';
+import 'package:ss_crmeducativo_2/src/provider/rubro_provaider.dart';
 
 void main() {
   FlutterCleanArchitecture.debugModeOn();
@@ -58,26 +61,37 @@ class MyApp extends StatelessWidget {
   }
 
   Widget getMainView(){
-    return MaterialApp(
-      title: ' ',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: AppTheme.textTheme,
-        //platform: TargetPlatform.iOS,
-      ),
-      /*theme: ThemeData(
+    return MultiProvider(
+        providers: [
+          Provider(create: (_) => HomeProvider()),
+          ChangeNotifierProvider(
+            create: (_) => HomeProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => RubroProvider(),
+          ),
+        ],
+        child: MaterialApp(
+          title: ' ',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            textTheme: AppTheme.textTheme,
+            //platform: TargetPlatform.iOS,
+          ),
+          /*theme: ThemeData(
         primaryColor: Colors.black,
         bottomAppBarColor: Colors.white,
         bottomAppBarTheme: BottomAppBarTheme(color: Colors.white),
         brightness: Brightness.dark,
         hintColor: Colors.white,
       ),*/
-      home: HomeView(),
-      routes: AppRouter.routes,
-      onGenerateRoute: (settings) {
-        return AppRouter.generateRoute(settings);
-      },
+          home: HomeView(),
+          routes: AppRouter.routes,
+          onGenerateRoute: (settings) {
+            return AppRouter.generateRoute(settings);
+          },
+        )
     );
   }
 

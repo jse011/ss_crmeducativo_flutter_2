@@ -22,6 +22,8 @@ class ResultadoController extends Controller{
   bool get progress => _progress;
   bool _datosOffline = false;
   bool get datosOffline => _datosOffline;
+  List<dynamic> _headers = [];
+  List<dynamic> get headers => _headers;
   List<dynamic> _rows = [];
   List<dynamic> get rows =>_rows;
   List<dynamic> _columns = [];
@@ -69,9 +71,10 @@ class ResultadoController extends Controller{
       _rows = [];
       _columns = [];
       _cells = [];
+      _headers = [];
 
       var result = TableResultadoUtils.getTableResulData(matrizResultadoUi, calendarioPeriodoUI);
-
+      _headers.addAll(result.headers??[]);
       _rows.addAll(result.rows??[]);
       _columns.addAll(result.columns??[]);
       _cells.addAll(result.cells??[]);
@@ -84,6 +87,7 @@ class ResultadoController extends Controller{
       _cells.clear();
       _rows.clear();
       _columns.clear();
+      _headers.clear();
       _progress = false;
       refreshUI();
     };

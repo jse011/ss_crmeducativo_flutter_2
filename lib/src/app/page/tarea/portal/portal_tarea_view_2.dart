@@ -2023,7 +2023,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
               onTap: () {
 
                 if(o.evaluacionUi?.personaUi?.contratoVigente??false){
-                  if(o.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_NUMERICO)
+                  if(o.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.VALOR_NUMERICO)
                     showDialogPresicion(controller, o, i, tareaAlumnoUi);
                   else
                     controller.onClicEvaluar(o, tareaAlumnoUi);

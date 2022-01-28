@@ -1433,7 +1433,7 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
   }
 
   @override
-  userImage(File? _image) {
+  userImage(File? _image, String? newname) {
     if(globalKey.currentContext!=null){
       CrearAgendaController controller =
       FlutterCleanArchitecture.getController<CrearAgendaController>(globalKey.currentContext!, listen: false);

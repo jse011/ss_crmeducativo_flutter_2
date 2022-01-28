@@ -49,17 +49,17 @@ class _ItemEventoState extends State<ItemEventoView>{
        Center(
          child: Container(
            margin: EdgeInsets.only(
-               top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+               top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 0),
                left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
-               bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)),
+               bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 32)),
            padding: EdgeInsets.only(
                top: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
                left: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
                right: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
                bottom: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0
            ),
-           decoration: BoxDecoration(
+           decoration: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false) ? BoxDecoration(
                borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16)),
                color: widget.color?.withOpacity(0.5),
              boxShadow: [
@@ -70,10 +70,10 @@ class _ItemEventoState extends State<ItemEventoView>{
                    spreadRadius: 0
                ),
              ],
-           ),
+           ):null,
            child: Column(
              children: [
-               if(widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false))
+              widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)?
                  Container(
                    margin: EdgeInsets.only(top:8, bottom: 8),
                    child:  Row(
@@ -163,19 +163,19 @@ class _ItemEventoState extends State<ItemEventoView>{
                        )),
                      ],
                    ),
-                 ),
+                 ):Container(),
                Container(
                  decoration: BoxDecoration(
-                     borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 10)),
+                     borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16)),
                      color: AppTheme.white,
-                   boxShadow: <BoxShadow>[
+                   /*boxShadow: <BoxShadow>[
                      BoxShadow(
                          color: AppTheme.grey.withOpacity(0.2),
                          offset:  Offset(0,5),
                          blurRadius: 10.0,
                          spreadRadius: 0
                      ),
-                   ],
+                   ],*/
                  ),
                  constraints: BoxConstraints(
                    //minWidth: 200.0,
@@ -198,7 +198,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                            Container(
                              margin: EdgeInsets.only(
                                  top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
-                                 left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                                 left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                                  right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
                                  bottom: 0),
                              child: CachedNetworkImage(
@@ -229,7 +229,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                  margin: EdgeInsets.only(
                                      top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
                                      left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
-                                     right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                                     right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                                      bottom: 0),
                                  child: Column(
                                    crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,8 +274,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                        children: [
                          Container(
                            margin: EdgeInsets.only(
-                             left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
-                             right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                             left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                             right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
                              bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
                            ),
@@ -297,8 +297,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                      Container(
                        margin: EdgeInsets.only(
                            top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
-                           left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
-                           right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                           left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                           right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                            bottom: 0
                        ),
                        child: Text(widget.eventoUi?.titulo??'',
@@ -314,8 +314,8 @@ class _ItemEventoState extends State<ItemEventoView>{
                        Container(
                          margin: EdgeInsets.only(
                              top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
-                             left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
-                             right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16)
+                             left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                             right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24)
                          ),
                          child: Linkify(
                            text: '${widget.eventoUi?.descripcion}',
@@ -384,7 +384,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                      Container(
                        margin: EdgeInsets.only(
                            top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8),
-                           left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                           left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                            right: 0,
                            bottom: 0
                        ),
@@ -420,7 +420,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                              maxLines: 1,
                              overflow: TextOverflow.ellipsis,
                              style: TextStyle( fontSize: 11, fontFamily: AppTheme.fontTTNorms, color: AppTheme.darkText,fontWeight: FontWeight.w500, fontStyle: FontStyle.italic),),
-                           Padding(padding: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16)))
+                           Padding(padding: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24)))
                          ],
                        ),
                      ),
@@ -453,7 +453,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                        Container(
                                          width:18,
                                          height:18,
-                                         margin: const EdgeInsets.only(top: 0, left: 16, right: 8, bottom: 0),
+                                         margin: const EdgeInsets.only(top: 0, left: 24, right: 8, bottom: 0),
                                          child: Image.asset(AppIcon.img_evento_megusta),
                                        ),
                                        Text("Me gusta", style: TextStyle( fontSize: 12, fontFamily: AppTheme.fontTTNorms, color: AppTheme.lightText, fontWeight: FontWeight.w500),),
@@ -476,7 +476,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                        Container(
                                          width:18,
                                          height:18,
-                                         margin:  EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                                         margin:  EdgeInsets.only(top: 0, left: 16, right: 8, bottom: 0),
                                          child: Icon(Ionicons.globe_outline, size: 20, color: AppTheme.blueGreyDarken1,),
                                        ),
                                        Padding(
@@ -509,7 +509,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                },
                                child:
                                Container(
-                                 padding: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 0),
+                                 padding: const EdgeInsets.only(top: 0, left: 16, right: 24, bottom: 0),
                                  height: 36,
                                  child: Row(
                                    children: [
@@ -1020,7 +1020,7 @@ class _ItemEventoState extends State<ItemEventoView>{
       child: Row(
         children: [
           Container(
-            margin: EdgeInsets.only(left: 16),
+            margin: EdgeInsets.only(left: 24),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
               color: color,
