@@ -19,6 +19,7 @@ class CalcularEvaluacionResultados {
 
     bool fueCalificado = false;
     for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi?.rubricaEvalUiList??[]){
+      print("fueCalificado: ${rubricaEvaluacionUi.tituloRubroCabecera}");
       int totalPeso = (capacidadUi?.total_peso??0);
       EvaluacionTransformadaUi? evaluacionTransformadaUi = rubricaEvaluacionUi.evaluacionTransformadaUiList?.firstWhereOrNull((element) => element.alumnoId == alumnoId);
       if(rubricaEvaluacionUi.peso == RubricaEvaluacionUi.PESO_RUBRO_EXCLUIDO){
@@ -38,14 +39,16 @@ class CalcularEvaluacionResultados {
           tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
          if(evaluacionTransformadaUi?.valorTipoNotaUi!=null){
            fueCalificado = true;
+           print("evaluacionTransformadaUi: ${evaluacionTransformadaUi?.valorTipoNotaUi?.titulo}");
          }
       }else{
         if((evaluacionTransformadaUi?.nota_ponderada??0)>0){
           fueCalificado = true;
+          //print("fueCalificado2: ${fueCalificado}");
         }
       }
     }
-
+    print("fueCalificado: ${fueCalificado}");
     if(fueCalificado){
       evaluacionCapacidadUi?.nota = notaCapacidad;
       if (tipoNotaUiResultado?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
@@ -67,22 +70,39 @@ class CalcularEvaluacionResultados {
     TipoNotaUi? tipoNotaUi = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi;
 
     evaluacionTransformadaUi?.nota = TransformarValoTipoNota.transformarNota(evaluacionUi?.nota, tipoNotaUi, evaluacionUi?.valorTipoNotaUi, tipoNotaUiResultado);
-    ValorTipoNotaUi? valorTipoNotaUiResultado = TransformarValoTipoNota.transformarTipoNota(evaluacionUi?.nota, tipoNotaUi, evaluacionUi?.valorTipoNotaUi, tipoNotaUiResultado);
 
-    evaluacionTransformadaUi?.valorTipoNotaId = valorTipoNotaUiResultado?.valorTipoNotaId;
-    evaluacionTransformadaUi?.valorTipoNotaUi = valorTipoNotaUiResultado;
+    if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||
+        tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+      if(evaluacionUi?.valorTipoNotaUi!=null){
+        ValorTipoNotaUi? valorTipoNotaUiResultado = TransformarValoTipoNota.transformarTipoNota(evaluacionUi?.nota, tipoNotaUi, evaluacionUi?.valorTipoNotaUi, tipoNotaUiResultado);
+        evaluacionTransformadaUi?.valorTipoNotaId = valorTipoNotaUiResultado?.valorTipoNotaId;
+        evaluacionTransformadaUi?.valorTipoNotaUi = valorTipoNotaUiResultado;
+      }else{
+        evaluacionTransformadaUi?.valorTipoNotaId = null;
+        evaluacionTransformadaUi?.valorTipoNotaUi = null;
+      }
+    }
 
   }
 
   static actualizarEvaluacionOriginal(EvaluacionTransformadaUi? evaluacionTransformadaUi,  TipoNotaUi? tipoNotaUiResultado){
     EvaluacionUi? evaluacionUi =   evaluacionTransformadaUi?.evaluacionUiOriginal;;
-    print("actualizarEvaluacionOriginal");
-    evaluacionUi?.nota = TransformarValoTipoNota.transformarNota(evaluacionTransformadaUi?.nota, tipoNotaUiResultado, evaluacionTransformadaUi?.valorTipoNotaUi, evaluacionUi.rubroEvaluacionUi?.tipoNotaUi);
-    print("actualizarEvaluacionOriginal ${ evaluacionUi?.nota}");
-    ValorTipoNotaUi? valorTipoNotaUiProceso = TransformarValoTipoNota.transformarTipoNota(evaluacionTransformadaUi?.nota, tipoNotaUiResultado, evaluacionTransformadaUi?.valorTipoNotaUi, evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi);
 
-    evaluacionUi?.valorTipoNotaId = valorTipoNotaUiProceso?.valorTipoNotaId;
-    evaluacionUi?.valorTipoNotaUi = valorTipoNotaUiProceso;
+    evaluacionUi?.nota = TransformarValoTipoNota.transformarNota(evaluacionTransformadaUi?.nota, tipoNotaUiResultado, evaluacionTransformadaUi?.valorTipoNotaUi, evaluacionUi.rubroEvaluacionUi?.tipoNotaUi);
+
+
+    if(tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||
+        tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+      if(evaluacionTransformadaUi?.valorTipoNotaUi!=null){
+        ValorTipoNotaUi? valorTipoNotaUiProceso = TransformarValoTipoNota.transformarTipoNota(evaluacionTransformadaUi?.nota, tipoNotaUiResultado, evaluacionTransformadaUi?.valorTipoNotaUi, evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi);
+        evaluacionUi?.valorTipoNotaId = valorTipoNotaUiProceso?.valorTipoNotaId;
+        evaluacionUi?.valorTipoNotaUi = valorTipoNotaUiProceso;
+      }else{
+        evaluacionUi?.valorTipoNotaId = null;
+        evaluacionUi?.valorTipoNotaUi = null;
+      }
+    }
+
 
   }
 

@@ -4,6 +4,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_reposito
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_anio_academico.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_cursos.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_contacto_docente.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_programas_educativos.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_usuario.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_session_anio_academico.dart';
@@ -20,17 +21,21 @@ class PortalDocentePresenter extends Presenter{
   late Function getCursosOnComplete, getCursosOnError;
   UpdateSessionAnioAcademico _updateSessionAnioAcademico;
   UpdateSessionProgramaAcademico _updateSessionProgramaAcademico;
+  UpdateContactoDocente _updateContactoDocente;
+  late Function updateContactoDocenteoOnError, updateContactoDocenteOnComplete;
 
   PortalDocentePresenter(ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo)
       : this._getSessionUsuario = new GetSessionUsuarioCase(configuracionRepo), _getAnioAcademico = new GetAnioAcademico(configuracionRepo),
         _updateProgramasEducativos = new UpdateProgramasEducativos(configuracionRepo, httpDatosRepo),
         _updateSessionAnioAcademico = new UpdateSessionAnioAcademico(configuracionRepo),
         _updateSessionProgramaAcademico = new UpdateSessionProgramaAcademico(configuracionRepo),
-        _getCursos = new GetCursos(configuracionRepo);
+        _getCursos = new GetCursos(configuracionRepo),
+        _updateContactoDocente  = UpdateContactoDocente(configuracionRepo, httpDatosRepo);
 
   @override
   void dispose() {
     _getSessionUsuario.dispose();
+    //_updateContactoDocente.dispose();
   }
 
   void getUsuario(){
@@ -55,6 +60,10 @@ class PortalDocentePresenter extends Presenter{
 
   void updateSessionProgramaAcademicoId(int programaAcademicoId) {
     _updateSessionProgramaAcademico.execute(programaAcademicoId);
+  }
+
+  void updateContactoDocente(){
+    _updateContactoDocente.execute(_UpdateContactoDocenteCase(this), UpdateContactoDocenteParams());
   }
 
 }
@@ -153,6 +162,28 @@ class _GetCursosCase extends Observer<GetCursosResponse>{
   void onNext(GetCursosResponse? response) {
     assert(presenter.getCursosOnComplete != null);
     presenter.getCursosOnComplete(response?.cursolist);
+
+  }
+
+}
+
+class _UpdateContactoDocenteCase extends Observer<UpdateContactoDocenteResponse>{
+  final PortalDocentePresenter presenter;
+
+  _UpdateContactoDocenteCase(this.presenter);
+
+  @override
+  void onComplete() {
+
+  }
+
+  @override
+  void onError(e) {
+
+  }
+
+  @override
+  void onNext(UpdateContactoDocenteResponse? response) {
 
   }
 

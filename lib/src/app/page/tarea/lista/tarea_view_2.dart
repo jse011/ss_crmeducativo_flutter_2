@@ -102,7 +102,20 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
-        Column(
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.white.withOpacity(topBarOpacity),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(32.0),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                  color: AppTheme.grey
+                      .withOpacity(0.4 * topBarOpacity),
+                  offset: const Offset(1.1, 1.1),
+                  blurRadius: 10.0),
+            ],
+          ),child:  Column(
           children: <Widget>[
             SizedBox(
               height: MediaQuery.of(context).padding.top,
@@ -173,7 +186,9 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
               ),
             )
           ],
+        ),
         )
+
       ],
     );
   }

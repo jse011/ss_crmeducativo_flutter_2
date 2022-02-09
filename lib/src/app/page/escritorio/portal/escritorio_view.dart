@@ -10,6 +10,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/fancy_shimmer_image.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/page/escritorio/portal/escritorio_controller.dart';
+import 'package:ss_crmeducativo_2/src/app/page/home/home_view.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/close_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -27,8 +28,10 @@ import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 class EscritorioView extends View{
   final AnimationController animationController;
   final MenuBuilder? menuBuilder;
+  final ConnectedCallback connectedCallback;
   final CloseSession closeSessionHandler;
-  EscritorioView({required this.animationController, this.menuBuilder, required this.closeSessionHandler});
+
+  EscritorioView({required this.animationController, this.menuBuilder, required this.closeSessionHandler, required this.connectedCallback});
 
   @override
   _EscritorioViewState createState() => _EscritorioViewState();
@@ -40,6 +43,7 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
   final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
   late Animation<double> topBarAnimation;
+  GlobalKey globalKey = GlobalKey();
 
   _EscritorioViewState() : super(EscritorioController(MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadSesionRepository()));
 
@@ -80,6 +84,14 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
       });
 
     });
+    widget.connectedCallback.call((bool connected){
+      if(globalKey.currentContext!=null){
+        EscritorioController controller =
+        FlutterCleanArchitecture.getController<EscritorioController>(globalKey.currentContext!, listen: false);
+        controller.changeConnected(connected);
+
+      }
+    });
     super.initState();
   }
 
@@ -90,6 +102,7 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
           widget.menuBuilder?.call(getMenuView(controller));
         });
         return WillPopScope(
+          key: globalKey,
             onWillPop: () async {
               return await widget.closeSessionHandler.closeSession()??false;
         },
@@ -789,7 +802,6 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
     );
   }
 
-
 }
-
 typedef MenuBuilder = void Function(Widget menuView);
+typedef ConnectedCallback = void Function(Function(bool connected) onChangeConnected);

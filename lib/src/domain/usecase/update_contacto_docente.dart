@@ -35,6 +35,7 @@ class UpdateContactoDocente extends UseCase<UpdateContactoDocenteResponse, Updat
             await repository.saveContactoDocente(contactoDocente, empleadoId, anioAcademicoIdSelect);
           }
         } catch (e) {
+          print("contactosSerialList: ${e.toString()}");
           offlineServidor = true;
         }
         

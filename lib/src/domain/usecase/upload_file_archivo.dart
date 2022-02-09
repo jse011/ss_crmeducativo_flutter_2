@@ -11,7 +11,7 @@ class UploadFileArchivo{
 
   Future<HttpStream?> execute(int silaboEventoId, TareaRecusoUi tareaRecusoUi, UploadProgressListen listen, UploadSuccessListen successListen) async{
     String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
-    if(tareaRecusoUi.file!=null){
+    if(tareaRecusoUi.file!=null && (tareaRecusoUi.file?.path??"").isNotEmpty){
       return httpDatosRepository.uploadFileArchivoDocente(urlServidorLocal, silaboEventoId, tareaRecusoUi.titulo??"", tareaRecusoUi.file!, (progress) {
         listen.call(progress);
       }, (sucess, value){

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
@@ -62,14 +63,17 @@ class UpdateDatosCrearRubro extends UseCase<UpdateDatosCrearRubroResponse, Updat
         updateDatosParaCrearRubro().then((value)async {
           try{
             String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
+            print("rubroEvaltareaId sesion tarea: ${rubroEvaltareaId}");
             errorServidor = value == null;
             if (!errorServidor) {
               await rubroRepository.saveDatosCrearRubros(value!, params?.silaboEventoId??0, params?.calendarioPeriodoId??0,sessionAprendizajeId);
               List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
+              print("rubrosNoEnviados sesion: ${rubrosNoEnviados.length}");
               Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId, rubrosNoEnviados,false, anioAcademicoId, programaEducativoId, empleadoId);
-              errorServidor = datosRubro == null;
+
+              errorServidor = (datosRubro == null);
               if (!errorServidor) {
-                await rubroRepository.saveDatosRubrosEval(value, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId);
+                await rubroRepository.saveDatosRubrosEval(datosRubro!, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId);
               }
             }
           }catch(e){
@@ -90,6 +94,8 @@ class UpdateDatosCrearRubro extends UseCase<UpdateDatosCrearRubroResponse, Updat
           String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
 
           List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
+          print("rubrosNoEnviados tarea: ${rubrosNoEnviados.length}");
+
           Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, params?.tareaId, rubrosNoEnviados, true, anioAcademicoId, programaEducativoId, empleadoId);
           errorServidor = datosRubro == null;
           if (!errorServidor) {
@@ -114,15 +120,22 @@ class UpdateDatosCrearRubro extends UseCase<UpdateDatosCrearRubroResponse, Updat
 
         try{
           String? rubroEvaltareaId = await rubroRepository.getRubroEvaluacionIdTarea(params?.tareaId);
-          Map<String, dynamic>? datosCrearRubro = await httpDatosRepository.updateDatosParaCrearRubro(urlServidorLocal, anioAcademicoId, programaEducativoId, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, empleadoId,sessionAprendizajeId);
-          errorServidor = datosCrearRubro == null;
+          print("getDatosRubroFlutter 1");
+          List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
+          Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId, rubrosNoEnviados,false, anioAcademicoId, programaEducativoId, empleadoId);
+          errorServidor = datosRubro == null;
           if (!errorServidor) {
-            await rubroRepository.saveDatosCrearRubros(datosCrearRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0,sessionAprendizajeId);
-            List<dynamic> rubrosNoEnviados = await rubroRepository.getRubroEvalNoEnviadosServidorSerial(params?.silaboEventoId??0, params?.calendarioPeriodoId??0);
-            Map<String, dynamic>? datosRubro = await httpDatosRepository.getDatosRubroFlutter(urlServidorLocal, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, georeferenciaId, usuarioId, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId, rubrosNoEnviados,false, anioAcademicoId, programaEducativoId, empleadoId);
-            errorServidor = datosRubro == null;
+            await rubroRepository.saveDatosRubrosEval(datosRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId);
+          }
+          print("getDatosRubroFlutter 2");
+
+          if (!errorServidor) {
+
+            print("rubrosNoEnviados silabo: ${rubrosNoEnviados.length}");
+            Map<String, dynamic>? datosCrearRubro = await httpDatosRepository.updateDatosParaCrearRubro(urlServidorLocal, anioAcademicoId, programaEducativoId, params?.calendarioPeriodoId??0, params?.silaboEventoId??0, empleadoId,sessionAprendizajeId);
+            errorServidor = datosCrearRubro == null;
             if (!errorServidor) {
-              await rubroRepository.saveDatosRubrosEval(datosRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0, sessionAprendizajeDocenteId, sessionAprendizajeAlumnoId, rubroEvaltareaId);
+              await rubroRepository.saveDatosCrearRubros(datosCrearRubro, params?.silaboEventoId??0, params?.calendarioPeriodoId??0,sessionAprendizajeId);
             }
           }
         }catch(e){

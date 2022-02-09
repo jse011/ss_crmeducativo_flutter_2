@@ -72,7 +72,7 @@ class AppRouter {
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     LOGIN: (BuildContext context) => LoginView5(),
-    HOME: (BuildContext context) => HomeView(),
+    HOME: (BuildContext context) => HomeView(context),
     //CURSO:(BuildContext context) => CursoView(),
   };
 
@@ -189,7 +189,8 @@ class AppRouter {
           if(arguments.containsKey('evaluacionCapacidadUi')){
             evaluacionCapacidadUi  = arguments['evaluacionCapacidadUi'];
           }
-          return EvaluacionCapacidadView(evaluacionCapacidadUi, cursosUi);
+          CalendarioPeriodoUI? calendarioPeriodoUI = arguments["calendarioPeriodoUI"];
+          return EvaluacionCapacidadView(evaluacionCapacidadUi, cursosUi, calendarioPeriodoUI);
         },
       );
     }else if(settings.name == EVALUACION_PESO_CRITERIO){
@@ -198,7 +199,8 @@ class AppRouter {
         builder: (context) {
           CursosUi cursosUi = arguments['cursoUi'];
           CapacidadUi? capacidadUi  = arguments['capacidadUi'];
-          return PesoCriterioView(capacidadUi, cursosUi);
+          CalendarioPeriodoUI? calendarioPeriodoUI = arguments['calendarioPeriodoUI'];
+          return PesoCriterioView(capacidadUi, cursosUi, calendarioPeriodoUI);
         },
       );
     }else if(settings.name == EVALUACION_MULTIPLE){
@@ -207,7 +209,7 @@ class AppRouter {
         builder: (context) {
           CursosUi cursosUi = arguments['cursoUi'];
           String rubroEvaluacionId  = arguments['rubroEvaluacionId'];
-          CalendarioPeriodoUI calendarioPeriodoUI = arguments['calendarioPeriodoUI'];
+          CalendarioPeriodoUI? calendarioPeriodoUI = arguments['calendarioPeriodoUI'];
           return EvaluacionIndicadorMultipleView(rubroEvaluacionId, cursosUi, calendarioPeriodoUI);
         },
       );
@@ -385,17 +387,17 @@ class AppRouter {
     );
   }
 
-  static Future<dynamic> createRouteEvaluacionCapacidad(BuildContext context, CursosUi? cursosUi, EvaluacionCapacidadUi? evaluacionCapacidadUi) async{
+  static Future<dynamic> createRouteEvaluacionCapacidad(BuildContext context, CursosUi? cursosUi, EvaluacionCapacidadUi? evaluacionCapacidadUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
     return await Navigator.pushNamed(context,
         EVALUACION_CAPACIDAD,
-        arguments: {'cursoUi': cursosUi, 'evaluacionCapacidadUi': evaluacionCapacidadUi, }
+        arguments: {'cursoUi': cursosUi, 'evaluacionCapacidadUi': evaluacionCapacidadUi, 'calendarioPeriodoUI': calendarioPeriodoUI}
     );
   }
 
-  static Future<dynamic> createRoutePesoCriterio(BuildContext context, CursosUi? cursosUi, CapacidadUi? capacidadUi) async{
+  static Future<dynamic> createRoutePesoCriterio(BuildContext context, CursosUi? cursosUi, CapacidadUi? capacidadUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
     return await Navigator.pushNamed(context,
         EVALUACION_PESO_CRITERIO,
-        arguments: {'cursoUi': cursosUi, 'capacidadUi': capacidadUi, }
+        arguments: {'cursoUi': cursosUi, 'capacidadUi': capacidadUi, 'calendarioPeriodoUI':calendarioPeriodoUI }
     );
   }
 

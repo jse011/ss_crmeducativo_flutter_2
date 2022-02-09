@@ -75,8 +75,8 @@ class Login extends UseCase<LoginResponse,LoginParams>{
               print("Aqui 3");
               anioAcademicoId = usuarioUi.anioAcademicoIdSelected??0;
               if(datosAnioAcademico!=null){
-                print("Aqui 4");
-                await datosrepository.saveDatosAnioAcademico(datosAnioAcademico);
+                print("Aqui 4 anioAcademicoId ${anioAcademicoId}");
+                await datosrepository.saveDatosAnioAcademico(datosAnioAcademico, anioAcademicoId, usuarioUi.empleadoId??0);
                 print("Aqui 4");
               }else{
                 errorServidor = true;

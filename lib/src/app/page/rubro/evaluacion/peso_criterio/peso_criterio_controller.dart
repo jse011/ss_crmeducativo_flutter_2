@@ -1,6 +1,7 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_presenter.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/peso_criterio/peso_criterio_presenter.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_ui.dart';
@@ -27,6 +28,7 @@ import 'package:collection/collection.dart';
 
 class PesoCriterioController extends Controller{
   static int Modifico_Peso_Rubro = 0, Modifico_Evaluacion = 1;
+  CalendarioPeriodoUI? calendarioPeriodoUI;
   CapacidadUi capacidadUi;
   CursosUi cursosUi;
   PesoCriterioPresenter presenter;
@@ -40,7 +42,7 @@ class PesoCriterioController extends Controller{
   bool _showDialog = false;
   bool get showDialog => _showDialog;
 
-  PesoCriterioController(this.capacidadUi, this.cursosUi, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
+  PesoCriterioController(this.capacidadUi, this.cursosUi, this.calendarioPeriodoUI, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
       presenter = PesoCriterioPresenter(configuracionRepo, rubroRepo, httpDatosRepo);
 
   @override

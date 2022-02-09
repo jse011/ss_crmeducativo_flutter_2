@@ -35,11 +35,11 @@ class LoginController extends Controller{
 
   @override
   void initListeners() {
-    presenter.loginOnNextValidate = (LoginUi loginUi, bool errorServidor){
+    presenter.loginOnNextValidate = (LoginUi? loginUi, bool? errorServidor){
       _loginUi = loginUi;
 
       _mensaje = null;
-      if(errorServidor){
+      if(errorServidor??false){
         _mensaje = "Error interno del servidor|";
       }else{
         if(_loginUi == LoginUi.INVALIDO){
@@ -66,13 +66,13 @@ class LoginController extends Controller{
       refreshUI();
     };
 
-    presenter.loginOnNextDatos = (bool errorServidor, bool rolValidado){
-      if(errorServidor){
+    presenter.loginOnNextDatos = (bool? errorServidor, bool? rolValidado){
+      if(errorServidor??false){
         _mensaje = "Error interno del servidor|";
         //_typeView = LoginTypeView.USUARIO;
         _progressData = false;
       }else{
-        if(rolValidado){
+        if(rolValidado??false){
           _dismis = true;
         }else{
           _progressData = false;

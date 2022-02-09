@@ -16,6 +16,7 @@ class HomePresenter extends Presenter{
   ValidarUsuario _validarUsuario;
   late Function cerrarCesionOnError, cerrarCesionOnComplete;
   UpdateContactoDocente _updateContactoDocente;
+  late Function updateContactoDocenteoOnError, updateContactoDocenteOnComplete;
   UpdateUsuario _updateUsuario;
   late Function updateUsuarioOnError, updateUsuarioOnComplete;
   CerrarSession _cerrarSession;
@@ -133,12 +134,14 @@ class _UpdateContactoDocenteCase extends Observer<UpdateContactoDocenteResponse>
 
   @override
   void onError(e) {
-
+    assert(presenter.updateContactoDocenteoOnError!=null);
+    presenter.updateContactoDocenteoOnError(e);
   }
 
   @override
   void onNext(UpdateContactoDocenteResponse? response) {
-
+    assert(presenter.updateContactoDocenteOnComplete!=null);
+    presenter.updateContactoDocenteOnComplete(response?.datosOffline, response?.errorServidor);
   }
 
 }

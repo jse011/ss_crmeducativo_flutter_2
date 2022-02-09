@@ -5,6 +5,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
+import 'package:collection/collection.dart';
 
 class GetTipoNota extends UseCase<GetTipoNotaResponse, GetTipoNotaParms>{
   ConfiguracionRepository configuracionRepository;
@@ -20,6 +21,8 @@ class GetTipoNota extends UseCase<GetTipoNotaResponse, GetTipoNotaParms>{
 
       TipoNotaUi? tipoNotaUi;
       List<TipoNotaUi> tipoNotaUiList = await repository.getGetTipoNota(programaEducativoId);
+      //tipoNotaUiList.firstWhereOrNull((element) => element.);
+
       if(tipoNotaUiList.isNotEmpty)tipoNotaUi = tipoNotaUiList[0];
       controller.add(GetTipoNotaResponse(tipoNotaUiList,tipoNotaUi));
       controller.close();

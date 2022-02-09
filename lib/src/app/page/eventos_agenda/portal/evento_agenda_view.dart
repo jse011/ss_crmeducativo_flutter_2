@@ -39,17 +39,19 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
+import 'package:ss_crmeducativo_2/src/provider/conexion_provaider.dart';
 import 'package:ss_crmeducativo_2/src/provider/homeProvider.dart';
 import 'evento_agenda_controller_2.dart';
-import 'package:provider/provider.dart';
 
 class EventoAgendaView extends View{
   UsuarioUi? usuarioUi;
   final AnimationController animationController;
   final MenuBuilder? menuBuilder;
   final CloseSession closeSessionHandler;
+  Function? closeMenu;
+  final ConnectedCallback connectedCallback;
 
-  EventoAgendaView(this.usuarioUi, {required this.animationController, this.menuBuilder, required this.closeSessionHandler});
+  EventoAgendaView(this.usuarioUi, {required this.animationController, this.menuBuilder, required this.closeSessionHandler, this.closeMenu, required this.connectedCallback});
 
   @override
   _EventoAgendaViewState createState() => _EventoAgendaViewState(this.usuarioUi);
@@ -64,12 +66,14 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
 
   late Animation<double> topBarAnimation;
   late ScrollController scrollController;
+  late ScrollController agendaTiposcrollController;
   double topBarOpacity = 0.0;
-
+  Map<TipoEventoUi,GlobalKey> evaluadoKeyMap = Map();
+  GlobalKey globalKey = GlobalKey();
   @override
   void initState() {
     scrollController = ScrollController();
-
+    agendaTiposcrollController = ScrollController();
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: widget.animationController,
@@ -106,6 +110,16 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
       });
 
     });
+
+    widget.connectedCallback.call((bool connected){
+      if(globalKey.currentContext!=null){
+        EventoAgendaController2 controller =
+        FlutterCleanArchitecture.getController<EventoAgendaController2>(globalKey.currentContext!, listen: false);
+        controller.changeConnected(connected);
+
+      }
+    });
+
     super.initState();
   }
 
@@ -116,6 +130,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
           widget.menuBuilder?.call(getMenuView(controller));
         });
         return WillPopScope(
+          key: globalKey,
           onWillPop: () async {
             bool salir = controller.onBackPress();
             if(salir){
@@ -129,7 +144,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
               children: <Widget>[
                 getMainTab(),
                 getAppBarUI(),
-                (controller.msgConexion??"").isNotEmpty?
+                /*(controller.msgConexion??"").isNotEmpty?
                 Positioned(
                   bottom: 100.0,
                   right: 1,
@@ -152,7 +167,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                       ],
                     ),
                   ),
-                ):Container(),
+                ):Container(),*/
                 controller.isLoading?
                 controller.eventoUiList!=null? ArsProgressWidget(
                     blur: 2,
@@ -305,7 +320,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
       height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,65),
       width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 78),
       decoration: BoxDecoration(
-        color: color.withOpacity(tipo.toogle??false?1:1),
+        color: color.withOpacity(tipo.toogle??false?1:0.6),
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,8.0)),
             bottomLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context,8.0)),
@@ -593,7 +608,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                      ),
                                      Padding(padding: EdgeInsets.all(4)),
                                      Center(
-                                       child: Text("Lista vacía${(controller.msgConexion??"").isNotEmpty?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                                       child: Text("${controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.TODOS?"Sin publicaciones":"Sin publicaciones de ${(controller.selectedTipoEventoUi?.nombre??"").toLowerCase()}"} ${!controller.conexion?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                                      )
                                    ],
                                  )
@@ -608,9 +623,12 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                            slivers: <Widget>[
                              SliverList(
                                  delegate: SliverChildListDelegate([
+
+                                   Padding(padding: EdgeInsets.only(top: 8)),
+                                   _categoryRow(controller, "Filtrar agenda diguital"),
                                    Container(
                                      padding: EdgeInsets.only(
-                                       top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+                                       top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                                      ),
                                    ),
                                  ])
@@ -884,6 +902,123 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
     );
   }
 
+  Widget _categoryRow(EventoAgendaController2 controller, String title) {
+    return Container(
+      // margin: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+         /* Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              title,
+              style: TextStyle(
+                  color: AppTheme.colorPrimary,
+                  fontFamily: AppTheme.fontTTNorms,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),*/
+          Container(
+              width: MediaQuery.of(context).size.width,
+              height: 46,
+              child: ListView.builder(
+                padding: EdgeInsets.only(left: 20, right: 10),
+                scrollDirection: Axis.horizontal,
+                controller: agendaTiposcrollController,
+                itemCount: controller.tipoEventoListInvert.length,
+                itemBuilder: (BuildContext context, int index) {
+                  TipoEventoUi tipoEventoUi = controller.tipoEventoListInvert[index];
+                  return Row(
+                    children: [
+                      _chip(tipoEventoUi, height: 5, isPrimaryCard: tipoEventoUi.toogle??false, onClick: (){
+                        controller.onSelectedTipoEvento(tipoEventoUi);
+                      }),
+                      SizedBox(width: 10),
+                    ],
+                  );
+                },
+              )),
+          /*SizedBox(height: 10)*/
+        ],
+      ),
+    );
+  }
+
+
+  Widget _chip(TipoEventoUi tipo,
+      {double height = 0, bool isPrimaryCard = false, Function? onClick }) {
+    Color? textColor = null;
+    switch(tipo.tipo??EventoIconoEnumUI.DEFAULT){
+      case EventoIconoEnumUI.DEFAULT:
+        textColor = HexColor("#00BCD4");
+        break;
+      case EventoIconoEnumUI.EVENTO:
+        textColor = HexColor("#bfca52");
+        break;
+      case EventoIconoEnumUI.NOTICIA:
+        textColor = HexColor("#ffc107");
+        break;
+      case EventoIconoEnumUI.ACTIVIDAD:
+        textColor = HexColor("#ff6b9d");
+        break;
+      case EventoIconoEnumUI.TAREA:
+        textColor = HexColor("#ff9800");
+        break;
+      case EventoIconoEnumUI.CITA:
+        textColor = HexColor("#00bcd4");
+        break;
+      case EventoIconoEnumUI.AGENDA:
+        textColor = HexColor("#71bb74");
+        break;
+      case EventoIconoEnumUI.TODOS:
+        textColor = HexColor("#0091EA");
+        break;
+    }
+    if(evaluadoKeyMap[tipo] == null){
+      evaluadoKeyMap[tipo] = GlobalKey();
+    }
+
+    return InkWell(
+      key: evaluadoKeyMap[tipo],
+      onTap: (){
+        onClick?.call();
+      },
+      child: Container(
+        alignment: Alignment.center,
+        constraints: BoxConstraints(
+            minWidth: 60
+        ),
+        margin: EdgeInsets.only(top: 8, bottom: 8),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: height),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(30)),
+          color: textColor.withAlpha(isPrimaryCard ? 200 : 0),
+            boxShadow: isPrimaryCard?[
+              BoxShadow(
+                  color:textColor.withOpacity(0.3),
+                  offset:  Offset(0,2),
+                  blurRadius: 10.0,
+                  spreadRadius: 0
+              ),
+            ]:null
+        ),
+        child: Text(
+          "${tipo.nombre??""}",
+          style: TextStyle(
+              color: isPrimaryCard ? Colors.white : AppTheme.colorPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              fontFamily: AppTheme.fontTTNorms
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget getMenuView(EventoAgendaController2 controller) {
     return Container(
       margin: EdgeInsets.only(
@@ -915,13 +1050,28 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
           Container(
             alignment: Alignment.center,
             child:  Wrap(
-              spacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
-              runSpacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 12),
+              spacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
+              runSpacing: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
               direction: Axis.horizontal,
               alignment: WrapAlignment.start,
               children: <Widget>[
                 for(var item in controller.tipoEventoList)
                   chip(item, (tipoEvento){
+                    Future.delayed(const Duration(milliseconds: 200), () {
+                      widget.closeMenu?.call();
+                    });
+
+
+                    final targetContext = evaluadoKeyMap[tipoEvento]?.currentContext;
+                    if (targetContext != null) {
+
+                      Scrollable.ensureVisible(
+                        targetContext,
+                        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart
+                      );
+
+                    }
+
                     controller.onSelectedTipoEvento(tipoEvento);
                   }),
                 //chipEspacio()
@@ -935,4 +1085,5 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
 
 }
 
+typedef ConnectedCallback = void Function(Function(bool connected) onChangeConnected);
 typedef MenuBuilder = void Function(Widget menuView);

@@ -22,8 +22,10 @@ class PortalDocenteController extends Controller{
   ProgramaEducativoUi? get programaEducativoUi => _programaEducativoUi;
   List<CursosUi> _cursosUiList = [];
   List<CursosUi> get cursosUiList => _cursosUiList;
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool get isLoading => _isLoading;
+  bool _conexion = true;
+  bool get conexion => _conexion;
 
   PortalDocenteController(usuarioConfiRepo, httpDatosRepo)
       :this.presenter = PortalDocentePresenter(usuarioConfiRepo, httpDatosRepo)
@@ -49,7 +51,6 @@ class PortalDocenteController extends Controller{
       _anioAcademicoUi = anioAcademicoSelected;
       _georeferenciaUi = _anioAcademicoUi?.georeferenciaUi;
       _georeferenciaUiList = georeferenciaUiList;
-      _isLoading = true;
       refreshUI();
       presenter.updateProgramaEducativo();
     };
@@ -57,37 +58,48 @@ class PortalDocenteController extends Controller{
     presenter.getAnioAcadOnError = (e){
       _anioAcademicoUi = null;
       _georeferenciaUiList = [];
+      _isLoading = false;
       refreshUI();
     };
 
     presenter.getProgramasEducativosOnComplete = (ProgramaEducativoUi? programaEducativoUi, List<ProgramaEducativoUi>? programaEducativoList, bool? datosOffline, bool? errorServidor){
       _programaEducativoUi = programaEducativoUi;
       _programaEducativoUiList = programaEducativoList??[];
-      _isLoading = false;
       refreshUI();
+      if(datosOffline??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
       presenter.getCursos(programaEducativoUi);
     };
 
     presenter.getProgramasEducativosOnError = (e){
       _programaEducativoUi = null;
       _programaEducativoUiList = [];
-      _isLoading = false;
       refreshUI();
+      _conexion = false;
     };
 
     presenter.getCursosOnComplete = (List<CursosUi> cursosUiList){
       _cursosUiList = cursosUiList;
+      _isLoading = false;
       refreshUI();
     };
 
     presenter.getCursosOnError = (e){
       _cursosUiList = [];
+      _isLoading = false;
       refreshUI();
     };
 
   }
 
   void onInitState() {
+    _isLoading = true;
+    refreshUI();
     presenter.getUsuario();
     presenter.getAnioAcademico();
     super.onInitState();
@@ -105,12 +117,14 @@ class PortalDocenteController extends Controller{
     _isLoading = true;
     refreshUI();
     presenter.updateProgramaEducativo();
+    print("updateContactoDocente");
+    presenter.updateContactoDocente();
   }
 
   void onSelectPrograma(item) {
     _programaEducativoUi = item;
     _isLoading = false;
-    presenter.updateSessionProgramaAcademicoId(anioAcademicoUi?.anioAcademicoId??0);
+    presenter.updateSessionProgramaAcademicoId(_programaEducativoUi?.idPrograma??0);
     refreshUI();
     presenter.getCursos(_programaEducativoUi);
   }
@@ -129,6 +143,24 @@ class PortalDocenteController extends Controller{
     }
 
     onSelectAnioAcademico(_anioAcademicoUi);
+  }
+
+  void changeConnected(bool connected) {
+    if(!_conexion && connected){
+      if(_anioAcademicoUi==null){
+        for (AnioAcademicoUi anioAcademicoUi in georeferenciaUi?.anioAcademicoUiList??[]) {
+          if (anioAcademicoUi.vigente??false) {
+            _anioAcademicoUi = anioAcademicoUi;
+          }
+        }
+      }
+
+      if(_anioAcademicoUi == null && (georeferenciaUi?.anioAcademicoUiList??[]).isNotEmpty){
+        _anioAcademicoUi = georeferenciaUi?.anioAcademicoUiList![0];
+      }
+
+      onSelectAnioAcademico(_anioAcademicoUi);
+    }
   }
 
 }

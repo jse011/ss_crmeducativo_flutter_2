@@ -1434,12 +1434,12 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
 
   @override
   userImage(File? _image, String? newname) {
-    if(globalKey.currentContext!=null){
+    if(globalKey.currentContext!=null&&(_image?.path??"").isNotEmpty){
       CrearAgendaController controller =
       FlutterCleanArchitecture.getController<CrearAgendaController>(globalKey.currentContext!, listen: false);
       List<File?> files = [];
       files.add(_image);
-      controller.addEventoAdjunto(files);
+      controller.addEventoAdjunto(files, newname);
 
     }
 
@@ -1450,7 +1450,7 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
     if(globalKey.currentContext!=null){
       CrearAgendaController controller =
       FlutterCleanArchitecture.getController<CrearAgendaController>(globalKey.currentContext!, listen: false);
-      controller.addEventoAdjunto(_documents);
+      controller.addEventoAdjunto(_documents, null);
 
     }
   }

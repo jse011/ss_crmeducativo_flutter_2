@@ -44,7 +44,7 @@ class MoorResultadoRepository extends ResultadoRepository{
       for(var competencia in competencias){
         ResultadoCompetenciaSerial competenciaSerial = ResultadoCompetenciaSerial.fromJson(competencia);
         ResultadoCompetenciaUi resultadoCompetenciaUi = ResultadoCompetenciaUi();
-        resultadoCompetenciaUi.titulo = competenciaSerial.titulo;
+        resultadoCompetenciaUi.titulo = competenciaSerial.competencia;
         resultadoCompetenciaUi.rubroResultadoId = competenciaSerial.rubroEvalResultadoId;
         resultadoCompetenciaUi.competenciaId = competenciaSerial.competenciaId;
         resultadoCompetenciaUi.rubroformal = competenciaSerial.rubroFormal;
@@ -60,7 +60,7 @@ class MoorResultadoRepository extends ResultadoRepository{
       for(var capacidad in capacidades){
         ResultadoCapacidadSerial capacidadSerial = ResultadoCapacidadSerial.fromJson(capacidad);
         ResultadoCapacidadUi resultadoCapacidadUi = ResultadoCapacidadUi();
-        resultadoCapacidadUi.titulo = capacidadSerial.titulo;
+        resultadoCapacidadUi.titulo = capacidadSerial.competencia;
         resultadoCapacidadUi.rubroResultadoId = capacidadSerial.rubroEvalResultadoId;
         try {
           resultadoCapacidadUi.competenciaId = (int.parse(capacidadSerial.competenciaId??"0"));

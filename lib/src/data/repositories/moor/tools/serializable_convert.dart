@@ -1029,66 +1029,16 @@ class SerializableConvert{
     return items;
   }
 
-  static ContactoDocenteData converSerializeContactoDocente(Map<String,dynamic> model){
-    ContactoDocenteSerial serial = ContactoDocenteSerial.fromJson(model);
-    return ContactoDocenteData(
-        personaId: serial.personaId??0,
-       tipo: serial.tipo??0,
-       cargaCursoId: serial.cargaCursoId??0,
-       nombreTipo: serial.nombres,
-       cursoId: serial.cursoId,
-       cursoNombre: serial.cursoNombre,
-       aulaId: serial.aulaId,
-       aulaNombre: serial.aulaNombre,
-       grupoId: serial.grupoId,
-       grupoNombre: serial.grupoNombre,
-       contratoEstadoId: serial.contratoEstadoId,
-       contratoVigente: serial.contratoVigente,
-       periodoId: serial.periodoId,
-       periodoNombre: serial.periodoNombre,
-       hijoRelacionId: serial.hijoRelacionId,
-       relacionId: serial.relacionId,
-       relacion: serial.relacion,
-       estadoId: serial.estadoId,
-       nombres: serial.nombres,
-       apellidoPaterno: serial.apellidoPaterno,
-       apellidoMaterno: serial.apellidoMaterno,
-      celular: serial.celular,
-      telefono: serial.telefono,
-      correo: serial.correo,
-      estadoCivil: serial.estadoCivil,
-      fechaNac: serial.fechaNac,
-      ocupacion: serial.ocupacion,
-      numDoc: serial.numDoc,
-      genero: serial.genero,
-      foto: serial.foto,
-      programaId: serial.programaId,
-      programaNombre: serial.programaNombre,
-      cargaAcademicaId: serial.cargaAcademicaId,
-      idEmpleadoTutor: serial.idEmpleadoTutor
-
-    );
-  }
-
-  static List<ContactoDocenteData> converListSerializeContactoDocente(dynamic model){
-    List<ContactoDocenteData> items = [];
-    Iterable l = model;
-    for(var item in l){
-      items.add(converSerializeContactoDocente(item));
-    }
-    return items;
-  }
-
 
   static CalendarioData converSerializeCalendario(Map<String,dynamic> model){
     CalendarioSerial serial = CalendarioSerial.fromJson(model);
     return CalendarioData(
         calendarioId: serial.calendarioId??"",
-        cargaAcademicaId: serial.cargaAcademicaId,
-        cargaCursoId: serial.cargaCursoId,
+        cargaAcademicaId: serial.cargaAcademicaId??0,
+        cargaCursoId: serial.cargaCursoId??0,
         cargo: serial.cargo,
         descripcion: serial.descripcion,
-        entidadId: serial.entidadId,
+        entidadId: serial.entidadId??0,
         estado: serial.estado,
         estadoPublicaciN: serial.estadoPublicaciN,
         estadoPublicacion: serial.estadoPublicacion,
@@ -1099,11 +1049,11 @@ class SerializableConvert{
         fechaRecibido: serial.fechaRecibido,
         fechaRespuesta: serial.fechaRespuesta,
         fechaVisto: serial.fechaVisto,
-        georeferenciaId: serial.georeferenciaId,
+        georeferenciaId: serial.georeferenciaId??0,
         nombre: serial.nombre,
-        rolId: serial.rolId,
+        rolId: serial.rolId??0,
         nUsuario: serial.nUsuario,
-        usuarioId: serial.usuarioId,
+        usuarioId: serial.usuarioId??0,
         getSTime: serial.getSTime,
         usuarioAccionId: serial.usuarioAccionId,
         usuarioCreacionId: serial.usuarioCreacionId,
@@ -1148,13 +1098,13 @@ class SerializableConvert{
         horaEvento: serial.horaEvento,
         fechaEvento: serial.fechaEvento,
         calendarioId: serial.calendarioId,
-        entidadId: serial.entidadId,
+        entidadId: serial.entidadId??0,
         envioPersonalizado: serial.envioPersonalizado,
-        estadoId: serial.estadoId,
+        estadoId: serial.estadoId??0,
         estadoPublicacion: serial.estadoPublicacion,
         eventoHijoId: serial.eventoHijoId,
-        georeferenciaId: serial.georeferenciaId,
-        tipoEventoId: serial.tipoEventoId,
+        georeferenciaId: serial.georeferenciaId??0,
+        tipoEventoId: serial.tipoEventoId??0,
         key: serial.key,
         fechaAccion: serial.fechaAccion,
         fechaCreacion: serial.fechaCreacion,

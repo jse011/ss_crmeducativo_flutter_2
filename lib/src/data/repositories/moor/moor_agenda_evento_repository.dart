@@ -631,7 +631,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
       usuarioCreacionId: usuarioId,
     ).toJson());
 
-
+    print("salon q: ${eventoUi?.listaEnvioUi?.cargaCursoId}");
     Map<String, dynamic> calendario = DomainTools.removeNull(CalendarioSerial(
       cargaAcademicaId: eventoUi?.listaEnvioUi?.cargaAdemicaId,
       cargaCursoId: eventoUi?.listaEnvioUi?.cargaCursoId,

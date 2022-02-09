@@ -23,6 +23,7 @@ import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
@@ -42,18 +43,19 @@ import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 class EvaluacionCapacidadView extends View{
   final EvaluacionCapacidadUi? evaluacionCapacidadUi;
   final CursosUi? cursosUi;
+  final CalendarioPeriodoUI? calendarioPeriodoUI;
 
-  EvaluacionCapacidadView(this.evaluacionCapacidadUi, this.cursosUi);
+  EvaluacionCapacidadView(this.evaluacionCapacidadUi, this.cursosUi, this.calendarioPeriodoUI);
 
   @override
-  _EvaluacionCapacidadViewState createState() => _EvaluacionCapacidadViewState(evaluacionCapacidadUi, cursosUi);
+  _EvaluacionCapacidadViewState createState() => _EvaluacionCapacidadViewState(evaluacionCapacidadUi, cursosUi, calendarioPeriodoUI);
 
 }
 
 class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, EvaluacionCapacidadController> with TickerProviderStateMixin{
   ScrollControllers crollControllers = ScrollControllers();
 
-  _EvaluacionCapacidadViewState(evaluacionCapacidadUi, cursosUi) : super(EvaluacionCapacidadController(evaluacionCapacidadUi, cursosUi, MoorConfiguracionRepository(), MoorRubroRepository(), DeviceHttpDatosRepositorio()));
+  _EvaluacionCapacidadViewState(evaluacionCapacidadUi, cursosUi, calendarioPeriodoUI) : super(EvaluacionCapacidadController(evaluacionCapacidadUi, cursosUi,calendarioPeriodoUI, MoorConfiguracionRepository(), MoorRubroRepository(), DeviceHttpDatosRepositorio()));
 
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
@@ -98,10 +100,12 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
         return WillPopScope(
             onWillPop: () async {
               bool?  se_a_modicado = await controller.onSave();
+              print("se_a_modicado ${se_a_modicado}");
               if(se_a_modicado){
                 Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
                 return false;
               }else{
+                Navigator.of(context).pop(true);
                 return true;
               }
             },
@@ -819,8 +823,17 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
               );
             }else if(obj is ValorTipoNotaUi){
               return InkWell(
-                onDoubleTap: () =>  controller.onClikShowDialogClearEvaluacion(),
-                onLongPress: () => controller.onClicEvaluacionAll(obj),
+                onDoubleTap: () {
+                  if(controller.calendarioPeriodoUI?.habilitadoProceso==1){
+                    controller.onClikShowDialogClearEvaluacion();
+                  }
+                } ,
+                onLongPress: () {
+                  if(controller.calendarioPeriodoUI?.habilitadoProceso==1){
+                    controller.onClicEvaluacionAll(obj);
+                  }
+
+                },
                 child: Stack(
                   children: [
                     _getTipoNotaCabecera(obj, controller,i)
@@ -1063,30 +1076,36 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
             }else if(o is EvaluacionRubricaValorTipoNotaUi){
               return InkWell(
                 onTap: () {
-
-                  if((o.evaluacionTransformadaUi?.personaUi?.contratoVigente == true)){
-                    if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false)){
-                      showDialogPresicion(controller, o, i);
-                    } else{
-                      controller.onClicEvaluar(o); 
+                  if(controller.calendarioPeriodoUI?.habilitadoProceso==1){
+                    if((o.evaluacionTransformadaUi?.personaUi?.contratoVigente == true)){
+                      if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false)){
+                        showDialogPresicion(controller, o, i);
+                      } else{
+                        controller.onClicEvaluar(o);
+                      }
+                    }else{
+                      controller.showControNoVigente();
                     }
-                  }else{
-                    controller.showControNoVigente();
                   }
+
                 },
                 onLongPress: (){
-                  if((o.evaluacionTransformadaUi?.personaUi?.contratoVigente == true)){
-                    if(o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false){
+                  if(controller.calendarioPeriodoUI?.habilitadoProceso==1){
+                    if((o.evaluacionTransformadaUi?.personaUi?.contratoVigente == true)){
+                      if(o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false){
 
-                    }
-                    else{
-                      showDialogTecladoPrecicion(controller, controller.tipoNotaUi, o.evaluacionTransformadaUi);
+                      }
+                      else{
+                        showDialogTecladoPrecicion(controller, controller.tipoNotaUi, o.evaluacionTransformadaUi);
+                      }
                     }
                   }
+
                 },
                 child: Stack(
                   children: [
                     _getTipoNotaDetalle(o, controller,i, j),
+                    (controller.calendarioPeriodoUI?.habilitadoProceso!=1)?
                     Positioned(
                         bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4),
                         right: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4),
@@ -1094,13 +1113,17 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                           color: AppTheme.redLighten1.withOpacity(0.8),
                           size: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14)
                         )
-                    ),
+                    ):Container(),
                   ],
                 ),
               );
             } else if(o is EvaluacionTransformadaUi){
               return InkWell(
-                onTap: () => showDialogTecladoPrecicion(controller, controller.tipoNotaUi, o),
+                onTap: () {
+                  if(controller.calendarioPeriodoUI?.habilitadoProceso==1){
+                    showDialogTecladoPrecicion(controller, controller.tipoNotaUi, o);
+                  }
+                },
                 child: Stack(
                   children: [
                     Container(
@@ -1117,11 +1140,12 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                         child: _getTipoNota(null, controller.tipoNotaUi, o.nota),
                       ),
                     ),
+                    (controller.calendarioPeriodoUI?.habilitadoProceso!=1)?
                     Positioned(
                         bottom: 4,
                         right: 4,
                         child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 14,)
-                    ),
+                    ):Container(),
                   ],
                 ),
               );

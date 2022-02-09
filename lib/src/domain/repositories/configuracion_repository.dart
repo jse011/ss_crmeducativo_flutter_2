@@ -30,7 +30,7 @@ abstract class ConfiguracionRepository{
   Future<bool> validarRol(int usuarioId);
   Future<UsuarioUi> saveDatosIniciales(Map<String, dynamic> datosInicio);
   Future<void> updateUsuarioSuccessData(int usuarioId, int anioAcademicoId);
-  Future<void> saveDatosAnioAcademico(Map<String, dynamic> datosAnioAcademico);
+  Future<void> saveDatosAnioAcademico(Map<String, dynamic> datosAnioAcademico,  int? anioAcademicoId, int? empleadoId);
   Future<UsuarioUi> getSessionUsuario();
   Future<List<GeoreferenciaUi>> getGeoreferenciaList(int usuarioId);
   Future<void> updateSessionAnioAcademicoId(int anioAcademicoId);

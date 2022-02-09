@@ -39,7 +39,7 @@ class UpdateProgramasEducativos extends UseCase<GetProgramasEducativosResponse, 
           print("getProgramaEducativo datos principales webconfig 2: estado. "+ errorServidor.toString());
           if (!errorServidor) {
             //printTime();
-            await repository.saveDatosAnioAcademico(anioAcedemico);
+            await repository.saveDatosAnioAcademico(anioAcedemico, anioAcademicoIdSelect, empleadoId);
             print("getProgramaEducativo datos principales webconfig 2: Save. ");
             //printTime();
           }

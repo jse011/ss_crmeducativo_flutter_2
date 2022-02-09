@@ -18,7 +18,7 @@ class CursoPresenter extends Presenter {
         _updateCalendarioPerido = UpdateCalendarioPerido(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo);
 
   void getCalendarioPerido(CursosUi? cursosUi){
-    _updateCalendarioPerido.execute(_GetCalendarioPeriodoCase(this), GetCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
+    _updateCalendarioPerido.execute(_GetCalendarioPeriodoCase(this), UpdateCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
   }
 
   @override
@@ -58,7 +58,7 @@ class _GetCursoCase extends Observer<GetCursoResponse>{
 
 }
 
-class _GetCalendarioPeriodoCase extends Observer<GetCalendarioPeridoResponse>{
+class _GetCalendarioPeriodoCase extends Observer<UpdateCalendarioPeridoResponse>{
   CursoPresenter presenter;
 
   _GetCalendarioPeriodoCase(this.presenter);
@@ -75,7 +75,7 @@ class _GetCalendarioPeriodoCase extends Observer<GetCalendarioPeridoResponse>{
   }
 
   @override
-  void onNext(GetCalendarioPeridoResponse? response) {
+  void onNext(UpdateCalendarioPeridoResponse? response) {
     print("getCalendarioPeridoOnComplete");
     assert(presenter.getCalendarioPeridoOnComplete!=null);
     presenter.getCalendarioPeridoOnComplete();

@@ -168,6 +168,9 @@ class RubroCrearController extends Controller{
         if(co.tipoCompetenciaUi == TipoCompetenciaUi.ENFOQUE)_competenciaUiEnfoqueList.add(co);
       }
       if(rubricaEvaluacionUi!=null){
+        if(rubricaEvaluacionUi?.tipoRubroEvaluacion == TipoRubroEvaluacion.UNIDIMENSIONAL){
+          rubricaEvaluacionUi?.rubrosDetalleList?.add(rubricaEvaluacionUi!);
+        }
         for(RubricaEvaluacionUi rubroEvalUi in rubricaEvaluacionUi?.rubrosDetalleList??[]){
           for(CompetenciaUi competenciaUi in competenciaUiList){
             for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
@@ -303,13 +306,13 @@ class RubroCrearController extends Controller{
     presenter.getTipoNota();
     presenter.getTemaCriterios(rubricaEvaluacionUi, cursosUi, calendarioPeriodoUI);
 
-    print("rubricaEvaluacionUi ${rubricaEvaluacionUi?.tipoNotaId}");
+    //print("tareaId ${tareaUi?.tareaId}");
     if(rubricaEvaluacionUi!=null){
       _tituloRubrica = rubricaEvaluacionUi?.titulo;
     }else if(tareaUi!=null){
       _tituloRubrica = tareaUi?.titulo;
     }
-    print("getFormaEvaluacion");
+    //print("getFormaEvaluacion");
     super.onInitState();
   }
 
@@ -563,7 +566,7 @@ class RubroCrearController extends Controller{
       if((criterioPesoUi?.criterioUi?.peso??0)==0)return false;
     }
 
-    print("TAG Peso: " + porcentaje.toString());
+    //print("TAG Peso: " + porcentaje.toString());
     if (porcentaje == 100) {
       return true;
     } else {

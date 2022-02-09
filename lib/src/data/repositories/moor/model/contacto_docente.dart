@@ -9,6 +9,8 @@ class ContactoDocente extends Table{
   IntColumn get estadoId => integer().nullable()();
   TextColumn get  telefono => text().nullable()();
   TextColumn get  celular => text().nullable()();
+  TextColumn get  celularApoderado => text().nullable()();
+  TextColumn get  telefonoApoderado => text().nullable()();
   TextColumn get  fechaNac => text().nullable()();
   TextColumn get  correo => text().nullable()();
   TextColumn get  genero => text().nullable()();
@@ -36,8 +38,8 @@ class ContactoDocente extends Table{
   TextColumn get programaNombre => text().nullable()();
   IntColumn get cargaAcademicaId => integer().nullable()();
   IntColumn get idEmpleadoTutor => integer().nullable()();
-
+  IntColumn get anioAcademicoId => integer()();
   @override
-  Set<Column> get primaryKey => {personaId, tipo, cargaCursoId};
+  Set<Column> get primaryKey => {personaId, tipo, cargaCursoId, anioAcademicoId};
 
 }

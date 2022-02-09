@@ -16,11 +16,11 @@ class DrawerUserController extends StatefulWidget {
     this.nameUser,
     this.photoUser,
     this.correo,
+    required this.closeMenuCallback,
     required this.onClickCerrarCession
   }) : super(key: key);
 
   final double drawerWidth;
-
   final Widget screenView;
   final Function(bool) drawerIsOpen;
   final Function() onTapImagePerfil;
@@ -30,6 +30,8 @@ class DrawerUserController extends StatefulWidget {
   final String? photoUser;
   final String? correo;
   final Function onClickCerrarCession;
+  final CloseSesionCallback closeMenuCallback;
+
   final Widget menuListaView;
   @override
   _DrawerUserControllerState createState() => _DrawerUserControllerState();
@@ -76,6 +78,11 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
           iconAnimationController.animateTo(1.0, duration: const Duration(milliseconds: 0), curve: Curves.fastOutSlowIn);
         }
       });
+
+    widget.closeMenuCallback.call((){
+      onDrawerClick();
+    });
+
     WidgetsBinding.instance?.addPostFrameCallback((_) => getInitState());
     super.initState();
   }
@@ -349,3 +356,5 @@ class _DrawerUserControllerState extends State<DrawerUserController> with Ticker
     }
   }
 }
+
+typedef CloseSesionCallback = void Function(Function closeMenu);

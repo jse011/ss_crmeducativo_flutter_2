@@ -173,7 +173,7 @@ class ColumnCountProvider{
     double widthPx = context.widthPx;
     double heightPx = context.heightPx;
     //if(heightPx < widthPx)widthPx = heightPx;
-    print("widthPx: ${widthPx}");
+    //print("widthPx: ${widthPx}");
    /* int column = columnsForWidthSesion(context);
     double margin = ((column-1) * 24) + 24 + 48;
     widthPx = widthPx - margin;
@@ -227,7 +227,7 @@ class ColumnCountProvider{
     // 13 / (16 / 6) = X
     double widthPx = context.widthPx;
 
-    print("scaleCkeckForWidthAgregarCriterios: ${widthPx}");
+    //print("scaleCkeckForWidthAgregarCriterios: ${widthPx}");
 
     if (widthPx >= 1010) {
       return 1;

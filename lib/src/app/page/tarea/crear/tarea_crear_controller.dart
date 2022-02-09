@@ -136,7 +136,7 @@ class TareaCrearController extends Controller{
      if(file!=null){
        TareaRecusoUi tareaRecusoUi = TareaRecusoUi();
        tareaRecusoUi.recursoDidacticoId = null;
-       tareaRecusoUi.titulo = newName;
+       tareaRecusoUi.titulo = newName??basename(file.path);
        tareaRecusoUi.tipoRecurso = DomainTools.getType(file.path);
        tareaRecusoUi.file = file;
        tareaRecusoUi.silaboEventoId = cursosUi?.silaboEventoId;

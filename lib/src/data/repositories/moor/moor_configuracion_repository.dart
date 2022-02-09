@@ -3,10 +3,13 @@ import 'dart:collection';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/aula.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/carga_academica.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/carga_cursos.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/contacto_docente.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/persona.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/plan_estudios.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/session_user.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/usuario.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/serializable_convert.dart';
@@ -299,80 +302,105 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   }
 
   @override
-  Future<void> saveDatosAnioAcademico(Map<String, dynamic> datosAnioAcademico) async{
+  Future<void> saveDatosAnioAcademico(Map<String, dynamic> datosAnioAcademico, int?  anioAcademicoId, int? empleadoId) async{
     AppDataBase SQL = AppDataBase();
     try{
       await SQL.batch((batch) async {
+       List<int> cargaAcademicaIdList = [];
+       for(CargaAcademicaData cargaAcademicaData in await (SQL.select(SQL.cargaAcademica)..where((tbl) => tbl.idAnioAcademico.equals(anioAcademicoId))).get()){
+         cargaAcademicaIdList.add(cargaAcademicaData.cargaAcademicaId);
+       }
+       List<int> cargaCursoIdList = [];
+       List<int> planCursoIdList = [];
+       for(CargaCursoData cargaCursoData in await (SQL.select(SQL.cargaCurso)..where((tbl) => tbl.cargaAcademicaId.isIn(cargaAcademicaIdList))).get()){
+         cargaCursoIdList.add(cargaCursoData.cargaCursoId);
+         planCursoIdList.add(cargaCursoData.planCursoId??0);
+       }
+       List<int> planEstudioIdList = [];
+       for(PlanCurso planCurso in await (SQL.select(SQL.planCursos)..where((tbl) => tbl.planCursoId.isIn(planCursoIdList))).get()){
+         planEstudioIdList.add(planCurso.planEstudiosId??0);
+       }
 
+       List<int> programaEduIdList = [];
+       for(PlanEstudioData planEstudio in await (SQL.select(SQL.planEstudio)..where((tbl) => tbl.planEstudiosId.isIn(planEstudioIdList))).get()){
+         programaEduIdList.add(planEstudio.programaEduId??0);
+       }
+
+       await (SQL.delete(SQL.cargaAcademica)..where((tbl) => tbl.cargaAcademicaId.isIn(cargaAcademicaIdList))).go();
+       await (SQL.delete(SQL.cargaCurso)..where((tbl) => tbl.cargaCursoId.isIn(cargaCursoIdList))).go();
+       await (SQL.delete(SQL.planCursos)..where((tbl) => tbl.planCursoId.isIn(planCursoIdList))).go();
+       await (SQL.delete(SQL.planEstudio)..where((tbl) => tbl.planEstudiosId.isIn(planEstudioIdList))).go();
+       await (SQL.delete(SQL.programasEducativo)..where((tbl) => tbl.programaEduId.isIn(programaEduIdList))).go();
+       await (SQL.delete(SQL.silaboEvento)..where((tbl) => tbl.cargaCursoId.isIn(cargaCursoIdList))).go();
 
         if(datosAnioAcademico.containsKey("aulas")){
-          batch.deleteWhere(SQL.aula, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.aula, (row) => const Constant(true));
           batch.insertAll(SQL.aula, SerializableConvert.converListSerializeAula(datosAnioAcademico["aulas"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("cargasAcademicas")){
-          batch.deleteWhere(SQL.cargaAcademica, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.cargaAcademica, (row) => const Constant(true));
           batch.insertAll(SQL.cargaAcademica, SerializableConvert.converListSerializeCargaAcademica(datosAnioAcademico["cargasAcademicas"]), mode: InsertMode.insertOrReplace );
         }
 
         if(datosAnioAcademico.containsKey("cargaCursoDocente")){
-          batch.deleteWhere(SQL.cargaCursoDocente, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.cargaCursoDocente, (row) => const Constant(true));
           batch.insertAll(SQL.cargaCursoDocente, SerializableConvert.converListSerializeCargaCursoDocente(datosAnioAcademico["cargaCursoDocente"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("cargaCursoDocenteDet")){
-          batch.deleteWhere(SQL.cargaCursoDocenteDet, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.cargaCursoDocenteDet, (row) => const Constant(true));
           batch.insertAll(SQL.cargaCursoDocenteDet, SerializableConvert.converListSerializeCargaCursoDocenteDet(datosAnioAcademico["cargaCursoDocenteDet"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("cargaCursos")){
-          batch.deleteWhere(SQL.cargaCurso, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.cargaCurso, (row) => const Constant(true));
           batch.insertAll(SQL.cargaCurso, SerializableConvert.converListSerializeCargaCurso(datosAnioAcademico["cargaCursos"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("cursos")){
-          batch.deleteWhere(SQL.cursos, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.cursos, (row) => const Constant(true));
           batch.insertAll(SQL.cursos, SerializableConvert.converListSerializeCursos(datosAnioAcademico["cursos"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("parametrosDisenio")){
-          batch.deleteWhere(SQL.parametrosDisenio, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.parametrosDisenio, (row) => const Constant(true));
           batch.insertAll(SQL.parametrosDisenio, SerializableConvert.converListSerializeParametrosDisenio(datosAnioAcademico["parametrosDisenio"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("nivelesAcademicos")){
-          batch.deleteWhere(SQL.nivelAcademico, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.nivelAcademico, (row) => const Constant(true));
           batch.insertAll(SQL.nivelAcademico, SerializableConvert.converListSerializeNivelAcademico(datosAnioAcademico["nivelesAcademicos"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("periodos")){
-          batch.deleteWhere(SQL.periodos, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.periodos, (row) => const Constant(true));
           batch.insertAll(SQL.periodos, SerializableConvert.converListSerializePeriodos(datosAnioAcademico["periodos"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("planCursos")){
-          batch.deleteWhere(SQL.planCursos, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.planCursos, (row) => const Constant(true));
           batch.insertAll(SQL.planCursos, SerializableConvert.converListSerializePlanCurso(datosAnioAcademico["planCursos"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("planEstudios")){
-          batch.deleteWhere(SQL.planEstudio, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.planEstudio, (row) => const Constant(true));
           batch.insertAll(SQL.planEstudio, SerializableConvert.converListSerializePlanEstudio(datosAnioAcademico["planEstudios"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("programasEducativos")){
-          batch.deleteWhere(SQL.programasEducativo, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.programasEducativo, (row) => const Constant(true));
           batch.insertAll(SQL.programasEducativo, SerializableConvert.converListSerializeProgramasEducativo(datosAnioAcademico["programasEducativos"]), mode: InsertMode.insertOrReplace);
         }
 
         if(datosAnioAcademico.containsKey("secciones")){
-          batch.deleteWhere(SQL.seccion, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.seccion, (row) => const Constant(true));
           batch.insertAll(SQL.seccion, SerializableConvert.converListSerializeSeccion(datosAnioAcademico["secciones"]), mode: InsertMode.insertOrReplace);
         }
 
 
         if(datosAnioAcademico.containsKey("silaboEvento")){
-          batch.deleteWhere(SQL.silaboEvento, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.silaboEvento, (row) => const Constant(true));
           batch.insertAll(SQL.silaboEvento, SerializableConvert.converListSerializeSilaboEvento(datosAnioAcademico["silaboEvento"]), mode: InsertMode.insertOrReplace);
         }
 
@@ -387,7 +415,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         }
 
         if(datosAnioAcademico.containsKey("calendarioAcademico")){
-          batch.deleteWhere(SQL.calendarioAcademico, (row) => const Constant(true));
+          //batch.deleteWhere(SQL.calendarioAcademico, (row) => const Constant(true));
           batch.insertAll(SQL.calendarioAcademico, SerializableConvert.converListSerializeCalendarioAcademico(datosAnioAcademico["calendarioAcademico"]), mode: InsertMode.insertOrReplace);
         }
 
@@ -549,7 +577,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     ]);
 
     query.where(SQL.cargaCurso.empleadoId.equals(empleadoId));
-    query.where(SQL.cargaCurso.complejo.equals(0));
+    query.where(SQL.cargaCurso.complejo.isNull());
     query.where(SQL.anioAcademico.idAnioAcademico.equals(anioAcademicoId));
 
     for(var row in await query.get()){
@@ -558,7 +586,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
     var queryComplejo = SQL.select(SQL.cargaCurso).join([
       innerJoin(SQL.cargaCursoDocente, SQL.cargaCursoDocente.cargaCursoId.equalsExp(SQL.cargaCurso.cargaCursoId)),
-      innerJoin(SQL.cargaCursoDocenteDet, SQL.cargaCursoDocente.cargaCursoDocenteId.equalsExp(SQL.cargaCursoDocenteDet.cargaCursoDocenteId)),
+      //innerJoin(SQL.cargaCursoDocenteDet, SQL.cargaCursoDocente.cargaCursoDocenteId.equalsExp(SQL.cargaCursoDocenteDet.cargaCursoDocenteId)),
       innerJoin(SQL.cargaAcademica, SQL.cargaAcademica.cargaAcademicaId.equalsExp(SQL.cargaCurso.cargaAcademicaId)),
       innerJoin(SQL.anioAcademico, SQL.anioAcademico.idAnioAcademico.equalsExp(SQL.cargaAcademica.idAnioAcademico)),
     ]);
@@ -636,7 +664,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     ]);
 
     query.where(SQL.cargaCurso.empleadoId.equals(empleadoId));
-    query.where(SQL.cargaCurso.complejo.equals(0));
+    query.where(SQL.cargaCurso.complejo.isNull());
     query.where(SQL.anioAcademico.idAnioAcademico.equals(anioAcademicoId));
     query.where(SQL.programasEducativo.programaEduId.equals(programaEducativoId));
 
@@ -775,7 +803,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         cursoUiList.add(cursosUiTutorUi);
       }
 
-    CursosUi? cursosUi = cursoUiList.firstWhereOrNull((element) => element.cargaAcademicaId == contactoData.cargaAcademicaId && element.cargaCursoId == contactoData.cargaCursoId);
+    /*CursosUi? cursosUi = cursoUiList.firstWhereOrNull((element) => element.cargaAcademicaId == contactoData.cargaAcademicaId && element.cargaCursoId == contactoData.cargaCursoId);
       if(cursosUi==null){
         cursosUi = CursosUi();
         cursosUi.cargaAcademicaId = contactoData.cargaAcademicaId;
@@ -783,7 +811,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         cursosUi.nombreCurso = "${contactoData.cursoNombre} ${contactoData.periodoNombre??""} ${contactoData.grupoNombre??""} - ${contactoData.programaNombre??""}";
         cursosUi.alumnoUiList = [];
         cursoUiList.add(cursosUi);
-      }
+      }*/
 
       PersonaUi? personaUi = cursosUiTutorUi.alumnoUiList?.firstWhereOrNull((element) => element.personaId == contactoData.personaId);
       if(personaUi == null){
@@ -791,11 +819,11 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         cursosUiTutorUi.alumnoUiList?.add(personaUi);
       }
 
-    PersonaUi? personaUi2 = cursosUi.alumnoUiList?.firstWhereOrNull((element) => element.personaId == contactoData.personaId);
+    /*PersonaUi? personaUi2 = cursosUi.alumnoUiList?.firstWhereOrNull((element) => element.personaId == contactoData.personaId);
       if(personaUi2 == null){
         personaUi2 = transformarPersona(contactoData);
         cursosUi.alumnoUiList?.add(personaUi2);
-      }
+      }*/
     }
 
     return cursoUiList;
@@ -816,15 +844,85 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
   @override
   Future<void> saveContactoDocente(Map<String, dynamic> contactoDocente, int empleadoId, int anioAcademicoIdSelect) async {
-
+    print("contactosSerialList: jse");
     AppDataBase SQL = AppDataBase();
     try{
       await SQL.batch((batch) async {
         // functions in a batch don't have to be awaited - just
         // await the whole batch afterwards.
         //rubroEvalList.add(SerializableConvert.converSerializeRubroEvalDesempenio(item));
-        batch.deleteWhere(SQL.contactoDocente, (row) => const Constant(true));
-        batch.insertAll(SQL.contactoDocente, SerializableConvert.converListSerializeContactoDocente(contactoDocente["contactos"]), mode: InsertMode.insertOrReplace );
+        //batch.deleteWhere(SQL.contactoDocente, (row) => const Constant(true));
+        //
+
+        await (SQL.delete(SQL.contactoDocente)..where((tbl) => tbl.anioAcademicoId.equals(anioAcademicoIdSelect))).go();
+
+        List<ContactoDocenteData> contactoDocenteDataList = [];
+        print("contactosSerialList: init");
+        List<PersonasContactoSerial> personasSerialList = [];
+        Iterable personas = contactoDocente["personas"];
+        for(var item in personas){
+          personasSerialList.add(PersonasContactoSerial.fromJson(item));
+        }
+
+        List<ContactosSerial> contactosSerialList = [];
+        Iterable contactos = contactoDocente["contactos"];
+        for(var item in contactos){
+          contactosSerialList.add(ContactosSerial.fromJson(item));
+        }
+
+        List<CargaCursosContactoSerial> cargaCursosSerialList = [];
+        Iterable cargaCursos = contactoDocente["cargaCursos"];
+        for(var item in cargaCursos){
+          cargaCursosSerialList.add(CargaCursosContactoSerial.fromJson(item));
+        }
+        print("contactosSerialList: ${contactosSerialList.length}");
+        for(ContactosSerial contactosSerial in contactosSerialList){
+          PersonasContactoSerial? personasContactoSerial = personasSerialList.firstWhereOrNull((element) => element.personaId == contactosSerial.personaId);
+          CargaCursosContactoSerial? cargaCursosContactoSerial = cargaCursosSerialList.firstWhereOrNull((element) => element.cargaCursoId == contactosSerial.cargaCursoId);
+          contactoDocenteDataList.add(ContactoDocenteData(
+              anioAcademicoId: anioAcademicoIdSelect,
+              personaId: contactosSerial.personaId??0,
+              tipo: contactosSerial.tipo??0,
+              cargaCursoId: contactosSerial.cargaCursoId??0,
+              //nombreTipo: serial.nombres,
+              cursoId: cargaCursosContactoSerial?.cursoId,
+              cursoNombre: cargaCursosContactoSerial?.cursoNombre,
+              aulaId: cargaCursosContactoSerial?.aulaId,
+              aulaNombre: cargaCursosContactoSerial?.aulaNombre,
+              grupoId: cargaCursosContactoSerial?.grupoId,
+              grupoNombre: cargaCursosContactoSerial?.grupoNombre,
+              contratoEstadoId: contactosSerial.contratoEstadoId,
+              contratoVigente: contactosSerial.contratoVigente,
+              periodoId: cargaCursosContactoSerial?.periodoId,
+              periodoNombre: cargaCursosContactoSerial?.periodoNombre,
+              //hijoRelacionId: contactosSerial.hijoRelacionId,
+              //relacionId: contactosSerial.relacionId,
+              //relacion: contactosSerial.relacion,
+              //estadoId: contactosSerial.estadoId,
+              nombres: personasContactoSerial?.nombres,
+              apellidoPaterno: personasContactoSerial?.apellidoPaterno,
+              apellidoMaterno: personasContactoSerial?.apellidoMaterno,
+              celular: personasContactoSerial?.celular,
+              telefono: personasContactoSerial?.telefono,
+              correo: personasContactoSerial?.correo,
+              celularApoderado: personasContactoSerial?.celularApoderado,
+              telefonoApoderado: personasContactoSerial?.telefonoApoderado,
+              //estadoCivil: personasContactoSerial?.estadoCivil,
+              //fechaNac: personasContactoSerial?.fechaNac,
+              //ocupacion: personasContactoSerial?.ocupacion,
+              //numDoc: personasContactoSerial?.numDoc,
+              //genero: personasContactoSerial?.genero,
+              foto: personasContactoSerial?.foto,
+              programaId: cargaCursosContactoSerial?.programaId,
+              programaNombre: cargaCursosContactoSerial?.programaNombre,
+              cargaAcademicaId: cargaCursosContactoSerial?.cargaAcademicaId,
+              idEmpleadoTutor: contactosSerial.idEmpleadoTutor
+
+          ));
+        }
+        batch.insertAll(SQL.contactoDocente, contactoDocenteDataList, mode: InsertMode.insertOrReplace );
+
+
 
       });
     }catch(e){
@@ -852,8 +950,8 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
       for(var row  in rows){
         ContactoDocenteData contactoData = row.readTable(SQL.contactoDocente);
-        ContactoDocenteData? padreData = row.readTableOrNull(padre);
-        ContactoDocenteData? apoderadoData = row.readTableOrNull(padre);
+        //ContactoDocenteData? padreData = row.readTableOrNull(padre);
+        //ContactoDocenteData? apoderadoData = row.readTableOrNull(padre);
         //ContactoUi? contactoUi = contactoUiList.firstWhereOrNull((element) => element.personaUi?.personaId == contactoData.personaId && element.tipo == contactoData.tipo);
         ContactoUi contactoUi = new ContactoUi();
         contactoUi.personaUi = PersonaUi();
@@ -868,16 +966,16 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         contactoUi.relacion = contactoData.relacion;
         contactoUi.personaUi?.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
 
-        if(padreData!=null){
+        /*if(padreData!=null){
           ContactoUi padreUi = new ContactoUi();
           padreUi.personaUi?.personaId = padreData.personaId;
           padreUi.relacion = padreData.relacion;
           contactoUi.relacionList?.add(padreUi);
-        }
+        }*/
 
-        if(apoderadoData!=null){
-          contactoUi.apoderadoTelfono = apoderadoData.celular!=null?apoderadoData.celular: apoderadoData.telefono??"";
-        }
+
+        contactoUi.apoderadoTelfono = contactoData.celularApoderado!=null?contactoData.celularApoderado: contactoData.telefonoApoderado??"";
+
 
         contactoUi.tipo = contactoData.tipo;
         contactoUiList.add(contactoUi);
@@ -943,7 +1041,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<String?> getServerIcono() async{
     AppDataBase SQL = AppDataBase();
     WebConfig? webConfig = await(SQL.select(SQL.webConfigs)..where((tbl) => tbl.nombre.equals("wstr_icono_padre"))).getSingleOrNull();
-
+    print("wstr_icono_padre: ${webConfig?.content}");
 
     return webConfig?.content;
   }

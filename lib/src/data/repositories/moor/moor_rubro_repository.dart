@@ -1,4 +1,6 @@
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/evaluacion_proceso.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/data_convert.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/estado_sync.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/tools/serializable_convert.dart';
@@ -50,7 +52,7 @@ class MoorRubroRepository extends RubroRepository{
       await SQL.batch((batch) async {
         // functions in a batch don't have to be awaited - just
         // await the whole batch afterwards.
-        if(crearRubro.containsKey("sessionAprendizajeCriterios")||crearRubro.containsKey("unidadAprendizajeCriterios")){
+        //if(crearRubro.containsKey("sessionAprendizajeCriterios")||crearRubro.containsKey("unidadAprendizajeCriterios")){
           //&& t.calendarioPeriodoId.equals(calendarioPeriodoId)
           //batch.deleteWhere(SQL.criterio, (Criterio t) => t.silaboEventoId.equals(silaboEventoId));
           if(sesionAprendizajeId>0){
@@ -63,7 +65,7 @@ class MoorRubroRepository extends RubroRepository{
             query.go();
           }
 
-        }
+        //}
 
         if(crearRubro.containsKey("sessionAprendizajeCriterios")){
           batch.insertAll(SQL.criterio, SerializableConvert.converListSerializeCriterio(crearRubro["sessionAprendizajeCriterios"])  , mode: InsertMode.insertOrReplace );
@@ -95,14 +97,217 @@ class MoorRubroRepository extends RubroRepository{
           batch.insertAll(SQL.tipoNotaResultado, SerializableConvert.converListSerializeTipoNotaResultado(crearRubro["tipoNotaEscala"]), mode: InsertMode.insertOrReplace);
         }
 
+        /*Nueva forma de enviar criterios*/
+        if(crearRubro.containsKey("unidades")||crearRubro.containsKey("sesiones")){
+          Iterable sesiones = crearRubro["sesiones"];
+          List<SesionesCriterioSerial> sesionSerialList = [];
+          for(var item in sesiones){
+            sesionSerialList.add(SesionesCriterioSerial.fromJson(item));
+          }
+
+          Iterable unidades = crearRubro["unidades"];
+          List<UnidadesCriteroSerial> unidadSerialList = [];
+          for(var item in unidades){
+            unidadSerialList.add(UnidadesCriteroSerial.fromJson(item));
+          }
+
+          Iterable competencias = crearRubro["competencias"];
+          List<CompetenciasCriteroSerial> competenciasSerialList = [];
+          for(var item in competencias){
+            competenciasSerialList.add(CompetenciasCriteroSerial.fromJson(item));
+          }
+
+          Iterable desempenioIcds = crearRubro["desempenioIcds"];
+          List<DesempenioIcdsCriteroSerial> desempenioIcdsSerialList = [];
+          for(var item in desempenioIcds){
+            desempenioIcdsSerialList.add(DesempenioIcdsCriteroSerial.fromJson(item));
+          }
+
+          Iterable icds = crearRubro["icds"];
+          List<IcdsCriteroSerial> icdsSerialList = [];
+          for(var item in icds){
+            icdsSerialList.add(IcdsCriteroSerial.fromJson(item));
+          }
+
+          Iterable campotematicos = crearRubro["campotematicos"];
+          List<CampotematicosCriteroSerial> campotematicosSerialList = [];
+          for(var item in campotematicos){
+            campotematicosSerialList.add(CampotematicosCriteroSerial.fromJson(item));
+          }
+
+          Iterable sesionesCompetencia = crearRubro["sesionesCompetencia"];
+          List<SesionesCompetenciaCriterioSerial> sesionesCompetenciaSerialList = [];
+          for(var item in sesionesCompetencia){
+            sesionesCompetenciaSerialList.add(SesionesCompetenciaCriterioSerial.fromJson(item));
+          }
+
+          Iterable sesionesDesempenioIcds = crearRubro["sesionesDesempenioIcds"];
+          List<SesionesDesempenioIcdsCriterioSerial> sesionesDesempenioIcdsSerialList = [];
+          for(var item in sesionesDesempenioIcds){
+            sesionesDesempenioIcdsSerialList.add(SesionesDesempenioIcdsCriterioSerial.fromJson(item));
+          }
+
+          Iterable sesionesCampoTematicos = crearRubro["sesionesCampoTematicos"];
+          List<SesionesCampoTematicosCriterioSerial> sesionesCampoTematicosSerialList = [];
+          for(var item in sesionesCampoTematicos){
+            sesionesCampoTematicosSerialList.add(SesionesCampoTematicosCriterioSerial.fromJson(item));
+          }
+
+          Iterable unidadCampoTematicos = crearRubro["unidadCampoTematicos"];
+          List<UnidadCampoTematicosCriteroSerial> unidadCampoTematicosSerialList = [];
+          for(var item in unidadCampoTematicos){
+            unidadCampoTematicosSerialList.add(UnidadCampoTematicosCriteroSerial.fromJson(item));
+          }
+
+          Iterable unidadCompetencias = crearRubro["unidadCompetencias"];
+          List<UnidadCompetenciasCriteroSerial> unidadCompetenciasSerialList = [];
+          for(var item in unidadCompetencias){
+            unidadCompetenciasSerialList.add(UnidadCompetenciasCriteroSerial.fromJson(item));
+          }
+
+          Iterable unidadDesempenioIcds = crearRubro["unidadDesempenioIcds"];
+          List<UnidadDesempenioIcdsCriteroSerial> unidadDesempenioIcdsSerialList = [];
+          for(var item in unidadDesempenioIcds){
+            unidadDesempenioIcdsSerialList.add(UnidadDesempenioIcdsCriteroSerial.fromJson(item));
+          }
+
+          Map<String,dynamic> imagenDesempenioIcd = crearRubro["imagenDesempenioIcd"];
+
+          List<CriterioData> criterioUnidadList = [];
+          for(var unidad in unidadSerialList){
+
+            var unidadCompetenciasFiltro = unidadCompetenciasSerialList.where((element) => element.unidadAprendizajeId == unidad.unidadAprendizajeId);
+            if(unidadCompetenciasFiltro.isNotEmpty){
+              for(var unidadcompetencia in unidadCompetenciasFiltro){
+                CompetenciasCriteroSerial? capacidad = competenciasSerialList.firstWhereOrNull((element) => element.competenciaId == unidadcompetencia.competenciaId);
+                CompetenciasCriteroSerial? competencia = competenciasSerialList.firstWhereOrNull((element) => element.competenciaId == capacidad?.superCompetenciaId);
+
+                var unidadDesempenioIcdsFiltro = unidadDesempenioIcdsSerialList.where((element) => element.unidadCompetenciaId == unidadcompetencia.unidadCompetenciaId);
+
+                if(unidadDesempenioIcdsFiltro.isNotEmpty){
+                  for(var unidadDesempenioIcd in unidadDesempenioIcdsFiltro){
+                    DesempenioIcdsCriteroSerial? desempenioIcds = desempenioIcdsSerialList.firstWhereOrNull((element) => element.desempenioIcdId == unidadDesempenioIcd.desempenioIcdId);
+                    IcdsCriteroSerial? icds = icdsSerialList.firstWhereOrNull((element) => element.icdId == desempenioIcds?.icdId);
+                    String? url = null;
+                    if(imagenDesempenioIcd.containsKey(desempenioIcds?.tipoId??"")){
+                      url = imagenDesempenioIcd[desempenioIcds?.tipoId];
+                    }
+
+                    var unidadCampoTematicosFiltro = unidadCampoTematicosSerialList.where((element) => element.unidadCompetenciaDesempenioIcdId == unidadDesempenioIcd.unidadCompetenciaDesempenioIcdId);
+                    if(unidadCampoTematicosFiltro.isNotEmpty){
+                      for(var unidadCampoTematico in unidadCampoTematicosFiltro){
+                        CampotematicosCriteroSerial? campotematico = campotematicosSerialList.firstWhereOrNull((element) => element.campoTematicoId == unidadCampoTematico.campoTematicoIcd);
+                        CampotematicosCriteroSerial? campotematicoPadre = campotematicosSerialList.firstWhereOrNull((element) => element.campoTematicoId == campotematico?.parentId);
+
+                        criterioUnidadList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, null, unidadcompetencia, capacidad, competencia, desempenioIcds, icds, url, campotematico, campotematicoPadre));
+                      }
+                    }else{
+                      criterioUnidadList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, null, unidadcompetencia, capacidad, competencia, desempenioIcds, icds, url, null, null));
+                    }
+                  }
+                }else{
+                  criterioUnidadList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, null, unidadcompetencia, capacidad, competencia, null, null, null, null, null));
+                }
+              }
+            }else{
+              criterioUnidadList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, null, null, null, null, null, null, null, null, null));
+            }
+          }
+
+          List<CriterioData> criterioSesionList = [];
+          for(var sesion in sesionSerialList){
+
+            var sesionCompetenciasFiltro = sesionesCompetenciaSerialList.where((element) => element.sesionAprendizajeId == sesion.sesionAprendizajeId);
+            if(sesionCompetenciasFiltro.isNotEmpty){
+              for(var sesioncompetencia in sesionCompetenciasFiltro){
+                CompetenciasCriteroSerial? capacidad = competenciasSerialList.firstWhereOrNull((element) => element.competenciaId == sesioncompetencia.competenciaId);
+                CompetenciasCriteroSerial? competencia = competenciasSerialList.firstWhereOrNull((element) => element.competenciaId == capacidad?.superCompetenciaId);
+
+                var sesionesDesempenioIcdsFiltro = sesionesDesempenioIcdsSerialList.where((element) => element.sesionCompetenciaId == sesioncompetencia.sesionCompetenciaId);
+                if(sesionesDesempenioIcdsFiltro.isNotEmpty){
+                  for(var sesionesDesempenioIcds in sesionesDesempenioIcdsFiltro){
+                    DesempenioIcdsCriteroSerial? desempenioIcds = desempenioIcdsSerialList.firstWhereOrNull((element) => element.desempenioIcdId == sesionesDesempenioIcds.desempenioIcdId);
+                    IcdsCriteroSerial? icds = icdsSerialList.firstWhereOrNull((element) => element.icdId == desempenioIcds?.icdId);
+                    String? url = null;
+                    if(imagenDesempenioIcd.containsKey(desempenioIcds?.tipoId??"")){
+                      url = imagenDesempenioIcd[desempenioIcds?.tipoId];
+                    }
+
+                    var sesionesCampoTematicosFiltro = sesionesCampoTematicosSerialList.where((element) => element.sesionCompetenciaDesempenioIcdId == sesionesDesempenioIcds.sesionCompetenciaDesempenioIcdId);
+                    if(sesionesCampoTematicosFiltro.isNotEmpty){
+                      for(var  sesionesCampoTematico in sesionesCampoTematicosFiltro){
+                        CampotematicosCriteroSerial? campotematico = campotematicosSerialList.firstWhereOrNull((element) => element.campoTematicoId == sesionesCampoTematico.campoTematicoId);
+                        CampotematicosCriteroSerial? campotematicoPadre = campotematicosSerialList.firstWhereOrNull((element) => element.campoTematicoId == campotematico?.parentId);
+
+                        criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, capacidad, competencia, desempenioIcds, icds, url, campotematico, campotematicoPadre));
+                      }
+                    }else{
+                      criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, capacidad, competencia, desempenioIcds, icds, url, null, null));
+                    }
+                  }
+                }else{
+                  criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, capacidad, competencia, null, null, null, null, null));
+                }
+              }
+            }else{
+              criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, null, null, null, null, null, null, null));
+            }
+          }
+
+          batch.insertAll(SQL.criterio,criterioUnidadList , mode: InsertMode.insertOrReplace );
+          batch.insertAll(SQL.criterio, criterioSesionList, mode: InsertMode.insertOrReplace );
+
+          /*Nueva forma de enviar criterios*/
+        }
+
       });
     });
   }
 
+  CriterioData tranformarCriterioUnidadData(int? silaboEventoId, int? calendarioPeriodoId, UnidadesCriteroSerial? unidad, SesionesCriterioSerial? sesion, UnidadCompetenciasCriteroSerial? unidadcompetencia, CompetenciasCriteroSerial? capacidad,
+      CompetenciasCriteroSerial? competencia, DesempenioIcdsCriteroSerial? desempenioIcds, IcdsCriteroSerial? icds, String? url, CampotematicosCriteroSerial? campotematico, CampotematicosCriteroSerial? campotematicoPadre){
+
+    return CriterioData(
+      unidadAprendiajeId: unidad?.unidadAprendizajeId??sesion?.unidadAprendizajeId??0,
+      nroUnidad: unidad?.nroUnidad,
+      tituloUnidad: unidad?.titulo,
+      calendarioPeriodoId: calendarioPeriodoId,
+      silaboEventoId: silaboEventoId??0,
+      competenciaId: capacidad?.competenciaId??0,
+      competenciaNombre: capacidad?.nombre,
+      competenciaEvaluable: unidadcompetencia?.competenciaEvaluable,
+      competenciaResultadoId: unidadcompetencia?.competenciaResultadoId,
+      competenciaTipoId: capacidad?.tipoId,
+      superCompetenciaId: capacidad?.superCompetenciaId,
+      superCompetenciaNombre: competencia?.nombre,
+      superCompetenciaEvaluable: unidadcompetencia?.competenciaEvaluablePadre,
+      superCompetenciaResultadoId: unidadcompetencia?.competenciaResultadoPadreId,
+      superCompetenciaTipoId: competencia?.tipoId,
+      desempenioIcdId: desempenioIcds?.desempenioIcdId??0,
+      tipoId: desempenioIcds?.tipoId,
+      icdId: desempenioIcds?.icdId,
+      icdTitulo: icds?.titulo,
+      desempenioId: desempenioIcds?.desempenioId,
+      url: url,
+      //sequito el titulo desempenio por ser largo
+      campoTematicoId: campotematico?.campoTematicoId??0,
+      campoTematicoTitulo: campotematico?.titulo,
+      campoTematicoParentEstado: campotematico?.estado,
+      campoTematicoParentParentId: campotematico?.parentId,
+      campoTematicoParentTitulo: campotematicoPadre?.titulo,
+      sesionAprendizajeId: sesion?.sesionAprendizajeId??0,
+      nroSesion: sesion?.nroSesion,
+      rolIdSesion: sesion?.rolId,
+      sesionAprendizajePadreId: sesion?.parentSesionId,
+      tituloSesion: sesion?.titulo
+    );
+  }
+
+
   @override
   Future<void> saveDatosRubrosEval(Map<String, dynamic> rubro, int silaboEventoId, int calendarioPeriodoId, int sesionAprendizajeDocenteId, int sesionAprendizajeAlumnoId, String? tareaId) async {
     AppDataBase SQL = AppDataBase();
-    print("saveDatosRubrosEval ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumnoId}");
+    //print("saveDatosRubrosEval ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumnoId}");
     await SQL.transaction(() async{
       await SQL.batch((batch) async {
 
@@ -132,6 +337,55 @@ class MoorRubroRepository extends RubroRepository{
           }
           //queryRubro.where(SQL.rubroEvaluacionProceso.syncFlag.isNotIn([EstadoSync.FLAG_UPDATED, EstadoSync.FLAG_ADDED])); El servidor devuelve los rubros que solo estan en el celular
 
+          List<RubroEvaluacionProcesoData> rubroEvaluacionProcesolist = SerializableConvert.converListSerializeRubroEvaluacionProceso(rubro["rubroEvaluaciones"]);
+
+          if(rubro.containsKey("evaluacionStringList")){
+            Iterable l = rubro["evaluacionStringList"];
+            List<EvaluacionProcesoData> evaluacionProcesoDataList = [];
+            for(var item in l){
+              String evaluacionProcesoId = "";
+              double nota = 0;
+              int alumoId = 0;
+              String? rubroEvaluacionId = null;
+              int publicado = 0;
+              String? valorTipoNotaId = null;
+              if(item is String){
+                var parts  = item.split('|\$');
+                evaluacionProcesoId =  parts[0];
+                var partsDetalle  = parts[1].split('|');
+                String _nota = partsDetalle[0];
+                String _alumnoId = partsDetalle[1];
+                String _positionRubro = partsDetalle[2];
+                String _publicado = partsDetalle[3];
+                nota = (_nota).isEmpty?0:double.parse(_nota);
+                alumoId = (_alumnoId).isEmpty?0:int.parse(_alumnoId);
+                publicado = (_publicado).isEmpty?0:int.parse(_publicado);
+                int? positionRubro = (_positionRubro).isEmpty?null:int.parse(_positionRubro);
+                if(positionRubro!=null){
+                  try{
+                    RubroEvaluacionProcesoData rubroEvaluacionProcesoData = rubroEvaluacionProcesolist[positionRubro];
+                    rubroEvaluacionId = rubroEvaluacionProcesoData.rubroEvalProcesoId;
+                  }catch(e){}
+                }
+                valorTipoNotaId = parts[2];
+
+              }
+
+              evaluacionProcesoDataList.add( EvaluacionProcesoData(
+                  evaluacionProcesoId: evaluacionProcesoId,
+                  rubroEvalProcesoId:  rubroEvaluacionId,
+                  nota: nota,
+                  alumnoId: alumoId,
+                  publicado: publicado,
+                  valorTipoNotaId: valorTipoNotaId
+              ));
+            }
+
+            batch.insertAll(SQL.evaluacionProceso, evaluacionProcesoDataList, mode: InsertMode.insertOrReplace );
+          }
+
+
+
           var queryEval = SQL.selectOnly(SQL.evaluacionProceso)..addColumns([SQL.evaluacionProceso.evaluacionProcesoId]);
           queryEval.where(SQL.evaluacionProceso.rubroEvalProcesoId.isInQuery(queryRubro));
 
@@ -143,8 +397,10 @@ class MoorRubroRepository extends RubroRepository{
           (SQL.delete(SQL.rubroEvalRNPFormula)..where((tbl) => tbl.rubroEvaluacionPrimId.isInQuery(queryRubro))).go();
           //(SQL.delete(SQL.equipoEvaluacion)..where((tbl) => tbl.rubroEvalProcesoId.isInQuery(queryRubro))).go();
           //(SQL.delete(SQL.equipoEvaluacion)..where((tbl) => tbl.rubroEvalProcesoId.isInQuery(queryRubro))).go();
-          batch.insertAll(SQL.rubroEvaluacionProceso, SerializableConvert.converListSerializeRubroEvaluacionProceso(rubro["rubroEvaluaciones"]), mode: InsertMode.insertOrReplace );
-          batch.insertAll(SQL.evaluacionProceso, SerializableConvert.converListSerializeEvaluacionProceso(rubro["evaluaciones"]), mode: InsertMode.insertOrReplace );
+          batch.insertAll(SQL.rubroEvaluacionProceso, rubroEvaluacionProcesolist, mode: InsertMode.insertOrReplace );
+          if(rubro.containsKey("evaluaciones")){
+            batch.insertAll(SQL.evaluacionProceso, SerializableConvert.converListSerializeEvaluacionProceso(rubro["evaluaciones"]), mode: InsertMode.insertOrReplace ); 
+          }
           batch.insertAll(SQL.rubroEvalRNPFormula, SerializableConvert.converListSerializeRubroEvalRNPFormula(rubro["rubroFormulas"]), mode: InsertMode.insertOrReplace );
 
         }
@@ -303,7 +559,7 @@ class MoorRubroRepository extends RubroRepository{
     for(CriterioData criterioData in criterioDataList){
 
       CompetenciaUi? competenciaUi = competenciaUiList.firstWhereOrNull((element) => element.competenciaId == criterioData.superCompetenciaId);
-      if(competenciaUi==null){
+      if(competenciaUi==null&& criterioData.superCompetenciaId != 0){
         competenciaUi = CompetenciaUi();
         competenciaUi.capacidadUiList = [];
         competenciaUi.competenciaId = criterioData.superCompetenciaId;
@@ -327,8 +583,8 @@ class MoorRubroRepository extends RubroRepository{
         competenciaUiList.add(competenciaUi);
       }
 
-      CapacidadUi? capacidadUi = competenciaUi.capacidadUiList?.firstWhereOrNull((element) => element.capacidadId == criterioData.competenciaId && competenciaUi?.competenciaId == element.competenciaId);
-      if(capacidadUi==null){
+      CapacidadUi? capacidadUi = competenciaUi?.capacidadUiList?.firstWhereOrNull((element) => element.capacidadId == criterioData.competenciaId && competenciaUi?.competenciaId == element.competenciaId);
+      if(capacidadUi==null && criterioData.competenciaId != 0){
         capacidadUi = CapacidadUi();
         capacidadUi.criterioUiList = [];
         capacidadUi.capacidadId = criterioData.competenciaId;
@@ -339,11 +595,18 @@ class MoorRubroRepository extends RubroRepository{
         capacidadUi.competenciaUi = competenciaUi;
         capacidadUi.rubroResultadoId = criterioData.competenciaResultadoId;
         capacidadUi.evaluable = criterioData.competenciaEvaluable;
-        competenciaUi.capacidadUiList?.add(capacidadUi);
+        competenciaUi?.capacidadUiList?.add(capacidadUi);
       }
 
-      CriterioUi? criterioUi = capacidadUi.criterioUiList?.firstWhereOrNull((element) => element.desempenioIcdId == criterioData.desempenioIcdId);
-      if(criterioUi==null){
+      CriterioUi? criterioUi = capacidadUi?.criterioUiList?.firstWhereOrNull((element) => element.desempenioIcdId == criterioData.desempenioIcdId);
+      if(criterioUi==null && criterioData.desempenioIcdId != 0){
+
+        if((criterioData.icdTitulo??"").trim().isEmpty){
+          //print("desempenioIcdId ${criterioData.desempenioIcdId}");
+          //print("icdTitulo ${criterioData.icdTitulo}");
+          //print("icdId ${criterioData.icdId}");
+          //print("capacidad ${criterioData.competenciaId}");
+        }
         criterioUi= CriterioUi();
         criterioUi.temaCriterioUiList = [];
         criterioUi.desempenioIcdId = criterioData.desempenioIcdId;
@@ -358,13 +621,13 @@ class MoorRubroRepository extends RubroRepository{
         criterioUi.capacidadUi = capacidadUi;
         criterioUi.tipoId = criterioData.tipoId;
         criterioUi.url = criterioData.url;
-        capacidadUi.criterioUiList?.add(criterioUi);
+        capacidadUi?.criterioUiList?.add(criterioUi);
 
       }
 
       if((criterioData.campoTematicoParentId??0) > 0) {
-        TemaCriterioUi? padreTemaCriterioUi = criterioUi.temaCriterioUiList?.firstWhereOrNull((element) => element.campoTematicoId == criterioData.campoTematicoParentId);
-        if (padreTemaCriterioUi == null) {
+        TemaCriterioUi? padreTemaCriterioUi = criterioUi?.temaCriterioUiList?.firstWhereOrNull((element) => element.campoTematicoId == criterioData.campoTematicoParentId);
+        if (padreTemaCriterioUi == null && criterioData.campoTematicoParentId != 0 && criterioData.campoTematicoParentId != null) {
           padreTemaCriterioUi = TemaCriterioUi();
           padreTemaCriterioUi.temaCriterioUiList = [];
           padreTemaCriterioUi.campoTematicoId =
@@ -373,51 +636,51 @@ class MoorRubroRepository extends RubroRepository{
           padreTemaCriterioUi.descripcion =
               criterioData.campoTematicoParentDescripcion;
           padreTemaCriterioUi.parentId = criterioData.campoTematicoParentId;
-          criterioUi.temaCriterioUiList?.add(padreTemaCriterioUi);
+          criterioUi?.temaCriterioUiList?.add(padreTemaCriterioUi);
         }
 
 
-        TemaCriterioUi? temaCriterioUi = padreTemaCriterioUi.temaCriterioUiList?.firstWhereOrNull((element) => element.campoTematicoId == criterioData.campoTematicoId);
-        if(temaCriterioUi==null){
+        TemaCriterioUi? temaCriterioUi = padreTemaCriterioUi?.temaCriterioUiList?.firstWhereOrNull((element) => element.campoTematicoId == criterioData.campoTematicoId);
+        if(temaCriterioUi==null && criterioData.campoTematicoId != 0 && criterioData.campoTematicoId != null){
           temaCriterioUi = TemaCriterioUi();
           temaCriterioUi.campoTematicoId = criterioData.campoTematicoId;
           temaCriterioUi.titulo = criterioData.campoTematicoTitulo;
           temaCriterioUi.descripcion = criterioData.campoTematicoDescripcion;
           temaCriterioUi.parentId = criterioData.campoTematicoParentId;
           temaCriterioUi.parent = padreTemaCriterioUi;
-          padreTemaCriterioUi.temaCriterioUiList?.add(temaCriterioUi);
+          padreTemaCriterioUi?.temaCriterioUiList?.add(temaCriterioUi);
         }
 
       }else{
-        TemaCriterioUi? temaCriterioUi = criterioUi.temaCriterioUiList?.firstWhereOrNull((element) => element.campoTematicoId == criterioData.campoTematicoId);
-        if(temaCriterioUi==null){
+        TemaCriterioUi? temaCriterioUi = criterioUi?.temaCriterioUiList?.firstWhereOrNull((element) => element.campoTematicoId == criterioData.campoTematicoId);
+        if(temaCriterioUi==null && criterioData.campoTematicoId != 0 && criterioData.campoTematicoId != null){
           temaCriterioUi = TemaCriterioUi();
           temaCriterioUi.campoTematicoId = criterioData.campoTematicoId;
           temaCriterioUi.titulo = criterioData.campoTematicoTitulo;
           temaCriterioUi.descripcion = criterioData.campoTematicoDescripcion;
           temaCriterioUi.parentId = criterioData.campoTematicoParentId;
-          criterioUi.temaCriterioUiList?.add(temaCriterioUi);
+          criterioUi?.temaCriterioUiList?.add(temaCriterioUi);
         }
       }
 
     }
 
-   // print("competenciaUiList size "+competenciaUiList.length.toString());
+   // //print("competenciaUiList size "+competenciaUiList.length.toString());
     return competenciaUiList;
   }
 
   @override
   Future<void> saveRubroEvaluacionData(Map<String, dynamic> rubroEvaluacionData) async {
-    print("saveRubroEvaluacionData");
+    //print("saveRubroEvaluacionData");
     AppDataBase SQL = AppDataBase();
     //= await getRubroEvaluacionData(rubricaEvaluacionUi, usuarioId);
 
-    print("saveRubroEvaluacionData ${rubroEvaluacionData.containsKey("rubroEvaluacionProceso")}");
+    //print("saveRubroEvaluacionData ${rubroEvaluacionData.containsKey("rubroEvaluacionProceso")}");
 
     await SQL.batch((batch) async {
-      print("saveRubroEvaluacionData ${rubroEvaluacionData["rubroEvaluacionProceso"]}");
+      //print("saveRubroEvaluacionData ${rubroEvaluacionData["rubroEvaluacionProceso"]}");
       if(rubroEvaluacionData["rubroEvaluacionProceso"] != null){
-        print("save rubroEvaluacionProceso");
+        //print("save rubroEvaluacionProceso");
         batch.insert(
             SQL.rubroEvaluacionProceso, rubroEvaluacionData["rubroEvaluacionProceso"], mode: InsertMode.insertOrReplace);
       }
@@ -465,7 +728,7 @@ class MoorRubroRepository extends RubroRepository{
     rubroEvaluacionData["rubroCampotematico"] = [];
     List<ContactoDocenteData> alumnoList = [];
 
-    print("createRubroEvaluacionData ${rubricaEvaluacionUi?.sesionAprendizajeId}");
+    //print("createRubroEvaluacionData ${rubricaEvaluacionUi?.sesionAprendizajeId}");
 
     if(rubricaEvaluacionUi?.formaEvaluacionId == FORMA_EVAL_INDIVIDUAL) {
       var query = SQL.select(SQL.contactoDocente)
@@ -503,7 +766,7 @@ class MoorRubroRepository extends RubroRepository{
       usuarioCreacionId: usuarioId,
     );
     rubroEvaluacionData["rubroEvaluacionProceso"] = rubroEvaluacionProceso;
-
+    print("");
     if(rubricaEvaluacionUi?.formaEvaluacionId == FORMA_EVAL_INDIVIDUAL){
 
       for(ContactoDocenteData alumno in alumnoList){
@@ -667,9 +930,9 @@ class MoorRubroRepository extends RubroRepository{
 
       for(var row in await queryRubroDetalle.get()){
         RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
-        print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.rubroEvalProcesoId}");
-        print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.titulo}");
-        print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.peso}");
+        //print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.rubroEvalProcesoId}");
+        //print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.titulo}");
+        //print("transformarEvaluaciones: ${rubroEvaluacionProcesoData.peso}");
         rubroEvaluacionDataList.add(rubroEvaluacionProcesoData);
         rubroEvaluacionIdEvaluacionList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
         rubroFormulaDataList.add(row.readTable(SQL.rubroEvalRNPFormula));
@@ -698,7 +961,7 @@ class MoorRubroRepository extends RubroRepository{
   @override
   Future<Map<String, dynamic>?> getRubroEvaluacionIdSerial(String? rubroEvaluacionId) async {
     AppDataBase SQL = AppDataBase();
-    print("getRubroEvaluacionSerial: ${rubroEvaluacionId} as");
+    //print("getRubroEvaluacionSerial: ${rubroEvaluacionId} as");
     RubroEvaluacionProcesoData? rubroEvaluacionProcesoData = await (SQL.selectSingle(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.equals(rubroEvaluacionId)))
         .getSingleOrNull();
     if(rubroEvaluacionProcesoData != null){
@@ -736,8 +999,8 @@ class MoorRubroRepository extends RubroRepository{
     var query = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     query.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    //query.where((tbl) => tbl.tipoFormulaId.isNull());
-    query.where((tbl) => tbl.tipoFormulaId.equals(0));
+    query.where((tbl) => tbl.tipoFormulaId.isNull());
+    //query.where((tbl) => tbl.tipoFormulaId.equals(0));
     query.where((tbl) => tbl.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
     query.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
 
@@ -909,8 +1172,8 @@ class MoorRubroRepository extends RubroRepository{
     var queryRubro = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     queryRubro.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     queryRubro.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    //query.where((tbl) => tbl.tipoFormulaId.isNull());
-    queryRubro.where((tbl) => tbl.tipoFormulaId.equals(0));
+    queryRubro.where((tbl) => tbl.tipoFormulaId.isNull());
+    //queryRubro.where((tbl) => tbl.tipoFormulaId.equals(0));
     queryRubro.where((tbl) => tbl.sesionAprendizajeId.isNotNull());
     queryRubro.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
 
@@ -939,8 +1202,8 @@ class MoorRubroRepository extends RubroRepository{
     queryRubro.where(SQL.rubroEvaluacionProceso.calendarioPeriodoId.equals(calendarioPeriodoId));
     queryRubro.where(SQL.rubroEvaluacionProceso.silaboEventoId.equals(silaboEventoId));
     queryRubro.where(SQL.rubroEvaluacionProceso.tiporubroid.isIn([TIPO_RUBRO_BIDIMENCIONAL_DETALLE, TIPO_RUBRO_UNIDIMENCIONAL]));
-    //query.where((tbl) => tbl.tipoFormulaId.isNull());
-    queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.equals(0));
+    queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.isNull());
+    //queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.equals(0));
     //queryRubro.where((tbl) => tbl.sesionAprendizajeId.isNotNull());
     queryRubro.where(SQL.rubroEvaluacionProceso.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
 
@@ -991,7 +1254,7 @@ class MoorRubroRepository extends RubroRepository{
       tipoNotaUiList.add(tipoNotaUi);
     }
 
-    print("evaluacionProcesoDataList: ${evaluacionProcesoDataList.length}");
+    //print("evaluacionProcesoDataList: ${evaluacionProcesoDataList.length}");
     List<CompetenciaUi> competenciaUiList = await getTemasCriterios(calendarioPeriodoId??0, silaboEventoId??0);
     for(CompetenciaUi competenciaUi in competenciaUiList){
       for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
@@ -1017,9 +1280,12 @@ class MoorRubroRepository extends RubroRepository{
                 rubricaEvaluacionUi.evaluacionUiList?.add(evaluacionUi);
               }
             }
+
             capacidadUi.rubricaEvalUiList?.add(rubricaEvaluacionUi);
           }
         }
+
+        //print("capacidadUi: ${ capacidadUi.rubricaEvalUiList?.length}");
       }
     }
 
@@ -1094,7 +1360,7 @@ class MoorRubroRepository extends RubroRepository{
 
       valorTipoNotaUiList.add(valorTipoNotaUi);
     }
-    print("valorTipoNotaList: " + (valorTipoNotaUiList.length).toString());
+    //print("valorTipoNotaList: " + (valorTipoNotaUiList.length).toString());
     tipoNotaUi.valorTipoNotaList = valorTipoNotaUiList;
     return tipoNotaUi;
   }
@@ -1141,7 +1407,7 @@ class MoorRubroRepository extends RubroRepository{
     for(ValorTipoNotaRubroData valorTipoNotaRubroData in valorTipoNotaRubroList){
       ValorTipoNotaUi valorTipoNotaUi = convertValorTipoNotaUi(valorTipoNotaRubroData);
       valorTipoNotaUi.tipoNotaUi = tipoNotaUi;
-      print("getTipoNota ${valorTipoNotaUi.icono}");
+      //print("getTipoNota ${valorTipoNotaUi.icono}");
       valorTipoNotaUiList.add(valorTipoNotaUi);
     }
 
@@ -1165,7 +1431,7 @@ class MoorRubroRepository extends RubroRepository{
       for(var row in await queryRubroDetalle.get()){
         RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
         RubroEvalRNPFormulaData rubroEvalRNPFormulaData = row.readTable(SQL.rubroEvalRNPFormula);
-        print("rubroEvalRNPFormulaData peso: ${rubroEvalRNPFormulaData.peso}");
+        //print("rubroEvalRNPFormulaData peso: ${rubroEvalRNPFormulaData.peso}");
         rubricaEvaluacionUiDetalleList.add(convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, rubroEvalRNPFormulaData.peso??0.0));
         count++;
       }
@@ -1261,8 +1527,8 @@ class MoorRubroRepository extends RubroRepository{
     var query = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     query.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    //query.where((tbl) => tbl.tipoFormulaId.isNull());
-    query.where((tbl) => tbl.tipoFormulaId.equals(0));
+    query.where((tbl) => tbl.tipoFormulaId.isNull());
+    //query.where((tbl) => tbl.tipoFormulaId.equals(0));
     query.where((tbl) => tbl.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
     query.where((tbl) => tbl.syncFlag.isIn([EstadoSync.FLAG_ADDED, EstadoSync.FLAG_UPDATED]));
 
@@ -1381,12 +1647,12 @@ class MoorRubroRepository extends RubroRepository{
     queryRubroDetalle.where(SQL.rubroEvalRNPFormula.rubroEvaluacionPrimId.equals(rubricaEvaluacionUi?.rubroEvaluacionId));
 
     rubroEvaluacionIdList.add(rubricaEvaluacionUi?.rubroEvaluacionId??"");
-    print("Eliminar rubro ${rubricaEvaluacionUi?.rubroEvaluacionId}");
+    //print("Eliminar rubro ${rubricaEvaluacionUi?.rubroEvaluacionId}");
     for(var row in await queryRubroDetalle.get()){
       RubroEvaluacionProcesoData rubroEvaluacionProcesoData = row.readTable(SQL.rubroEvaluacionProceso);
 
       rubroEvaluacionIdList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
-      print("Eliminar rubro ${rubroEvaluacionProcesoData.rubroEvalProcesoId}");
+      //print("Eliminar rubro ${rubroEvaluacionProcesoData.rubroEvalProcesoId}");
     }
 
     await (SQL.update(SQL.rubroEvaluacionProceso)
@@ -1413,7 +1679,7 @@ class MoorRubroRepository extends RubroRepository{
   @override
   Future<void> updatePesoRubro(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId) async {
     AppDataBase SQL = AppDataBase();
-    print("updatePesoRubro: ${rubricaEvaluacionUi?.rubricaIdRubroCabecera}");
+    //print("updatePesoRubro: ${rubricaEvaluacionUi?.rubricaIdRubroCabecera}");
     await (SQL.update(SQL.rubroEvaluacionProceso)
       ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubricaIdRubroCabecera)))
         .write(
@@ -1422,7 +1688,7 @@ class MoorRubroRepository extends RubroRepository{
           fechaAccion: Value(DateTime.now()),
           syncFlag: Value(EstadoSync.FLAG_UPDATED),
         ));
-    print("updatePesoRubro: ${rubricaEvaluacionUi?.peso}");
+    //print("updatePesoRubro: ${rubricaEvaluacionUi?.peso}");
     await (SQL.update(SQL.rubroEvaluacionProceso)
       ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubroEvaluacionId)))
         .write(
@@ -1436,15 +1702,15 @@ class MoorRubroRepository extends RubroRepository{
 
   @override
   Future<List<RubricaEvaluacionUi>> getRubroEvaluacionSesionList(int? silaboEventoId, int? calendarioPeriodoId,  int sesionAprendizajeDocenteId, int sesionAprendizajeAlumonId) async{
-    //print("getRubroEvaluacionSesionList ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumonId}");
+    ////print("getRubroEvaluacionSesionList ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumonId}");
     AppDataBase SQL = AppDataBase();
     var query = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     query.where((tbl) => tbl.sesionAprendizajeId.isIn([sesionAprendizajeDocenteId, sesionAprendizajeAlumonId]));
     query.where((tbl) => tbl.sesionAprendizajeId.isNotIn([0]));
     query.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    //query.where((tbl) => tbl.tipoFormulaId.isNull());
-    query.where((tbl) => tbl.tipoFormulaId.equals(0));
+    query.where((tbl) => tbl.tipoFormulaId.isNull());
+    //query.where((tbl) => tbl.tipoFormulaId.equals(0));
     query.where((tbl) => tbl.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
     query.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
 
@@ -1452,7 +1718,7 @@ class MoorRubroRepository extends RubroRepository{
     List<String> rubricaIdList =[];
     List<RubricaEvaluacionUi> rubricaEvalProcesoUiList = [];
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await query.get();
-    print("rubricaEvalProcesoUiList: ${rubroEvalProcesoList}");
+    //print("rubricaEvalProcesoUiList: ${rubroEvalProcesoList}");
     for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in  rubroEvalProcesoList){
       rubricaIdList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
       RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
@@ -1518,7 +1784,7 @@ class MoorRubroRepository extends RubroRepository{
     rubroEvaluacionData["rubroEvalRNPFormula"] = [];
     //rubroEvaluacionData["criterioRubroEvaluacion"] = [];
     //rubroEvaluacionData["rubroCampotematico"] = [];
-    print("rubricaEvaluacionUi: ${rubricaEvaluacionUi?.rubroEvaluacionId}");
+    //print("rubricaEvaluacionUi: ${rubricaEvaluacionUi?.rubroEvaluacionId}");
 
 
     RubroEvaluacionProcesoData rubroEvaluacionProceso = await (SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubroEvaluacionId))).getSingle();
@@ -1613,7 +1879,7 @@ class MoorRubroRepository extends RubroRepository{
 
     if(rubricaEvaluacionUi?.tipoRubroEvaluacion != TipoRubroEvaluacion.UNIDIMENSIONAL){
       for(CriterioPesoUi criterioPesoUi in rubricaEvaluacionUi?.criterioPesoUiList??[]){
-        print("criterioPesoUi ${criterioPesoUi.criterioUi?.rubroEvaluacionId}");
+        //print("criterioPesoUi ${criterioPesoUi.criterioUi?.rubroEvaluacionId}");
         RubroEvaluacionProcesoData? procesoDetalle = await (SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.equals(criterioPesoUi.criterioUi?.rubroEvaluacionId))).getSingleOrNull();
         procesoDetalle = rubroEvaluacionProceso?.copyWith(
           titulo:  rubricaEvaluacionUi?.titulo??"",

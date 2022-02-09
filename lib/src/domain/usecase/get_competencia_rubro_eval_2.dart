@@ -42,21 +42,46 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
       List<PersonaUi> alumnoCursoList = await repository.getListAlumnoCurso(params?.cargaCursoId??0);
 
       List<CompetenciaUi> competenciaUiList = await rubroRepository.getRubroCompetencia(params?.silaboEventoId, params?.calendarioPeriodoUI?.id, params?.cargaCursoId);
-      competenciaUiList.removeWhere((element) => !(element.evaluable??false));
+
 
       for(CompetenciaUi competenciaUi in competenciaUiList){
-
+        bool evaluableCompetencia = false;
         List<CapacidadUi> capacidadUiList = [];
         for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
-          if((capacidadUi.evaluable??false)){
-            capacidadUiList.add(capacidadUi);
+          //if((capacidadUi.evaluable??false)){
+          bool evaluableCapacidad = false;
+          for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
+            int cantidadEvaluados = 0;
+            for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
+              if((rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS ||
+                  rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES) ){
+                if(evaluacionUi.valorTipoNotaId != null){
+                  cantidadEvaluados++;
+                }
+              }else {
+                if((evaluacionUi.nota??0) > 0){
+                  cantidadEvaluados++;
+                }
+              }
+            }
+            rubricaEvaluacionUi.cantiEvalCalificadas = cantidadEvaluados;
+            if(cantidadEvaluados!=0){
+              evaluableCapacidad =  true;
+            }
           }
+          if(evaluableCapacidad){
+            capacidadUiList.add(capacidadUi);
+            evaluableCompetencia = true;
+          }
+          //}
         }
         capacidadUiList.sort((o1, o2){
           return (o1.rubroResultadoId??0).compareTo((o2.rubroResultadoId??0));
         });
         competenciaUi.capacidadUiList = capacidadUiList;
+        competenciaUi.evaluable = evaluableCompetencia;
       }
+      competenciaUiList.removeWhere((element) => !(element.evaluable??false));
 
       alumnoCursoList.sort((o1, o2){
         return (o1.apellidos??"").compareTo((o2.apellidos??""));
@@ -83,7 +108,7 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
             }
             return 1;
           });
-
+          print("rubricaEvaluacionUi count: ${capacidadUi.rubricaEvalUiList?.length}");
           for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
             rubricaEvaluacionUi.ningunaEvalCalificada = CalcularEvaluacionResultados.ningunaEvalCalificada(rubricaEvaluacionUi);
 
@@ -131,6 +156,7 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
               evaluacionTransformadaUi.evaluacionUiOriginal = evaluacionUi;
               CalcularEvaluacionResultados.actualizarEvaluacionTransformada(evaluacionTransformadaUi, tipoNotaUi);
               evaluacionTransformadaUiList.add(evaluacionTransformadaUi);
+
             }
 
             rubricaEvaluacionUi.evaluacionTransformadaUiList = evaluacionTransformadaUiList;

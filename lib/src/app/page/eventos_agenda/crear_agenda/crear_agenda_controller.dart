@@ -60,17 +60,32 @@ class CrearAgendaController extends Controller{
       //cursosUi Solo para los colores
       print("horaEvento: ${eventoUi?.horaEvento}");
 
+
       for(EventosListaEnvioUi salonUi in salonUiList){
-        if(eventoUi?.cargaCursoId==null || eventoUi?.cargaCursoId == 0 ){
-          if(eventoUi?.cargaAcademicaId!=null && salonUi.cargaAdemicaId == eventoUi?.cargaAcademicaId && (salonUi.cargaCursoId == null || salonUi.cargaCursoId == 0)){
+        if(eventoUi!=null){
+          if(eventoUi?.cargaCursoId==null || eventoUi?.cargaCursoId == 0 ){
+            if(eventoUi?.cargaAcademicaId!=null && salonUi.cargaAdemicaId == eventoUi?.cargaAcademicaId && (salonUi.cargaCursoId == null || salonUi.cargaCursoId == 0)){
+              _eventosListaEnvioUi = salonUi;
+            }
+          }else if(eventoUi?.cargaCursoId!=null && salonUi.cargaCursoId == eventoUi?.cargaCursoId){
             _eventosListaEnvioUi = salonUi;
           }
-        }else if(eventoUi?.cargaCursoId!=null && salonUi.cargaCursoId == eventoUi?.cargaCursoId){
-          _eventosListaEnvioUi = salonUi;
+        }else{
+          if(cursosUi?.cargaCursoId==null || cursosUi?.cargaCursoId == 0 ){
+            if(cursosUi?.cargaAcademicaId!=null && salonUi.cargaAdemicaId == cursosUi?.cargaAcademicaId && (salonUi.cargaCursoId == null || salonUi.cargaCursoId == 0)){
+              _eventosListaEnvioUi = salonUi;
+            }
+          }else if(cursosUi?.cargaCursoId!=null && salonUi.cargaCursoId == cursosUi?.cargaCursoId){
+            _eventosListaEnvioUi = salonUi;
+
+          }
         }
 
-        if(_eventosListaEnvioUi==null)_eventosListaEnvioUi = salonUi;
       }
+
+
+      if(_eventosListaEnvioUi==null)_eventosListaEnvioUi = salonUiList.isNotEmpty?salonUiList[0]:null;
+      print("salon: ${_eventosListaEnvioUi?.cargaCursoId}");
 
       _personasUiList.clear();
 
@@ -156,12 +171,12 @@ class CrearAgendaController extends Controller{
     _horaEvento = str;
   }
 
-  void addEventoAdjunto(List<File?> files) async {
+  void addEventoAdjunto(List<File?> files, String? newname) async {
     for (File? file in files) {
       if (file != null) {
         EventoAdjuntoUi eventoAdjuntoUi = EventoAdjuntoUi();
         eventoAdjuntoUi.eventoAdjuntoId = IdGenerator.generateId();
-        eventoAdjuntoUi.titulo = basename(file.path);
+        eventoAdjuntoUi.titulo = newname??basename(file.path);
         eventoAdjuntoUi.tipoRecursosUi = DomainTools.getType(file.path);
         eventoAdjuntoUi.file = file;
         _eventoAdjuntoUiList.add(eventoAdjuntoUi);

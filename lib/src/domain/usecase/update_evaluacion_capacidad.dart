@@ -16,31 +16,52 @@ class UpdateEvaluacionCapacidad {
 
   Future<void> execute(RubricaEvaluacionUi? rubricaEvaluacionUiDetalle, PersonaUi? personaUi) async {
     int usuarioId = await configuracionRepository.getSessionUsuarioId();
-    RubricaEvaluacionUi? rubricaEvaluacionUiCabeceraUi =  await repository.getRubroEvaluacion(rubricaEvaluacionUiDetalle?.rubricaIdRubroCabecera??"");
-
-
-    EvaluacionTransformadaUi? evaluacionUiDetalle;
-    for(EvaluacionTransformadaUi evaluacionUi in rubricaEvaluacionUiDetalle?.evaluacionTransformadaUiList??[]){
-      if(evaluacionUi.alumnoId == personaUi?.personaId){
-        evaluacionUiDetalle = evaluacionUi;
+    RubricaEvaluacionUi? rubricaEvaluacionUi = null;
+    if((rubricaEvaluacionUiDetalle?.rubricaIdRubroCabecera??"").isNotEmpty){
+      RubricaEvaluacionUi? rubricaEvaluacionUiCabeceraUi =  await repository.getRubroEvaluacion(rubricaEvaluacionUiDetalle?.rubricaIdRubroCabecera??"");
+      print("UpdateEvaluacionCapacidad: ${rubricaEvaluacionUiCabeceraUi}");
+      EvaluacionTransformadaUi? evaluacionUiDetalle;
+      for(EvaluacionTransformadaUi evaluacionUi in rubricaEvaluacionUiDetalle?.evaluacionTransformadaUiList??[]){
+        if(evaluacionUi.alumnoId == personaUi?.personaId){
+          evaluacionUiDetalle = evaluacionUi;
+        }
       }
-    }
 
-    for (RubricaEvaluacionUi item in rubricaEvaluacionUiCabeceraUi.rubrosDetalleList??[]) {
-      if(item.rubroEvaluacionId == rubricaEvaluacionUiDetalle?.rubroEvaluacionId){
-        for(EvaluacionUi evaluacionUi in item.evaluacionUiList??[]){
-          if(evaluacionUi.alumnoId == personaUi?.personaId){
-            print("modificado12: ${evaluacionUiDetalle?.evaluacionUiOriginal?.evaluacionId}");
-            evaluacionUi.valorTipoNotaId = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaId;
-            evaluacionUi.valorTipoNotaUi = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaUi;
-            evaluacionUi.nota = evaluacionUiDetalle?.evaluacionUiOriginal?.nota;
+      for (RubricaEvaluacionUi item in rubricaEvaluacionUiCabeceraUi.rubrosDetalleList??[]) {
+        if(item.rubroEvaluacionId == rubricaEvaluacionUiDetalle?.rubroEvaluacionId){
+          for(EvaluacionUi evaluacionUi in item.evaluacionUiList??[]){
+            if(evaluacionUi.alumnoId == personaUi?.personaId){
+              print("modificado12: ${evaluacionUiDetalle?.evaluacionUiOriginal?.evaluacionId}");
+              evaluacionUi.valorTipoNotaId = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaId;
+              evaluacionUi.valorTipoNotaUi = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaUi;
+              evaluacionUi.nota = evaluacionUiDetalle?.evaluacionUiOriginal?.nota;
+            }
           }
         }
       }
+
+      CalcularEvaluacionProceso.actualizarCabecera(rubricaEvaluacionUiCabeceraUi, personaUi);
+      rubricaEvaluacionUi = rubricaEvaluacionUiCabeceraUi;
+    }else{
+      rubricaEvaluacionUi =  await repository.getRubroEvaluacion(rubricaEvaluacionUiDetalle?.rubroEvaluacionId??"");
+      EvaluacionTransformadaUi? evaluacionUiDetalle;
+      for(EvaluacionTransformadaUi evaluacionUi in rubricaEvaluacionUiDetalle?.evaluacionTransformadaUiList??[]){
+        if(evaluacionUi.alumnoId == personaUi?.personaId){
+          evaluacionUiDetalle = evaluacionUi;
+        }
+      }
+      for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
+        if(evaluacionUi.alumnoId == personaUi?.personaId){
+          print("modificado12: ${evaluacionUiDetalle?.evaluacionUiOriginal?.evaluacionId}");
+          evaluacionUi.valorTipoNotaId = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaId;
+          evaluacionUi.valorTipoNotaUi = evaluacionUiDetalle?.evaluacionUiOriginal?.valorTipoNotaUi;
+          evaluacionUi.nota = evaluacionUiDetalle?.evaluacionUiOriginal?.nota;
+        }
+      }
+
     }
 
-    CalcularEvaluacionProceso.actualizarCabecera(rubricaEvaluacionUiCabeceraUi, personaUi);
-    return repository.updateEvaluacion(rubricaEvaluacionUiCabeceraUi, personaUi?.personaId, usuarioId);
+    return repository.updateEvaluacion(rubricaEvaluacionUi, personaUi?.personaId, usuarioId);
 
   }
   

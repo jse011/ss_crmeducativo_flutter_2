@@ -13,8 +13,9 @@ class HomeController extends Controller{
   int get showLoggin => _showLoggin;
   String? _logoApp = null;
   String? get logoApp => _logoApp;
-
   VistaIndex get vistaActual => _vistaActual;
+  bool _conexion = true;
+  bool get conexion => _conexion;
 
   HomeController(usuarioConfiRepo, httpDatosRepo)
       :  _vistaActual = VistaIndex.Principal,
@@ -95,6 +96,20 @@ class HomeController extends Controller{
 
     };
 
+    homePresenter.updateContactoDocenteOnComplete = (bool? datosOffline, bool? errorServidor){
+      if(datosOffline??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
+    };
+
+    homePresenter.updateContactoDocenteoOnError = (e){
+      _conexion = false;
+    };
+
   }
 
   @override
@@ -139,6 +154,12 @@ class HomeController extends Controller{
   void onDisposed() {
     super.onDisposed();
     homePresenter.dispose();
+  }
+
+  void changeConnected(bool connected) {
+    if(!_conexion && connected){
+      homePresenter.updateContactoDocente();
+    }
   }
 }
 

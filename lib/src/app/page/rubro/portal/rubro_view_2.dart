@@ -12,6 +12,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_rubro.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/portal/rubro_controller.dart';
@@ -616,6 +617,8 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                       ),
                                     ),
                                     Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
+                                    controller.calendarioPeriodoUI!=null?
+                                    !controller.progressResultado?
                                     InkWell(
                                       onTap: ()=> controller.onClickShowDialogInformar(),
                                       child: Container(
@@ -648,7 +651,27 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                           ],
                                         ),
                                       ),
-                                    ),
+                                    ):
+                                    SizedBox(
+                                      child: Shimmer.fromColors(
+                                        baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                        highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                        child: Container(
+                                          height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 30),
+                                          width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
+                                          padding: EdgeInsets.only(
+                                              left: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context,16) ,
+                                              right: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context,16),
+                                              top: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context,8),
+                                              bottom: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context,8)),
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context,6))),
+                                              color: HexColor(controller.cursosUi.color2)
+                                          ),
+                                          alignment: Alignment.center,
+                                        ),
+                                      ),
+                                    ):Container(),
                                     /*Padding(padding: EdgeInsets.all( ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
                                     InkWell(
                                       onTap: ()=> AppRouter.showVistaPreviaRubro(context, controller.cursosUi, controller.calendarioPeriodoUI),
@@ -915,23 +938,34 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
     if(response is String) controller.respuestaFormularioCrearRubro();
   }
 
-  void _evaluacionCapacidadRetornar(BuildContext context, RubroController controller, EvaluacionCapacidadUi evaluacionCapacidadUi) async {
+  void _evaluacionCapacidadRetornar(BuildContext context, RubroController controller, EvaluacionCapacidadUi evaluacionCapacidadUi, CalendarioPeriodoUI? calendarioPeriodoUI) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
-    dynamic response = await AppRouter.createRouteEvaluacionCapacidad(context, controller.cursosUi, evaluacionCapacidadUi);
+    dynamic response = await AppRouter.createRouteEvaluacionCapacidad(context, controller.cursosUi, evaluacionCapacidadUi, calendarioPeriodoUI);
     if(response is int) controller.respuestaEvaluacionCapacidad();
   }
 
   void _evaluacionMultipleRetornar(BuildContext context, RubroController controller, RubricaEvaluacionUi rubricaEvaluacionUi) async {
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
+
     dynamic response = await AppRouter.createRouteEvaluacionMultiple(context, controller.calendarioPeriodoUI,controller.cursosUi, rubricaEvaluacionUi.rubroEvaluacionId);
-    if(response is int) controller.respuestaEvaluacion();
+    WidgetsBinding.instance?.addPostFrameCallback((_) async{
+        await Future.delayed(Duration(milliseconds: 500));
+        if(response is int) controller.respuestaEvaluacion();
+    });
+
   }
 
   void _evaluacionSimpleRetornar(BuildContext context, RubroController controller, RubricaEvaluacionUi rubricaEvaluacionUi, CalendarioPeriodoUI? calendarioPeriodoUI) async{
+
     dynamic response = await AppRouter.createRouteEvaluacionSimple(context, controller.cursosUi, rubricaEvaluacionUi, calendarioPeriodoUI);
-    if(response is int) controller.respuestaEvaluacion();
+    WidgetsBinding.instance?.addPostFrameCallback((_) async{
+      await Future.delayed(Duration(milliseconds: 500));
+      print("response: ${response}");
+      if(response is int) controller.respuestaEvaluacion();
+    });
+
   }
 
   void showDialogButtom(RubroController controller) {
@@ -1046,9 +1080,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
           if((s.capacidadUiList?.length??0)==0){
             widths = widths * 3;
           } else if((s.capacidadUiList?.length??0)==1){
-            widths = widths * 2;
-          } else if((s.capacidadUiList?.length??0)==2){
             widths = widths * 1;
+          } else if((s.capacidadUiList?.length??0)==2){
+            widths = widths * 0;
           }else{
             widths = widths * 0;
           }
@@ -1068,9 +1102,9 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
           if((s.capacidadUiList?.length??0)==0){
             widths = widths * 3;
           } else if((s.capacidadUiList?.length??0)==1){
-            widths = widths * 3;
+            widths = widths * 2;
           } else if((s.capacidadUiList?.length??0)==2){
-            widths = widths * 3;
+            widths = widths * 2;
           }else{
             widths = widths * (s.capacidadUiList?.length??0);
           }
@@ -1081,610 +1115,637 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
         }
       }
 
-
-
-      if((controller.columnList2.length)<= 3){
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
-            ),
-            Padding(padding: EdgeInsets.all(4)),
-            Center(
-              child: Text("Sin compentencias", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
-            )
-          ],
-        );
-      }
-
-      return Padding(
-        padding: const EdgeInsets.only(left: 8, right: 0, top: 16),
-        child:  StickyHeadersTableRubro(
-          scrollControllers: scrollControllersResultado,
-          cellDimensions: CellDimensions.variableColumnWidth(
-              stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 145),
-              stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 50),
-              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 40),
-              columnWidths: tablecolumnWidths,
-              stickyHeadHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 40),
-              headWidths: tableheadWidths,
-          ),
-          initialScrollOffsetX: controller.scrollRubroProcesoX,
-          initialScrollOffsetY: controller.scrollRubroProcesoY,
-          onEndScrolling: (x, y) {
-            print("x ${x}, y ${y}");
-            controller.scrollRubroProceso(x,y);
-          },
-          columnsLength: controller.columnList2.length,
-          rowsLength: controller.rowList2.length,
-          headsLength: controller.headList2.length,
-          columnsTitleBuilder: (i) {
-            dynamic o = controller.columnList2[i];
-            if(o is ContactoUi){
-              return Container(
-                  constraints: BoxConstraints.expand(),
+      return Stack(
+        children: [
+          ((controller.columnList2.length)<= 3)?
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                ),
+                Padding(padding: EdgeInsets.all(4)),
+                Center(
+                  child: Text("Registro sin criterios de evaluación.\nCrea una evaluación en el apartado rúbrica.", textAlign: TextAlign.center,style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                )
+              ],
+            ):
+          Column(
+            children: [
+              Padding(padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))),
+              controller.calendarioPeriodoUI==null || (controller.calendarioPeriodoUI?.habilitadoProceso??0)==1?
+              Container(): Container(
+                margin: EdgeInsets.only(
+                    top:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 0),
+                    bottom: 0
+                ),
+                padding: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                    right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                    top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                    bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
+                decoration: BoxDecoration(
+                  color: AppTheme.redLighten1,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text("El ${controller.calendarioPeriodoUI?.nombre??"período"} no se encuentra vigente.", textAlign: TextAlign.center,style: TextStyle(color: AppTheme.white, fontSize: 11),),
+              ),
+              Expanded(
+                child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 25)
+                      left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                      right: 0,
+                      top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)
                   ),
-                  child: Center(
-                    child:  Text("Apellidos y\n Nombres",
-                      style: TextStyle(
-                        color: AppTheme.greyDarken3,
-                        fontWeight: FontWeight.w700,
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                        fontFamily: AppTheme.fontTTNorms,
-                      ),),
-                  ),
-                  decoration: BoxDecoration(
-                      border: Border(
-                        //top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      ),
-                      color: HexColor("#EFEDEE")
-                  )
-              );
-            }else if(o is CompetenciaUi){
-              return Stack(
-                children: [
-                  Container(
-                      constraints: BoxConstraints.expand(),
-                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
-                      child: Center(
-                        child:  RotatedBox(
-                          quarterTurns: -1,
-                          child: Text("Promedio\n${o.tipoCompetenciaUi!=TipoCompetenciaUi.BASE?"Transversal":""}",
-                              textAlign: TextAlign.center,
-                              maxLines: 4,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: AppTheme.greyDarken3,
-                                fontWeight: FontWeight.w700,
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                                fontFamily: AppTheme.fontTTNorms,
+                  child:  StickyHeadersTableRubro(
+                    scrollControllers: scrollControllersResultado,
+                    cellDimensions: CellDimensions.variableColumnWidth(
+                      stickyLegendHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 145),
+                      stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 50),
+                      contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 40),
+                      columnWidths: tablecolumnWidths,
+                      stickyHeadHeight:ColumnCountProvider.aspectRatioForWidthTableRubro(context, 40),
+                      headWidths: tableheadWidths,
+                    ),
+                    initialScrollOffsetX: controller.scrollRubroProcesoX,
+                    initialScrollOffsetY: controller.scrollRubroProcesoY,
+                    onEndScrolling: (x, y) {
+                      print("x ${x}, y ${y}");
+                      controller.scrollRubroProceso(x,y);
+                    },
+                    columnsLength: controller.columnList2.length,
+                    rowsLength: controller.rowList2.length,
+                    headsLength: controller.headList2.length,
+                    columnsTitleBuilder: (i) {
+                      dynamic o = controller.columnList2[i];
+                      if(o is ContactoUi){
+                        return Container(
+                            constraints: BoxConstraints.expand(),
+                            padding: EdgeInsets.only(
+                                bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 25)
+                            ),
+                            child: Center(
+                              child:  Text("Apellidos y\n Nombres",
+                                style: TextStyle(
+                                  color: AppTheme.greyDarken3,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                  fontFamily: AppTheme.fontTTNorms,
+                                ),),
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  //top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                  right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                ),
+                                color: HexColor("#EFEDEE")
+                            )
+                        );
+                      }else if(o is CompetenciaUi){
+                        return Stack(
+                          children: [
+                            Container(
+                                constraints: BoxConstraints.expand(),
+                                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
+                                child: Center(
+                                  child:  RotatedBox(
+                                    quarterTurns: -1,
+                                    child: Text("Promedio\n${o.tipoCompetenciaUi!=TipoCompetenciaUi.BASE?"Transversal":""}",
+                                        textAlign: TextAlign.center,
+                                        maxLines: 4,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: AppTheme.greyDarken3,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                          fontFamily: AppTheme.fontTTNorms,
+                                        )
+                                    ),
+                                  ),
+                                ),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      //top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                      left: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                      //bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                    ),
+                                    color: HexColor("#EFEDEE")
+                                )
+                            ),
+                            Container(
+                              width: 1,
+                              color: HexColor("#EFEDEE"),
+                              margin: EdgeInsets.only(top: 1, bottom: 1),
+                            )
+                          ],
+                        );
+                      }else if(o is CapacidadUi){
+                        return InkWell(
+                          onTap: () async{
+                            dynamic response = await AppRouter.createRoutePesoCriterio(context, controller.cursosUi, o, controller.calendarioPeriodoUI);
+                            if(response is int) controller.respuestaPesoCriterio();
+                          },
+                          child: Container(
+                              constraints: BoxConstraints.expand(),
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                        left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                                        top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                                        bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 24),
+                                        right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)
+                                    ),
+                                    child: Center(
+                                      child:  RotatedBox(
+                                        quarterTurns: -1,
+                                        child: Text(o.nombre??"",
+                                            textAlign: TextAlign.center,
+                                            maxLines: 4,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: AppTheme.greyDarken3,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                              fontFamily: AppTheme.fontTTNorms,
+                                            )
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 4,
+                                    left: 4,
+                                    bottom: 4,
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(4) ,
+                                        color: HexColor(controller.cursosUi.color2),// use instead of BorderRadius.all(Radius.circular(20))
+                                      ),
+                                      height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 14),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(Ionicons.pencil,
+                                            color: AppTheme.white,
+                                            size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
+                                          ),
+                                          Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 2))),
+                                          Text("Modifica",
+                                            style: TextStyle(
+                                              color: AppTheme.white,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
+                                              fontFamily: AppTheme.fontTTNorms,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                    //top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                    right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                    left: BorderSide(color: (o.round??false)?HexColor(controller.cursosUi.color3):Colors.white),
+                                    //bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                  ),
+                                  color: AppTheme.white
                               )
                           ),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border(
-                            //top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            left: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            //bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                        );
+                      }else if(o is CalendarioPeriodoUI){
+                        return Row(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
+                                    child: Center(
+                                      child:  RotatedBox(
+                                        quarterTurns: -1,
+                                        child: Text("Final ${o.nombre??""}",
+                                            textAlign: TextAlign.center,
+                                            maxLines: 4,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                                color: AppTheme.black,
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                fontWeight: FontWeight.w700
+                                            )),
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                          top: BorderSide(color: AppTheme.greyLighten1),
+                                          right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                        ),
+                                        color: AppTheme.greyLighten1
+                                    )
+                                )
+                            ),
+                            Expanded(
+                                flex: 2,
+                                child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                      ),
+
+                                    )
+                                )
+                            )
+                          ],
+                        );
+                      }else{
+                        return Container();
+                      }
+
+                    },
+                    rowsTitleBuilder: (i) {
+                      dynamic o = controller.rowList2[i];
+                      if(o is PersonaUi){
+                        return  Container(
+                            constraints: BoxConstraints.expand(),
+                            child: Row(
+                              children: [
+                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4))),
+                                Expanded(
+                                    child: Text((i+1).toString() + ".",
+                                        style: TextStyle(
+                                          color: AppTheme.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                          fontFamily: AppTheme.fontTTNorms,
+                                        )
+                                    )
+                                ),
+                                Container(
+                                  height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
+                                  width: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
+                                  margin: EdgeInsets.only(
+                                      right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 3)
+                                  ),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: HexColor(controller.cursosUi.color3),
+                                  ),
+                                  child: true?
+                                  CachedNetworkImage(
+                                    placeholder: (context, url) => CircularProgressIndicator(),
+                                    imageUrl: o.foto??"",
+                                    errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded,
+                                        size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 80)
+                                    ),
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                        ),
+                                  ):
+                                  Container(),
+                                ),
+                                Padding(padding: EdgeInsets.all(1)),
+                              ],
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                  right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                ),
+                                color: HexColor(controller.cursosUi.color2)
+                            )
+                        );
+                      }else{
+                        return  Container();
+                      }
+
+                    },
+                    contentCellBuilder: (i, j) {
+                      dynamic o = controller.cellListList[j][i];
+                      if(o is PersonaUi){
+                        return Container(
+                            constraints: BoxConstraints.expand(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(o.apellidos??"",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: AppTheme.greyDarken3,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                                      fontFamily: AppTheme.fontTTNorms,
+                                    )
+                                ),
+                                Text(o.nombres??"",
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: AppTheme.greyDarken3,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                                      fontFamily: AppTheme.fontTTNorms,
+                                    )
+                                ),
+                              ],
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                  right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                ),
+                                color: _getColorAlumnoBloqueados(o, 0)
+                            )
+                        );
+                      }else if(o is EvaluacionCapacidadUi){
+                        return InkWell(
+                          onTap: () => _evaluacionCapacidadRetornar(context, controller, o, controller.calendarioPeriodoUI),
+                          child: Stack(
+                            children: [
+                              Container(
+                                constraints: BoxConstraints.expand(),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                      right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                      left: BorderSide(color: (o.capacidadUi?.round??false)?HexColor(controller.cursosUi.color3): Colors.white),
+                                    ),
+                                    color: _getColorAlumnoBloqueados(o.personaUi, 0)
+                                ),
+                                child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
+                              ),
+                              if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
+                                Positioned(
+                                    bottom: 4,
+                                    right: 4,
+                                    child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 15,)
+                                ),
+                            ],
                           ),
-                          color: HexColor("#EFEDEE")
-                      )
-                  ),
-                  Container(
-                    width: 1,
-                    color: HexColor("#EFEDEE"),
-                    margin: EdgeInsets.only(top: 1, bottom: 1),
-                  )
-                ],
-              );
-            }else if(o is CapacidadUi){
-              return InkWell(
-                onTap: () async{
-                  dynamic response = await AppRouter.createRoutePesoCriterio(context, controller.cursosUi, o);
-                  if(response is int) controller.respuestaPesoCriterio();
-                },
-                child: Container(
-                    constraints: BoxConstraints.expand(),
-                    child: Stack(
+                        );
+                      }else if(o is EvaluacionCompetenciaUi){
+                        return Stack(
+                          children: [
+                            Container(
+                              constraints: BoxConstraints.expand(),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                    right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                  ),
+                                  color: _getColorAlumnoBloqueados(o.personaUi, 1, c_default: HexColor("#EFEDEE"))
+                              ),
+                              child: _getTipoNota(controller.tipoNotaUi,o.valorTipoNotaUi, o.nota, controller.precision),
+                            ),
+                            if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
+                              Positioned(
+                                  bottom: 4,
+                                  right: 4,
+                                  child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
+                              ),
+                          ],
+                        );
+                      }else if(o is EvaluacionCalendarioPeriodoUi){
+                        return Row(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      constraints: BoxConstraints.expand(),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                            top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                            right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                          ),
+                                          color: _getColorAlumnoBloqueados(o.personaUi, 2, c_default: AppTheme.greyLighten1)
+                                      ),
+                                      child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
+                                    ),
+                                    if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
+                                      Positioned(
+                                          bottom: 4,
+                                          right: 4,
+                                          child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
+                                      ),
+                                  ],
+                                )
+                            ),
+                            Expanded(
+                                flex: 2,
+                                child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                      ),
+
+                                    )
+                                )
+                            ),
+                          ],
+                        );
+                      }else{
+                        return Container();
+                      }
+                    },
+                    legendCell: Stack(
                       children: [
                         Container(
-                          margin: EdgeInsets.only(
-                              left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
-                              top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
-                              bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 24),
-                              right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)
-                          ),
-                          child: Center(
-                            child:  RotatedBox(
-                              quarterTurns: -1,
-                              child: Text(o.nombre??"",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 4,
-                                  overflow: TextOverflow.ellipsis,
+                            decoration: BoxDecoration(
+                              color: HexColor(controller.cursosUi.color1),
+                              //borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
+                            )
+                        ),
+                        Container(
+                            padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 25)),
+                            child: Center(
+                              child: Text('N°',
                                   style: TextStyle(
-                                    color: AppTheme.greyDarken3,
+                                    color: AppTheme.white,
                                     fontWeight: FontWeight.w700,
                                     fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
                                     fontFamily: AppTheme.fontTTNorms,
                                   )
                               ),
                             ),
-                          ),
-                        ),
-                        Positioned(
-                          right: 4,
-                          left: 4,
-                          bottom: 4,
-                          child: Container(
-                            alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4) ,
-                              color: HexColor(controller.cursosUi.color2),// use instead of BorderRadius.all(Radius.circular(20))
-                            ),
-                            height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 14),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(Ionicons.pencil,
-                                  color: AppTheme.white,
-                                  size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                                ),
-                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 2))),
-                                Text("Modifica",
-                                  style: TextStyle(
-                                    color: AppTheme.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 9),
-                                    fontFamily: AppTheme.fontTTNorms,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    decoration: BoxDecoration(
-                        border: Border(
-                          //top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                          right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                          left: BorderSide(color: (o.round??false)?HexColor(controller.cursosUi.color3):Colors.white),
-                          //bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        ),
-                        color: AppTheme.white
-                    )
-                ),
-              );
-            }else if(o is CalendarioPeriodoUI){
-              return Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                          constraints: BoxConstraints.expand(),
-                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
-                          child: Center(
-                            child:  RotatedBox(
-                              quarterTurns: -1,
-                              child: Text("Final ${o.nombre??""}",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 4,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                                      color: AppTheme.black,
-                                      fontFamily: AppTheme.fontTTNorms,
-                                      fontWeight: FontWeight.w700
-                                  )),
-                            ),
-                          ),
-                          decoration: BoxDecoration(
                               border: Border(
-                                top: BorderSide(color: AppTheme.greyLighten1),
                                 right: BorderSide(color: HexColor(controller.cursosUi.color3)),
                               ),
-                              color: AppTheme.greyLighten1
-                          )
-                      )
-                  ),
-                  Expanded(
-                      flex: 2,
-                      child: Container(
-                          constraints: BoxConstraints.expand(),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                              ),
-
-                          )
-                      )
-                  )
-                ],
-              );
-            }else{
-              return Container();
-            }
-
-          },
-          rowsTitleBuilder: (i) {
-            dynamic o = controller.rowList2[i];
-            if(o is PersonaUi){
-              return  Container(
-                  constraints: BoxConstraints.expand(),
-                  child: Row(
-                    children: [
-                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4))),
-                      Expanded(
-                          child: Text((i+1).toString() + ".",
-                            style: TextStyle(
-                                color: AppTheme.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                              fontFamily: AppTheme.fontTTNorms,
                             )
-                          )
-                      ),
-                      Container(
-                        height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
-                        width: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
-                        margin: EdgeInsets.only(
-                            right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 3)
                         ),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: HexColor(controller.cursosUi.color3),
-                        ),
-                        child: true?
-                        CachedNetworkImage(
-                          placeholder: (context, url) => CircularProgressIndicator(),
-                          imageUrl: o.foto??"",
-                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded,
-                            size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 80)
-                          ),
-                          imageBuilder: (context, imageProvider) =>
-                              Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                              ),
-                        ):
-                        Container(),
-                      ),
-                      Padding(padding: EdgeInsets.all(1)),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      ),
-                      color: HexColor(controller.cursosUi.color2)
-                  )
-              );
-            }else{
-              return  Container();
-            }
 
-          },
-          contentCellBuilder: (i, j) {
-            dynamic o = controller.cellListList[j][i];
-            if(o is PersonaUi){
-              return Container(
-                  constraints: BoxConstraints.expand(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(o.apellidos??"",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: AppTheme.greyDarken3,
-                          fontWeight: FontWeight.w700,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                          fontFamily: AppTheme.fontTTNorms,
-                        )
-                      ),
-                      Text(o.nombres??"",
-                        maxLines: 1,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: AppTheme.greyDarken3,
-                          fontWeight: FontWeight.w500,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                          fontFamily: AppTheme.fontTTNorms,
-                        )
-                      ),
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                      ),
-                      color: _getColorAlumnoBloqueados(o, 0)
-                  )
-              );
-            }else if(o is EvaluacionCapacidadUi){
-              return InkWell(
-                onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
-                child: Stack(
-                  children: [
-                    Container(
-                      constraints: BoxConstraints.expand(),
-                      decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                            left: BorderSide(color: (o.capacidadUi?.round??false)?HexColor(controller.cursosUi.color3): Colors.white),
-                          ),
-                          color: _getColorAlumnoBloqueados(o.personaUi, 0)
-                      ),
-                      child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
+                      ],
                     ),
-                    if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
-                    Positioned(
-                        bottom: 4,
-                        right: 4,
-                        child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 15,)
-                    ),
-                  ],
-                ),
-              );
-            }else if(o is EvaluacionCompetenciaUi){
-              return Stack(
-                children: [
-                  Container(
-                    constraints: BoxConstraints.expand(),
-                    decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                          right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                    legendHead:  Stack(
+                      children: [
+                        Container(
+                            decoration: BoxDecoration(
+                                color: HexColor(controller.cursosUi.color1),
+                                borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
+                            )
                         ),
-                        color: _getColorAlumnoBloqueados(o.personaUi, 1, c_default: HexColor("#EFEDEE"))
+                        Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                              ),
+                            )
+                        ),
+
+                      ],
                     ),
-                    child: _getTipoNota(controller.tipoNotaUi,o.valorTipoNotaUi, o.nota, controller.precision),
-                  ),
-                  if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
-                  Positioned(
-                      bottom: 4,
-                      right: 4,
-                      child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
-                  ),
-                ],
-              );
-            }else if(o is EvaluacionCalendarioPeriodoUi){
-              return Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: Stack(
-                        children: [
-                          Container(
+                    columnsHeadBuilder: (int i) {
+                      dynamic o = controller.headList2[i];
+                      if(o is ContactoUi){
+                        return Container(
                             constraints: BoxConstraints.expand(),
+                            child: Center(
+                              child:  Text("Competencias y capacidades".toUpperCase(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: AppTheme.greyDarken3,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
+                                  fontFamily: AppTheme.fontTTNorms,
+                                ),),
+                            ),
                             decoration: BoxDecoration(
                                 border: Border(
                                   top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                                  right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                                ),
-                                color: _getColorAlumnoBloqueados(o.personaUi, 2, c_default: AppTheme.greyLighten1)
-                            ),
-                            child: _getTipoNota(controller.tipoNotaUi, o.valorTipoNotaUi, o.nota, controller.precision),
-                          ),
-                          if(controller.calendarioPeriodoUI?.habilitadoProceso != 1)
-                          Positioned(
-                              bottom: 4,
-                              right: 4,
-                              child: Icon(Icons.block, color: AppTheme.redLighten1.withOpacity(0.8), size: 18,)
-                          ),
-                        ],
-                      )
-                  ),
-                  Expanded(
-                      flex: 2,
-                      child: Container(
-                          constraints: BoxConstraints.expand(),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
-                              ),
-
-                          )
-                      )
-                  ),
-                ],
-              );
-            }else{
-              return Container();
-            }
-          },
-          legendCell: Stack(
-            children: [
-              Container(
-                  decoration: BoxDecoration(
-                      color: HexColor(controller.cursosUi.color1),
-                      //borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
-                  )
-              ),
-              Container(
-                padding: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 25)),
-                  child: Center(
-                    child: Text('N°',
-                      style: TextStyle(
-                        color: AppTheme.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                        fontFamily: AppTheme.fontTTNorms,
-                      )
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                    ),
-                  )
-              ),
-
-            ],
-          ),
-          legendHead:  Stack(
-            children: [
-              Container(
-                  decoration: BoxDecoration(
-                    color: HexColor(controller.cursosUi.color1),
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(7))
-                  )
-              ),
-              Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                    ),
-                  )
-              ),
-
-            ],
-          ),
-          columnsHeadBuilder: (int i) {
-            dynamic o = controller.headList2[i];
-            if(o is ContactoUi){
-              return Container(
-                  constraints: BoxConstraints.expand(),
-                  child: Center(
-                    child:  Text("Competencias y capacidades".toUpperCase(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppTheme.greyDarken3,
-                        fontWeight: FontWeight.w700,
-                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 10),
-                        fontFamily: AppTheme.fontTTNorms,
-                      ),),
-                  ),
-                  decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                        bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                      ),
-                      color: HexColor("#EFEDEE")
-                  )
-              );
-            }else if(o is CompetenciaUi){
-              return Stack(
-                children: [
-                  Container(
-                      constraints: BoxConstraints.expand(),
-                      padding: EdgeInsets.only(
-                        top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4),
-                        bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4),
-                        left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
-                        right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)
-                      ),
-                      child: Center(
-                          child: Text(o.nombre??"",
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: AppTheme.greyDarken3,
-                              fontWeight: FontWeight.w700,
-                              fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                              fontFamily: AppTheme.fontTTNorms,
-                            ),
-                          )
-                      ),
-                      decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            left: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                            right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                          ),
-                          color: HexColor("#EFEDEE"),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular((o.round??false)?7:0),
-                          topRight: Radius.circular((o.tipoCompetenciaUi!=TipoCompetenciaUi.BASE&&i==controller.headList2.length-2)?7:0),
-                        )
-                      )
-                  ),
-                 !(o.round??false)?
-                  Container(
-                    width: 1,
-                    color: HexColor("#EFEDEE"),
-                    margin: EdgeInsets.only(top: 1, bottom: 1),
-                  ):Container()
-                ],
-              );
-            }else if(o is CalendarioPeriodoUI){
-              return Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))
-                        ),
-                        child: Container(
-                            constraints: BoxConstraints.expand(),
-                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
-                            child: Center(
-                              child:  RotatedBox(
-                                quarterTurns: -1,
-                                child: Text(" ",
-                                    textAlign: TextAlign.center,
-                                    maxLines: 4,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                                        color: AppTheme.black,
-                                        fontFamily: AppTheme.fontTTNorms,
-                                        fontWeight: FontWeight.w700
-                                    )),
-                              ),
-                            ),
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(color: AppTheme.greyLighten1),
                                   right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                  bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
                                 ),
-                                color: AppTheme.greyLighten1
+                                color: HexColor("#EFEDEE")
                             )
-                        ),
-                      )
-                  ),
-                  Expanded(
-                      flex: 2,
-                      child: Container(
-                          constraints: BoxConstraints.expand(),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                        );
+                      }else if(o is CompetenciaUi){
+                        return Stack(
+                          children: [
+                            Container(
+                                constraints: BoxConstraints.expand(),
+                                padding: EdgeInsets.only(
+                                    top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4),
+                                    bottom: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4),
+                                    left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8),
+                                    right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)
+                                ),
+                                child: Center(
+                                    child: Text(o.nombre??"",
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: AppTheme.greyDarken3,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                        fontFamily: AppTheme.fontTTNorms,
+                                      ),
+                                    )
+                                ),
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                      left: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                      bottom: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                      right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                    ),
+                                    color: HexColor("#EFEDEE"),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular((o.round??false)?7:0),
+                                      topRight: Radius.circular((o.tipoCompetenciaUi!=TipoCompetenciaUi.BASE&&i==controller.headList2.length-2)?7:0),
+                                    )
+                                )
                             ),
+                            !(o.round??false)?
+                            Container(
+                              width: 1,
+                              color: HexColor("#EFEDEE"),
+                              margin: EdgeInsets.only(top: 1, bottom: 1),
+                            ):Container()
+                          ],
+                        );
+                      }else if(o is CalendarioPeriodoUI){
+                        return Row(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))
+                                  ),
+                                  child: Container(
+                                      constraints: BoxConstraints.expand(),
+                                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)),
+                                      child: Center(
+                                        child:  RotatedBox(
+                                          quarterTurns: -1,
+                                          child: Text(" ",
+                                              textAlign: TextAlign.center,
+                                              maxLines: 4,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                                  color: AppTheme.black,
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  fontWeight: FontWeight.w700
+                                              )),
+                                        ),
+                                      ),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                            top: BorderSide(color: AppTheme.greyLighten1),
+                                            right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                          ),
+                                          color: AppTheme.greyLighten1
+                                      )
+                                  ),
+                                )
+                            ),
+                            Expanded(
+                                flex: 2,
+                                child: Container(
+                                    constraints: BoxConstraints.expand(),
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        //right: BorderSide(color:  HexColor(controller.cursosUi.color3)),
+                                      ),
 
-                          )
-                      )
-                  )
-                ],
-              );
-            }else{
-              return Container();
-            }
-          },
-        ),
+                                    )
+                                )
+                            )
+                          ],
+                        );
+                      }else{
+                        return Container();
+                      }
+                    },
+                  ),
 
+                ),
+              )
+            ],
+          ),
+        ],
       );
     }else{
       return Container();
@@ -2568,6 +2629,16 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
 
   Future<bool?> _informarRegistro(BuildContext context, RubroController controller) async {
 
+    bool noasignado = controller.noAsignado();
+    bool cerrado = controller.calendarioResultadoCerrado();
+
+    String? error = null;
+    if(cerrado){
+      error = "La evaluación del resultado no esta vigente ó esta cerrado.";
+    }else if(noasignado){
+      error = "No se asignaron las evaluaciones al Resultado. Comuníquese con su académico o con el encargado de asignar las evaluaciones.";
+    }
+
     return await showGeneralDialog(
         context: context,
         pageBuilder: (BuildContext buildContext,
@@ -2616,6 +2687,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                     ),),
                                   ),
                                   Padding(padding: EdgeInsets.all(4),),
+                                  error==null?
                                   RichText(
                                     text: TextSpan(
                                       children: [
@@ -2643,13 +2715,38 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  Padding(padding: EdgeInsets.all(4),),
+                                  ):Container(),
+                                  error==null?
+                                  Padding(padding: EdgeInsets.all(4),):Container(),
                                 ],
                               )
                           )
                         ],
                       ),
+                      error!=null?
+                      Padding(
+                          padding: EdgeInsets.only(bottom: 4, left: 4, right: 4),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              WidgetSpan(
+                                child: Icon(Icons.info,
+                                    color: AppTheme.red,
+                                    size: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 20)
+                                ),
+                              ),
+                              TextSpan(
+                                  text: " ${error}",
+                                  style: TextStyle(
+                                    color: AppTheme.redAccent4,
+                                    fontSize: 14,
+                                    height: 1.5,
+                                  )
+                              ),
+                            ],
+                          ),
+                        ),
+                      ):Container(),
                       Row(
                         children: [
                           Expanded(
@@ -2667,10 +2764,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                               )
                           ),
                           Padding(padding: EdgeInsets.all(8)),
-                          Expanded(child: ElevatedButton(
+                          Expanded(child: error==null?ElevatedButton(
                             onPressed: () async {
                               Navigator.of(context).pop(true);
                               await controller.onClickProcesarNota();
+
                             },
                             style: ElevatedButton.styleFrom(
                               primary:  HexColor(controller.cursosUi.color1),
@@ -2681,6 +2779,22 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                               ),
                             ),
                             child: Padding(padding: EdgeInsets.all(4), child: Text('Aceptar'),),
+                          ):
+                          ElevatedButton(
+                            onPressed: () async {
+                              Navigator.of(context).pop(true);
+                              controller.actualizarResultado();
+
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary:  HexColor(controller.cursosUi.color1),
+                              onPrimary: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Padding(padding: EdgeInsets.all(4), child: Text('Actualizar ${cerrado?controller.calendarioPeriodoUI?.nombre??"":"Resultado"}'),),
                           )),
                         ],
                       )

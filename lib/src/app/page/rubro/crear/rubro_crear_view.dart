@@ -7,6 +7,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
@@ -594,7 +595,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                             borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                             splashColor: AppTheme.grey.withOpacity(0.4),
                             onTap: ()  {
-                              print("guardar");
+                              //print("guardar");
                               controller.onSave();
                             },
                             child:
@@ -977,7 +978,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
           return Container(
             height: MediaQuery.of(context).size.height * 1,
             child: Container(
-              padding: EdgeInsets.all(0),
+              padding: EdgeInsets.only(top: 16),
               decoration: new BoxDecoration(
                 color: AppTheme.background,
                 borderRadius: new BorderRadius.only(
@@ -1018,9 +1019,10 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                     color: AppTheme.background,
                     child: CupertinoScrollbar(
                       child: ListView.builder(
+                        padding: EdgeInsets.only(top: 10),
                         shrinkWrap: true,
                         physics: const PageScrollPhysics(), //
-                        controller: scrollController,
+                        //controller: scrollController,
                         itemCount: controller.tipoNotaUiList.length,
                         itemBuilder: (context, index) {
                           TipoNotaUi tipoNotaUi = controller.tipoNotaUiList[index];
@@ -1042,31 +1044,72 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                 children: [
                                   Text(tipoNotaUi.nombre??"",
                                     style: TextStyle(
-                                      fontFamily: AppTheme.fontTTNormsMedium,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
                                       color: Colors.black,
                                     ),),
-                                  Text("Escala: " +(tipoNotaUi.escalanombre??"") +" (" + (tipoNotaUi.escalavalorMinimo??0).toString() + " - " + (tipoNotaUi.escalavalorMaximo??0).toString() + ")"),
+                                  Padding(padding: EdgeInsets.only(top: 4)),
+                                  Text("Escala: " +(tipoNotaUi.escalanombre??"") +" (" + (tipoNotaUi.escalavalorMinimo??0).toString() + " - " + (tipoNotaUi.escalavalorMaximo??0).toString() + ")",
+                                    style: TextStyle(
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontSize: 14,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                   Padding(padding: EdgeInsets.only(top: 8)),
-                                  GridView.builder(
-                                    shrinkWrap : true,
-                                    physics: ClampingScrollPhysics(),
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 4.0),
+                                  /*SingleChildScrollView(
+                                    child: StaggeredGrid.count(
+                                      crossAxisCount: 4,
+                                      mainAxisSpacing: 4,
+                                      crossAxisSpacing: 4,
+                                      children: [
+                                        StaggeredGridTile.count(
+                                          crossAxisCellCount: 2,
+                                          mainAxisCellCount: 2,
+                                          child: Tile(index: 0),
+                                        ),
+                                        StaggeredGridTile.count(
+                                          crossAxisCellCount: 2,
+                                          mainAxisCellCount: 1,
+                                          child: Tile(index: 1),
+                                        ),
+                                        StaggeredGridTile.count(
+                                          crossAxisCellCount: 1,
+                                          mainAxisCellCount: 1,
+                                          child: Tile(index: 2),
+                                        ),
+                                        StaggeredGridTile.count(
+                                          crossAxisCellCount: 1,
+                                          mainAxisCellCount: 1,
+                                          child: Tile(index: 3),
+                                        ),
+                                        StaggeredGridTile.count(
+                                          crossAxisCellCount: 4,
+                                          mainAxisCellCount: 2,
+                                          child: Tile(index: 4),
+                                        ),
+                                      ],
+                                    ),
+                                  ),*/
+                                  ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
                                     itemBuilder: (_, index) {
                                       ValorTipoNotaUi valorTipoNotaUi = tipoNotaUi.valorTipoNotaList![index];
 
                                       switch(tipoNotaUi.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO){
                                         case TipoNotaTiposUi.SELECTOR_VALORES:
                                           return Container(
+                                            margin: EdgeInsets.only(top: 4, bottom: 8),
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
                                                     Container(
-                                                        height: 3.5,
-                                                        width: 3.5,
+                                                        height: 5,
+                                                        width: 5,
                                                         decoration: new BoxDecoration(
                                                           color: Colors.black,
                                                           shape: BoxShape.circle,
@@ -1075,20 +1118,30 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                                     Padding(padding: EdgeInsets.only(left: 8)),
                                                     Text(valorTipoNotaUi.titulo??"",
                                                         style: TextStyle(
-                                                          fontFamily: AppTheme.fontTTNormsMedium,
-                                                          fontSize: 14,
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontSize: 18,
                                                           fontWeight: FontWeight.w700,
                                                           color: Colors.black,
-                                                        )),
+                                                        )
+                                                    ),
                                                     Padding(padding: EdgeInsets.only(left: 8)),
-                                                    Expanded(child: Text(valorTipoNotaUi.alias??"",))
+                                                    Expanded(
+                                                        child: Text(valorTipoNotaUi.alias??"",
+                                                            style: TextStyle(
+                                                              fontFamily: AppTheme.fontTTNorms,
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w700,
+                                                              color: Colors.black,
+                                                            )
+                                                        )
+                                                    )
                                                   ],
                                                 ),
                                                 Padding(padding: EdgeInsets.only(left: 12),
                                                   child:  Text("Valor numérico: " + (valorTipoNotaUi.valorNumerico??0.0).toStringAsFixed(1),
                                                       style: TextStyle(
-                                                        fontFamily: AppTheme.fontName,
-                                                        fontSize: 8,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontSize: 12,
                                                       )
                                                   ),
                                                 ),
@@ -1097,14 +1150,15 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                           );
                                         case TipoNotaTiposUi.SELECTOR_ICONOS:
                                           return Container(
+                                            margin: EdgeInsets.only(top: 4, bottom: 8),
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
                                                     Container(
-                                                        height: 3.5,
-                                                        width: 3.5,
+                                                        height: 5,
+                                                        width: 5,
                                                         decoration: new BoxDecoration(
                                                           color: Colors.black,
                                                           shape: BoxShape.circle,
@@ -1113,27 +1167,37 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                                     Padding(padding: EdgeInsets.only(left: 8)),
                                                     Text(valorTipoNotaUi.titulo??"",
                                                         style: TextStyle(
-                                                          fontFamily: AppTheme.fontTTNormsMedium,
-                                                          fontSize: 14,
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontSize: 18,
                                                           fontWeight: FontWeight.w700,
                                                           color: Colors.black,
-                                                        )),
+                                                        )
+                                                    ),
                                                     CachedNetworkImage(
-                                                      height: 20,
-                                                      width: 20,
+                                                      height: 35,
+                                                      width: 35,
                                                       imageUrl: valorTipoNotaUi.icono??"",
                                                       placeholder: (context, url) => CircularProgressIndicator(),
                                                       errorWidget: (context, url, error) => Icon(Icons.error),
                                                     ),
                                                     Padding(padding: EdgeInsets.only(left: 8)),
-                                                    Expanded(child: Text(valorTipoNotaUi.alias??"",))
+                                                    Expanded(
+                                                        child: Text(valorTipoNotaUi.alias??"",
+                                                            style: TextStyle(
+                                                              fontFamily: AppTheme.fontTTNorms,
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.w700,
+                                                              color: Colors.black,
+                                                            )
+                                                        )
+                                                    )
                                                   ],
                                                 ),
                                                 Padding(padding: EdgeInsets.only(left: 12),
                                                   child:  Text("Valor numérico: " + (valorTipoNotaUi.valorNumerico??0.0).toStringAsFixed(1),
                                                       style: TextStyle(
-                                                        fontFamily: AppTheme.fontName,
-                                                        fontSize: 8,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontSize: 12,
                                                       )
                                                   ),
                                                 ),
@@ -1181,7 +1245,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                   child: StickyHeadersTableNotExpandedNotScrolling(
                       cellDimensions: CellDimensions.variableColumnWidth(
                           stickyLegendHeight:35,
-                          stickyLegendWidth: 135,
+                          stickyLegendWidth: 150,
                           contentCellHeight: 60,
                           columnWidths: controller.tableTipoNotacolumnWidths
                       ),
@@ -1221,7 +1285,12 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                               Container(
                                   padding: EdgeInsets.only(top: 4),
                                   child: Center(
-                                    child: Text("Peso", style: TextStyle(color: AppTheme.white, fontSize: 11),),
+                                    child: Text("%", style: TextStyle(
+                                        color: AppTheme.white,
+                                        fontSize: 12,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w800
+                                    ),),
                                   ),
                                   decoration: BoxDecoration(
                                     border: Border(
@@ -1244,15 +1313,15 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                       children: [
                                         Text("${obj.titulo??""}".trim(),
                                           style: TextStyle(fontFamily: AppTheme.fontTTNormsMedium,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w800,
                                             color: getColor(i),
                                           ),
                                         ),
                                         Text((obj.valorNumerico??0).toStringAsFixed(1),
                                           style: TextStyle(fontFamily: AppTheme.fontTTNormsMedium,
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w800,
                                               color: getColor(i)
                                           ),),
                                       ],
@@ -1314,13 +1383,37 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+                                  Padding(padding: EdgeInsets.only(left: 8),),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    child: (){
+                                      switch(o.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
+                                        case TipoCompetenciaUi.BASE:
+                                          return CachedNetworkImage(
+                                            height: 12,
+                                            width: 12,
+                                            imageUrl: o.url??"",
+                                            placeholder: (context, url) => CircularProgressIndicator(),
+                                            errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 16, height: 16,),
+                                          );
+                                        case TipoCompetenciaUi.TRANSVERSAL:
+                                          return SvgPicture.asset(AppIcon.ic_transversal, width: 16, height: 16,);
+                                        case TipoCompetenciaUi.ENFOQUE:
+                                          return SvgPicture.asset(AppIcon.ic_enfoque, width: 16, height: 16,);
+                                      }
+                                    }(),
+                                  ),
                                   Expanded(
                                       child: Padding(
-                                        padding: EdgeInsets.only(left: 8, right: 4),
+                                        padding: EdgeInsets.only(left: 6, right: 4),
                                         child: Text((o.icdTituloEditado??o.icdTituloEditado??o.icdTitulo??"") ,
                                             maxLines: 3,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(fontSize: 10)
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                fontWeight: FontWeight.w500
+                                            )
                                         ),
                                       )
                                   ),
@@ -1428,26 +1521,13 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    child: (){
-                                      switch(o.criterioUi?.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
-                                        case TipoCompetenciaUi.BASE:
-                                          return CachedNetworkImage(
-                                            height: 16,
-                                            width: 16,
-                                            imageUrl: o.criterioUi?.url??"",
-                                            placeholder: (context, url) => CircularProgressIndicator(),
-                                            errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 16, height: 16,),
-                                          );
-                                        case TipoCompetenciaUi.TRANSVERSAL:
-                                          return SvgPicture.asset(AppIcon.ic_transversal, width: 16, height: 16,);
-                                        case TipoCompetenciaUi.ENFOQUE:
-                                          return SvgPicture.asset(AppIcon.ic_enfoque, width: 16, height: 16,);
-                                      }
-                                    }(),
-                                  ) ,
-                                  Padding(padding: EdgeInsets.all(2)),
-                                  Text((o.criterioUi?.peso??0).toString()+"%", style: TextStyle(fontSize: 11, color: AppTheme.black)),
+                                  Text((o.criterioUi?.peso??0).toString()+"%",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppTheme.black,
+                                          fontFamily: AppTheme.fontTTNorms,
+                                          fontWeight: FontWeight.w500
+                                      )),
                                 ],
                               ),
                               decoration: BoxDecoration(
@@ -1523,13 +1603,13 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
   }
 
   Color getColor(int position) {
-     if(position == 1){
+     if(position == 0){
        return HexColor("#1976d2");
-     }else if(position == 2){
+     }else if(position == 1){
        return HexColor("#388e3c");
-     }else if(position == 3){
+     }else if(position == 2){
        return HexColor("#FF6D00");
-     }else if(position == 4){
+     }else if(position == 3){
        return HexColor("#D32F2F");
      }else{
        return Colors.black;
@@ -1626,53 +1706,116 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                   Expanded(
                                     child: TabBarView(
                                       children: [
-                                        SingleChildScrollView(
-                                          physics: ScrollPhysics(),
-                                          child: ListView.builder(
-                                              padding: EdgeInsets.only(
-                                                  left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
-                                                  right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
-                                                  bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 180),),
-                                              physics: NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: controller.competenciaUiBaseList.length,
-                                              itemBuilder: (BuildContext ctxt, int index) {
-                                                CompetenciaUi  competenciaUi = controller.competenciaUiBaseList[index];
-                                                return getCompetencia('Competencias de base', index,competenciaUi, controller, dialogState);
-                                              }
-                                          ),
+                                        Stack(
+                                          children: [
+                                            controller.competenciaUiBaseList.isEmpty?
+                                            Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Center(
+                                                  child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                                                ),
+                                                Padding(padding: EdgeInsets.all(4)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(left: 24, right: 24),
+                                                  child:  Center(
+                                                    child: Text("No se asignaron las competencias base a evaluar. Comuníquese con su académico o con el encargado a asignar las competencias, capacidades y criterios.", textAlign: TextAlign.center ,style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                                                  ),
+                                                )
+                                              ],
+                                            ):
+                                            SingleChildScrollView(
+                                              physics: ScrollPhysics(),
+                                              child: ListView.builder(
+                                                  padding: EdgeInsets.only(
+                                                    left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                                    right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                                    bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 180),),
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: controller.competenciaUiBaseList.length,
+                                                  itemBuilder: (BuildContext ctxt, int index) {
+                                                    CompetenciaUi  competenciaUi = controller.competenciaUiBaseList[index];
+                                                    return getCompetencia('Competencias de base', index,competenciaUi, controller, dialogState);
+                                                  }
+                                              ),
+                                            ),
+
+                                          ],
                                         ),
-                                        SingleChildScrollView(
-                                          physics: ScrollPhysics(),
-                                          child: ListView.builder(
-                                              padding: EdgeInsets.only(
-                                                left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
-                                                right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
-                                                bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 180),),
-                                              physics: NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: controller.competenciaUiTransversalList.length,
-                                              itemBuilder: (BuildContext ctxt, int index) {
-                                                CompetenciaUi  competenciaUi = controller.competenciaUiTransversalList[index];
-                                                return getCompetencia('Competencias transversales', index, competenciaUi, controller, dialogState);
-                                              }
-                                          ),
+                                        Stack(
+                                          children: [
+                                            controller.competenciaUiTransversalList.isEmpty?
+                                            Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Center(
+                                                  child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                                                ),
+                                                Padding(padding: EdgeInsets.all(4)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(left: 24, right: 24),
+                                                  child:  Center(
+                                                    child: Text("No se asignaron las competencias transversales a evaluar. Comuníquese con su académico o con el encargado a asignar las competencias, capacidades y criterios.", textAlign: TextAlign.center ,style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                                                  ),
+                                                )
+                                              ],
+                                            ):
+                                            SingleChildScrollView(
+                                              physics: ScrollPhysics(),
+                                              child: ListView.builder(
+                                                  padding: EdgeInsets.only(
+                                                    left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                                    right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                                    bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 180),),
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: controller.competenciaUiTransversalList.length,
+                                                  itemBuilder: (BuildContext ctxt, int index) {
+                                                    CompetenciaUi  competenciaUi = controller.competenciaUiTransversalList[index];
+                                                    return getCompetencia('Competencias transversales', index, competenciaUi, controller, dialogState);
+                                                  }
+                                              ),
+                                            ),
+
+                                          ],
                                         ),
-                                        SingleChildScrollView(
-                                          physics: ScrollPhysics(),
-                                          child: ListView.builder(
-                                              padding: EdgeInsets.only(
-                                                left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
-                                                right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
-                                                bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 180),),
-                                              physics: NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: controller.competenciaUiEnfoqueList.length,
-                                              itemBuilder: (BuildContext ctxt, int index) {
-                                                CompetenciaUi  competenciaUi = controller.competenciaUiEnfoqueList[index];
-                                                return getCompetencia('Competencias de enfoque', index,competenciaUi, controller, dialogState);
-                                              }
-                                          ),
+                                        Stack(
+                                          children: [
+                                            controller.competenciaUiEnfoqueList.isEmpty?
+                                            Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Center(
+                                                  child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                                                ),
+                                                Padding(padding: EdgeInsets.all(4)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(left: 24, right: 24),
+                                                  child:  Center(
+                                                    child: Text("No se asignaron las competencias enfoque a evaluar. Comuníquese con su académico o con el encargado a asignar las competencias, capacidades y criterios.", textAlign: TextAlign.center ,style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                                                  ),
+                                                )
+                                              ],
+                                            ):
+                                            SingleChildScrollView(
+                                              physics: ScrollPhysics(),
+                                              child: ListView.builder(
+                                                  padding: EdgeInsets.only(
+                                                    left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                                    right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                                    bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 180),),
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: controller.competenciaUiEnfoqueList.length,
+                                                  itemBuilder: (BuildContext ctxt, int index) {
+                                                    CompetenciaUi  competenciaUi = controller.competenciaUiEnfoqueList[index];
+                                                    return getCompetencia('Competencias de enfoque', index,competenciaUi, controller, dialogState);
+                                                  }
+                                              ),
+                                            ),
+
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -2732,4 +2875,50 @@ class _ItemCompetenciaState extends State<ItemCompetencia>{
 
 
 
+}
+
+class Tile extends StatelessWidget {
+  const Tile({
+    Key? key,
+    required this.index,
+    this.extent,
+    this.backgroundColor,
+    this.bottomSpace,
+  }) : super(key: key);
+
+  final int index;
+  final double? extent;
+  final double? bottomSpace;
+  final Color? backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final child = Container(
+      color: backgroundColor ?? AppTheme.colorPrimary,
+      height: extent,
+      child: Center(
+        child: CircleAvatar(
+          minRadius: 20,
+          maxRadius: 20,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          child: Text('$index', style: const TextStyle(fontSize: 20)),
+        ),
+      ),
+    );
+
+    if (bottomSpace == null) {
+      return child;
+    }
+
+    return Column(
+      children: [
+        Expanded(child: child),
+        Container(
+          height: bottomSpace,
+          color: Colors.green,
+        )
+      ],
+    );
+  }
 }

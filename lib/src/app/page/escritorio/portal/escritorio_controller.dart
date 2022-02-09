@@ -14,6 +14,8 @@ class EscritorioController extends Controller{
   UsuarioUi? get usuarioUi => _usuarioUi;
   bool _sesionProgress = false;
   bool get sesionProgress => _sesionProgress;
+  bool _conexion = true;
+  bool get conexion => _conexion;
 
   EscritorioController(configuracionRepository, httpRepository, unidadSesionRepository):
         escritorioPresenter = EscritorioPresenter(configuracionRepository, httpRepository, unidadSesionRepository);
@@ -40,11 +42,19 @@ class EscritorioController extends Controller{
       _sesionHoyUiList = [];
       _sesionProgress = false;
       refreshUI();
+      _conexion = false;
     };
     escritorioPresenter.getSesionesHoyOnSuccess = (bool? datosOffline, bool? errorServidor, List<SesionHoyUi>? sesionHoyUiList){
       _sesionHoyUiList = sesionHoyUiList??[];
       _sesionProgress = false;
       refreshUI();
+      if(datosOffline??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
     };
   }
 
@@ -57,6 +67,14 @@ class EscritorioController extends Controller{
   void onClickVerMasSesiones() {
     _sesionToogle = !_sesionToogle;
     refreshUI();
+  }
+
+  void changeConnected(bool connected) {
+    if(!_conexion && connected){
+      _sesionProgress = true;
+      refreshUI();
+      escritorioPresenter.getSesionesHoy();
+    }
   }
 
 

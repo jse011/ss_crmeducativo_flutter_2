@@ -4,15 +4,26 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/portal/evento_agenda_presenter_2.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_eventoUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
+import 'package:collection/collection.dart';
 
 class EventoAgendaController2 extends Controller{
   UsuarioUi? usuarioUi;
-  String? _msgConexion = null;
-  String? get msgConexion => _msgConexion;
+  bool _conexion = true;
+  bool get conexion => _conexion;
   Timer? selectedTipoEventoTimer = null;
   List<TipoEventoUi> _tipoEventoList = [];
   List<TipoEventoUi> get tipoEventoList => _tipoEventoList;
+  List<TipoEventoUi> get tipoEventoListInvert {
+    List<TipoEventoUi> list = [];
+    list.addAll(_tipoEventoList);
+    TipoEventoUi? tipoEventoUi = list.firstWhereOrNull((element) => element.id == 0);
+    if(tipoEventoUi!=null)list.remove(tipoEventoUi);
+    if(tipoEventoUi!=null)list.insert(0, tipoEventoUi);
+
+    return list;
+  }
   TipoEventoUi? _selectedTipoEventoUi = null;
   TipoEventoUi? get selectedTipoEventoUi => _selectedTipoEventoUi;
   List<EventoUi>? _eventoUilIst = null;
@@ -46,15 +57,22 @@ class EventoAgendaController2 extends Controller{
 
       _eventoUilIst = [];
       _isLoading = false;
-      _msgConexion = "Al parecer ocurrió un error involuntario.";
+      _conexion = false;
       refreshUI();
     };
 
-    presenter.getEventoAgendaOnNext = (List<TipoEventoUi>? tipoEvantoList, List<EventoUi>? eventoList, bool errorServidor, bool datosOffline) {
+    presenter.getEventoAgendaOnNext = (List<TipoEventoUi>? tipoEvantoList, List<EventoUi>? eventoList, bool? errorServidor, bool? datosOffline) {
 
       _tipoEventoList = tipoEvantoList??[];
-      _msgConexion = errorServidor? "!Oops! Al parecer ocurrió un error involuntario.":null;
-      _msgConexion = datosOffline? "No hay Conexión a Internet...":null;
+      if(errorServidor??false){
+        _conexion = false;
+      }else if(datosOffline??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
+      //_conexion = errorServidor? "!Oops! Al parecer ocurrió un error involuntario.":null;
+      //_conexion = datosOffline? "No hay Conexión a Internet...":null;
 
       if(_selectedTipoEventoUi==null){
         for(TipoEventoUi tipoEventoUi in tipoEventoList){
@@ -176,6 +194,14 @@ class EventoAgendaController2 extends Controller{
     _isLoading = false;
     refreshUI();
     return result;
+  }
+
+  void changeConnected(bool connected) {
+    if(!_conexion && connected){
+      _isLoading = true;
+      refreshUI();
+      presenter.getEventoAgenda(null, true);
+    }
   }
 
 }

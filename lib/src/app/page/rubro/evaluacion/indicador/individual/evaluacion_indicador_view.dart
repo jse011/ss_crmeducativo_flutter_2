@@ -97,6 +97,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
             bool?  se_a_modicado = await controller.onSave();
             if(se_a_modicado??false){
               Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+              await Future.delayed(Duration(seconds: 1));
               return false;
             }else{
               return true;
@@ -189,7 +190,10 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                     Expanded(child: ElevatedButton(
                                       onPressed: () async {
                                         await controller.onClickAceptarEliminar();
-                                        Navigator.of(context).pop(-1);//si devuelve un entero se actualiza toda la lista. -1 si se elimino la rubrica
+                                        await Future.delayed(const Duration(milliseconds: 300), () {
+                                          Navigator.of(context).pop(-1);//si devuelve un entero se actualiza toda la lista. -1 si se elimino la rubrica
+                                        });
+
                                       },
                                       style: ElevatedButton.styleFrom(
                                         primary: Colors.red,
@@ -343,7 +347,13 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                           icon: Icon(Ionicons.arrow_back, color: AppTheme.nearlyBlack, size: 22 + 6 - 6 * topBarOpacity,),
                           onPressed: () async {
                             bool? respuesta = await controller.onSave();
-                            Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                            if(respuesta??false){
+                              Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                            }else{
+                              Navigator.of(context).pop(false);
+                            }
+
+
 
                           },
                         )

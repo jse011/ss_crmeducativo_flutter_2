@@ -25,6 +25,7 @@ import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
@@ -46,18 +47,18 @@ import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 class PesoCriterioView extends View{
   CapacidadUi? capacidadUi;
   CursosUi? cursosUi;
-
-  PesoCriterioView(this.capacidadUi, this.cursosUi);
+  CalendarioPeriodoUI? calendarioPeriodoUI;
+  PesoCriterioView(this.capacidadUi, this.cursosUi, this.calendarioPeriodoUI);
 
   @override
-  _PesoCriterioViewState createState() => _PesoCriterioViewState(capacidadUi, cursosUi);
+  _PesoCriterioViewState createState() => _PesoCriterioViewState(capacidadUi, cursosUi, calendarioPeriodoUI);
 
 }
 
 class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioController> with TickerProviderStateMixin{
   ScrollControllers crollControllers = ScrollControllers();
 
-  _PesoCriterioViewState(capacidadUi, cursosUi) : super(PesoCriterioController(capacidadUi, cursosUi, MoorConfiguracionRepository(), MoorRubroRepository(), DeviceHttpDatosRepositorio()));
+  _PesoCriterioViewState(capacidadUi, cursosUi, calendarioPeriodoUI) : super(PesoCriterioController(capacidadUi, cursosUi, calendarioPeriodoUI, MoorConfiguracionRepository(), MoorRubroRepository(), DeviceHttpDatosRepositorio()));
 
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
@@ -689,65 +690,82 @@ class _PesoCriterioViewState extends ViewState<PesoCriterioView, PesoCriterioCon
             dynamic o = controller.tableCells[j][i];
             if(o is RubricaEvaluacionPesoSelectedUi){
               return InkWell(
-                onTap: () => controller.onClickPeso(o),
-                child: Container(
-                  alignment: Alignment.center,
-                  child: RotatedBox(
-                   quarterTurns: -1,
-                    child: Text("${(){
-                      if(o.peso==3){
-                        return "Peso\nAlta";
-                      }else if(o.peso==2){
-                        return "Peso\nEstandar";
-                      }else if(o.peso==1){
-                        return "Peso\nBaja";
-                      }else if(o.peso==-1){
-                        return "No usar\ncriterio";
-                      }else{
-                        return "";
-                      }
-                    }()}",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color:  (o.selected??false)?AppTheme.white: getPosition((){
-                              if(o.peso==3){
-                                return 0;
-                              }else if(o.peso==2){
-                                return 1;
-                              }else if(o.peso==1){
-                                return 2;
-                              }else if(o.peso==-1){
-                                return 3;
-                              }else{
-                                return 4;
-                              }
-                            }()).withOpacity(0.8),
-                            fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
-                            fontFamily: AppTheme.fontTTNorms,
-                            fontWeight: FontWeight.w700
+                onTap: () {
+                  if(controller.calendarioPeriodoUI?.habilitadoProceso==1){
+                    controller.onClickPeso(o);
+                  }
+                } ,
+                child: Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      child: RotatedBox(
+                        quarterTurns: -1,
+                        child: Text("${(){
+                          if(o.peso==3){
+                            return "Peso\nAlta";
+                          }else if(o.peso==2){
+                            return "Peso\nEstandar";
+                          }else if(o.peso==1){
+                            return "Peso\nBaja";
+                          }else if(o.peso==-1){
+                            return "No usar\ncriterio";
+                          }else{
+                            return "";
+                          }
+                        }()}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color:  (o.selected??false)?AppTheme.white: getPosition((){
+                                  if(o.peso==3){
+                                    return 0;
+                                  }else if(o.peso==2){
+                                    return 1;
+                                  }else if(o.peso==1){
+                                    return 2;
+                                  }else if(o.peso==-1){
+                                    return 3;
+                                  }else{
+                                    return 4;
+                                  }
+                                }()).withOpacity(0.8),
+                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 11),
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700
+                            )
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: AppTheme.greyLighten2),
+                          right: BorderSide(color: AppTheme.greyLighten2),
+                          bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableCells.length-1) <= j ? 1:0)),
+                        ),
+                        color: (o.peso??0) == 0 || !(o.selected??false)?AppTheme.white : getPosition((){
+                          if(o.peso==3){
+                            return 0;
+                          }else if(o.peso==2){
+                            return 1;
+                          }else if(o.peso==1){
+                            return 2;
+                          }else if(o.peso==-1){
+                            return 3;
+                          }else{
+                            return 4;
+                          }
+                        }()).withOpacity(0.8),
+                      ),
+                    ),
+                    (controller.calendarioPeriodoUI?.habilitadoProceso!=1)?
+                    Positioned(
+                        bottom: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4),
+                        right: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 4),
+                        child: Icon(Icons.block,
+                            color: AppTheme.redLighten1.withOpacity(0.8),
+                            size: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 14)
                         )
-                    ),
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: AppTheme.greyLighten2),
-                      right: BorderSide(color: AppTheme.greyLighten2),
-                      bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.tableCells.length-1) <= j ? 1:0)),
-                    ),
-                    color: (o.peso??0) == 0 || !(o.selected??false)?AppTheme.white : getPosition((){
-                      if(o.peso==3){
-                        return 0;
-                      }else if(o.peso==2){
-                        return 1;
-                      }else if(o.peso==1){
-                        return 2;
-                      }else if(o.peso==-1){
-                        return 3;
-                      }else{
-                        return 4;
-                      }
-                    }()).withOpacity(0.8),
-                  ),
+                    ):Container(),
+                  ],
                 ),
               );
             }

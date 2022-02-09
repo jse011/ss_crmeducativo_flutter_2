@@ -1,5 +1,6 @@
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_presenter.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
@@ -26,6 +27,7 @@ import 'package:collection/collection.dart';
 
 class EvaluacionCapacidadController extends Controller{
   static int Modifico_Peso_Rubro = 0, Modifico_Evaluacion = 1;
+  CalendarioPeriodoUI? calendarioPeriodoUI;
   EvaluacionCapacidadUi evaluacionCapacidadUi;
   CursosUi cursosUi;
   EvaluacionCapacidadPresenter presenter;
@@ -47,7 +49,7 @@ class EvaluacionCapacidadController extends Controller{
   bool get showDialog => _showDialog;
   Map<String?, int> rubroModificadosMap = Map();//Se guarda que rubro se modifico ademas si el contenido es 0 se modifico el peso_criterio y si es 1 se modifoco la evaluacion
 
-  EvaluacionCapacidadController(this.evaluacionCapacidadUi, this.cursosUi, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
+  EvaluacionCapacidadController(this.evaluacionCapacidadUi, this.cursosUi, this.calendarioPeriodoUI, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo, HttpDatosRepository httpDatosRepo):
       presenter = EvaluacionCapacidadPresenter(configuracionRepo, rubroRepo, httpDatosRepo);
 
   @override

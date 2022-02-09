@@ -27,7 +27,7 @@ class SaveTareaEval{
     for(EvaluacionUi evaluacionUi in params.rubricaEvaluacionUi?.evaluacionUiList??[]){
       int? alumnoId = params.alumnoIdList.firstWhereOrNull((element) => element == evaluacionUi.alumnoId);
       if(alumnoId!=null){
-        print("valorTipoNotaId a enviar: ${evaluacionUi.valorTipoNotaId}");
+        //print("valorTipoNotaId a enviar: ${evaluacionUi.valorTipoNotaId}");
         evaluacionUiList.add(evaluacionUi);
       }
     }
@@ -57,7 +57,7 @@ class SaveTareaEval{
     int usuarioId = await configuracionRepository.getSessionUsuarioId();
     String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
     int georeferenciaId = await configuracionRepository.getGeoreferenciaId();
-    print("SaveRubroEvaluacionResponse");
+    //print("SaveRubroEvaluacionResponse");
     Map<String, dynamic>? dataBDEvaluacion =  await repository.getUpdateRubroEvaluacionData(rubricaEvaluacionUi, usuarioId);
 
     bool success = true;
@@ -66,6 +66,7 @@ class SaveTareaEval{
       if(data!=null){
         success = await httpDatosRepository.updateEvaluacionRubroFlutter(urlServidorLocal, params.calendarioPeriodoUI?.id??0, params.tareaUi?.silaboEventoId??0, georeferenciaId, usuarioId, data)??false;
         if(success){
+          await repository.saveRubroEvaluacionData(dataBDEvaluacion);
           await repository.cambiarEstadoActualizado(rubricaEvaluacionUi.rubroEvaluacionId??"");
         }
       }
@@ -79,11 +80,11 @@ class SaveTareaEval{
             if(success==null){
               successListen.call(SaveTareaEvalResponse(dataBDEvaluacion, false, sinConexion, true, false));
             }else if(success){
-              //await repository.saveRubroEvaluacionData(dataBD);
+              //
               //await repository.cambiarEstadoActualizado(params.rubricaEvaluacionUi?.rubroEvaluacionId??"");
               successListen.call(SaveTareaEvalResponse(dataBDEvaluacion, true, sinConexion, false, false));
             }else{
-              print("saveRubroEvaluacionAllError :/ error");
+              //print("saveRubroEvaluacionAllError :/ error");
               successListen.call(SaveTareaEvalResponse(dataBDEvaluacion,false, sinConexion, false, false));
             }
           });

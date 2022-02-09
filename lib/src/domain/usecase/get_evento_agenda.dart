@@ -60,8 +60,6 @@ class GetEventoAgenda extends UseCase<GetEvaluacionCaseResponse, GetEventoAgenda
         controller.addError(e);
         // Finally, callback fires.
         // throw Exception(e);              // Future completes with 42.
-      }).timeout(const Duration (seconds:60),onTimeout : () {
-        throw Exception("GetEventoAgenda timeout 60 seconds");
       });
 
     } catch (e) {

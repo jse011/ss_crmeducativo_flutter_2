@@ -496,7 +496,6 @@ class EvaluacionIndicadorMultipleController extends Controller {
       refreshUI();
       await presenter.updateServer(cursosUi, calendarioPeriodoUI ,rubroEvaluacionUi);
     }
-
     return _modificado;
   }
 

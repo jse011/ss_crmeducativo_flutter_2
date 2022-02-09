@@ -1,86 +1,97 @@
-import 'package:http/http.dart' as http;
-import 'package:package_info/package_info.dart';
-import 'package:html/parser.dart' show parse;
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/cupertino.dart';
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io' show Platform;
 
-typedef DialogTextBuilder = String Function(
-    String localVersion,
-    String storeVersion
-    );
+import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:html/parser.dart' show parse;
+import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Information about the app's current version, and the most recent version
 /// available in the Apple App Store or Google Play Store.
 class VersionStatus {
-  /// True if the there is a more recent version of the app in the store.
-  bool canUpdate;
-
   /// The current version of the app.
-  String localVersion;
+  final String localVersion;
 
   /// The most recent version of the app in the store.
-  String storeVersion;
+  final String storeVersion;
 
   /// A link to the app store page where the app can be updated.
-  String? appStoreLink;
+  final String appStoreLink;
 
-  VersionStatus({this.canUpdate = false, this.localVersion = "", this.storeVersion = ""});
+  /// The release notes for the store version of the app.
+  final String? releaseNotes;
+
+  /// Returns `true` if the store version of the application is greater than the local version.
+  bool get canUpdate {
+    final local = localVersion.split('.').map(int.parse).toList();
+    final store = storeVersion.split('.').map(int.parse).toList();
+
+    // Each consecutive field in the version notation is less significant than the previous one,
+    // therefore only one comparison needs to yield `true` for it to be determined that the store
+    // version is greater than the local version.
+    for (var i = 0; i < store.length; i++) {
+      // The store version field is newer than the local version.
+      if (store[i] > local[i]) {
+        return true;
+      }
+
+      // The local version field is newer than the store version.
+      if (local[i] > store[i]) {
+        return false;
+      }
+    }
+
+    // The local and store versions are the same.
+    return false;
+  }
+
+  VersionStatus._({
+    required this.localVersion,
+    required this.storeVersion,
+    required this.appStoreLink,
+    this.releaseNotes,
+  });
 }
 
 class NewVersion {
-  /// This is required to check the user's platform and display alert dialogs.
-  BuildContext context;
+  /// An optional value that can override the default packageName when
+  /// attempting to reach the Apple App Store. This is useful if your app has
+  /// a different package name in the App Store.
+  final String? iOSId;
 
   /// An optional value that can override the default packageName when
   /// attempting to reach the Google Play Store. This is useful if your app has
-  /// a different package name in the Play Store for some reason.
-  String? androidId;
+  /// a different package name in the Play Store.
+  final String? androidId;
 
-  /// An optional value that can override the default packageName when
-  /// attempting to reach the Apple App Store. This is useful if your app has
-  /// a different package name in the App Store for some reason.
-  String? iOSId;
+  /// Only affects iOS App Store lookup: The two-letter country code for the store you want to search.
+  /// Provide a value here if your app is only available outside the US.
+  /// For example: US. The default is US.
+  /// See http://en.wikipedia.org/wiki/ ISO_3166-1_alpha-2 for a list of ISO Country Codes.
+  final String? iOSAppStoreCountry;
 
-  /// An optional value that can override the default callback to dismiss button
-  VoidCallback? dismissAction;
-
-  /// An optional value that can override the default text to alert,
-  /// you can ${versionStatus.localVersion} to ${versionStatus.storeVersion}
-  /// to determinate in the text a versions.
-  String? dialogText;
-
-  /// An optional value that can override the default title of alert dialog
-  String dialogTitle;
-
-  /// An optional value that can override the default text of dismiss button
-  String dismissText;
-
-  /// An optional value that can override the default text of update button
-  String updateText;
-
-  DialogTextBuilder? dialogTextBuilder;
+  /// An optional value that will force the plugin to always return [forceAppVersion]
+  /// as the value of [storeVersion]. This can be useful to test the plugin's behavior
+  /// before publishng a new version.
+  final String? forceAppVersion;
 
   NewVersion({
     this.androidId,
     this.iOSId,
-    required this.context,
-    this.dismissAction,
-    this.dismissText: 'Maybe Later',
-    this.updateText: 'Update',
-    this.dialogText,
-    this.dialogTitle: 'Update Available',
-    this.dialogTextBuilder,
+    this.iOSAppStoreCountry,
+    this.forceAppVersion,
   });
 
   /// This checks the version status, then displays a platform-specific alert
   /// with buttons to dismiss the update alert, or go to the app store.
-  showAlertIfNecessary() async {
-    VersionStatus? versionStatus = await getVersionStatus();
+  showAlertIfNecessary({required BuildContext context}) async {
+    final VersionStatus? versionStatus = await getVersionStatus();
     if (versionStatus != null && versionStatus.canUpdate) {
-      showUpdateDialog(versionStatus);
+      showUpdateDialog(context: context, versionStatus: versionStatus);
     }
   }
 
@@ -89,116 +100,163 @@ class NewVersion {
   /// way.
   Future<VersionStatus?> getVersionStatus() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    VersionStatus versionStatus = VersionStatus(
-      localVersion: packageInfo.version,
-    );
-    switch (Theme.of(context).platform) {
-      case TargetPlatform.android:
-        final id = androidId ?? packageInfo.packageName;
-        versionStatus = await _getAndroidStoreVersion(id, versionStatus);
-        break;
-      case TargetPlatform.iOS:
-        final id = iOSId ?? packageInfo.packageName;
-        versionStatus = await _getiOSStoreVersion(id, versionStatus);
-        break;
-      default:
-        print('This target platform is not yet supported by this package.');
+    if (Platform.isIOS) {
+      return _getiOSStoreVersion(packageInfo);
+    } else if (Platform.isAndroid) {
+      return _getAndroidStoreVersion(packageInfo);
+    } else {
+      debugPrint(
+          'The target platform "${Platform.operatingSystem}" is not yet supported by this package.');
     }
-    versionStatus.canUpdate = versionStatus.storeVersion != versionStatus.localVersion;
-    return versionStatus;
   }
 
   /// iOS info is fetched by using the iTunes lookup API, which returns a
   /// JSON document.
-  _getiOSStoreVersion(String id, VersionStatus versionStatus) async {
-    final url = 'https://itunes.apple.com/lookup?bundleId=$id';
-    final response = await http.get(Uri.parse(url));
+  Future<VersionStatus?> _getiOSStoreVersion(PackageInfo packageInfo) async {
+    final id = iOSId ?? packageInfo.packageName;
+    final parameters = {"bundleId": "$id"};
+    if (iOSAppStoreCountry != null) {
+      parameters.addAll({"country": iOSAppStoreCountry!});
+    }
+    var uri = Uri.https("itunes.apple.com", "/lookup", parameters);
+    final response = await http.get(uri);
     if (response.statusCode != 200) {
-      print('Can\'t find an app in the App Store with the id: $id');
+      debugPrint('Failed to query iOS App Store');
       return null;
     }
     final jsonObj = json.decode(response.body);
-    versionStatus.storeVersion = jsonObj['results'][0]['version'];
-    versionStatus.appStoreLink = jsonObj['results'][0]['trackViewUrl'];
-    return versionStatus;
+    final List results = jsonObj['results'];
+    if (results.isEmpty) {
+      debugPrint('Can\'t find an app in the App Store with the id: $id');
+      return null;
+    }
+    return VersionStatus._(
+      localVersion: packageInfo.version,
+      storeVersion: forceAppVersion ?? jsonObj['results'][0]['version'],
+      appStoreLink: jsonObj['results'][0]['trackViewUrl'],
+      releaseNotes: jsonObj['results'][0]['releaseNotes'],
+    );
   }
 
   /// Android info is fetched by parsing the html of the app store page.
-  _getAndroidStoreVersion(String id, VersionStatus versionStatus) async {
-    final url = 'https://play.google.com/store/apps/details?id=$id';
-    final response = await http.get(Uri.parse(url));
+  Future<VersionStatus?> _getAndroidStoreVersion(
+      PackageInfo packageInfo) async {
+    final id = androidId ?? packageInfo.packageName;
+    final uri =
+    Uri.https("play.google.com", "/store/apps/details", {"id": "$id"});
+    final response = await http.get(uri);
     if (response.statusCode != 200) {
-      print('Can\'t find an app in the Play Store with the id: $id');
+      debugPrint('Can\'t find an app in the Play Store with the id: $id');
       return null;
     }
     final document = parse(response.body);
-    final elements = document.getElementsByClassName('hAyfc');
-    final versionElement = elements.firstWhere(
+
+    final additionalInfoElements = document.getElementsByClassName('hAyfc');
+    final versionElement = additionalInfoElements.firstWhere(
           (elm) => elm.querySelector('.BgcNfc')!.text == 'Current Version',
     );
-    versionStatus.storeVersion = versionElement.querySelector('.htlgb')!.text;
-    versionStatus.appStoreLink = url;
-    return versionStatus;
+    final storeVersion = versionElement.querySelector('.htlgb')!.text;
+
+    final sectionElements = document.getElementsByClassName('W4P4ne');
+    final releaseNotesElement = sectionElements.firstWhereOrNull(
+          (elm) => elm.querySelector('.wSaTQd')!.text == 'What\'s New',
+    );
+    final releaseNotes = releaseNotesElement
+        ?.querySelector('.PHBdkd')
+        ?.querySelector('.DWPxHb')
+        ?.text;
+
+    return VersionStatus._(
+      localVersion: packageInfo.version,
+      storeVersion: forceAppVersion ?? storeVersion,
+      appStoreLink: uri.toString(),
+      releaseNotes: releaseNotes,
+    );
   }
 
   /// Shows the user a platform-specific alert about the app update. The user
   /// can dismiss the alert or proceed to the app store.
-  void showUpdateDialog(VersionStatus versionStatus) async {
-    final title = Text(dialogTitle);
-    String? text;
-    if( this.dialogTextBuilder!=null){
-      text = this.dialogTextBuilder!(versionStatus.localVersion, versionStatus.storeVersion);
-    }else{
-      text = this.dialogText ?? 'You can now update this app from ${versionStatus.localVersion} to ${versionStatus.storeVersion}';
+  ///
+  /// To change the appearance and behavior of the update dialog, you can
+  /// optionally provide [dialogTitle], [dialogText], [updateButtonText],
+  /// [dismissButtonText], and [dismissAction] parameters.
+  void showUpdateDialog({
+    required BuildContext context,
+    required VersionStatus versionStatus,
+    String dialogTitle = 'Update Available',
+    String? dialogText,
+    String updateButtonText = 'Update',
+    bool allowDismissal = true,
+    String dismissButtonText = 'Maybe Later',
+    VoidCallback? dismissAction,
+  }) async {
+    final dialogTitleWidget = Text(dialogTitle);
+    final dialogTextWidget = Text(
+      dialogText ??
+          'You can now update this app from ${versionStatus.localVersion} to ${versionStatus.storeVersion}',
+    );
+
+    final updateButtonTextWidget = Text(updateButtonText);
+    final updateAction = () {
+      launchAppStore(versionStatus.appStoreLink);
+      if (allowDismissal) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+    };
+
+    List<Widget> actions = [
+      Platform.isAndroid
+          ? TextButton(
+        child: updateButtonTextWidget,
+        onPressed: updateAction,
+      )
+          : CupertinoDialogAction(
+        child: updateButtonTextWidget,
+        onPressed: updateAction,
+      ),
+    ];
+
+    if (allowDismissal) {
+      final dismissButtonTextWidget = Text(dismissButtonText);
+      dismissAction = dismissAction ??
+              () => Navigator.of(context, rootNavigator: true).pop();
+      actions.add(
+        Platform.isAndroid
+            ? TextButton(
+          child: dismissButtonTextWidget,
+          onPressed: dismissAction,
+        )
+            : CupertinoDialogAction(
+          child: dismissButtonTextWidget,
+          onPressed: dismissAction,
+        ),
+      );
     }
 
-    final content = Text(text,);
-    final dismissText = Text(this.dismissText);
-    final dismissAction = this.dismissAction ?? () => Navigator.of(context, rootNavigator: true).pop();
-    final updateText = Text(this.updateText);
-    final updateAction = () {
-      _launchAppStore(versionStatus.appStoreLink!);
-      Navigator.of(context, rootNavigator: true).pop();
-    };
-    final platform = Theme.of(context).platform;
-    showDialog(
+    await showDialog(
       context: context,
+      barrierDismissible: allowDismissal,
       builder: (BuildContext context) {
-        return platform == TargetPlatform.android
-            ? AlertDialog(
-          title: title,
-          content: content,
-          actions: <Widget>[
-            TextButton(
-              child: dismissText,
-              onPressed: dismissAction,
+        return WillPopScope(
+            child: Platform.isAndroid
+                ? AlertDialog(
+              title: dialogTitleWidget,
+              content: dialogTextWidget,
+              actions: actions,
+            )
+                : CupertinoAlertDialog(
+              title: dialogTitleWidget,
+              content: dialogTextWidget,
+              actions: actions,
             ),
-            TextButton(
-              child: updateText,
-              onPressed: updateAction,
-            ),
-          ],
-        )
-            : CupertinoAlertDialog(
-          title: title,
-          content: content,
-          actions: <Widget>[
-            CupertinoDialogAction(
-              child: dismissText,
-              onPressed: dismissAction,
-            ),
-            CupertinoDialogAction(
-              child: updateText,
-              onPressed: updateAction,
-            ),
-          ],
-        );
+            onWillPop: () => Future.value(allowDismissal));
       },
     );
   }
 
   /// Launches the Apple App Store or Google Play Store page for the app.
-  void _launchAppStore(String appStoreLink) async {
+  Future<void> launchAppStore(String appStoreLink) async {
+    debugPrint(appStoreLink);
     if (await canLaunch(appStoreLink)) {
       await launch(appStoreLink);
     } else {

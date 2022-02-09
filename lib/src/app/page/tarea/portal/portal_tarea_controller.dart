@@ -167,8 +167,8 @@ class PortalTareaController extends Controller{
       refreshCountEvaluados();
       _progressRubro = true;
       refreshUI();
-      print("onActualizarRubro");
-      await Future.delayed(Duration(seconds: 1));
+      //print("onActualizarRubro");
+      //await Future.delayed(Duration(seconds: 1));
       presenter.onActualizarRubro(calendarioPeriodoUI, cursosUi, sesionUi, tareaUi);
 
     };
@@ -182,19 +182,19 @@ class PortalTareaController extends Controller{
     };
 
     presenter.updateDatosCrearRubroOnNext = (bool? errorConexion, bool? errorServidor)async{
-      print("updateDatosCrearRubroOnNext progressCambiosEvaluacion ${_progressCambiosEvaluacion}");
+      //print("updateDatosCrearRubroOnNext progressCambiosEvaluacion ${_progressCambiosEvaluacion}");
       if(progressCambiosEvaluacion){
         _progressCambiosEvaluacion = false;
         _cambiosEvaluacion = false;
         _abrirRubrica = true;
-        refreshUI();
       }else{
         presenter.getRubroEvaluacion(tareaUi?.tareaId, cursosUi);
       }
+      refreshUI();
     };
 
     presenter.updateDatosCrearRubroOnError = (e){
-      print("updateDatosCrearRubroOnError");
+      //print("updateDatosCrearRubroOnError");
       this.rubricaEvalUI = null;
       _progressRubro = false;
       refreshUI();
@@ -202,7 +202,7 @@ class PortalTareaController extends Controller{
 
 
     presenter.getRubroEvaluacionOnNext = (RubricaEvaluacionUi? rubricaEvalUI, List<PersonaUi> alumnoCursoList) {
-      print("getRubroEvaluacionOnNext ${rubricaEvalUI?.rubroEvaluacionId} && rubroEvalProcesoId: ${tareaUi?.rubroEvalProcesoId}");
+      //print("getRubroEvaluacionOnNext ${rubricaEvalUI?.rubroEvaluacionId} && rubroEvalProcesoId: ${tareaUi?.rubroEvalProcesoId}");
       this.rubricaEvalUI = rubricaEvalUI;
       _progressRubro= false;
 
@@ -226,7 +226,7 @@ class PortalTareaController extends Controller{
     };
 
     presenter.getRubroEvaluacionOnError = (e){
-      print("getRubroEvaluacionOnError");
+      //print("getRubroEvaluacionOnError");
       this.rubricaEvalUI = null;
       _progressRubro= false;
       refreshUI();
@@ -902,6 +902,11 @@ class PortalTareaController extends Controller{
     refreshUI();
   }
 
+  @override
+  void dispose() {
+    presenter.dispose();
+    super.dispose();
+  }
 
 
 

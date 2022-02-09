@@ -7,8 +7,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/fancy_shimmer_image.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/close_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -31,8 +33,8 @@ class PortalDocenteView extends View{
   final AnimationController animationController;
   final MenuBuilder? menuBuilder;
   final CloseSession closeSessionHandler;
-
-  PortalDocenteView({required this.animationController, this.menuBuilder, required this.closeSessionHandler});
+  final ConnectedCallback connectedCallback;
+  PortalDocenteView({required this.animationController, this.menuBuilder, required this.closeSessionHandler, required this.connectedCallback});
 
   @override
   _PortalDocenteViewState createState() => _PortalDocenteViewState();
@@ -43,6 +45,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
   final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
   late Animation<double> topBarAnimation;
+  GlobalKey globalKey = GlobalKey();
 
   _PortalDocenteViewState()
       : super(PortalDocenteController(MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
@@ -85,12 +88,23 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
       });
 
     });
+
+    widget.connectedCallback.call((bool connected){
+      if(globalKey.currentContext!=null){
+        PortalDocenteController controller =
+        FlutterCleanArchitecture.getController<PortalDocenteController>(globalKey.currentContext!, listen: false);
+        controller.changeConnected(connected);
+
+      }
+    });
+
     super.initState();
   }
 
 
   @override
   Widget get view =>  WillPopScope(
+    key: globalKey,
     onWillPop: () async{
       return await widget.closeSessionHandler.closeSession()??false;
     },
@@ -212,6 +226,19 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                       builder: (context, controller) {
                         return Stack(
                           children: [
+                            controller.cursosUiList.isEmpty && !controller.isLoading?
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(4)),
+                                  Center(
+                                    child: Text("Lista vacía${!controller.conexion?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                                  )
+                                ],
+                              ):
                             CustomScrollView(
                               controller: scrollController,
                               slivers: <Widget>[
@@ -1209,3 +1236,4 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
 }
 
 typedef MenuBuilder = void Function(Widget menuView);
+typedef ConnectedCallback = void Function(Function(bool connected) onChangeConnected);

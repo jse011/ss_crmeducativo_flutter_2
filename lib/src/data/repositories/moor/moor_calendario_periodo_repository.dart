@@ -23,6 +23,7 @@ class MoorCalendarioPeriodoRepository extends CalendarioPeriodoRepository{
         calendarioPeriodoUI.nombre = calendarioPeriodoData.nombre;
         calendarioPeriodoUI.habilitadoProceso = calendarioPeriodoData.habilitadoProceso;
         calendarioPeriodoUI.habilitadoResultado = calendarioPeriodoData.habilitadoResultado;
+        calendarioPeriodoUI.habilitadoResultado = calendarioPeriodoData.habilitadoResultado;
         calendarioPeriodoList.add(calendarioPeriodoUI);
       }
 

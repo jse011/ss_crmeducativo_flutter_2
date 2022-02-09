@@ -715,7 +715,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                       Expanded(child: ElevatedButton(
                                         onPressed: () async {
                                           await controller.onClickAceptarEliminar();
-                                          Navigator.of(context).pop(-1);//si devuelve un entero se actualiza toda la lista. -1 si se elimino la rubrica
+                                          if (mounted) {
+                                            WidgetsBinding.instance?.addPostFrameCallback((_){
+                                              Navigator.of(context).pop(-1);//si devuelve un entero se actualiza toda la lista. -1 si se elimino la rubrica
+                                            });
+                                          }
                                         },
                                         style: ElevatedButton.styleFrom(
                                           primary: Colors.red,
@@ -782,8 +786,20 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                     }else{
 
                                     }*/
-                            bool?  respuesta = await controller.onSave();
-                            Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+
+
+                            bool?  modificado = await controller.onSave();
+                            if(modificado){
+                              if (mounted) {
+                                WidgetsBinding.instance?.addPostFrameCallback((_){
+                                  Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                                });
+                              }
+                            }else{
+                              Navigator.of(context).pop(false);
+                            }
+
+
                           },
                         )
                     ),

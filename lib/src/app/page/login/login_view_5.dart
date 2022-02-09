@@ -209,7 +209,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
             ):null,
             child: Container(
               constraints: BoxConstraints(
-                maxWidth: ColumnCountProvider.aspectRatioForWidthLogin(context, 350)
+                maxWidth: ColumnCountProvider.aspectRatioForWidthLogin(context, 400)
               ),
               padding: EdgeInsets.only(
                 left: ColumnCountProvider.aspectRatioForWidthLogin(context, 25),
@@ -500,7 +500,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                     SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 30)),
                     Row(
                       children: [
-                        _educarLogo(ColumnCountProvider.aspectRatioForWidthLogin(context, 45), ColumnCountProvider.aspectRatioForWidthLogin(context, 135), "http://educar.icrmedu.com/PortalAcademico/Images/Inicio/logoiCRM.png"),
+                        _educarLogo(ColumnCountProvider.aspectRatioForWidthLogin(context, 45), ColumnCountProvider.aspectRatioForWidthLogin(context, 135)),
                         Expanded(child: Container()),
                       ],
                     ),
@@ -513,20 +513,12 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
     );
   }
 
-  Widget _educarLogo(double? height, double? width, String url){
-    return CachedNetworkImage(
-      imageUrl: url,//"http://educar.icrmedu.com/Images/Inicio/logo_Inicio.png"
-      imageBuilder: (context, imageProvider) => Container(
-        height: height,
-        width: width,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: imageProvider,
-              fit: BoxFit.contain),
-        ),
-      ),
-      placeholder: (context, url) => CircularProgressIndicator(),
-      errorWidget: (context, url, error) => Icon(Icons.error),
+  Widget _educarLogo(double? height, double? width){
+    return Image.asset(AppImagen.logo_ICRM,
+      fit: BoxFit.cover,
+      colorBlendMode: BlendMode.modulate,
+      height: height,
+      width: width,
     );
   }
 

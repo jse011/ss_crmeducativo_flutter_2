@@ -9,8 +9,9 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/splash.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/splash_error.dart';
 import 'package:provider/provider.dart';
+import 'package:ss_crmeducativo_2/src/provider/contactos_provider.dart';
 import 'package:ss_crmeducativo_2/src/provider/homeProvider.dart';
-import 'package:ss_crmeducativo_2/src/provider/rubro_provaider.dart';
+import 'package:ss_crmeducativo_2/src/provider/conexion_provaider.dart';
 
 void main() {
   FlutterCleanArchitecture.debugModeOn();
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
 
           // Once complete, show your application
           if (snapshot.connectionState == ConnectionState.done) {
-            return getMainView();
+            return getMainView(context);
           }
 
           // Otherwise, show something whilst waiting for initialization to complete
@@ -60,15 +61,19 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Widget getMainView(){
+  Widget getMainView(BuildContext context){
     return MultiProvider(
         providers: [
           Provider(create: (_) => HomeProvider()),
           ChangeNotifierProvider(
             create: (_) => HomeProvider(),
           ),
+          Provider(create: (_) => ConexionProvider()),
           ChangeNotifierProvider(
-            create: (_) => RubroProvider(),
+            create: (_) => ConexionProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ContactoProvider(),
           ),
         ],
         child: MaterialApp(
@@ -86,7 +91,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         hintColor: Colors.white,
       ),*/
-          home: HomeView(),
+          home: HomeView(context),
           routes: AppRouter.routes,
           onGenerateRoute: (settings) {
             return AppRouter.generateRoute(settings);

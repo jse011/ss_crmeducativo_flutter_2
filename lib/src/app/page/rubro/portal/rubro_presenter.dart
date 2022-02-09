@@ -12,6 +12,7 @@ import 'package:ss_crmeducativo_2/src/domain/usecase/get_calendario_periodo.dart
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_competencia_rubro_eval.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_competencia_rubro_eval_2.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_resultados.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/update_calendario_periodo.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_cerrar_curso.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/update_datos_crear_rubros.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_rubro_evaluacion_list.dart';
@@ -41,6 +42,9 @@ class RubroPresenter extends Presenter{
   UpdateResultadoCurso _updateResultadoCurso;
   late Function UpdateCursoOnMessage;
 
+  UpdateCalendarioPerido _updateCalendarioPerido;
+  late Function updateCalendarioPeridoOnComplete, updateCalendarioPeridoOnError;
+
   RubroPresenter(CalendarioPeriodoRepository calendarioPeriodoRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, RubroRepository rubroRepo, ResultadoRepository resultadoRepo) :
                           _getCalendarioPerido = new GetCalendarioPerido(configuracionRepo, calendarioPeriodoRepo),
                           _getDatosCrearRubro = new UpdateDatosCrearRubro(httpDatosRepo, configuracionRepo, rubroRepo),
@@ -49,10 +53,15 @@ class RubroPresenter extends Presenter{
                           _getCompetenciaRubroEval = GetCompetenciaRubroEval2(rubroRepo, configuracionRepo),
                           _getResultados = GetResultados(httpDatosRepo, configuracionRepo, resultadoRepo),
                           _updateCerrarSesion = UpdateCerrarCurso(configuracionRepo, httpDatosRepo),
-                          _updateResultadoCurso = UpdateResultadoCurso(configuracionRepo, httpDatosRepo, rubroRepo);
+                          _updateResultadoCurso = UpdateResultadoCurso(configuracionRepo, httpDatosRepo, rubroRepo),
+                            _updateCalendarioPerido = UpdateCalendarioPerido(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo);
 
-  void getCalendarioPerido(CursosUi? cursosUi){
-    _getCalendarioPerido.execute(_GetCalendarioPeriodoCase(this), GetCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
+  void updateCalendarioPerido(CursosUi? cursosUi){
+    _updateCalendarioPerido.execute(_UpdateCalendarioPeriodoCase(this), UpdateCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
+  }
+
+  void getCalendarioPerido(CursosUi? cursosUi, bool updateResultado){
+    _getCalendarioPerido.execute(_GetCalendarioPeriodoCase(this, updateResultado), GetCalendarioPeridoParams(cursosUi?.cargaCursoId??0));
   }
 
 
@@ -106,8 +115,8 @@ class RubroPresenter extends Presenter{
 
 class _GetCalendarioPeriodoCase extends Observer<GetCalendarioPeridoResponse>{
   RubroPresenter presenter;
-
-  _GetCalendarioPeriodoCase(this.presenter);
+  bool updateResultado;
+  _GetCalendarioPeriodoCase(this.presenter, this.updateResultado);
 
   @override
   void onComplete() {
@@ -124,7 +133,7 @@ class _GetCalendarioPeriodoCase extends Observer<GetCalendarioPeridoResponse>{
   void onNext(GetCalendarioPeridoResponse? response) {
     print("getCalendarioPeridoOnComplete");
     assert(presenter.getCalendarioPeridoOnComplete!=null);
-    presenter.getCalendarioPeridoOnComplete(response?.calendarioPeriodoList, response?.calendarioPeriodoUI);
+    presenter.getCalendarioPeridoOnComplete(response?.calendarioPeriodoList, response?.calendarioPeriodoUI,updateResultado);
   }
 
 }
@@ -246,6 +255,32 @@ class _GetResultadosCase extends Observer<GetResultadosResponse>{
     print("getResultadosOnComplete");
     assert(presenter.getResultadosOnComplete!=null);
     presenter.getResultadosOnComplete(response?.matrizResultadoUi, response?.offlineServidor, response?.errorServidor);
+  }
+
+}
+
+
+class _UpdateCalendarioPeriodoCase extends Observer<UpdateCalendarioPeridoResponse>{
+  RubroPresenter presenter;
+
+  _UpdateCalendarioPeriodoCase(this.presenter);
+
+  @override
+  void onComplete() {
+
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.updateCalendarioPeridoOnError!=null);
+    presenter.updateCalendarioPeridoOnError(e);
+  }
+
+  @override
+  void onNext(UpdateCalendarioPeridoResponse? response) {
+    print("updateCalendarioPeridoOnComplete");
+    assert(presenter.updateCalendarioPeridoOnComplete!=null);
+    presenter.updateCalendarioPeridoOnComplete();
   }
 
 }

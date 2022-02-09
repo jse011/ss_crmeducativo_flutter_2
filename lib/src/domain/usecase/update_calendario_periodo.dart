@@ -6,7 +6,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/calendario_perido_repo
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 
-class UpdateCalendarioPerido extends UseCase<GetCalendarioPeridoResponse, GetCalendarioPeridoParams>{
+class UpdateCalendarioPerido extends UseCase<UpdateCalendarioPeridoResponse, UpdateCalendarioPeridoParams>{
   ConfiguracionRepository configuracionRepository;
   CalendarioPeriodoRepository repository;
   HttpDatosRepository httpDatosRepo;
@@ -15,8 +15,8 @@ class UpdateCalendarioPerido extends UseCase<GetCalendarioPeridoResponse, GetCal
   UpdateCalendarioPerido(this.configuracionRepository, this.repository, this.httpDatosRepo);
 
   @override
-  Future<Stream<GetCalendarioPeridoResponse?>> buildUseCaseStream(GetCalendarioPeridoParams? params) async{
-    final controller = StreamController<GetCalendarioPeridoResponse>();
+  Future<Stream<UpdateCalendarioPeridoResponse?>> buildUseCaseStream(UpdateCalendarioPeridoParams? params) async{
+    final controller = StreamController<UpdateCalendarioPeridoResponse>();
     try {
       String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
       int anioAcademicoIdSelect = await configuracionRepository.getSessionAnioAcademicoId();
@@ -59,7 +59,7 @@ class UpdateCalendarioPerido extends UseCase<GetCalendarioPeridoResponse, GetCal
     return controller.stream;
   }
 
-  Future<void> getCalendarioPerido(StreamController<GetCalendarioPeridoResponse> controller,int anioAcademicoId, int programaEducativoId, int cargaCursoId,bool errorServidor, bool offlineServidor) async{
+  Future<void> getCalendarioPerido(StreamController<UpdateCalendarioPeridoResponse> controller,int anioAcademicoId, int programaEducativoId, int cargaCursoId,bool errorServidor, bool offlineServidor) async{
     CalendarioPeriodoUI? calendarioPeriodoUI;
 
     final List<CalendarioPeriodoUI> calendarioPeriodoList = await repository.getCalendarioPerios(programaEducativoId, cargaCursoId, anioAcademicoId);
@@ -73,21 +73,21 @@ class UpdateCalendarioPerido extends UseCase<GetCalendarioPeridoResponse, GetCal
 
     calendarioPeriodoUI?.selected = true;
 
-    controller.add(GetCalendarioPeridoResponse(calendarioPeriodoList, calendarioPeriodoUI, offlineServidor, errorServidor));
+    controller.add(UpdateCalendarioPeridoResponse(calendarioPeriodoList, calendarioPeriodoUI, offlineServidor, errorServidor));
   }
 
 }
-class GetCalendarioPeridoResponse{
+class UpdateCalendarioPeridoResponse{
   List<CalendarioPeriodoUI> calendarioPeriodoList;
   CalendarioPeriodoUI? calendarioPeriodoUI;
   bool offlineServidor;
   bool errorServidor;
 
-  GetCalendarioPeridoResponse(this.calendarioPeriodoList,
+  UpdateCalendarioPeridoResponse(this.calendarioPeriodoList,
       this.calendarioPeriodoUI, this.offlineServidor, this.errorServidor);
 }
-class GetCalendarioPeridoParams{
+class UpdateCalendarioPeridoParams{
   int cargaCursoId;
 
-  GetCalendarioPeridoParams(this.cargaCursoId);
+  UpdateCalendarioPeridoParams(this.cargaCursoId);
 }
