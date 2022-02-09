@@ -162,28 +162,24 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                       child: BottomNavigationBar(
                         selectedItemColor: Theme.of(context).primaryColor,
                         unselectedItemColor: Colors.grey[500],
+                        selectedLabelStyle: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700),
+                        unselectedLabelStyle: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700),
                         items: [
-                          // ignore: deprecated_member_use
                           BottomNavigationBarItem(
-                            // ignore: deprecated_member_use
                               icon: Container(),
-                              // ignore: deprecated_member_use
-                              title: Text('Rúbrica', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700),)),
-                          /* BottomNavigationBarItem(
-                      // ignore: deprecated_member_use
-                        icon: Container(),
-                        // ignore: deprecated_member_use
-                        title: Text('Sesión')),*/
+                              //title: Text('Rúbrica', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700),)
+                              label: 'Rúbrica'
+                          ),
                           BottomNavigationBarItem(
-                            // ignore: deprecated_member_use
                               icon: Container(),
-                              // ignore: deprecated_member_use
-                              title: Text('Registro', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))),
+                              label: 'Registro'
+                              //title: Text('Registro', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))
+                          ),
                           BottomNavigationBarItem(
-                            // ignore: deprecated_member_use
                               icon: Container(),
-                              // ignore: deprecated_member_use
-                              title: Text('Resultado', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))),
+                              //title: Text('Resultado', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))
+                              label: 'Resultado'
+                          ),
                         ],
                         currentIndex: controller.seletedItem,
                         onTap: (index) {

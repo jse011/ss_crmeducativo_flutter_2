@@ -123,18 +123,19 @@ class _TareaViewState extends ViewState<TareaView, TareaController> with TickerP
             child: BottomNavigationBar(
               selectedItemColor: Theme.of(context).primaryColor,
               unselectedItemColor: Colors.grey[500],
+              selectedLabelStyle: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700),
+              unselectedLabelStyle: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700),
               items: [
-                // ignore: deprecated_member_use
                 BottomNavigationBarItem(
-                  // ignore: deprecated_member_use
                     icon: Container(),
-                    // ignore: deprecated_member_use
-                    title: Text('Sesión')),
+                    //title: Text('Sesión')
+                    label: 'Sesión'
+                ),
                 BottomNavigationBarItem(
-                  // ignore: deprecated_member_use
                     icon: Container(),
-                    // ignore: deprecated_member_use
-                    title: Text('Unidad'))
+                    //title: Text('Unidad')
+                  label: 'Unidad'
+                )
               ],
               currentIndex: _seletedItem,
               onTap: (index) {
