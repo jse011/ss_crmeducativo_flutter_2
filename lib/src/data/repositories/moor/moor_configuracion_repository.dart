@@ -263,14 +263,16 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
           batch.deleteWhere(SQL.rol, (row) => const Constant(true));
           batch.insertAll(SQL.rol, SerializableConvert.converListSerializeRol(datosUsuario["roles"]), mode: InsertMode.insertOrReplace);
         }
-
+        print("usuariojse usuarioRolGeoreferencias");
         if(datosUsuario.containsKey("usuarioRolGeoreferencias")){
           //personaSerelizable.addAll(datosInicioPadre["usuariosrelacionados"]);
           batch.deleteWhere(SQL.usuarioRolGeoreferencia, (row) => const Constant(true));
           batch.insertAll(SQL.usuarioRolGeoreferencia, SerializableConvert.converListSerializeUsuarioRolGeoreferencia(datosUsuario["usuarioRolGeoreferencias"]), mode: InsertMode.insertOrReplace);
         }
+        print("usuariojse usuarioRolGeoreferencias 2");
       });
     }catch(e){
+      print(e);
       throw Exception(e);
     }
   }
@@ -292,9 +294,9 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<bool> validarRol(int usuarioId) async {
     AppDataBase SQL = AppDataBase();
     try{
-      var query = SQL.selectSingle(SQL.usuarioRolGeoreferencia)..where((tbl) => tbl.usuarioId.equals(usuarioId));
+      var query = SQL.select(SQL.usuarioRolGeoreferencia)..where((tbl) => tbl.usuarioId.equals(usuarioId));
       query.where((tbl) => tbl.rolId.equals(4));
-      UsuarioRolGeoreferenciaData usuarioRolGeoreferenciaData = await query.getSingle();
+      UsuarioRolGeoreferenciaData? usuarioRolGeoreferenciaData = await query.getSingleOrNull();
       return usuarioRolGeoreferenciaData!=null;
     }catch(e){
       throw Exception(e);
@@ -944,7 +946,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         leftOuterJoin(padre, padre.hijoRelacionId.equalsExp(SQL.contactoDocente.personaId)),
         leftOuterJoin(apoderado, apoderado.hijoRelacionId.equalsExp(SQL.contactoDocente.personaId))
       ]);
-
+      query.where(SQL.contactoDocente.anioAcademicoId.equals(anioAcademicoIdSelect));
       query.groupBy([SQL.contactoDocente.personaId, SQL.contactoDocente.tipo]);
       var rows = await query.get();
 

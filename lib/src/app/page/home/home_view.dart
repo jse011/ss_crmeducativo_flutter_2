@@ -271,7 +271,8 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
                           setState(() {
                             _menuScreenView = menuView;
                           });
-                        }, closeSessionHandler: CloseSession(context), connectedCallback: (dynamic Function(bool) onChangeConnected) {
+                        }, closeSessionHandler: CloseSession(context),
+                          connectedCallback: (dynamic Function(bool) onChangeConnected) {
                           _onChangeConnected = onChangeConnected;
                         },);
                       case 1:
@@ -287,7 +288,8 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
                           setState(() {
                             _menuScreenView = menuView;
                           });
-                        }, closeSessionHandler: CloseSession(context), connectedCallback: (dynamic Function(bool) onChangeConnected) {
+                        }, closeSessionHandler: CloseSession(context),
+                          connectedCallback: (dynamic Function(bool) onChangeConnected) {
                           _onChangeConnected = onChangeConnected;
                         },);
                       default:

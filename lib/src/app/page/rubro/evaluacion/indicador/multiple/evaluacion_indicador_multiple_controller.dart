@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multiple/evaluacion_indicador_multiple_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
@@ -9,6 +11,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_evidencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
@@ -18,8 +22,10 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/calcular_evaluacion_proceso.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
 import 'package:collection/collection.dart';
+import 'package:path/path.dart';
 
 class EvaluacionIndicadorMultipleController extends Controller {
   String rubroEvaluacionId;
@@ -28,6 +34,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
   EvaluacionIndicadorMultiplePresenter presenter;
   RubricaEvaluacionUi? rubroEvaluacionUi;
   List<dynamic> _columnList2 = [];
+  EvaluacionUi? _evaluacionGeneralUiSelect = null;
   bool get modificado => _modificado;
   bool _modificado = false;
   UsuarioUi? _usuarioUi = null;
@@ -64,6 +71,8 @@ class EvaluacionIndicadorMultipleController extends Controller {
   bool _siguiente = false;
   bool get siguiente => _siguiente;
 
+  Map<RubroEvidenciaUi, HttpStream?> mapRubroEvidencia = Map();
+
   EvaluacionIndicadorMultipleController(this.rubroEvaluacionId, this.cursosUi, this.calendarioPeriodoUI,
       RubroRepository rubroRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo) :
         presenter = EvaluacionIndicadorMultiplePresenter(
@@ -90,6 +99,21 @@ class EvaluacionIndicadorMultipleController extends Controller {
       //print("rubroEvaluacionUi: ${this.rubroEvaluacionUi?.evaluacionUiList?.length}");
       initTable(alumnoCursoList, rubroEvaluacionUi);
       initLista(alumnoCursoList, rubroEvaluacionUi);
+      refreshUI();
+    };
+
+    presenter.uploadFileRubroEvidenciaOnProgress = (double? progress,  RubroEvidenciaUi? rubroEvidenciaUi){
+      rubroEvidenciaUi?.progress = progress;
+      refreshUI();
+    };
+
+    presenter.uploadFileRubroEvidenciaOnSucces = (bool success, RubroEvidenciaUi? rubroEvidenciaUi){
+      rubroEvidenciaUi?.success = success;
+      if(success){
+        presenter.saveRubroEvidenciaUi(rubroEvidenciaUi);
+      }else{
+        //_mensaje = "Error al subir el archivo";
+      }
       refreshUI();
     };
   }
@@ -577,6 +601,85 @@ class EvaluacionIndicadorMultipleController extends Controller {
     presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionUi?.personaUi?.personaId);
   }
 
+  void saveComentario(String? comentario, EvaluacionUi? evaluacionUi) async{
+    RubroComentarioUi rubroComentarioUi = RubroComentarioUi();
+    rubroComentarioUi.comentario = comentario;
+    rubroComentarioUi.rubroEvaluacionId = evaluacionUi?.rubroEvaluacionId;
+    rubroComentarioUi.evaluacionId = evaluacionUi?.evaluacionId;
+    rubroComentarioUi.evaluacionRubroComentarioId = IdGenerator.generateId();
+    evaluacionUi?.comentarios?.add(rubroComentarioUi);
+    refreshUI();
+    await presenter.uploadComentario(rubroComentarioUi, evaluacionUi);
+    _modificado = true;
+  }
+
+  void eliminarComentario(RubroComentarioUi? rubroComentarioUi, EvaluacionUi? evaluacionUi)async {
+    rubroComentarioUi?.eliminar = true;
+    if(rubroComentarioUi!=null)evaluacionUi?.comentarios?.remove(rubroComentarioUi);
+    refreshUI();
+    await presenter.uploadComentario(rubroComentarioUi, evaluacionUi);
+    _modificado = true;
+  }
+
+  void addEvidencia(List<File?> files, String? newName) async {
+    for(File? file in files){
+      if(file!=null){
+        RubroEvidenciaUi rubroEvidenciaUi = RubroEvidenciaUi();
+        rubroEvidenciaUi.archivoRubroId = IdGenerator.generateId();
+        rubroEvidenciaUi.rubroEvaluacionId = _evaluacionGeneralUiSelect?.rubroEvaluacionId;
+        rubroEvidenciaUi.evaluacionUi = _evaluacionGeneralUiSelect;
+        rubroEvidenciaUi.titulo = newName??basename(file.path);
+        rubroEvidenciaUi.tipoRecurso = DomainTools.getType(file.path);
+        rubroEvidenciaUi.file = file;
+        _evaluacionGeneralUiSelect?.evidencias?.add(rubroEvidenciaUi);
+
+        HttpStream? httpStream = await presenter.uploadEvidencia(rubroEvidenciaUi, cursosUi);
+        mapRubroEvidencia[rubroEvidenciaUi] = httpStream;
+      }
+      refreshUI();
+      _modificado = true;
+    }
+
+
+  }
+
+  void removeRubroEvidencia(RubroEvidenciaUi rubroEvidenciaUi, EvaluacionUi? evaluacionUi) {
+    if(rubroEvidenciaUi.success == null){
+      if(mapRubroEvidencia.containsKey(rubroEvidenciaUi)){
+        HttpStream? httpStream = mapRubroEvidencia[rubroEvidenciaUi];
+        httpStream?.cancel();
+        mapRubroEvidencia.remove(rubroEvidenciaUi);
+      }
+    }
+    evaluacionUi?.evidencias?.remove(rubroEvidenciaUi);
+    rubroEvidenciaUi.eliminar = true;
+    presenter.saveRubroEvidenciaUi(rubroEvidenciaUi);
+    refreshUI();
+    _modificado = true;
+  }
+
+  @override
+  void dispose() {
+    mapRubroEvidencia.forEach((key, value) {
+      if(!(key.success??false)){
+        key.evaluacionUi?.evidencias?.remove(key);
+      }
+      value?.cancel();
+    });
+    presenter.dispose();
+    super.dispose();
+  }
+
+  void refreshRubroEvidenciaUi(RubroEvidenciaUi rubroEvidenciaUi) async{
+    rubroEvidenciaUi.progress = null;
+    rubroEvidenciaUi.success = null;
+    HttpStream? httpStream = await presenter.uploadEvidencia(rubroEvidenciaUi, cursosUi);
+    mapRubroEvidencia[rubroEvidenciaUi] = httpStream;
+  }
+
+  void onSelectedEvaluacionGeneral(EvaluacionUi? evaluacionGeneralUi) {
+    _evaluacionGeneralUiSelect = evaluacionGeneralUi;
+  }
 
 
 

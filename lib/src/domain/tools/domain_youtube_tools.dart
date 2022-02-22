@@ -64,13 +64,36 @@ enum Quality {
   FIRST, SECOND, THIRD, FOURTH, MAXIMUM, STANDARD_DEFINITION, MEDIUM, HIGH, DEFAULT
 }
 class YouTubeUrlParser{
+
   YouTubeUrlParser();
+
   static String? getYoutubeVideoId(String? url) {
     RegExp regExp = new RegExp(
       r'.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*',
       caseSensitive: false,
       multiLine: false,
     );
-    return url!=null?regExp.firstMatch(url)?.group(1)?.trim():""; // <- This is the fix;
+
+    bool validate = validateUrl(url);
+    print("YouTubeUrlParser: ${validate}");
+    if(validate){
+      return url!=null?regExp.firstMatch(url)?.group(1)?.trim():null; // <- This is the fix;
+    }else{
+      return null;
+    }
   }
+
+  static bool validateUrl(String? url) {
+
+    if ((url??"").isEmpty) {
+      return false;
+    }
+
+    final RegExp pattern = RegExp(
+        r'^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$');
+    final bool match = pattern.hasMatch(url!);
+
+    return match;
+  }
+
 }

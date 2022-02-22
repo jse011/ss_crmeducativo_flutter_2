@@ -1123,11 +1123,13 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                   case TipoRecursosUi.TIPO_HOJA_CALCULO:
                                                                   case TipoRecursosUi.TIPO_DIAPOSITIVA:
                                                                   case TipoRecursosUi.TIPO_PDF:
-                                                                  case TipoRecursosUi.TIPO_VINCULO:
                                                                     await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
                                                                     break;
+                                                                  case TipoRecursosUi.TIPO_VINCULO:
+                                                                    await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
+                                                                    break;
                                                                   case TipoRecursosUi.TIPO_ENCUESTA:
-                                                                    await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+                                                                    await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
                                                                     break;
                                                                   case TipoRecursosUi.TIPO_VINCULO_DRIVE:
                                                                   //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
@@ -1181,11 +1183,24 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                               mainAxisAlignment: MainAxisAlignment.center,
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
-                                                                                Text("${tareaRecursoUi.titulo??""}", maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
-                                                                                Padding(padding: EdgeInsets.all(2)),
                                                                                 tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
-                                                                                Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url: tareaRecursoUi.descripcion}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 10)):
-                                                                                Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
+                                                                                Column(
+                                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Padding(padding: EdgeInsets.all(4)),
+                                                                                    Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 12)),
+                                                                                    Padding(padding: EdgeInsets.all(4)),
+                                                                                  ],
+                                                                                ):Column(
+                                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text("${tareaRecursoUi.titulo??""}", maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
+                                                                                    Padding(padding: EdgeInsets.all(2)),
+                                                                                    Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
+                                                                                  ],
+                                                                                )
                                                                               ],
                                                                             ),
                                                                           ),
@@ -2961,8 +2976,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
         case TipoRecursosUi.TIPO_HOJA_CALCULO:
         case TipoRecursosUi.TIPO_DIAPOSITIVA:
         case TipoRecursosUi.TIPO_PDF:
-        case TipoRecursosUi.TIPO_VINCULO:
           await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
+          break;
+        case TipoRecursosUi.TIPO_VINCULO:
+          await AppUrlLauncher.openLink(controller.abrirTareaAlumnoArchivo?.url??controller.abrirTareaAlumnoArchivo?.nombre, webview: false);
           break;
         case TipoRecursosUi.TIPO_ENCUESTA:
           await AppUrlLauncher.openLink(controller.abrirTareaAlumnoArchivo?.url, webview: false);

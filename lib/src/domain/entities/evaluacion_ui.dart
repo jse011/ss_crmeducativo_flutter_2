@@ -1,5 +1,7 @@
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_evidencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 
 class EvaluacionUi{
@@ -14,6 +16,8 @@ class EvaluacionUi{
   double? nota;
   RubricaEvaluacionUi? rubroEvaluacionUi;
   String? escala;
+  List<RubroComentarioUi>? comentarios;
+  List<RubroEvidenciaUi>? evidencias;
 
    EvaluacionUi copyWithSimple({String? evaluacionId,String? rubroEvaluacionId,  int? alumnoId, String? valorTipoNotaId, double? nota}) {
     EvaluacionUi item = new EvaluacionUi();

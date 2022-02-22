@@ -34,7 +34,9 @@ class MoorCalendarioPeriodoRepository extends CalendarioPeriodoRepository{
   Future<void> saveCalendarioPeriodoCursoFlutter(List<dynamic> calendarioPeriodoList, String urlServidorLocal, int anioAcademicoIdSelect, int programaEducativoIdSelect, int cargaCursoId) async{
     AppDataBase SQL = AppDataBase();
     await SQL.batch((batch) async {
-      (SQL.delete(SQL.calendarioPeriodoCargaCurso)..where((tbl) => tbl.cargaCursoId.equals(cargaCursoId))).go();
+      print("saveCalendarioPeriodoCursoFlutter ${calendarioPeriodoList.length}");
+      print("saveCalendarioPeriodoCursoFlutter cargaCursoId ${cargaCursoId}");
+      await (SQL.delete(SQL.calendarioPeriodoCargaCurso)..where((tbl) => tbl.cargaCursoId.equals(cargaCursoId))).go();
       batch.insertAll(SQL.calendarioPeriodoCargaCurso, SerializableConvert.converListSerializeCalendarioPeriodoCargaCurso(calendarioPeriodoList), mode: InsertMode.insertOrReplace);
     });
   }

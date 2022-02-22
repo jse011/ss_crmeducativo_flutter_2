@@ -21,7 +21,7 @@ class ImagePickerHandler {
     imagePicker.dismissDialog();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     final File image = File(pickedFile?.path??"");
-    final dateformat = DateFormat('yyyy-MM-dd-hh:mm');
+    final dateformat = DateFormat('yyyy-MM-dd-hh-mm');
     if(cropScuared??false){
       cropImage(image, prefiImage+ dateformat.format(DateTime.now())+".jpg");
     }else{
@@ -61,8 +61,8 @@ class ImagePickerHandler {
     _listener.userImage(croppedFile, name);
   }
 
-  showDialog(BuildContext context, {botonRemoverImagen}) {
-    imagePicker.getImage(context, botonRemoverImagen: botonRemoverImagen);
+  showDialog(BuildContext context, {botonRemoverImagen, botonLink}) {
+    imagePicker.getImage(context, botonRemoverImagen: botonRemoverImagen, botonLink: botonLink);
   }
 
   openDocument() async{

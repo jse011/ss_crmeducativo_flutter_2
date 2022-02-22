@@ -397,8 +397,10 @@ class _TabActividadesSatate extends State<TabActividades>{
                 case TipoRecursosUi.TIPO_HOJA_CALCULO:
                 case TipoRecursosUi.TIPO_DIAPOSITIVA:
                 case TipoRecursosUi.TIPO_PDF:
-                case TipoRecursosUi.TIPO_VINCULO:
                   await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(actividadRecursoUi.driveId), webview: false);
+                  break;
+                case TipoRecursosUi.TIPO_VINCULO:
+                  await AppUrlLauncher.openLink(actividadRecursoUi.descripcion, webview: false);
                   break;
                 case TipoRecursosUi.TIPO_ENCUESTA:
                   await AppUrlLauncher.openLink(actividadRecursoUi.descripcion, webview: false);

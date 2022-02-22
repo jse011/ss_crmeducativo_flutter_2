@@ -382,8 +382,8 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                     controller.typeView==LoginTypeView.USUARIO?
                     GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => ResetPassword()));
+                         /* Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => ResetPassword()));*/
                         },
                         child: Container(
                             alignment: Alignment(1.0, 0.0),
@@ -392,12 +392,12 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                 left: ColumnCountProvider.aspectRatioForWidthLogin(context, 20)
                             ),
                             child: InkWell(
-                                child: Text('Has olvidado tu contraseña',
+                                child: Text(/*'Has olvidado tu contraseña'*/"Usa tu cuenta del iCRM Educativo",
                                     style: TextStyle(
                                         color: AppTheme.colorPrimary,
                                         fontFamily: AppTheme.fontTTrueno,
                                         fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 11),
-                                        decoration: TextDecoration.underline
+                                        //decoration: TextDecoration.underline
                                     )
                                 )
                             )

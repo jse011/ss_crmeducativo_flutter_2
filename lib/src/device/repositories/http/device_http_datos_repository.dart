@@ -5,8 +5,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http/io_client.dart';
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
 import 'package:ss_crmeducativo_2/src/device/utils/http_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:http/http.dart' as http;
@@ -24,7 +26,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     body["method"] = method;
     body["parameters"] = parameters;
     String s = json.encode(body);
-    print(TAG + " "+s);
+    log(TAG + " "+s);
     return s;
   }
 
@@ -288,6 +290,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       // then parse the JSON.
       Map<String,dynamic> body = json.decode(response.body);
       if(body.containsKey("Successful")&&body.containsKey("Value")){
+        log("getCalendarioPeriodoCursoFlutter ${body.containsKey("Value").toString()}");
         return body["Value"];
       }else{
         return null;
@@ -1359,6 +1362,87 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       // then throw an exception.
       throw Exception('Failed to load info tarea');
     }
+  }
+
+  @override
+  Future<HttpStream?> uploadRubroComentario(String urlServidorLocal, Map<String, dynamic> json, HttpValueSuccess httpValueSuccess)async {
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vobj_RubroComentario"] = json;
+
+
+    Dio dio = new Dio();
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: getBody("fbol_uploadRubtoComentario", parameters),
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+          print("${progress}%");
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        print("Response ${body.toString()}");
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpValueSuccess.call(true, body["Value"]);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpValueSuccess.call(false, null);
+          print("Response null ${response.data}");
+        }
+      }
+    });
+
+    return dioCancellation;
+  }
+
+  @override
+  Future<HttpStream?> uploadFileRubroEvidencia(String urlServidorLocal, String nombre, File file, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen) async{
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_UsuarioId"] = 0;
+    print("nombre ${nombre}");
+    var formData = FormData.fromMap({
+      'body': getBody("uploadFileRubroEvidencia", parameters),
+      'file': await MultipartFile.fromFile(file.path, filename: nombre),
+    });
+    Dio dio = new Dio();
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: formData,
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+          print("${progress}%");
+          progressListen.call(progress);
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        print("Response success");
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(true, body["Value"]);
+          print("Response success ${body["Value"]}");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, null);
+          print("Response null ${response.data}");
+        }
+      }
+    });
+
+    return dioCancellation;
   }
 
 }

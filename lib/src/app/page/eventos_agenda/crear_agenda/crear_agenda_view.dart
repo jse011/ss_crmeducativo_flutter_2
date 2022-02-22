@@ -16,6 +16,7 @@ import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/crear_agenda/crear_agenda_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_imagen.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_url_launcher.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_utils.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
@@ -32,6 +33,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evento_personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class CrearAgendaView extends View{
@@ -1195,84 +1197,94 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
                                   return Stack(
                                     children: [
                                       Center(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                              border:  Border.all(
-                                                  width: 1,
-                                                  color: colorTipoAgenda
-                                              ),
-                                              color: eventoAdjuntoUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
-                                          ),
-                                          margin: EdgeInsets.only(bottom: 8),
-                                          width: 450,
-                                          height: 50,
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      margin: EdgeInsets.only(right: 16),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.only(
-                                                          bottomLeft: Radius.circular(8),
-                                                          topLeft: Radius.circular(8),
-                                                        ), // use instead of BorderRadius.all(Radius.circular(20))
-                                                        color: AppTheme.greyLighten2,
-                                                      ),
-                                                      width: 50,
-                                                      child: Center(
-                                                        child: Image.asset(getImagen(eventoAdjuntoUi)??"",
-                                                          height: 30.0,
-                                                          fit: BoxFit.cover,
+                                        child: InkWell(
+                                          onTap: () async{
+                                            if(eventoAdjuntoUi.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO ||
+                                                eventoAdjuntoUi.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO_YOUTUBE){
+                                              await AppUrlLauncher.openLink(eventoAdjuntoUi.titulo, webview: false);
+                                            }else{
+                                              await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi.driveId), webview: false);
+                                            }
+                                          },
+                                          child:  Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                                border:  Border.all(
+                                                    width: 1,
+                                                    color: colorTipoAgenda
+                                                ),
+                                                color: eventoAdjuntoUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
+                                            ),
+                                            margin: EdgeInsets.only(bottom: 8),
+                                            width: 450,
+                                            height: 50,
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.only(right: 16),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.only(
+                                                            bottomLeft: Radius.circular(8),
+                                                            topLeft: Radius.circular(8),
+                                                          ), // use instead of BorderRadius.all(Radius.circular(20))
+                                                          color: AppTheme.greyLighten2,
+                                                        ),
+                                                        width: 50,
+                                                        child: Center(
+                                                          child: Image.asset(getImagen(eventoAdjuntoUi)??"",
+                                                            height: 30.0,
+                                                            fit: BoxFit.cover,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text("${eventoAdjuntoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
-                                                        ],
+                                                      Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Text("${eventoAdjuntoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    eventoAdjuntoUi.success == false?
-                                                    InkWell(
-                                                      onTap: (){
-                                                        controller.refreshEventoAdjuntoUi(eventoAdjuntoUi);
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.only(right: 16),
-                                                        child: Icon(Icons.refresh),
-                                                      ),
-                                                    ):Container(),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        controller.removeEventoAdjuntoUi(eventoAdjuntoUi);
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.only(right: 16),
-                                                        child: Icon(Icons.close),
-                                                      ),
+                                                      eventoAdjuntoUi.success == false?
+                                                      InkWell(
+                                                        onTap: (){
+                                                          controller.refreshEventoAdjuntoUi(eventoAdjuntoUi);
+                                                        },
+                                                        child: Container(
+                                                          margin: EdgeInsets.only(right: 16),
+                                                          child: Icon(Icons.refresh),
+                                                        ),
+                                                      ):Container(),
+                                                      InkWell(
+                                                        onTap: (){
+                                                          controller.removeEventoAdjuntoUi(eventoAdjuntoUi);
+                                                        },
+                                                        child: Container(
+                                                          margin: EdgeInsets.only(right: 16),
+                                                          child: Icon(Icons.close),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                !(eventoAdjuntoUi.success != null)&&(eventoAdjuntoUi.progress??0)>0?
+                                                Column(
+                                                  children: [
+                                                    Expanded(child: Container()),
+                                                    ProgressBar(
+                                                      current: eventoAdjuntoUi.progress??0,
+                                                      max: 100,
+                                                      borderRadiusGeometry:BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
+                                                      color: colorTipoAgenda,
                                                     )
                                                   ],
-                                                ),
-                                              ),
-                                              !(eventoAdjuntoUi.success != null)&&(eventoAdjuntoUi.progress??0)>0?
-                                              Column(
-                                                children: [
-                                                  Expanded(child: Container()),
-                                                  ProgressBar(
-                                                    current: eventoAdjuntoUi.progress??0,
-                                                    max: 100,
-                                                    borderRadiusGeometry:BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
-                                                    color: colorTipoAgenda,
-                                                  )
-                                                ],
-                                              ):Container()
-                                            ],
+                                                ):Container()
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),

@@ -58,6 +58,7 @@ class Login extends UseCase<LoginResponse,LoginParams>{
             try{
               await datosrepository.saveUsuario(usuarioRest);
             }catch(e){
+              print(e);
               errorServidor = true;
             }
           }

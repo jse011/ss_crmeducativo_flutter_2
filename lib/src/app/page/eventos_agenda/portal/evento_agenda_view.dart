@@ -701,13 +701,15 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                        return ItemEventoView(eventoUi, tipoEditar: controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA,
                                          onClickMoreEventoAdjuntoDowload:(eventoUi) {
                                            controller.onClickMoreEventoAdjuntoDowload(eventoUi);
-                                         }, onClickPreview: (eventoUi, eventoAdjuntoUi) async{
+                                         },
+                                         onClickPreview: (eventoUi, eventoAdjuntoUi) async{
                                            if((eventoUi?.eventoAdjuntoUiPreviewList??[]).isNotEmpty&&(eventoUi?.eventoAdjuntoUiPreviewList??[]).length>1){
                                              dynamic response = await AppRouter.createEventoInfoComplejoRouter(context, eventoUi);
                                            }else{
                                              dynamic response = await AppRouter.createEventoInfoSimpleRouter(context, eventoUi, eventoAdjuntoUi);
                                            }
-                                         }, onClickPreviewComplejo: (eventoUi, eventoAdjuntoUi) async {
+                                         },
+                                         onClickPreviewComplejo: (eventoUi, eventoAdjuntoUi) async {
                                            dynamic response = await AppRouter.createEventoInfoComplejoRouter(context, eventoUi);
                                          },
                                          onClickEditar: (eventoUi) async{
@@ -814,7 +816,12 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                       EventoAdjuntoUi eventoAdjuntoUi = eventoAdjuntoUiList[index];
                       return InkWell(
                         onTap: () async{
-                          await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi.driveId), webview: false);
+                          if(eventoAdjuntoUi.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO ||
+                              eventoAdjuntoUi.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO_YOUTUBE){
+                            await AppUrlLauncher.openLink(eventoAdjuntoUi.titulo, webview: false);
+                          }else{
+                            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi.driveId), webview: false);
+                          }
                         },
                         child:  Container(
                           height: 50,

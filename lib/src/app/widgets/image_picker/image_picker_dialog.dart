@@ -10,6 +10,7 @@ class ImagePickerDialog extends StatelessWidget {
   late BuildContext context;
   bool? documento;
   Function? botonRemoverImagen;
+  Function? botonLink;
   ImagePickerDialog(this._listener, this._controller,{ this.documento});
 
   late Animation<double> _drawerContentsOpacity;
@@ -29,13 +30,14 @@ class ImagePickerDialog extends StatelessWidget {
     ));
   }
 
-  getImage(BuildContext context, {botonRemoverImagen}) {
+  getImage(BuildContext context, {botonRemoverImagen, botonLink}) {
     if (_controller == null ||
         _drawerDetailsPosition == null ||
         _drawerContentsOpacity == null) {
       return;
     }
     this.botonRemoverImagen = botonRemoverImagen;
+    this.botonLink = botonLink;
     _controller.forward();
     showDialog(
       context: context,
@@ -104,6 +106,19 @@ class ImagePickerDialog extends StatelessWidget {
                   child: roundedButton(
                       Icons.article,
                       "Documento",
+                      EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                      AppTheme.colorPrimary,
+                      const Color(0xFFFFFFFF)),
+                ):Container(),
+                botonLink!=null?
+                GestureDetector(
+                  onTap:(){
+                    Navigator.pop(context);
+                    botonLink?.call();
+                  },
+                  child: roundedButton(
+                      Icons.link,
+                      "Enlace",
                       EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
                       AppTheme.colorPrimary,
                       const Color(0xFFFFFFFF)),

@@ -753,7 +753,13 @@ class _ItemEventoState extends State<ItemEventoView>{
                     children: [
                       InkWell(
                         onTap: () async{
+                          if(eventoAdjuntoUi?.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO ||
+                              eventoAdjuntoUi?.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO_DRIVE ||
+                              eventoAdjuntoUi?.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO_YOUTUBE){
+                            await AppUrlLauncher.openLink(eventoAdjuntoUi?.titulo, webview: false);
+                          }else{
                           await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi?.driveId), webview: false);
+                          }
                         },
                         child:  Container(
                           height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 45),

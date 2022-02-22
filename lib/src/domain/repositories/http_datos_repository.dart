@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 
 abstract class HttpDatosRepository{
@@ -42,6 +43,7 @@ abstract class HttpDatosRepository{
   Future<Map<String, dynamic>?> updateUsuario(String urlServidorLocal, int usuarioId);
   Future<bool?> cerrarCursoDocente(String urlServidorLocal, int? cargaCursoId, int? calendarioPeriodoId, int usuarioId);
   Future<bool?> updResultadoFlutter(String urlServidorLocal, int? silaboEventoId, int? cargaCursoId, int? CalendarioPeriodoId, int usuarioId, List rubrosNoEnviados);
+  Future<HttpStream?> uploadFileRubroEvidencia(String urlServidorLocal, String nombre, File file, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen);
 
 }
 

@@ -634,8 +634,10 @@ class _TabAprendizajeState extends State<TabAprendizaje>{
                                           case TipoRecursosUi.TIPO_HOJA_CALCULO:
                                           case TipoRecursosUi.TIPO_DIAPOSITIVA:
                                           case TipoRecursosUi.TIPO_PDF:
-                                          case TipoRecursosUi.TIPO_VINCULO:
                                             await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(sesionRecursoUi.driveId), webview: false);
+                                            break;
+                                          case TipoRecursosUi.TIPO_VINCULO:
+                                            await AppUrlLauncher.openLink(sesionRecursoUi.descripcion, webview: false);
                                             break;
                                           case TipoRecursosUi.TIPO_ENCUESTA:
                                             await AppUrlLauncher.openLink(sesionRecursoUi.descripcion, webview: false);

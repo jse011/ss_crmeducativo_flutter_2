@@ -5,6 +5,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/origen_rubro_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_evidencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
@@ -62,5 +64,11 @@ abstract class RubroRepository{
   Future<bool> isRubroSincronizado(String? rubroEvalProcesoId);
 
   Future<Map<String,dynamic>> updateRubroEvaluacionData(RubricaEvaluacionUi? rubricaEvaluacionUi, int usuarioId);
+
+  Future<void> saveComentario(RubroComentarioUi? rubroComentarioUi, int? usuarioId);
+
+  Future<Map<String, dynamic>>getRubroComentarioData(RubroComentarioUi? rubroComentarioUi, int usuarioId);
+
+  void saveRubroEvidencias(RubroEvidenciaUi? rubroEvidenciaUi, int usuarioId);
 
 }

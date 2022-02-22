@@ -1460,6 +1460,7 @@ class SerializableConvert{
   static List<ArchivoRubroData> converListSerializeArchivoRubro(dynamic model){
     List<ArchivoRubroData> items = [];
     Iterable l = model;
+
     for(var item in l){
       items.add(converSerializeListaArchivoRubro(item));
     }

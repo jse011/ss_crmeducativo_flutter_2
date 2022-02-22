@@ -118,8 +118,8 @@ class RubroController extends Controller{
         _calendarioPeriodoUI = calendarioPeriodoUI;
       }
 
-      _calendarioPeriodoUI?.habilitadoProceso = 1;
-      _calendarioPeriodoUI?.habilitadoResultado = 1;
+      //_calendarioPeriodoUI?.habilitadoProceso = 1;
+      //_calendarioPeriodoUI?.habilitadoResultado = 1;
       if(!(updateResultado??false)){
         _origenRubroUi = OrigenRubroUi.TODOS;
         _progress = true;
@@ -407,8 +407,8 @@ class RubroController extends Controller{
 
   void onSelectedCalendarioPeriodo(CalendarioPeriodoUI? calendarioPeriodoUi) {
     this._calendarioPeriodoUI = calendarioPeriodoUi;
-    _calendarioPeriodoUI?.habilitadoProceso = 1;
-    _calendarioPeriodoUI?.habilitadoResultado = 1;
+    //_calendarioPeriodoUI?.habilitadoProceso = 1;
+    //_calendarioPeriodoUI?.habilitadoResultado = 1;
     for(var item in  _calendarioPeriodoList){
       item.selected = false;
     }

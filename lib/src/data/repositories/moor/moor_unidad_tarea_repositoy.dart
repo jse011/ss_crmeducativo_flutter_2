@@ -226,7 +226,9 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
 
           tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
           String? idYoutube = YouTubeUrlParser.getYoutubeVideoId(url);
+
           String? idDrive = DriveUrlParser.getDocumentId(url);
+          print("idDrive ${idDrive}");
           if((idYoutube??"").isNotEmpty){
             tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
           }else if((idDrive??"").isNotEmpty){

@@ -9,6 +9,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_recurso_ui.dart';
 import 'package:path/path.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
@@ -261,6 +262,19 @@ class TareaCrearController extends Controller{
     tareaRecursoUi.success = null;
     HttpStream? httpStream = await presenter.uploadTareaRecurso(tareaRecursoUi, cursosUi);
     mapRecurso[tareaRecursoUi] = httpStream;
+  }
+
+  void addLink(String enlace)async {
+    TareaRecusoUi tareaRecusoUi = TareaRecusoUi();
+    tareaRecusoUi.recursoDidacticoId = null;
+    tareaRecusoUi.titulo = "";
+    tareaRecusoUi.descripcion = enlace;
+    tareaRecusoUi.url = null;
+    tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
+    tareaRecusoUi.file = null;
+    tareaRecusoUi.silaboEventoId = cursosUi?.silaboEventoId;
+    _tareaRecursoList.add(tareaRecusoUi);
+    refreshUI();
   }
 
 }

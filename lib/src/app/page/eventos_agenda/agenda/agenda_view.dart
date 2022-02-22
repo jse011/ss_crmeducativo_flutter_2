@@ -522,7 +522,12 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
                       EventoAdjuntoUi eventoAdjuntoUi = eventoAdjuntoUiList[index];
                       return InkWell(
                         onTap: () async{
-                          await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi.driveId), webview: false);
+                          if(eventoAdjuntoUi.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO ||
+                              eventoAdjuntoUi.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO_YOUTUBE){
+                            await AppUrlLauncher.openLink(eventoAdjuntoUi.titulo, webview: false);
+                          }else{
+                            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi.driveId), webview: false);
+                          }
                         },
                         child:  Container(
                           height: 50,

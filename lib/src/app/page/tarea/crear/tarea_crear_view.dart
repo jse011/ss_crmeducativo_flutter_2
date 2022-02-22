@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,10 +22,12 @@ import 'package:ss_crmeducativo_2/libs/sticky-headers-table/example/main.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/crear/tarea_crear_controller.dart';
+import 'package:ss_crmeducativo_2/src/app/page/tarea/multimedia/tarea_multimedia_view.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_imagen.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_url_launcher.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_utils.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
@@ -57,7 +60,9 @@ import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_youtube_tools.dart';
 
 class TareaCrearView extends View{
   CursosUi? cursosUi;
@@ -85,11 +90,13 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
   late ImagePickerHandler imagePicker;
   GlobalKey globalKey = GlobalKey();
 
+
   TareaCrearViewState(usuarioUi, cursosUi, calendarioPeriodoUI, tareaUi, unidadUi, sesionUi) :
         super(TareaCrearController(usuarioUi, cursosUi, calendarioPeriodoUI, tareaUi, unidadUi, sesionUi, DeviceHttpDatosRepositorio(), MoorConfiguracionRepository(), MoorUnidadTareaRepository()));
   var _tiuloTareacontroller = TextEditingController();
   var _Instrucionescontroller = TextEditingController();
   var _Horacontroller = TextEditingController();
+  TextEditingController linktController = TextEditingController();
 
   int? selectedRow;
   int? selectedColumn;
@@ -703,7 +710,10 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                   Center(
                                     child: InkWell(
                                       onTap: () async{
-                                        imagePicker.showDialog(context);
+                                        imagePicker.showDialog(context, botonLink: () async{
+                                          linktController.text = "";
+                                          await _showDialogEnlace(controller);
+                                        });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(8),
@@ -747,89 +757,137 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                   return Stack(
                                     children: [
                                       Center(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                              border:  Border.all(
-                                                  width: 1,
-                                                  color: HexColor(controller.cursosUi?.color1)
-                                              ),
-                                              color: tareaRecursoUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
-                                          ),
-                                          margin: EdgeInsets.only(bottom: 8),
-                                          width: 450,
-                                          height: 50,
-                                          child: Stack(
-                                            children: [
-                                              Container(
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      margin: EdgeInsets.only(right: 16),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.only(
-                                                          bottomLeft: Radius.circular(8),
-                                                          topLeft: Radius.circular(8),
-                                                        ), // use instead of BorderRadius.all(Radius.circular(20))
-                                                        color: AppTheme.greyLighten2,
-                                                      ),
-                                                      width: 50,
-                                                      child: Center(
-                                                        child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
-                                                          height: 30.0,
-                                                          fit: BoxFit.cover,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            switch(tareaRecursoUi.tipoRecurso){
+                                              case TipoRecursosUi.TIPO_DOCUMENTO:
+                                              case TipoRecursosUi.TIPO_IMAGEN:
+                                              case TipoRecursosUi.TIPO_AUDIO:
+                                              case TipoRecursosUi.TIPO_HOJA_CALCULO:
+                                              case TipoRecursosUi.TIPO_DIAPOSITIVA:
+                                              case TipoRecursosUi.TIPO_PDF:
+                                                await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                break;
+                                              case TipoRecursosUi.TIPO_VINCULO:
+                                                await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
+                                                break;
+                                              case TipoRecursosUi.TIPO_ENCUESTA:
+                                                await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
+                                                break;
+                                              case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+                                              //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+                                                await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                break;
+                                              case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+                                                print("youtube: ${tareaRecursoUi.url}");
+                                                TareaMultimediaView.showDialog(context, YouTubeUrlParser.getYoutubeVideoId(tareaRecursoUi.url), TareaMultimediaTipoArchivo.YOUTUBE);
+                                                break;
+                                              case TipoRecursosUi.TIPO_RECURSO:
+                                              //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+
+                                                break;
+                                              default:
+                                                await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                break;
+                                            }
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                                border:  Border.all(
+                                                    width: 1,
+                                                    color: HexColor(controller.cursosUi?.color1)
+                                                ),
+                                                color: tareaRecursoUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
+                                            ),
+                                            margin: EdgeInsets.only(bottom: 8),
+                                            width: 450,
+                                            height: 50,
+                                            child: Stack(
+                                              children: [
+                                                Container(
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        margin: EdgeInsets.only(right: 16),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.only(
+                                                            bottomLeft: Radius.circular(8),
+                                                            topLeft: Radius.circular(8),
+                                                          ), // use instead of BorderRadius.all(Radius.circular(20))
+                                                          color: AppTheme.greyLighten2,
+                                                        ),
+                                                        width: 50,
+                                                        child: Center(
+                                                          child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
+                                                            height: 30.0,
+                                                            fit: BoxFit.cover,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text("${tareaRecursoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
-                                                          Padding(padding: EdgeInsets.all(2)),
-                                                          tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
-                                                          Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url: tareaRecursoUi.descripcion}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 10)):
-                                                          Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
-                                                        ],
+                                                      Expanded(
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
+                                                            Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Padding(padding: EdgeInsets.all(4)),
+                                                                Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 12)),
+                                                                Padding(padding: EdgeInsets.all(4)),
+                                                              ],
+                                                            ):Column(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Text("${tareaRecursoUi.titulo??""}", style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
+                                                                Padding(padding: EdgeInsets.all(2)),
+                                                                Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    tareaRecursoUi.success == false?
-                                                    InkWell(
-                                                      onTap: (){
-                                                        controller.refreshTareaRecursoUi(tareaRecursoUi);
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.only(right: 16),
-                                                        child: Icon(Icons.refresh),
-                                                      ),
-                                                    ):Container(),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        controller.removeTareaRecurso(tareaRecursoUi);
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.only(right: 16),
-                                                        child: Icon(Icons.close),
-                                                      ),
+                                                      tareaRecursoUi.success == false?
+                                                      InkWell(
+                                                        onTap: (){
+                                                          controller.refreshTareaRecursoUi(tareaRecursoUi);
+                                                        },
+                                                        child: Container(
+                                                          margin: EdgeInsets.only(right: 16),
+                                                          child: Icon(Icons.refresh),
+                                                        ),
+                                                      ):Container(),
+                                                      InkWell(
+                                                        onTap: (){
+                                                          controller.removeTareaRecurso(tareaRecursoUi);
+                                                        },
+                                                        child: Container(
+                                                          margin: EdgeInsets.only(right: 16),
+                                                          child: Icon(Icons.close),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                !(tareaRecursoUi.success != null)&&(tareaRecursoUi.progress??0)>0?
+                                                Column(
+                                                  children: [
+                                                    Expanded(child: Container()),
+                                                    ProgressBar(
+                                                      current: tareaRecursoUi.progress??0,
+                                                      max: 100,
+
+                                                      borderRadiusGeometry:BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
+                                                      color: HexColor(controller.cursosUi?.color2),
                                                     )
                                                   ],
-                                                ),
-                                              ),
-                                              !(tareaRecursoUi.success != null)&&(tareaRecursoUi.progress??0)>0?
-                                              Column(
-                                                children: [
-                                                  Expanded(child: Container()),
-                                                  ProgressBar(
-                                                    current: tareaRecursoUi.progress??0,
-                                                    max: 100,
-
-                                                    borderRadiusGeometry:BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
-                                                    color: HexColor(controller.cursosUi?.color2),
-                                                  )
-                                                ],
-                                              ):Container()
-                                            ],
+                                                ):Container()
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -927,6 +985,10 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
   void dispose() {
     super.dispose();
     _imagePickerAnimationcontroller.dispose();
+    linktController.dispose();
+    _tiuloTareacontroller.dispose();
+    _Instrucionescontroller.dispose();
+   _Horacontroller.dispose();
   }
 
   Future<bool?> _showMaterialDialog(TareaCrearController controller) async {
@@ -1020,6 +1082,179 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   fontSize: 13
+                              ),
+                            ),
+                          )),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+          );
+        },
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context)
+            .modalBarrierDismissLabel,
+        barrierColor: Colors.transparent,
+        transitionDuration:
+        const Duration(milliseconds: 150));
+  }
+
+  Future<bool?> _showDialogEnlace(TareaCrearController controller) async {
+    return await showGeneralDialog(
+        context: context,
+        pageBuilder: (BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+              loadingWidget: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // if you need this
+                  side: BorderSide(
+                    color: Colors.grey.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(padding: EdgeInsets.all(8),),
+                      TextFormField(
+                        autofocus: true,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        autovalidateMode: AutovalidateMode.disabled,
+                        validator: (val) => '' ,
+                        textAlign: TextAlign.start,
+                        style: Theme.of(context).textTheme.caption?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontFamily: AppTheme.fontTTNorms,
+                          color: Colors.black,
+                        ),
+                        controller: linktController,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: "Agregar enlace",
+                          labelStyle: TextStyle(
+                            color:  HexColor(controller.cursosUi?.color1),
+                            fontFamily: AppTheme.fontTTNorms,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          contentPadding: EdgeInsets.all(15.0),
+                          prefixIcon: Icon(
+                            Icons.link,
+                            color: HexColor(controller.cursosUi?.color1),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: HexColor(controller.cursosUi?.color1),
+                            ),
+                          ),
+                          hintText: "",
+                          hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppTheme.fontTTNorms,
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: HexColor(controller.cursosUi?.color1),
+                            ),
+                          ),
+                          focusColor: AppTheme.colorAccent,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(child: ElevatedButton(
+                            onPressed: () {
+                              FlutterClipboard.paste().then((value) {
+                                linktController.text = value;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: HexColor(controller.cursosUi?.color1),
+                              onPrimary: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Ionicons.clipboard_outline,
+                                  size: 16,
+                                ),
+                                Padding(padding: EdgeInsets.all(2),),
+                                Text('PEGAR',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w700
+                                  ),
+                                )
+                              ],
+                            ),
+                          )),
+                        ],
+                      ),
+                      Padding(padding: EdgeInsets.all(8),),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: Text('Cancelar',
+                                  style: TextStyle(
+                                      color: HexColor(controller.cursosUi?.color1),
+                                      fontSize: 13,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w700
+                                  ),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              )
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                              controller.addLink(linktController.text);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: HexColor(controller.cursosUi?.color1),
+                              onPrimary: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Text('Guardar',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 13,
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700
                               ),
                             ),
                           )),

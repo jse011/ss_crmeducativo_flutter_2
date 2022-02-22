@@ -473,7 +473,12 @@ class _EventoInfoComplejoState extends ViewState<EventoInfoComplejoView, EventoI
                 children: [
                   InkWell(
                     onTap: () async{
-                      await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi?.driveId), webview: false);
+                      if(eventoAdjuntoUi?.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO ||
+                          eventoAdjuntoUi?.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO_YOUTUBE){
+                        await AppUrlLauncher.openLink(eventoAdjuntoUi?.titulo, webview: false);
+                      }else{
+                        await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(eventoAdjuntoUi?.driveId), webview: false);
+                      }
                     },
                     child:  Container(
                       height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 45),

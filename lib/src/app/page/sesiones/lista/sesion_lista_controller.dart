@@ -34,8 +34,8 @@ class SesionListaController extends Controller{
     presenter.getCalendarioPeridoOnComplete = (List<CalendarioPeriodoUI>? calendarioPeridoList, CalendarioPeriodoUI? calendarioPeriodoUI){
       _calendarioPeriodoList = calendarioPeridoList??[];
       _calendarioPeriodoUI = calendarioPeriodoUI;
-      _calendarioPeriodoUI?.habilitadoProceso = 1;
-      _calendarioPeriodoUI?.habilitadoResultado = 1;
+      //_calendarioPeriodoUI?.habilitadoProceso = 1;
+      //_calendarioPeriodoUI?.habilitadoResultado = 1;
       _progressDocente = true;
       refreshUI();
       presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);
@@ -99,8 +99,8 @@ class SesionListaController extends Controller{
       item.selected = false;
     }
     calendarioPeriodoUI?.selected = true;
-    _calendarioPeriodoUI?.habilitadoProceso = 1;
-    _calendarioPeriodoUI?.habilitadoResultado = 1;
+    //_calendarioPeriodoUI?.habilitadoProceso = 1;
+    //_calendarioPeriodoUI?.habilitadoResultado = 1;
     _progressDocente = true;
     refreshUI();
     presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);

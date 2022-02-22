@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -15,9 +18,14 @@ import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclad
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_imagen.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_url_launcher.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/image_picker/image_picker_handler.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/preview_image_view.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/progress_bar.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
@@ -31,10 +39,14 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubro_evidencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class EvaluacionIndicadorMultipleView extends View{
   String? rubroEvaluacionId;
@@ -48,7 +60,7 @@ class EvaluacionIndicadorMultipleView extends View{
 
 }
 
-class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndicadorMultipleView, EvaluacionIndicadorMultipleController> with TickerProviderStateMixin{
+class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndicadorMultipleView, EvaluacionIndicadorMultipleController> with TickerProviderStateMixin, ImagePickerListener{
   ScrollControllers crollController = ScrollControllers();
   double? offset = 0.0;
   late final ScrollControllers scrollControllers = ScrollControllers();
@@ -63,6 +75,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
   Tween<Offset> _tween = Tween(begin: Offset(0, 1), end: Offset(0, 0));
   late AnimationController _controller;
   Duration _duration = Duration(milliseconds: 200);
+  TextEditingController _controllerComentario = TextEditingController();
+
+  late AnimationController _imagePickerAnimationcontroller;
+  late ImagePickerHandler imagePicker;
+  GlobalKey globalKey = GlobalKey();
 
   @override
   void initState() {
@@ -92,11 +109,20 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
 
     super.initState();
     _controller = AnimationController(vsync: this, duration: _duration);
+    _imagePickerAnimationcontroller = new AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    imagePicker=new ImagePickerHandler(this,_imagePickerAnimationcontroller, false);
+    imagePicker.init(documento: false);
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _imagePickerAnimationcontroller.dispose();
+    _controllerComentario.dispose();
     super.dispose();
   }
 
@@ -104,6 +130,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
   Widget get view => ControlledWidgetBuilder<EvaluacionIndicadorMultipleController>(
       builder: (context, controller) {
           return WillPopScope (
+            key: globalKey,
             onWillPop: () async {
               if(_controller.isCompleted){
                 _controller.reverse();
@@ -444,12 +471,118 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                               ),
                                               Container(
                                                 width: width,
-                                                child: Text("Comentarios privados(Sólo lo ve el padre)",
+                                                child: Text("Comentarios privados (Sólo lo ve el padre)",
                                                     style: TextStyle(
-                                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
-                                                        color: AppTheme.colorPrimary
+                                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                                        color: AppTheme.colorPrimary,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontWeight: FontWeight.w700
                                                     )
                                                 ),
+                                              ),
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                padding: EdgeInsets.only(top: 0),
+                                                itemBuilder: (context, index) {
+                                                  var rubroComentarioUi =  evaluacionGeneralUi?.comentarios![index];
+                                                  return Container(
+                                                    width: width,
+                                                    margin: EdgeInsets.only(top:  ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
+                                                    //padding: EdgeInsets.only( right: padding_right),
+                                                    child: Row(
+                                                      children: [
+                                                        CachedNetworkImage(
+                                                          placeholder: (context, url) => Container(
+                                                            child: CircularProgressIndicator(),
+                                                          ),
+                                                          imageUrl: controller.usuarioUi?.personaUi?.foto??"",
+                                                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),),
+                                                          imageBuilder: (context, imageProvider) =>
+                                                              Container(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),
+                                                                  height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),
+                                                                  margin: EdgeInsets.only(
+                                                                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                      left: 0,
+                                                                      top: 0,
+                                                                      bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                                    image: DecorationImage(
+                                                                      image: imageProvider,
+                                                                      fit: BoxFit.cover,
+                                                                    ),
+                                                                  )
+                                                              ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              color: AppTheme.greyLighten3,
+                                                              borderRadius: BorderRadius.circular(8.0),
+                                                              border: Border.all(color: AppTheme.greyLighten2),
+                                                            ),
+                                                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                                            child: Column(
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                        child: Container(
+                                                                            padding: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                                                            child: Text("${controller.usuarioUi?.personaUi?.nombreCompleto}",
+                                                                                maxLines: 1,
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                                style: TextStyle(
+                                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                                    fontWeight: FontWeight.w700
+                                                                                ))
+                                                                        )
+                                                                    ),
+                                                                    Text("${DomainTools.f_fecha_letras(rubroComentarioUi?.fechaCreacion)}",
+                                                                        style: TextStyle(
+                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                                                            color: AppTheme.greyDarken1,
+                                                                            fontFamily: AppTheme.fontTTNorms,
+                                                                            fontWeight: FontWeight.w700
+                                                                        )
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2))),
+                                                                Container(
+                                                                  alignment: Alignment.centerLeft,
+                                                                  child: Text("${rubroComentarioUi?.comentario??""}",
+                                                                    style: TextStyle(
+                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                        fontWeight: FontWeight.w600
+                                                                    ),),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        IconButton(
+                                                          onPressed: ()async {
+                                                            bool succes = await _showDialogEliminarComentario(controller)??false;
+                                                            if(succes){
+                                                              controller.eliminarComentario(rubroComentarioUi, evaluacionGeneralUi);
+                                                            }
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.close,
+                                                            color: AppTheme.greyDarken1,
+                                                          ),
+                                                          iconSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 20),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                                itemCount: evaluacionGeneralUi?.comentarios?.length??0,
                                               ),
                                               Padding(
                                                   padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))
@@ -463,14 +596,18 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                         child: CircularProgressIndicator(),
                                                       ),
                                                       imageUrl: controller.usuarioUi?.personaUi?.foto??"",
-                                                      errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                                                      errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),),
                                                       imageBuilder: (context, imageProvider) =>
                                                           Container(
-                                                              width: 40,
-                                                              height: 40,
-                                                              margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
+                                                              width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),
+                                                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),
+                                                              margin: EdgeInsets.only(
+                                                                  right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                  left: 0,
+                                                                  top: 0,
+                                                                  bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
                                                               decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 25))),
                                                                 image: DecorationImage(
                                                                   image: imageProvider,
                                                                   fit: BoxFit.cover,
@@ -483,25 +620,26 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                         children: [
                                                           Expanded(
                                                             child: Container(
-                                                              height: 65,
+                                                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 65),
                                                               child: Row(
                                                                 children: <Widget>[
                                                                   Expanded(
                                                                     child: Container(
                                                                       decoration: BoxDecoration(
                                                                         color: AppTheme.greyLighten3,
-                                                                        borderRadius: BorderRadius.circular(8.0),
+                                                                        borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
                                                                         border: Border.all(color: AppTheme.greyLighten2),
                                                                       ),
-                                                                      padding: EdgeInsets.all(8),
+                                                                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
                                                                       child: Row(
                                                                         children: <Widget>[
                                                                           Expanded(
                                                                             child: TextField(
+                                                                              controller: _controllerComentario,
                                                                               maxLines: null,
                                                                               keyboardType: TextInputType.multiline,
                                                                               style: TextStyle(
-                                                                                fontSize: 12,
+                                                                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
 
                                                                               ),
                                                                               decoration: InputDecoration(
@@ -522,13 +660,14 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
 
                                                           IconButton(
                                                             onPressed: () {
-                                                              // You enter here what you want the button to do once the user interacts with it
+                                                              controller.saveComentario(_controllerComentario.text, evaluacionGeneralUi);
+                                                              _controllerComentario.text = "";
                                                             },
                                                             icon: Icon(
                                                               Icons.send,
                                                               color: AppTheme.greyDarken1,
                                                             ),
-                                                            iconSize: 20.0,
+                                                            iconSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 20),
                                                           )
                                                         ],
                                                       ),
@@ -537,33 +676,194 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                 ),
                                               ),
                                               Padding(
-                                                  padding: EdgeInsets.only(top: 16)
+                                                  padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16))
                                               ),
                                               Container(
                                                 width: width,
                                                 child: Text("Evidencias (Sólo lo ve el padre)",
                                                     style: TextStyle(
-                                                        fontSize: 11,
-                                                        color: AppTheme.colorPrimary
+                                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                                        color: AppTheme.colorPrimary,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontWeight: FontWeight.w700
                                                     )
                                                 ),
                                               ),
                                               Padding(
-                                                  padding: EdgeInsets.only(top: 8)
+                                                  padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))
                                               ),
                                               Container(
-                                                width: width,
-                                                child: Row(
+                                                padding: EdgeInsets.only(
+                                                  left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 24),
+                                                  right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 24),
+                                                  top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),),
+                                                child: Stack(
                                                   children: [
-                                                    FloatingActionButton(
-                                                      heroTag: "btn_${controller.personaUiSelected?.personaId??""}",
-                                                      onPressed: () {},
-                                                      elevation: 0,
-                                                      child: Icon(Icons.add,),
-                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                                    Center(
+                                                      child: InkWell(
+                                                        onTap: () async{
+                                                          controller.onSelectedEvaluacionGeneral(evaluacionGeneralUi);
+                                                          imagePicker.showDialog(context);
+                                                        },
+                                                        child: Container(
+                                                          padding: EdgeInsets.all(8),
+                                                          decoration: BoxDecoration(
+                                                            color: HexColor(controller.cursosUi.color2).withOpacity(0.1),
+                                                            borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                                          ),
+                                                          width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 450),
+                                                          height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 60),
+                                                          child: FDottedLine(
+                                                            color: HexColor(controller.cursosUi.color1).withOpacity(0.6),
+                                                            strokeWidth: 2.0,
+                                                            dottedLength: 10.0,
+                                                            space: 2.0,
+                                                            corner: FDottedLineCorner.all(14.0),
+
+                                                            /// add widget
+                                                            child: Container(
+                                                              alignment: Alignment.center,
+                                                              child: Text("Agregar evidencia",  style: TextStyle(
+                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                  fontWeight: FontWeight.w500,
+                                                                  color: HexColor(controller.cursosUi.color1).withOpacity(0.8)
+                                                              ),),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     )
                                                   ],
                                                 ),
+                                              ),
+                                              ListView.builder(
+                                                  padding: EdgeInsets.only(
+                                                      left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 24),
+                                                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 24),
+                                                      top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                      bottom: 0),
+                                                  itemCount: evaluacionGeneralUi?.evidencias?.length??0,
+                                                  shrinkWrap: true,
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  itemBuilder: (context, index){
+                                                    RubroEvidenciaUi rubroEvidenciaUi =  evaluacionGeneralUi!.evidencias![index];
+
+                                                    return Stack(
+                                                      children: [
+                                                        Center(
+                                                          child: InkWell(
+                                                            onTap: () async{
+                                                              print("Click a");
+                                                              if(rubroEvidenciaUi.tipoRecurso == TipoRecursosUi.TIPO_IMAGEN){
+                                                                Navigator.of(context).push(PreviewImageView.createRoute(rubroEvidenciaUi.url));
+                                                              }else{
+                                                                await AppUrlLauncher.openLink(rubroEvidenciaUi.url, webview: false);
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)), // use instead of BorderRadius.all(Radius.circular(20))
+                                                                  border:  Border.all(
+                                                                      width: 1,
+                                                                      color: HexColor(controller.cursosUi.color1)
+                                                                  ),
+                                                                  color: rubroEvidenciaUi.success == false? AppTheme.red.withOpacity(0.1):AppTheme.white
+                                                              ),
+                                                              margin: EdgeInsets.only(bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
+                                                              width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 450),
+                                                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                              child: Stack(
+                                                                children: [
+                                                                  Container(
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Container(
+                                                                          margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
+                                                                          decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.only(
+                                                                              bottomLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                                                              topLeft: Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                                                            ), // use instead of BorderRadius.all(Radius.circular(20))
+                                                                            color: AppTheme.greyLighten2,
+                                                                          ),
+                                                                          width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                                          child: Center(
+                                                                            child: Image.asset(getImagen(rubroEvidenciaUi.tipoRecurso),
+                                                                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 30),
+                                                                              fit: BoxFit.cover,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          child: Column(
+                                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Text("${rubroEvidenciaUi.titulo??""}",
+                                                                                  style: TextStyle(
+                                                                                      color: AppTheme.greyDarken3,
+                                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
+                                                                                      fontFamily: AppTheme.fontTTNorms,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                  )),
+                                                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 2))),
+                                                                              Text("${getDescripcion(rubroEvidenciaUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,
+                                                                                  style: TextStyle(
+                                                                                      color: AppTheme.blue,
+                                                                                      fontFamily: AppTheme.fontTTNorms,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10)
+                                                                                  )),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                        rubroEvidenciaUi.success == false?
+                                                                        InkWell(
+                                                                          onTap: (){
+                                                                            controller.refreshRubroEvidenciaUi(rubroEvidenciaUi);
+                                                                          },
+                                                                          child: Container(
+                                                                            margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
+                                                                            child: Icon(Icons.refresh),
+                                                                          ),
+                                                                        ):Container(),
+                                                                        InkWell(
+                                                                          onTap: () async{
+                                                                            bool? success = await _showDialogEliminarEvidencia(controller);
+                                                                            if(success??false){
+                                                                              controller.removeRubroEvidencia(rubroEvidenciaUi, evaluacionGeneralUi);
+                                                                            }
+
+                                                                          },
+                                                                          child: Container(
+                                                                            margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)),
+                                                                            child: Icon(Icons.close),
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  !(rubroEvidenciaUi.success != null)&&(rubroEvidenciaUi.progress??0)>0?
+                                                                  Column(
+                                                                    children: [
+                                                                      Expanded(child: Container()),
+                                                                      ProgressBar(
+                                                                        current: rubroEvidenciaUi.progress??0,
+                                                                        max: 100,
+
+                                                                        borderRadiusGeometry:BorderRadius.only(bottomRight: Radius.circular(8), bottomLeft: Radius.circular(8)),
+                                                                        color: HexColor(controller.cursosUi.color2),
+                                                                      )
+                                                                    ],
+                                                                  ):Container()
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
                                               ),
                                               Padding(
                                                   padding: EdgeInsets.all(48)
@@ -585,6 +885,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                       TextButton(
                                         onPressed: () async{
                                           await _controller.reverse();
+                                          _controllerComentario.text = "";
                                           controller.onClickFinalizarEvaluacion();
                                         },
                                         style: TextButton.styleFrom(
@@ -601,6 +902,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                         TextButton(
                                           onPressed: () {
                                             controller.onClickAtrasEvaluacion();
+                                            _controllerComentario.text = "";
                                           },
                                           style: TextButton.styleFrom(
                                             primary: HexColor(controller.cursosUi.color2),
@@ -616,6 +918,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                         TextButton(
                                           onPressed: () {
                                             controller.onClickSiguienteEvaluacion();
+                                            _controllerComentario.text = "";
                                           },
                                           style: TextButton.styleFrom(
                                             primary: HexColor(controller.cursosUi.color2),
@@ -1781,7 +2084,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                 ),
                 decoration: BoxDecoration(
                   border: Border(
-                    right: BorderSide(color: AppTheme.colorPrimary),
+                    right: BorderSide(color: HexColor(controller.cursosUi.color1),),
                   ),
                 )
             ),
@@ -2304,4 +2607,303 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
         const Duration(milliseconds: 150));
   }
 
+  Future<bool?> _showDialogEliminarComentario(EvaluacionIndicadorMultipleController controller) async {
+    /*RubroCrearController controller =
+    FlutterCleanArchitecture.getController<RubroCrearController>(context, listen: false);*/
+    return await showGeneralDialog(
+        context: context,
+        pageBuilder: (BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+              loadingWidget: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // if you need this
+                  side: BorderSide(
+                    color: Colors.grey.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 45,
+                            height: 45,
+                            child: Icon(Ionicons.close, size: 35, color: AppTheme.white,),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: HexColor(controller.cursosUi.color1)),
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Eliminar comentario",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppTheme.fontTTNormsMedium
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(16),),
+                                ],
+                              )
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: Text('Cancelar', style: TextStyle(fontSize: 14),),
+                                style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    primary: AppTheme.darkText
+                                ),
+                              )
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: AppTheme.redLighten4,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Text('Aceptar',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppTheme.red,
+                                  fontWeight: FontWeight.w700
+                              ),
+                            ),
+                          )),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+          );
+        },
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context)
+            .modalBarrierDismissLabel,
+        barrierColor: Colors.transparent,
+        transitionDuration:
+        const Duration(milliseconds: 150));
+  }
+
+  Future<bool?> _showDialogEliminarEvidencia(EvaluacionIndicadorMultipleController controller) async {
+    /*RubroCrearController controller =
+    FlutterCleanArchitecture.getController<RubroCrearController>(context, listen: false);*/
+    return await showGeneralDialog(
+        context: context,
+        pageBuilder: (BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+              loadingWidget: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // if you need this
+                  side: BorderSide(
+                    color: Colors.grey.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 45,
+                            height: 45,
+                            child: Icon(Ionicons.close, size: 35, color: AppTheme.white,),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: HexColor(controller.cursosUi.color1)),
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Eliminar evidencia",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppTheme.fontTTNormsMedium
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(16),),
+                                ],
+                              )
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: Text('Cancelar', style: TextStyle(fontSize: 14),),
+                                style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    primary: AppTheme.darkText
+                                ),
+                              )
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: AppTheme.redLighten4,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Text('Aceptar',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppTheme.red,
+                                  fontWeight: FontWeight.w700
+                              ),
+                            ),
+                          )),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+          );
+        },
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context)
+            .modalBarrierDismissLabel,
+        barrierColor: Colors.transparent,
+        transitionDuration:
+        const Duration(milliseconds: 150));
+  }
+
+  String getImagen(TipoRecursosUi? tipoRecursosUi){
+    switch(tipoRecursosUi??TipoRecursosUi.TIPO_VINCULO){
+      case TipoRecursosUi.TIPO_VIDEO:
+        return AppImagen.archivo_video;
+      case TipoRecursosUi.TIPO_VINCULO:
+        return AppImagen.archivo_link;
+      case TipoRecursosUi.TIPO_DOCUMENTO:
+        return AppImagen.archivo_documento;
+      case TipoRecursosUi.TIPO_IMAGEN:
+        return AppImagen.archivo_imagen;
+      case TipoRecursosUi.TIPO_AUDIO:
+        return AppImagen.archivo_audio;
+      case TipoRecursosUi.TIPO_HOJA_CALCULO:
+        return AppImagen.archivo_hoja_calculo;
+      case TipoRecursosUi.TIPO_DIAPOSITIVA:
+        return AppImagen.archivo_diapositiva;
+      case TipoRecursosUi.TIPO_PDF:
+        return AppImagen.archivo_pdf;
+      case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+        return AppImagen.archivo_youtube;
+      case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+        return AppImagen.archivo_drive;
+      case TipoRecursosUi.TIPO_RECURSO:
+        return AppImagen.archivo_recurso;
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return AppImagen.archivo_recurso;
+    }
+  }
+
+  String getDescripcion(TipoRecursosUi? tipoRecursosUi){
+    switch(tipoRecursosUi??TipoRecursosUi.TIPO_VINCULO){
+      case TipoRecursosUi.TIPO_VIDEO:
+        return "Video";
+      case TipoRecursosUi.TIPO_VINCULO:
+        return "Link";
+      case TipoRecursosUi.TIPO_DOCUMENTO:
+        return "Documento";
+      case TipoRecursosUi.TIPO_IMAGEN:
+        return "Imagen";
+      case TipoRecursosUi.TIPO_AUDIO:
+        return "Audio";
+      case TipoRecursosUi.TIPO_HOJA_CALCULO:
+        return "Hoja cálculo";
+      case TipoRecursosUi.TIPO_DIAPOSITIVA:
+        return "Presentación";
+      case TipoRecursosUi.TIPO_PDF:
+        return "Documento Portátil";
+      case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+        return "Youtube";
+      case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+        return "Drive";
+      case TipoRecursosUi.TIPO_RECURSO:
+        return "Recurso";
+      case TipoRecursosUi.TIPO_ENCUESTA:
+        return "Recurso";
+        break;
+    }
+  }
+
+  @override
+  userDocument(List<File?> _documents) {
+    if(globalKey.currentContext!=null){
+      print("document ${_documents.length}");
+      EvaluacionIndicadorMultipleController controller =
+      FlutterCleanArchitecture.getController<EvaluacionIndicadorMultipleController>(globalKey.currentContext!, listen: false);
+      controller.addEvidencia(_documents, null);
+
+    }
+  }
+
+  @override
+  userImage(File? _image, String? newName) {
+     if(globalKey.currentContext!=null&&(_image?.path??"").isNotEmpty){
+      EvaluacionIndicadorMultipleController controller =
+      FlutterCleanArchitecture.getController<EvaluacionIndicadorMultipleController>(globalKey.currentContext!, listen: false);
+      List<File?> files = [];
+      files.add(_image);
+      controller.addEvidencia(files,newName);
+      print("image ${_image?.path}");
+    }
+  }
 }
