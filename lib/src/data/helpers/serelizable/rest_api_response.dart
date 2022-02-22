@@ -4,7 +4,7 @@ part 'rest_api_response.g.dart';
 /*
 Mac OS important
 export PATH="$PATH:/Users/edwinrubenpuente/SDKFlutter/flutter/bin"
-export PATH="$PATH:/Users/jose/flutter/bin"
+export PATH="$PATH:/Users/jose/flutter 2/bin"
 
 * One-time code generation
 By running flutter pub run build_runner build in the project root, you generate JSON serialization code for your models whenever they are needed. This triggers a one-time build that goes through the source files, picks the relevant ones, and generates the necessary serialization code for them.

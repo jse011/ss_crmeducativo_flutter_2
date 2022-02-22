@@ -48,7 +48,7 @@ class ImagePickerHandler {
   }
 
   Future cropImage(File image, String? name) async {
-    File? croppedFile = await ImageCropper.cropImage(
+    File? croppedFile = await ImageCropper().cropImage(
       sourcePath: image.path,
       //ratioX: 1.0,
       //ratioY: 1.0,
