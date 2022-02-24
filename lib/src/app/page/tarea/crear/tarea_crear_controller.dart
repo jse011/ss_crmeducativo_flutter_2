@@ -133,6 +133,7 @@ class TareaCrearController extends Controller{
   }
 
   void addTareaRecursos(List<File?> files, String? newName) async {
+    print("newName: ${newName}");
    for(File? file in files){
      if(file!=null){
        TareaRecusoUi tareaRecusoUi = TareaRecusoUi();

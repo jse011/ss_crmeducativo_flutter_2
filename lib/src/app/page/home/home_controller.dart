@@ -27,6 +27,7 @@ class HomeController extends Controller{
   void initListeners() {
     homePresenter.getUserOnNext = (UsuarioUi user) {
       _userioSession = user;
+      print("usuario: ${user.personaUi?.foto}");
       homePresenter.updateUsuario();
       refreshUI(); // Refreshes the UI manually
     };

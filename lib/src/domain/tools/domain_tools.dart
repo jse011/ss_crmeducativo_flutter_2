@@ -379,7 +379,7 @@ class DomainTools {
     if (extencion.contains(".doc") || extencion.contains(".docx")) {
       // Word document
       return TipoRecursosUi.TIPO_DOCUMENTO;
-    } else if (extencion.contains(".rubro_pdf")) {
+    } else if (extencion.contains(".pdf")) {
       // PDF file
       return TipoRecursosUi.TIPO_PDF;
     } else if (extencion.contains(".ppt") || extencion.contains(".pptx")) {

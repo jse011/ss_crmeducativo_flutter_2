@@ -41,7 +41,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     AppDataBase SQL = AppDataBase();
     try{
 
-      SessionUserData sessionUserData = await (SQL.selectSingle(SQL.sessionUser)).getSingle();//El ORM genera error si hay dos registros
+      SessionUserData? sessionUserData = await (SQL.selectSingle(SQL.sessionUser)).getSingleOrNull();//El ORM genera error si hay dos registros
 
       //Solo deve haber una registro de session user data
       return sessionUserData!=null?sessionUserData.complete??false:false;
@@ -70,7 +70,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<int> getSessionUsuarioId() async{
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingle();
+      SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
       return sessionUserData!=null?sessionUserData.userId:0;
     }catch(e){
       throw Exception(e);
@@ -81,8 +81,8 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<String> getSessionUsuarioUrlServidor() async{
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingle();
-      return sessionUserData.urlServerLocal??"";
+      SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
+      return sessionUserData?.urlServerLocal??"";
     }catch(e){
       throw Exception(e);
     }
@@ -92,7 +92,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<int> getSessionAnioAcademicoId()async {
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingle();
+      SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
       return sessionUserData!=null?sessionUserData.anioAcademicoId??0:0;
     }catch(e){
       throw Exception(e);
@@ -110,7 +110,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     query.where((tbl) => tbl.geoReferenciaId.equals(academicoData?.georeferenciaId));
     UsuarioRolGeoreferenciaData? usuarioRolGeoreferenciaData = await query.getSingleOrNull();
 
-    GeoreferenciaData georeferenciaData =  await (SQL.selectSingle(SQL.georeferencia)..where((tbl) => tbl.georeferenciaId.equals(usuarioRolGeoreferenciaData?.geoReferenciaId))).getSingle();
+    GeoreferenciaData? georeferenciaData =  await (SQL.selectSingle(SQL.georeferencia)..where((tbl) => tbl.georeferenciaId.equals(usuarioRolGeoreferenciaData?.geoReferenciaId))).getSingleOrNull();
 
     return georeferenciaData!=null?georeferenciaData.entidadId??0:0;
   }
@@ -132,7 +132,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<int> getSessionProgramaEducativoId() async{
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingle();
+      SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
       return sessionUserData!=null?sessionUserData.programaEducativoId??0:0;
     }catch(e){
       throw Exception(e);
@@ -281,7 +281,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<void> updateUsuarioSuccessData(int usuarioId, int anioAcademicoId) async {
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData = await(SQL.selectSingle(SQL.sessionUser).getSingle());
+      SessionUserData? sessionUserData = await(SQL.selectSingle(SQL.sessionUser).getSingleOrNull());
       if(sessionUserData!=null){
         await SQL.update(SQL.sessionUser).replace(sessionUserData.copyWith(complete: true, anioAcademicoId: anioAcademicoId));
       }
@@ -460,16 +460,16 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
     AppDataBase SQL = AppDataBase();
     int usuarioId = await getSessionUsuarioId();
-    var query =  SQL.select(SQL.persona).join([
+    var query =  SQL.selectSingle(SQL.persona).join([
       innerJoin(SQL.usuario, SQL.usuario.personaId.equalsExp(SQL.persona.personaId))
     ]);
 
     query.where(SQL.usuario.usuarioId.equals(usuarioId));
-    var resultRow = await query.getSingle();
-    PersonaData personaData = resultRow.readTable(SQL.persona);
+    var resultRow = await query.getSingleOrNull();
+    PersonaData? personaData = resultRow?.readTable(SQL.persona);
 
     String fechaNacimiento = "";
-    if(personaData.fechaNac !=null && personaData.fechaNac!.isNotEmpty){
+    if(personaData?.fechaNac !=null && personaData!.fechaNac!.isNotEmpty){
       DateTime fecPad = DomainTools.convertDateTimePtBR(personaData.fechaNac!, null);
       fechaNacimiento = "${DomainTools.calcularEdad(fecPad)} años (${DomainTools.f_fecha_anio_mes_letras(fecPad)})";
 
@@ -478,14 +478,14 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     UsuarioUi usuarioUi = UsuarioUi();
     usuarioUi.usuarioId = usuarioId;
     PersonaUi personaUi = PersonaUi();
-    personaUi.personaId = personaData.personaId;
-    personaUi.nombreCompleto = '${DomainTools.capitalize(personaData.nombres??"")} ${DomainTools.capitalize(personaData.apellidoPaterno??"")} ${DomainTools.capitalize(personaData.apellidoMaterno??"")}';
-    personaUi.foto = '${personaData.foto??""}';
-    personaUi.correo = personaData.correo??"";
-    personaUi.telefono = personaData.celular??personaData.telefono??"";
+    personaUi.personaId = personaData?.personaId;
+    personaUi.nombreCompleto = '${DomainTools.capitalize(personaData?.nombres??"")} ${DomainTools.capitalize(personaData?.apellidoPaterno??"")} ${DomainTools.capitalize(personaData?.apellidoMaterno??"")}';
+    personaUi.foto = '${personaData?.foto??""}';
+    personaUi.correo = personaData?.correo??"";
+    personaUi.telefono = personaData?.celular??personaData?.telefono??"";
     personaUi.fechaNacimiento = fechaNacimiento;
-    personaUi.nombres = DomainTools.capitalize(personaData.nombres??"");
-    personaUi.fechaNacimiento2 = (personaData.fechaNac??"").replaceAll(RegExp(' 00:00:00'), '');
+    personaUi.nombres = DomainTools.capitalize(personaData?.nombres??"");
+    personaUi.fechaNacimiento2 = (personaData?.fechaNac??"").replaceAll(RegExp(' 00:00:00'), '');
     usuarioUi.personaUi = personaUi;
     return usuarioUi;
 
@@ -557,7 +557,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<void> updateSessionAnioAcademicoId(int anioAcademicoId) async {
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData = await(SQL.selectSingle(SQL.sessionUser).getSingle());
+      SessionUserData? sessionUserData = await(SQL.selectSingle(SQL.sessionUser).getSingleOrNull());
       if(sessionUserData!=null){
         await SQL.update(SQL.sessionUser).replace(sessionUserData.copyWith(anioAcademicoId: anioAcademicoId));
       }
@@ -637,7 +637,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         innerJoin(SQL.usuario, SQL.usuario.personaId.equalsExp(SQL.empleado.personaId))
       ]);
       query.where(SQL.usuario.usuarioId.equals(await getSessionUsuarioId()));
-      var row = await query.getSingle();
+      var row = await query.getSingleOrNull();
 
 
       if(row != null){
@@ -715,7 +715,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
     queryCursos.where(SQL.cargaCurso.cargaCursoId.isIn(cargaCursosIdList));
 
-    ParametrosDisenioData defaultParametrosDisenioData = await (SQL.selectSingle(SQL.parametrosDisenio)..where((tbl) => tbl.nombre.equals("default"))).getSingle();
+    ParametrosDisenioData? defaultParametrosDisenioData = await (SQL.selectSingle(SQL.parametrosDisenio)..where((tbl) => tbl.nombre.equals("default"))).getSingleOrNull();
 
     for(var row in await queryCursos.get()){
       CursosUi cursosUi = CursosUi();
@@ -776,7 +776,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<void> updateSessionProgramaEducativoId(int programaEducativoId) async {
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData = await(SQL.selectSingle(SQL.sessionUser).getSingle());
+      SessionUserData? sessionUserData = await(SQL.selectSingle(SQL.sessionUser).getSingleOrNull());
       if(sessionUserData!=null){
         await SQL.update(SQL.sessionUser).replace(sessionUserData.copyWith(programaEducativoId: programaEducativoId));
       }
@@ -992,10 +992,10 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<int> getGeoreferenciaId() async {
     AppDataBase SQL = AppDataBase();
     try{
-      SessionUserData sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingle();
+      SessionUserData? sessionUserData =  await SQL.selectSingle(SQL.sessionUser).getSingleOrNull();
        int anioAcademicoId = sessionUserData!=null?sessionUserData.anioAcademicoId??0:0;
-       AnioAcademicoData academicoData = await (SQL.selectSingle(SQL.anioAcademico)..where((tbl) => tbl.idAnioAcademico.equals(anioAcademicoId))).getSingle();
-       return academicoData.georeferenciaId??0;
+       AnioAcademicoData? academicoData = await (SQL.selectSingle(SQL.anioAcademico)..where((tbl) => tbl.idAnioAcademico.equals(anioAcademicoId))).getSingleOrNull();
+       return academicoData?.georeferenciaId??0;
     }catch(e){
       throw Exception(e);
     }
@@ -1051,7 +1051,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   @override
   Future<void> updatePersona(PersonaUi? personaUi) async{
     AppDataBase SQL = AppDataBase();
-    PersonaData personaData = await (SQL.selectSingle(SQL.persona)..where((tbl) => tbl.personaId.equals(personaUi?.personaId))).getSingle();
+    PersonaData? personaData = await (SQL.selectSingle(SQL.persona)..where((tbl) => tbl.personaId.equals(personaUi?.personaId))).getSingleOrNull();
     print("personaUi save ${personaUi?.foto}");
     if(personaData!=null)await SQL.update(SQL.persona).replace(personaData.copyWith(celular: personaUi?.telefono, correo: personaUi?.correo, foto: personaUi?.foto??personaData.foto));
   }

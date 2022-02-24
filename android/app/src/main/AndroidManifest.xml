@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.consultoraestrategia.ssCrmeducativoIcrm2">
+    package="com.consultoraestrategia.ss_crmeducativo_icrm_2">
     <uses-permission android:name="android.permission.INTERNET" />
 
    <application

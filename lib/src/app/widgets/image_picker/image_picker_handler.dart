@@ -34,11 +34,18 @@ class ImagePickerHandler {
     final  pickedFile = await picker.pickImage(source: ImageSource.gallery);
     final File image = File(pickedFile?.path??"");
 
-
-    if(cropScuared??false){
-      cropImage(image, null);
+    final dateformat = DateFormat('yyyy-MM-dd-hh-mm');
+    var ext = image.path.split(".").last;
+    String? name;
+    if(ext.isNotEmpty){
+      name = "${prefiImage+ dateformat.format(DateTime.now())}.${ext}";
     }else{
-      _listener.userImage(image, null);
+      name = null;
+    }
+    if(cropScuared??false){
+      cropImage(image, name);
+    }else{
+      _listener.userImage(image, name);
     }
   }
 

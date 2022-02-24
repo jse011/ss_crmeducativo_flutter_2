@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/fancy_shimmer_image.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_informacion_controller.dart';
@@ -17,7 +20,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:video_player/video_player.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
-import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+//import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
 
 class EventoInfoSimpleView extends View{
   EventoUi? eventoUi;
@@ -47,10 +51,16 @@ class _EventoInfoSimpleState extends ViewState<EventoInfoSimpleView, EventoInfor
     }else if(widget.eventoAdjuntoUi?.tipoRecursosUi == TipoRecursosUi.TIPO_VINCULO_YOUTUBE){
       inizializaYourubePlayer();
     }
-    /*SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]
-    );*/
+
+    if(Platform.isAndroid) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.portraitUp
+      ]);
+    }
+
   }
 
   inizializaYourubePlayer(){
@@ -77,13 +87,36 @@ class _EventoInfoSimpleState extends ViewState<EventoInfoSimpleView, EventoInfor
           ..play()
           ..hideTopMenu();
       }
-      if (value.hasPlayed) {
-        _youtubeController..hideEndScreen();
-      }
-    });
+      if (value.isFullScreen) {
+        //_youtubeController..hideEndScreen();
 
-    _youtubeController.onExitFullscreen = () {
-      print("onExitFullscreen");
+
+      }else{
+
+      }
+
+    });
+    _youtubeController.onEnterFullscreen = ()async{
+
+      if(Platform.isAndroid){
+        await Future.delayed(const Duration(milliseconds: 1000));
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ]);
+      }
+    };
+
+    _youtubeController.onExitFullscreen = () async{
+      if(Platform.isAndroid) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.portraitDown,
+          DeviceOrientation.portraitUp
+        ]);
+      }
     };
   }
 
@@ -195,7 +228,7 @@ class _EventoInfoSimpleState extends ViewState<EventoInfoSimpleView, EventoInfor
                                 //key: UniqueKey(),
                                 controller: _youtubeController,
                                 child: YoutubePlayerIFrame(
-
+                                  //aspectRatio: 16 / 9,
                                 ),
                             ),
                           ) :
@@ -343,6 +376,14 @@ class _EventoInfoSimpleState extends ViewState<EventoInfoSimpleView, EventoInfor
 
 @override
   void dispose() {
+  if(Platform.isAndroid){
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp
+    ]);
+  }
 
   //if (_videoPlayerController1.value.isPlaying) _videoPlayerController1.pause();
   _videoPlayerController1?.dispose();

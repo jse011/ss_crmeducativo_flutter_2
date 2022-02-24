@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +15,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_youtube_tools.dart';
 import 'package:video_player/video_player.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
-import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+//import 'package:youtube_plyr_iframe/youtube_plyr_iframe.dart';
 
 class TareaMultimediaView extends StatefulWidget{
 
@@ -65,6 +68,14 @@ class _TareaMultimediaViewState extends State<TareaMultimediaView>{
         SystemUiMode.manual,
         overlays: [SystemUiOverlay.top]
     );*/
+    if(Platform.isAndroid) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.portraitUp
+      ]);
+    }
   }
 
   inizializaYourubePlayer(){
@@ -92,13 +103,33 @@ class _TareaMultimediaViewState extends State<TareaMultimediaView>{
           ..hideTopMenu();
       }
       if (value.hasPlayed) {
-        _youtubeController..hideEndScreen();
+        //_youtubeController..hideEndScreen();
       }
     });
 
-    _youtubeController.onExitFullscreen = () {
-      print("onExitFullscreen");
+    _youtubeController.onEnterFullscreen = ()async{
+
+      if(Platform.isAndroid){
+        await Future.delayed(const Duration(milliseconds: 1000));
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ]);
+      }
     };
+
+    _youtubeController.onExitFullscreen = () async{
+      if(Platform.isAndroid) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.portraitDown,
+          DeviceOrientation.portraitUp
+        ]);
+      }
+    };
+
   }
 
   Future<void> initializePlayer() async {

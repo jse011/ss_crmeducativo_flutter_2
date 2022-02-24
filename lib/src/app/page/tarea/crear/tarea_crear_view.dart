@@ -769,7 +769,7 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
                                                 await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
                                                 break;
                                               case TipoRecursosUi.TIPO_VINCULO:
-                                                await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
+                                                await AppUrlLauncher.openLink("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", webview: false);
                                                 break;
                                               case TipoRecursosUi.TIPO_ENCUESTA:
                                                 await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);

@@ -70,235 +70,258 @@ class _EventoInfoComplejoState extends ViewState<EventoInfoComplejoView, EventoI
                         backgroundColor: HexColor("#292A2B"),
                         body: Container(
                           margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 16,),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: Container(
-                              padding: EdgeInsets.only(left: 24, right: 24),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  getCabeceraEvento(controller.eventoUi),
-                                  Container(
-                                    margin:  const EdgeInsets.only(top: 8, bottom: 0),
-                                    color: HexColor("#33979797"),
-                                    height: 1,
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 8),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          margin: const EdgeInsets.only(top: 8, bottom: 0),
-                                          child: CachedNetworkImage(
-                                              placeholder: (context, url) => CircularProgressIndicator(),
-                                              imageUrl: controller.eventoUi?.fotoEntidad??'',
-                                              errorWidget: (context, url, error) => Container(),
-                                              imageBuilder: (context, imageProvider) => Container(
-                                                  height: 40,
-                                                  width: 40,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                                                    image: DecorationImage(
-                                                      image: imageProvider,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  )
-                                              )
-                                          ),
-                                        ),
-                                        Expanded(
-                                            child: Container(
-                                              margin: const EdgeInsets.only(top: 8, left: 8, right: 16, bottom: 0),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  //Text(eventoUi.nombreEntidad??'', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 16, color: AppTheme.darkText),),
-                                                  Text('${controller.eventoUi?.nombreEmisor??""}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 14, color: AppTheme.white),),
-                                                  Padding(padding: EdgeInsets.all(2)),
-                                                  Text('${controller.eventoUi?.rolEmisor??""} ${(controller.eventoUi?.nombreFechaPublicacion??"").isNotEmpty?" - " + (controller.eventoUi?.nombreFechaPublicacion??""): ""}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 11, color: AppTheme.white))
-                                                ],
-                                              ),
-                                            )
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    color: HexColor("#33979797"),
-                                    height: 1,
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 16, bottom: 0),
-                                    child: Text(controller.eventoUi?.titulo??'', style: TextStyle( fontSize: 14, color: AppTheme.white, fontFamily: AppTheme.fontName, )),
-                                  ),
-                                  if((controller.eventoUi?.descripcion??"").isNotEmpty && controller.eventoUi?.descripcion != ".")
-                                    Container(
-                                      margin: const EdgeInsets.only(top: 8, ),
-                                      child: Linkify(
-                                        text: '${controller.eventoUi?.descripcion}',
-                                        style: TextStyle( fontSize: 12, color: AppTheme.white, fontWeight: FontWeight.w300, height: 1.5),
-                                        onOpen: (url) async {
-                                          await AppUrlLauncher.openLink(url.url);
-                                        },
+                          child: Stack(
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 24, right: 24),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      getCabeceraEvento(controller.eventoUi),
+                                      Container(
+                                        margin:  const EdgeInsets.only(top: 8, bottom: 0),
+                                        color: HexColor("#33979797"),
+                                        height: 1,
                                       ),
-                                    ),
-                                  Column(
-                                    children:List.generate(controller.eventoUi?.eventoAdjuntoUiEncuestaList?.length??0, (index){
-                                      EventoAdjuntoUi? eventoAdjuntoUi = controller.eventoUi?.eventoAdjuntoUiEncuestaList?[index];
-                                      return Container(
-                                        padding: EdgeInsets.only(top: index==0?8:4),
+                                      Container(
+                                        margin: EdgeInsets.only(bottom: 8),
                                         child: Row(
                                           children: [
-                                            Padding(padding: EdgeInsets.all(8)),
-                                            SvgPicture.asset(
-                                              AppIcon.ic_evento_adjunto_instrumetno,
-                                              width: 20,
-                                              height: 20,
+                                            Container(
+                                              margin: const EdgeInsets.only(top: 8, bottom: 0),
+                                              child: CachedNetworkImage(
+                                                  placeholder: (context, url) => CircularProgressIndicator(),
+                                                  imageUrl: controller.eventoUi?.fotoEntidad??'',
+                                                  errorWidget: (context, url, error) => Container(),
+                                                  imageBuilder: (context, imageProvider) => Container(
+                                                      height: 40,
+                                                      width: 40,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      )
+                                                  )
+                                              ),
                                             ),
-                                            Padding(padding: EdgeInsets.all(4)),
-                                            Text("Encuesta: ",  style: TextStyle(
-                                                fontSize: 12,
-                                                color: HexColor("#5588AD"),
-                                                fontWeight: FontWeight.w700
-                                            ),),
                                             Expanded(
-                                                child: InkWell(
-                                                  onTap: () async{
-                                                    String? url = AppLinkify.extractLink(eventoAdjuntoUi?.titulo??"");
-                                                    await AppUrlLauncher.openLink(url);
-                                                  },
-                                                  child: Text("${eventoAdjuntoUi?.titulo??""}",
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: HexColor("439EF2"),
-                                                        fontWeight: FontWeight.w400
-                                                    )
-                                                    ,),
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(top: 8, left: 8, right: 16, bottom: 0),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      //Text(eventoUi.nombreEntidad??'', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 16, color: AppTheme.darkText),),
+                                                      Text('${controller.eventoUi?.nombreEmisor??""}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 14, color: AppTheme.white),),
+                                                      Padding(padding: EdgeInsets.all(2)),
+                                                      Text('${controller.eventoUi?.rolEmisor??""} ${(controller.eventoUi?.nombreFechaPublicacion??"").isNotEmpty?" - " + (controller.eventoUi?.nombreFechaPublicacion??""): ""}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 11, color: AppTheme.white))
+                                                    ],
+                                                  ),
                                                 )
                                             ),
                                           ],
                                         ),
-                                      );
-                                    }),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 14, left: 14, right: 0, bottom: 0),
-                                    child: Row(
-                                      children: [
+                                      ),
+                                      Container(
+                                        color: HexColor("#33979797"),
+                                        height: 1,
+                                      ),
+                                      Container(
+                                        margin: const EdgeInsets.only(top: 16, bottom: 0),
+                                        child: Text(controller.eventoUi?.titulo??'', style: TextStyle( fontSize: 14, color: AppTheme.white, fontFamily: AppTheme.fontName, )),
+                                      ),
+                                      if((controller.eventoUi?.descripcion??"").isNotEmpty && controller.eventoUi?.descripcion != ".")
                                         Container(
-                                          margin: const EdgeInsets.only(top: 0, left: 0, right: 8, bottom: 0),
-                                          child: Image.asset(AppIcon.img_evento_megusta_1, width: 16, height: 16,),
-                                        ),
-                                            (){
-                                          String megusta = "me gusta";
-                                          if((controller.eventoUi?.cantLike??0)!=0){
-                                            megusta =  "${controller.eventoUi?.cantLike??""} me gusta";
-                                          }else if((controller.eventoUi?.cantLike??0)>1000){
-                                            megusta += "1k me gusta" ;
-                                          }
-                                          return Text(megusta, style: TextStyle( fontSize: 11, color: AppTheme.white),);
-                                        }(),
-                                        Expanded(
-                                          child: Container(),
-                                        ),
-                                        Text(controller.eventoUi?.nombreEntidad??'', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 11, color: AppTheme.white, fontStyle: FontStyle.italic),),
-                                        Padding(padding: const EdgeInsets.only(right: 16))
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin:  const EdgeInsets.only(top: 16, bottom: 0),
-                                    color: AppTheme.white,
-                                    height: 0.5,
-                                  ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                            focusColor: Colors.transparent,
-                                            highlightColor: Colors.transparent,
-                                            hoverColor: Colors.transparent,
-                                            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                            splashColor: AppTheme.nearlyDarkBlue.withOpacity(0.2),
-                                            onTap: () {
-
+                                          margin: const EdgeInsets.only(top: 8, ),
+                                          child: Linkify(
+                                            text: '${controller.eventoUi?.descripcion}',
+                                            style: TextStyle( fontSize: 12, color: AppTheme.white, fontWeight: FontWeight.w300, height: 1.5),
+                                            onOpen: (url) async {
+                                              await AppUrlLauncher.openLink(url.url);
                                             },
-                                            child:
-                                            Container(
-                                              padding: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 0),
-                                              height: 45,
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
-                                                    child: Image.asset(AppIcon.img_evento_megusta, width: 18, height: 18, color: AppTheme.white,),
-                                                  ),
-                                                  Text("Me gusta", style: TextStyle( fontSize: 12, color: AppTheme.white),),
-                                                ],
-                                              ),
-                                            )
+                                          ),
                                         ),
+                                      Column(
+                                        children:List.generate(controller.eventoUi?.eventoAdjuntoUiEncuestaList?.length??0, (index){
+                                          EventoAdjuntoUi? eventoAdjuntoUi = controller.eventoUi?.eventoAdjuntoUiEncuestaList?[index];
+                                          return Container(
+                                            padding: EdgeInsets.only(top: index==0?8:4),
+                                            child: Row(
+                                              children: [
+                                                Padding(padding: EdgeInsets.all(8)),
+                                                SvgPicture.asset(
+                                                  AppIcon.ic_evento_adjunto_instrumetno,
+                                                  width: 20,
+                                                  height: 20,
+                                                ),
+                                                Padding(padding: EdgeInsets.all(4)),
+                                                Text("Encuesta: ",  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: HexColor("#5588AD"),
+                                                    fontWeight: FontWeight.w700
+                                                ),),
+                                                Expanded(
+                                                    child: InkWell(
+                                                      onTap: () async{
+                                                        String? url = AppLinkify.extractLink(eventoAdjuntoUi?.titulo??"");
+                                                        await AppUrlLauncher.openLink(url);
+                                                      },
+                                                      child: Text("${eventoAdjuntoUi?.titulo??""}",
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: HexColor("439EF2"),
+                                                            fontWeight: FontWeight.w400
+                                                        )
+                                                        ,),
+                                                    )
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
                                       ),
-                                      Expanded(child: Container()),
-                                      Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                            focusColor: Colors.transparent,
-                                            highlightColor: Colors.transparent,
-                                            hoverColor: Colors.transparent,
-                                            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                                            splashColor: AppTheme.nearlyDarkBlue.withOpacity(0.2),
-                                            onTap: () {
-                                              if(controller.eventoUi?.fotoEntidad!=null && (controller.eventoUi?.fotoEntidad??"").isNotEmpty){
-                                                //_shareImageFromUrl(eventoUi);
-                                              }else{
-                                                //_shareText(eventoUi);
+                                      Container(
+                                        margin: EdgeInsets.only(top: 14, left: 14, right: 0, bottom: 0),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              margin: const EdgeInsets.only(top: 0, left: 0, right: 8, bottom: 0),
+                                              child: Image.asset(AppIcon.img_evento_megusta_1, width: 16, height: 16,),
+                                            ),
+                                                (){
+                                              String megusta = "me gusta";
+                                              if((controller.eventoUi?.cantLike??0)!=0){
+                                                megusta =  "${controller.eventoUi?.cantLike??""} me gusta";
+                                              }else if((controller.eventoUi?.cantLike??0)>1000){
+                                                megusta += "1k me gusta" ;
                                               }
-                                            },
-                                            child:
-                                            Container(
-                                              padding: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 0),
-                                              height: 45,
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
-                                                    child: Image.asset(AppIcon.img_evento_compartir,  width:18, height:18, color: AppTheme.white,),
-                                                  ),
-                                                  Text("Compartir", style: TextStyle( fontSize: 12, color: AppTheme.white), ),
-                                                ],
-                                              ),
-                                            )
+                                              return Text(megusta, style: TextStyle( fontSize: 11, color: AppTheme.white),);
+                                            }(),
+                                            Expanded(
+                                              child: Container(),
+                                            ),
+                                            Text(controller.eventoUi?.nombreEntidad??'', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle( fontSize: 11, color: AppTheme.white, fontStyle: FontStyle.italic),),
+                                            Padding(padding: const EdgeInsets.only(right: 16))
+                                          ],
                                         ),
                                       ),
+                                      Container(
+                                        margin:  const EdgeInsets.only(top: 16, bottom: 0),
+                                        color: AppTheme.white,
+                                        height: 0.5,
+                                      ),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                                focusColor: Colors.transparent,
+                                                highlightColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                                splashColor: AppTheme.nearlyDarkBlue.withOpacity(0.2),
+                                                onTap: () {
+
+                                                },
+                                                child:
+                                                Container(
+                                                  padding: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 0),
+                                                  height: 45,
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                                                        child: Image.asset(AppIcon.img_evento_megusta, width: 18, height: 18, color: AppTheme.white,),
+                                                      ),
+                                                      Text("Me gusta", style: TextStyle( fontSize: 12, color: AppTheme.white),),
+                                                    ],
+                                                  ),
+                                                )
+                                            ),
+                                          ),
+                                          Expanded(child: Container()),
+                                          Material(
+                                            color: Colors.transparent,
+                                            child: InkWell(
+                                                focusColor: Colors.transparent,
+                                                highlightColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                                                splashColor: AppTheme.nearlyDarkBlue.withOpacity(0.2),
+                                                onTap: () {
+                                                  if(controller.eventoUi?.fotoEntidad!=null && (controller.eventoUi?.fotoEntidad??"").isNotEmpty){
+                                                    //_shareImageFromUrl(eventoUi);
+                                                  }else{
+                                                    //_shareText(eventoUi);
+                                                  }
+                                                },
+                                                child:
+                                                Container(
+                                                  padding: const EdgeInsets.only(top: 0, left: 16, right: 16, bottom: 0),
+                                                  height: 45,
+                                                  child: Row(
+                                                    children: [
+                                                      Container(
+                                                        margin: const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 0),
+                                                        child: Image.asset(AppIcon.img_evento_compartir,  width:18, height:18, color: AppTheme.white,),
+                                                      ),
+                                                      Text("Compartir", style: TextStyle( fontSize: 12, color: AppTheme.white), ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        margin:  const EdgeInsets.only(top: 0, bottom: 0),
+                                        color: AppTheme.white,
+                                        height: 0.5,
+                                      ),
+                                      listarAdjuntosEventos(controller.eventoUi,controller.eventoUi?.eventoAdjuntoUiDownloadList, controller ),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          EventoAdjuntoUi eventoAdjuntoUi = controller.eventoUi!.eventoAdjuntoUiPreviewList![index];
+                                          return previewEventos(controller.eventoUi!, eventoAdjuntoUi);
+                                        },
+                                        itemCount: controller.eventoUi?.eventoAdjuntoUiPreviewList?.length,
+                                      ),
+
+
                                     ],
                                   ),
-                                  Container(
-                                    margin:  const EdgeInsets.only(top: 0, bottom: 0),
-                                    color: AppTheme.white,
-                                    height: 0.5,
-                                  ),
-                                  listarAdjuntosEventos(controller.eventoUi,controller.eventoUi?.eventoAdjuntoUiDownloadList, controller ),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      EventoAdjuntoUi eventoAdjuntoUi = controller.eventoUi!.eventoAdjuntoUiPreviewList![index];
-                                      return previewEventos(controller.eventoUi!, eventoAdjuntoUi);
-                                    },
-                                    itemCount: controller.eventoUi?.eventoAdjuntoUiPreviewList?.length,
-                                  ),
-
-
-                                ],
+                                ),
                               ),
-                            ),
+                              Positioned(
+                                  left: 16,
+                                  child: GestureDetector(
+                                    onTap: (){
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: Container(
+                                      width: 35,
+                                      height: 35,
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.black.withOpacity(0.4),
+                                        shape: BoxShape.circle
+                                      ),
+                                      child: Center(
+                                        child: Icon(Icons.arrow_back, color: AppTheme.white, size: 28,),
+                                      ),
+                                    ),
+                                  )
+                              ),
+                            ],
                           ),
                         ),
                       ),

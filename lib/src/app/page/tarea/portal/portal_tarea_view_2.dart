@@ -1126,7 +1126,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                     await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
                                                                     break;
                                                                   case TipoRecursosUi.TIPO_VINCULO:
-                                                                    await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
+                                                                    await AppUrlLauncher.openLink("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", webview: false);
                                                                     break;
                                                                   case TipoRecursosUi.TIPO_ENCUESTA:
                                                                     await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
@@ -2979,7 +2979,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
           await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
           break;
         case TipoRecursosUi.TIPO_VINCULO:
-          await AppUrlLauncher.openLink(controller.abrirTareaAlumnoArchivo?.url??controller.abrirTareaAlumnoArchivo?.nombre, webview: false);
+          await AppUrlLauncher.openLink((controller.abrirTareaAlumnoArchivo?.url??"").isNotEmpty?controller.abrirTareaAlumnoArchivo?.url:controller.abrirTareaAlumnoArchivo?.nombre, webview: false);
           break;
         case TipoRecursosUi.TIPO_ENCUESTA:
           await AppUrlLauncher.openLink(controller.abrirTareaAlumnoArchivo?.url, webview: false);

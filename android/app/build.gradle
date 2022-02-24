@@ -40,7 +40,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.consultoraestrategia.ssCrmeducativoIcrm2"
+        applicationId "com.consultoraestrategia.ss_crmeducativo_icrm_2"
         minSdkVersion 17
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
