@@ -66,6 +66,9 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       tareaUi.silaboEventoId = tareaData.silaboEventoId;
       print("getUnidadTarea  silaboEventoId: ${tareaData.silaboEventoId}");
       tareaUi.titulo = tareaData.titulo;
+      tareaUi.nroSesion = int.tryParse(tareaData.sesionNombre??"0");
+      tareaUi.sesionAprendizajeId = tareaData.sesionAprendizajeId;
+      tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;
       tareaUi.instrucciones = tareaData.instrucciones;
       tareaUi.tipoNotaId = tareaData.tipoNotaId;
       tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;
@@ -290,6 +293,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
           tareaAlumnoArchivoUi.tareaId = tareaAlumnoArchivoData.tareaId;
           tareaAlumnoArchivoUi.nombre = tareaAlumnoArchivoData.nombre;
           tareaAlumnoArchivoUi.url = tareaAlumnoArchivoData.path;
+          print("tareaAlumnoArchivoUi url ${tareaAlumnoArchivoData.driveId}");
           tareaAlumnoArchivoUi.repositorio = tareaAlumnoArchivoData.repositorio;
           tareaAlumnoArchivoUi.driveId = tareaAlumnoArchivoData.driveId;
           if(tareaAlumnoArchivoUi.repositorio??false){
@@ -493,7 +497,9 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       tareaUi.tipoNotaId = tareaData.tipoNotaId;
       tareaUi.competenciaId = tareaData.competenciaId;
       tareaUi.desempenioIcdId = tareaData.desempenioIcdId;
-
+      tareaUi.nroSesion = int.tryParse(tareaData.sesionNombre??"0");
+      tareaUi.sesionAprendizajeId = tareaData.sesionAprendizajeId;
+      tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;
       tareaUi.titulo = tareaData.titulo;
       tareaUi.instrucciones = tareaData.instrucciones;
       tareaUi.unidadAprendizajeId = tareaData.unidadAprendizajeId;

@@ -2720,3 +2720,70 @@ class BESesionHoyDocenteSerial {
   Map<String, dynamic> toJson() => _$BESesionHoyDocenteSerialToJson(this);
 }
 
+@JsonSerializable()
+class PreguntaFirebaseSerial {
+  String? PreguntaPortalAlumnoId;
+  String? Pregunta;
+  String? NivelLogroId;
+  String? DesempenioIcdId;
+  String? RubroEvalProcesoId;
+
+  PreguntaFirebaseSerial({this.PreguntaPortalAlumnoId, this.Pregunta, this.NivelLogroId, this.DesempenioIcdId});
+
+  factory PreguntaFirebaseSerial.fromJson(Map<String, dynamic> json) => _$PreguntaFirebaseSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PreguntaFirebaseSerialToJson(this);
+}
+
+@JsonSerializable()
+class TareaFirebaseSerial {
+  String? TareaId;
+  String? Titulo;
+  Map<String, dynamic>? RubroEvalProceso;
+
+  TareaFirebaseSerial({this.TareaId, this.Titulo, this.RubroEvalProceso});
+
+  factory TareaFirebaseSerial.fromJson(Map<String, dynamic> json) => _$TareaFirebaseSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TareaFirebaseSerialToJson(this);
+
+}
+
+@JsonSerializable()
+class InstrumetosFirebaseSerial {
+  int? CantidadPreguntas;
+  String? FechaCierre;
+  String? FechaLanzamiento;
+  String? Icono;
+  String? Imagen;
+  int? InstrumentoEvalId;
+  String? Nombre;
+  String? RubroEvaluacionId;
+  int? SesionAprendizajeId;
+  int? SilaboEventoId;
+  String? TipoNotaId;
+  List<Map<String, dynamic>>? variables;
+  int? Version;
+  int? puntaje;
+
+  InstrumetosFirebaseSerial(
+      {this.CantidadPreguntas,
+        this.FechaCierre,
+        this.FechaLanzamiento,
+        this.Icono,
+        this.Imagen,
+        this.InstrumentoEvalId,
+        this.Nombre,
+        this.RubroEvaluacionId,
+        this.SesionAprendizajeId,
+        this.SilaboEventoId,
+        this.TipoNotaId,
+        this.variables,
+        this.Version,
+        this.puntaje});
+
+  factory InstrumetosFirebaseSerial.fromJson(Map<String, dynamic> json) => _$InstrumetosFirebaseSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$InstrumetosFirebaseSerialToJson(this);
+}
+

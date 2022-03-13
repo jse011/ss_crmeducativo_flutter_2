@@ -161,10 +161,12 @@ class EvaluacionIndicadorController extends Controller{
         if(evaluacionUiCabecera==null){
           evaluacionUiCabecera = EvaluacionUi();
           evaluacionUiCabecera.rubroEvaluacionUi = rubricaEvaluacionUiCebecera2;
+          evaluacionUiCabecera.rubroEvaluacionId = rubricaEvaluacionUiCebecera2?.rubroEvaluacionId;
           evaluacionUiCabecera.alumnoId = row.personaId;
           row.soloApareceEnElCurso = true;
           this.rubricaEvaluacionUiCebecera2?.evaluacionUiList?.add(evaluacionUiCabecera);
         }
+        evaluacionUiCabecera.personaUi = row;
 
         EvaluacionUi? evaluacionUi = rubricaEvaluacionUiCebecera2?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
         //Una evaluacion vasia significa que el foto_alumno no tiene evaluacion
@@ -172,6 +174,7 @@ class EvaluacionIndicadorController extends Controller{
           evaluacionUi = EvaluacionUi();
           row.soloApareceEnElCurso = true;
           evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUiCebecera2;
+          evaluacionUi.rubroEvaluacionId = rubricaEvaluacionUiCebecera2?.rubroEvaluacionId;
           evaluacionUi.alumnoId = row.personaId;
           rubroEvaluacionUi?.evaluacionUiList?.add(evaluacionUi);
         }
@@ -244,7 +247,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi);
-    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
+    presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
   }
 
   void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, double nota) {
@@ -279,7 +282,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi);
-    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
+    presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId);
   }
 
   onClicPrecision() {
@@ -308,7 +311,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(null);
-    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera2);
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
   String getRangoNota(ValorTipoNotaUi? valorTipoNotaUi){
@@ -336,7 +339,7 @@ class EvaluacionIndicadorController extends Controller{
       showTodosPublicados();
       refreshUI();
       _modificado = true;
-      presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionPublicadoUi.evaluacionUi?.alumnoId);
+      presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionPublicadoUi.evaluacionUi?.alumnoId);
   }
 
   void showTodosPublicados(){
@@ -371,7 +374,7 @@ class EvaluacionIndicadorController extends Controller{
     }
     refreshUI();
     _modificado = true;
-    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera2);
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
   void onClickCancelarEliminar() {
@@ -382,7 +385,7 @@ class EvaluacionIndicadorController extends Controller{
   void onClickEliminar() {
     if(isCalendarioDesactivo())return;
     _showDialogEliminar = true;
-    print("rubroEvaluacionUi: ${rubricaEvaluacionUiCebecera2?.rubroEvaluacionId}");
+    print("rubroEvaluacionUi: ${rubroEvaluacionUi?.rubroEvaluacionId}");
     refreshUI();
   }
 
@@ -401,7 +404,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(null);
-    presenter.updateEvaluacionAll(rubricaEvaluacionUiCebecera2);
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
   onClikShowDialogClearEvaluacion() {
@@ -478,7 +481,7 @@ class EvaluacionIndicadorController extends Controller{
     refreshUI();
     _modificado = true;
     _actualizarCabecera(evaluacionUi?.personaUi);
-    presenter.updateEvaluacion(rubricaEvaluacionUiCebecera2, evaluacionUi?.alumnoId);
+    presenter.updateEvaluacion(rubroEvaluacionUi, evaluacionUi?.alumnoId);
   }
 
   void onClickComentario(EvaluacionUi? evaluacionUi) {

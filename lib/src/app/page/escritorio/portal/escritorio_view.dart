@@ -2,6 +2,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -11,6 +12,7 @@ import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/fancy_shimmer_image.da
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/page/escritorio/portal/escritorio_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/home/home_view.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_system_ui.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/close_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -101,29 +103,32 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
         SchedulerBinding.instance?.addPostFrameCallback((_) {
           widget.menuBuilder?.call(getMenuView(controller));
         });
-        return WillPopScope(
-          key: globalKey,
-            onWillPop: () async {
-              return await widget.closeSessionHandler.closeSession()??false;
-        },
-        child: Container(
-          child: Scaffold(
-            backgroundColor: AppTheme.background,
-            body: Stack(
-              children: <Widget>[
-                getMainTab(),
-                getAppBarUI(),
-                false?
-                ArsProgressWidget(
-                    blur: 2,
-                    backgroundColor: Color(0x33000000),
-                    animationDuration: Duration(milliseconds: 500)):
-                Container(),
+        return  AnnotatedRegion<SystemUiOverlayStyle>(
+          value: AppSystemUi.getSystemUiOverlayStyleOscuro(),
+          child: WillPopScope(
+              key: globalKey,
+              onWillPop: () async {
+                return await widget.closeSessionHandler.closeSession()??false;
+              },
+              child: Container(
+                child: Scaffold(
+                  backgroundColor: AppTheme.background,
+                  body: Stack(
+                    children: <Widget>[
+                      getMainTab(),
+                      getAppBarUI(),
+                      false?
+                      ArsProgressWidget(
+                          blur: 2,
+                          backgroundColor: Color(0x33000000),
+                          animationDuration: Duration(milliseconds: 500)):
+                      Container(),
 
-              ],
-            ),
-          ),
-        ));
+                    ],
+                  ),
+                ),
+              )),
+        );
       });
 
   Widget getAppBarUI() {
@@ -715,6 +720,95 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                           child: ClipOval(
                                             child: Material(
                                               color: Color(0XFFdcb7f6), // button color
+                                              child: InkWell(
+                                                splashColor: AppTheme.colorPrimary, // inkwell color
+                                                child: SizedBox(
+                                                    width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                    height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                    child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                          right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                          top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                          bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
+                                                      ),
+                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                    )),
+                                                onTap: () {},
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                constraints: BoxConstraints(
+                                    maxWidth: 450
+                                ),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                   //await AppRouter.createRouteAsistenciaQR(context);
+                                    await AppRouter.showBuscarAsistenciaQR(context);
+
+                                  },
+                                  child: Container(
+                                    height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,90),
+                                    margin: EdgeInsets.only(
+                                        top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,8),
+                                        left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,24),
+                                        right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,24),
+                                        bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,20)
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Color(0XFFBAD3F5),
+                                          width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,2)
+                                      ),
+                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesionHoy(context,22))),
+                                      color: AppTheme.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Color(0XFFE7EFFA).withOpacity(0.3),
+                                            offset:  Offset(0,3),
+                                            blurRadius: 2.0,
+                                            spreadRadius: 0
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthSesionHoy(context,8)),
+                                          decoration: BoxDecoration(
+                                              color: Color(0XFFE7EFFA),
+                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesionHoy(context,16)))
+                                          ),
+                                          width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,65),
+                                          child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_asistencia),),
+                                        ),
+                                        Padding(padding: EdgeInsets.only(left: 8)),
+                                        Expanded(
+                                            child: Text("Asistencia QR", style: TextStyle(
+                                              color: AppTheme.darkerText,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthSesionHoy(context, 16),
+                                              fontFamily: AppTheme.fontTTNorms,
+                                            ),)
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,8),
+                                              right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,28)
+                                          ),
+                                          child: ClipOval(
+                                            child: Material(
+                                              color: Color(0XFFBAD3F5), // button color
                                               child: InkWell(
                                                 splashColor: AppTheme.colorPrimary, // inkwell color
                                                 child: SizedBox(

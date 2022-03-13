@@ -23,7 +23,7 @@ class _SplashViewState extends State<SplashErrorView> {
         child: new Stack(
           children: <Widget>[
             Container(
-              color: ChangeAppTheme.colorEspera(),
+              color: ChangeAppTheme.getcolorApp(),
               child: Column(
                 children: [
                   Expanded(

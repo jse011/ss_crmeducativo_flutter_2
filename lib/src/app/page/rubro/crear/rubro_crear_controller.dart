@@ -205,8 +205,8 @@ class RubroCrearController extends Controller{
       _errorConexion = errorConexion;
       _errorServidor = errorServidor;
       if(!modoOnline){ // modo hecho especialmente para la tarea por que es online
-        _dialogGuardarLocal = false;
-        _dialogReintentar = true;
+        _dialogGuardarLocal = true;
+        _dialogReintentar = false;
       }else{
         if(countReintentos<2){
           _dialogGuardarLocal = false;
@@ -304,7 +304,7 @@ class RubroCrearController extends Controller{
     presenter.getFormaEvaluacion();
     presenter.getTipoEvaluacion();
     presenter.getTipoNota();
-    presenter.getTemaCriterios(rubricaEvaluacionUi, cursosUi, calendarioPeriodoUI);
+    presenter.getTemaCriterios(rubricaEvaluacionUi, cursosUi, calendarioPeriodoUI, sesionUi);
 
     //print("tareaId ${tareaUi?.tareaId}");
     if(rubricaEvaluacionUi!=null){
@@ -386,7 +386,7 @@ class RubroCrearController extends Controller{
     _errorServidor = false;
     refreshUI();
 
-    if(rubricaEvaluacionUi==null){
+    if(rubricaEvaluacionUi==null || !(rubricaEvaluacionUi?.update??false)){
       rubricaEvaluacionUi = RubricaEvaluacionUi();
       rubricaEvaluacionUi?.rubroEvaluacionId = newRubroEvalid;
       rubricaEvaluacionUi?.titulo = tituloRubrica;
@@ -407,6 +407,7 @@ class RubroCrearController extends Controller{
       rubricaEvaluacionUi?.criterioPesoUiList = criterioPesoUiList;
       rubricaEvaluacionUi?.criterioValorTipoNotaUiList = criterioValorTipoNotaUiList;
       rubricaEvaluacionUi?.tipoEvaluacionId = tipoEvaluacionUi?.id;
+      rubricaEvaluacionUi?.update = true;
       _cancelSaveRubro = await presenter.update(rubricaEvaluacionUi);
     }
 

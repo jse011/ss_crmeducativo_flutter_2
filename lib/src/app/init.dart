@@ -1,6 +1,8 @@
 
 class Init{
 
+
+
   static Future initialize() async {
     await _registerServices();
     await _loadSettings();
@@ -22,7 +24,10 @@ class Init{
     } catch (e) {
       print(e); // TODO: show dialog with error
     }*/
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 4));
     print("finished loading settings");
   }
+
 }
+
+

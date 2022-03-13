@@ -44931,6 +44931,524 @@ class $RecursoSesionTable extends RecursoSesion
   }
 }
 
+class AsistenciaQRData extends DataClass
+    implements Insertable<AsistenciaQRData> {
+  final String aistenciaQRId;
+  final String? alumno;
+  final String? code;
+  final int? hora;
+  final int? minuto;
+  final int? segundo;
+  final int? dia;
+  final int? mes;
+  final int? anio;
+  final bool? enviado;
+  final bool? repetido;
+  AsistenciaQRData(
+      {required this.aistenciaQRId,
+      this.alumno,
+      this.code,
+      this.hora,
+      this.minuto,
+      this.segundo,
+      this.dia,
+      this.mes,
+      this.anio,
+      this.enviado,
+      this.repetido});
+  factory AsistenciaQRData.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return AsistenciaQRData(
+      aistenciaQRId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}aistencia_q_r_id'])!,
+      alumno: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}alumno']),
+      code: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}code']),
+      hora: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}hora']),
+      minuto: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}minuto']),
+      segundo: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}segundo']),
+      dia: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}dia']),
+      mes: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}mes']),
+      anio: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}anio']),
+      enviado: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}enviado']),
+      repetido: const BoolType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}repetido']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['aistencia_q_r_id'] = Variable<String>(aistenciaQRId);
+    if (!nullToAbsent || alumno != null) {
+      map['alumno'] = Variable<String?>(alumno);
+    }
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String?>(code);
+    }
+    if (!nullToAbsent || hora != null) {
+      map['hora'] = Variable<int?>(hora);
+    }
+    if (!nullToAbsent || minuto != null) {
+      map['minuto'] = Variable<int?>(minuto);
+    }
+    if (!nullToAbsent || segundo != null) {
+      map['segundo'] = Variable<int?>(segundo);
+    }
+    if (!nullToAbsent || dia != null) {
+      map['dia'] = Variable<int?>(dia);
+    }
+    if (!nullToAbsent || mes != null) {
+      map['mes'] = Variable<int?>(mes);
+    }
+    if (!nullToAbsent || anio != null) {
+      map['anio'] = Variable<int?>(anio);
+    }
+    if (!nullToAbsent || enviado != null) {
+      map['enviado'] = Variable<bool?>(enviado);
+    }
+    if (!nullToAbsent || repetido != null) {
+      map['repetido'] = Variable<bool?>(repetido);
+    }
+    return map;
+  }
+
+  AsistenciaQRCompanion toCompanion(bool nullToAbsent) {
+    return AsistenciaQRCompanion(
+      aistenciaQRId: Value(aistenciaQRId),
+      alumno:
+          alumno == null && nullToAbsent ? const Value.absent() : Value(alumno),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
+      hora: hora == null && nullToAbsent ? const Value.absent() : Value(hora),
+      minuto:
+          minuto == null && nullToAbsent ? const Value.absent() : Value(minuto),
+      segundo: segundo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(segundo),
+      dia: dia == null && nullToAbsent ? const Value.absent() : Value(dia),
+      mes: mes == null && nullToAbsent ? const Value.absent() : Value(mes),
+      anio: anio == null && nullToAbsent ? const Value.absent() : Value(anio),
+      enviado: enviado == null && nullToAbsent
+          ? const Value.absent()
+          : Value(enviado),
+      repetido: repetido == null && nullToAbsent
+          ? const Value.absent()
+          : Value(repetido),
+    );
+  }
+
+  factory AsistenciaQRData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return AsistenciaQRData(
+      aistenciaQRId: serializer.fromJson<String>(json['aistenciaQRId']),
+      alumno: serializer.fromJson<String?>(json['alumno']),
+      code: serializer.fromJson<String?>(json['code']),
+      hora: serializer.fromJson<int?>(json['hora']),
+      minuto: serializer.fromJson<int?>(json['minuto']),
+      segundo: serializer.fromJson<int?>(json['segundo']),
+      dia: serializer.fromJson<int?>(json['dia']),
+      mes: serializer.fromJson<int?>(json['mes']),
+      anio: serializer.fromJson<int?>(json['anio']),
+      enviado: serializer.fromJson<bool?>(json['enviado']),
+      repetido: serializer.fromJson<bool?>(json['repetido']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'aistenciaQRId': serializer.toJson<String>(aistenciaQRId),
+      'alumno': serializer.toJson<String?>(alumno),
+      'code': serializer.toJson<String?>(code),
+      'hora': serializer.toJson<int?>(hora),
+      'minuto': serializer.toJson<int?>(minuto),
+      'segundo': serializer.toJson<int?>(segundo),
+      'dia': serializer.toJson<int?>(dia),
+      'mes': serializer.toJson<int?>(mes),
+      'anio': serializer.toJson<int?>(anio),
+      'enviado': serializer.toJson<bool?>(enviado),
+      'repetido': serializer.toJson<bool?>(repetido),
+    };
+  }
+
+  AsistenciaQRData copyWith(
+          {String? aistenciaQRId,
+          String? alumno,
+          String? code,
+          int? hora,
+          int? minuto,
+          int? segundo,
+          int? dia,
+          int? mes,
+          int? anio,
+          bool? enviado,
+          bool? repetido}) =>
+      AsistenciaQRData(
+        aistenciaQRId: aistenciaQRId ?? this.aistenciaQRId,
+        alumno: alumno ?? this.alumno,
+        code: code ?? this.code,
+        hora: hora ?? this.hora,
+        minuto: minuto ?? this.minuto,
+        segundo: segundo ?? this.segundo,
+        dia: dia ?? this.dia,
+        mes: mes ?? this.mes,
+        anio: anio ?? this.anio,
+        enviado: enviado ?? this.enviado,
+        repetido: repetido ?? this.repetido,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('AsistenciaQRData(')
+          ..write('aistenciaQRId: $aistenciaQRId, ')
+          ..write('alumno: $alumno, ')
+          ..write('code: $code, ')
+          ..write('hora: $hora, ')
+          ..write('minuto: $minuto, ')
+          ..write('segundo: $segundo, ')
+          ..write('dia: $dia, ')
+          ..write('mes: $mes, ')
+          ..write('anio: $anio, ')
+          ..write('enviado: $enviado, ')
+          ..write('repetido: $repetido')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(aistenciaQRId, alumno, code, hora, minuto,
+      segundo, dia, mes, anio, enviado, repetido);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AsistenciaQRData &&
+          other.aistenciaQRId == this.aistenciaQRId &&
+          other.alumno == this.alumno &&
+          other.code == this.code &&
+          other.hora == this.hora &&
+          other.minuto == this.minuto &&
+          other.segundo == this.segundo &&
+          other.dia == this.dia &&
+          other.mes == this.mes &&
+          other.anio == this.anio &&
+          other.enviado == this.enviado &&
+          other.repetido == this.repetido);
+}
+
+class AsistenciaQRCompanion extends UpdateCompanion<AsistenciaQRData> {
+  final Value<String> aistenciaQRId;
+  final Value<String?> alumno;
+  final Value<String?> code;
+  final Value<int?> hora;
+  final Value<int?> minuto;
+  final Value<int?> segundo;
+  final Value<int?> dia;
+  final Value<int?> mes;
+  final Value<int?> anio;
+  final Value<bool?> enviado;
+  final Value<bool?> repetido;
+  const AsistenciaQRCompanion({
+    this.aistenciaQRId = const Value.absent(),
+    this.alumno = const Value.absent(),
+    this.code = const Value.absent(),
+    this.hora = const Value.absent(),
+    this.minuto = const Value.absent(),
+    this.segundo = const Value.absent(),
+    this.dia = const Value.absent(),
+    this.mes = const Value.absent(),
+    this.anio = const Value.absent(),
+    this.enviado = const Value.absent(),
+    this.repetido = const Value.absent(),
+  });
+  AsistenciaQRCompanion.insert({
+    required String aistenciaQRId,
+    this.alumno = const Value.absent(),
+    this.code = const Value.absent(),
+    this.hora = const Value.absent(),
+    this.minuto = const Value.absent(),
+    this.segundo = const Value.absent(),
+    this.dia = const Value.absent(),
+    this.mes = const Value.absent(),
+    this.anio = const Value.absent(),
+    this.enviado = const Value.absent(),
+    this.repetido = const Value.absent(),
+  }) : aistenciaQRId = Value(aistenciaQRId);
+  static Insertable<AsistenciaQRData> custom({
+    Expression<String>? aistenciaQRId,
+    Expression<String?>? alumno,
+    Expression<String?>? code,
+    Expression<int?>? hora,
+    Expression<int?>? minuto,
+    Expression<int?>? segundo,
+    Expression<int?>? dia,
+    Expression<int?>? mes,
+    Expression<int?>? anio,
+    Expression<bool?>? enviado,
+    Expression<bool?>? repetido,
+  }) {
+    return RawValuesInsertable({
+      if (aistenciaQRId != null) 'aistencia_q_r_id': aistenciaQRId,
+      if (alumno != null) 'alumno': alumno,
+      if (code != null) 'code': code,
+      if (hora != null) 'hora': hora,
+      if (minuto != null) 'minuto': minuto,
+      if (segundo != null) 'segundo': segundo,
+      if (dia != null) 'dia': dia,
+      if (mes != null) 'mes': mes,
+      if (anio != null) 'anio': anio,
+      if (enviado != null) 'enviado': enviado,
+      if (repetido != null) 'repetido': repetido,
+    });
+  }
+
+  AsistenciaQRCompanion copyWith(
+      {Value<String>? aistenciaQRId,
+      Value<String?>? alumno,
+      Value<String?>? code,
+      Value<int?>? hora,
+      Value<int?>? minuto,
+      Value<int?>? segundo,
+      Value<int?>? dia,
+      Value<int?>? mes,
+      Value<int?>? anio,
+      Value<bool?>? enviado,
+      Value<bool?>? repetido}) {
+    return AsistenciaQRCompanion(
+      aistenciaQRId: aistenciaQRId ?? this.aistenciaQRId,
+      alumno: alumno ?? this.alumno,
+      code: code ?? this.code,
+      hora: hora ?? this.hora,
+      minuto: minuto ?? this.minuto,
+      segundo: segundo ?? this.segundo,
+      dia: dia ?? this.dia,
+      mes: mes ?? this.mes,
+      anio: anio ?? this.anio,
+      enviado: enviado ?? this.enviado,
+      repetido: repetido ?? this.repetido,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (aistenciaQRId.present) {
+      map['aistencia_q_r_id'] = Variable<String>(aistenciaQRId.value);
+    }
+    if (alumno.present) {
+      map['alumno'] = Variable<String?>(alumno.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String?>(code.value);
+    }
+    if (hora.present) {
+      map['hora'] = Variable<int?>(hora.value);
+    }
+    if (minuto.present) {
+      map['minuto'] = Variable<int?>(minuto.value);
+    }
+    if (segundo.present) {
+      map['segundo'] = Variable<int?>(segundo.value);
+    }
+    if (dia.present) {
+      map['dia'] = Variable<int?>(dia.value);
+    }
+    if (mes.present) {
+      map['mes'] = Variable<int?>(mes.value);
+    }
+    if (anio.present) {
+      map['anio'] = Variable<int?>(anio.value);
+    }
+    if (enviado.present) {
+      map['enviado'] = Variable<bool?>(enviado.value);
+    }
+    if (repetido.present) {
+      map['repetido'] = Variable<bool?>(repetido.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AsistenciaQRCompanion(')
+          ..write('aistenciaQRId: $aistenciaQRId, ')
+          ..write('alumno: $alumno, ')
+          ..write('code: $code, ')
+          ..write('hora: $hora, ')
+          ..write('minuto: $minuto, ')
+          ..write('segundo: $segundo, ')
+          ..write('dia: $dia, ')
+          ..write('mes: $mes, ')
+          ..write('anio: $anio, ')
+          ..write('enviado: $enviado, ')
+          ..write('repetido: $repetido')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AsistenciaQRTable extends AsistenciaQR
+    with TableInfo<$AsistenciaQRTable, AsistenciaQRData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AsistenciaQRTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _aistenciaQRIdMeta =
+      const VerificationMeta('aistenciaQRId');
+  @override
+  late final GeneratedColumn<String?> aistenciaQRId = GeneratedColumn<String?>(
+      'aistencia_q_r_id', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _alumnoMeta = const VerificationMeta('alumno');
+  @override
+  late final GeneratedColumn<String?> alumno = GeneratedColumn<String?>(
+      'alumno', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String?> code = GeneratedColumn<String?>(
+      'code', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _horaMeta = const VerificationMeta('hora');
+  @override
+  late final GeneratedColumn<int?> hora = GeneratedColumn<int?>(
+      'hora', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _minutoMeta = const VerificationMeta('minuto');
+  @override
+  late final GeneratedColumn<int?> minuto = GeneratedColumn<int?>(
+      'minuto', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _segundoMeta = const VerificationMeta('segundo');
+  @override
+  late final GeneratedColumn<int?> segundo = GeneratedColumn<int?>(
+      'segundo', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _diaMeta = const VerificationMeta('dia');
+  @override
+  late final GeneratedColumn<int?> dia = GeneratedColumn<int?>(
+      'dia', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _mesMeta = const VerificationMeta('mes');
+  @override
+  late final GeneratedColumn<int?> mes = GeneratedColumn<int?>(
+      'mes', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _anioMeta = const VerificationMeta('anio');
+  @override
+  late final GeneratedColumn<int?> anio = GeneratedColumn<int?>(
+      'anio', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _enviadoMeta = const VerificationMeta('enviado');
+  @override
+  late final GeneratedColumn<bool?> enviado = GeneratedColumn<bool?>(
+      'enviado', aliasedName, true,
+      type: const BoolType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (enviado IN (0, 1))');
+  final VerificationMeta _repetidoMeta = const VerificationMeta('repetido');
+  @override
+  late final GeneratedColumn<bool?> repetido = GeneratedColumn<bool?>(
+      'repetido', aliasedName, true,
+      type: const BoolType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'CHECK (repetido IN (0, 1))');
+  @override
+  List<GeneratedColumn> get $columns => [
+        aistenciaQRId,
+        alumno,
+        code,
+        hora,
+        minuto,
+        segundo,
+        dia,
+        mes,
+        anio,
+        enviado,
+        repetido
+      ];
+  @override
+  String get aliasedName => _alias ?? 'asistencia_q_r';
+  @override
+  String get actualTableName => 'asistencia_q_r';
+  @override
+  VerificationContext validateIntegrity(Insertable<AsistenciaQRData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('aistencia_q_r_id')) {
+      context.handle(
+          _aistenciaQRIdMeta,
+          aistenciaQRId.isAcceptableOrUnknown(
+              data['aistencia_q_r_id']!, _aistenciaQRIdMeta));
+    } else if (isInserting) {
+      context.missing(_aistenciaQRIdMeta);
+    }
+    if (data.containsKey('alumno')) {
+      context.handle(_alumnoMeta,
+          alumno.isAcceptableOrUnknown(data['alumno']!, _alumnoMeta));
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+          _codeMeta, code.isAcceptableOrUnknown(data['code']!, _codeMeta));
+    }
+    if (data.containsKey('hora')) {
+      context.handle(
+          _horaMeta, hora.isAcceptableOrUnknown(data['hora']!, _horaMeta));
+    }
+    if (data.containsKey('minuto')) {
+      context.handle(_minutoMeta,
+          minuto.isAcceptableOrUnknown(data['minuto']!, _minutoMeta));
+    }
+    if (data.containsKey('segundo')) {
+      context.handle(_segundoMeta,
+          segundo.isAcceptableOrUnknown(data['segundo']!, _segundoMeta));
+    }
+    if (data.containsKey('dia')) {
+      context.handle(
+          _diaMeta, dia.isAcceptableOrUnknown(data['dia']!, _diaMeta));
+    }
+    if (data.containsKey('mes')) {
+      context.handle(
+          _mesMeta, mes.isAcceptableOrUnknown(data['mes']!, _mesMeta));
+    }
+    if (data.containsKey('anio')) {
+      context.handle(
+          _anioMeta, anio.isAcceptableOrUnknown(data['anio']!, _anioMeta));
+    }
+    if (data.containsKey('enviado')) {
+      context.handle(_enviadoMeta,
+          enviado.isAcceptableOrUnknown(data['enviado']!, _enviadoMeta));
+    }
+    if (data.containsKey('repetido')) {
+      context.handle(_repetidoMeta,
+          repetido.isAcceptableOrUnknown(data['repetido']!, _repetidoMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {aistenciaQRId};
+  @override
+  AsistenciaQRData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return AsistenciaQRData.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $AsistenciaQRTable createAlias(String alias) {
+    return $AsistenciaQRTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$AppDataBase extends GeneratedDatabase {
   _$AppDataBase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $SessionUserTable sessionUser = $SessionUserTable(this);
@@ -45051,6 +45569,7 @@ abstract class _$AppDataBase extends GeneratedDatabase {
   late final $RecursosActividadSesionTable recursosActividadSesion =
       $RecursosActividadSesionTable(this);
   late final $RecursoSesionTable recursoSesion = $RecursoSesionTable(this);
+  late final $AsistenciaQRTable asistenciaQR = $AsistenciaQRTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
@@ -45135,6 +45654,7 @@ abstract class _$AppDataBase extends GeneratedDatabase {
         actividadSesion,
         instrumentoEvaluacionSesion,
         recursosActividadSesion,
-        recursoSesion
+        recursoSesion,
+        asistenciaQR
       ];
 }

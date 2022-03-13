@@ -55,21 +55,24 @@ class MoorRubroRepository extends RubroRepository{
     int  empleadoId = 0;
 
     await SQL.transaction(() async{
+
+      if(sesionAprendizajeId>0){
+        var query = SQL.delete(SQL.criterio)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
+        await query.go();
+      }else{
+        var query = SQL.delete(SQL.criterio)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
+        query.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
+        //query.where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
+        await query.go();
+      }
+
       await SQL.batch((batch) async {
         // functions in a batch don't have to be awaited - just
         // await the whole batch afterwards.
         //if(crearRubro.containsKey("sessionAprendizajeCriterios")||crearRubro.containsKey("unidadAprendizajeCriterios")){
           //&& t.calendarioPeriodoId.equals(calendarioPeriodoId)
           //batch.deleteWhere(SQL.criterio, (Criterio t) => t.silaboEventoId.equals(silaboEventoId));
-          if(sesionAprendizajeId>0){
-            var query = SQL.delete(SQL.criterio)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
-            query.go();
-          }else{
-            var query = SQL.delete(SQL.criterio)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
-            query.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
-            query.where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
-            query.go();
-          }
+
 
         //}
 
@@ -222,7 +225,7 @@ class MoorRubroRepository extends RubroRepository{
 
           List<CriterioData> criterioSesionList = [];
           for(var sesion in sesionSerialList){
-
+            var unidad = unidadSerialList.firstWhereOrNull((element) => element.unidadAprendizajeId == sesion.unidadAprendizajeId);
             var sesionCompetenciasFiltro = sesionesCompetenciaSerialList.where((element) => element.sesionAprendizajeId == sesion.sesionAprendizajeId);
             if(sesionCompetenciasFiltro.isNotEmpty){
               for(var sesioncompetencia in sesionCompetenciasFiltro){
@@ -245,18 +248,18 @@ class MoorRubroRepository extends RubroRepository{
                         CampotematicosCriteroSerial? campotematico = campotematicosSerialList.firstWhereOrNull((element) => element.campoTematicoId == sesionesCampoTematico.campoTematicoId);
                         CampotematicosCriteroSerial? campotematicoPadre = campotematicosSerialList.firstWhereOrNull((element) => element.campoTematicoId == campotematico?.parentId);
 
-                        criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, capacidad, competencia, desempenioIcds, icds, url, campotematico, campotematicoPadre));
+                        criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, sesion, null, capacidad, competencia, desempenioIcds, icds, url, campotematico, campotematicoPadre));
                       }
                     }else{
-                      criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, capacidad, competencia, desempenioIcds, icds, url, null, null));
+                      criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, sesion, null, capacidad, competencia, desempenioIcds, icds, url, null, null));
                     }
                   }
                 }else{
-                  criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, capacidad, competencia, null, null, null, null, null));
+                  criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, sesion, null, capacidad, competencia, null, null, null, null, null));
                 }
               }
             }else{
-              criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, null, sesion, null, null, null, null, null, null, null, null));
+              criterioSesionList.add(tranformarCriterioUnidadData(silaboEventoId, calendarioPeriodoId, unidad, sesion, null, null, null, null, null, null, null, null));
             }
           }
 
@@ -272,7 +275,7 @@ class MoorRubroRepository extends RubroRepository{
 
   CriterioData tranformarCriterioUnidadData(int? silaboEventoId, int? calendarioPeriodoId, UnidadesCriteroSerial? unidad, SesionesCriterioSerial? sesion, UnidadCompetenciasCriteroSerial? unidadcompetencia, CompetenciasCriteroSerial? capacidad,
       CompetenciasCriteroSerial? competencia, DesempenioIcdsCriteroSerial? desempenioIcds, IcdsCriteroSerial? icds, String? url, CampotematicosCriteroSerial? campotematico, CampotematicosCriteroSerial? campotematicoPadre){
-
+    print("unidad ${unidad?.titulo}");
     return CriterioData(
       unidadAprendiajeId: unidad?.unidadAprendizajeId??sesion?.unidadAprendizajeId??0,
       nroUnidad: unidad?.nroUnidad,
@@ -485,6 +488,8 @@ class MoorRubroRepository extends RubroRepository{
     var query = SQL.select(SQL.tipoNotaRubro)..where((tbl) => tbl.programaEducativoId.equals(programaEducativoId));
     query.where((tbl) => tbl.tipoId.isNotIn([TN_VALOR_ASISTENCIA]));
     //query.where((tbl) => tbl.silaboEventoId.isNotIn([0]));
+    query.orderBy([(tbl)=> OrderingTerm.desc(tbl.tipoNotaId),
+            (tbl)=> OrderingTerm.desc(tbl.nombre)]);
     List<TipoNotaRubroData> tipoNotaList = await query.get();
     for(TipoNotaRubroData tipoNotaRubroData in tipoNotaList){
 
@@ -560,10 +565,13 @@ class MoorRubroRepository extends RubroRepository{
     return valorTipoNotaUi;
   }
   @override
-  Future<List<CompetenciaUi>> getTemasCriterios(int? calendarioPeriodoId, int? silaboEventoId) async{
+  Future<List<CompetenciaUi>> getTemasCriterios(int? calendarioPeriodoId, int? silaboEventoId, int? sesionAprendizajeId) async{
     AppDataBase SQL = AppDataBase();
     var query = SQL.select(SQL.criterio)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
+    if((sesionAprendizajeId??0)>0){
+      query.where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
+    }
 
     List<CompetenciaUi> competenciaUiList = [];
     //List<CapacidadUi> capacidadUiList = [];
@@ -1017,7 +1025,7 @@ class MoorRubroRepository extends RubroRepository{
     var query = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     query.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    query.where((tbl) => tbl.tipoFormulaId.isNull());
+    //query.where((tbl) => tbl.tipoFormulaId.isNull());
     //query.where((tbl) => tbl.tipoFormulaId.equals(0));
     query.where((tbl) => tbl.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
     query.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
@@ -1026,7 +1034,7 @@ class MoorRubroRepository extends RubroRepository{
     List<RubricaEvaluacionUi> rubricaEvalProcesoUiList = [];
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await query.get();
     for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in  rubroEvalProcesoList){
-
+      if((rubroEvaluacionProcesoData.tipoFormulaId??0)!=0)continue;
       RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
 
       if(origenRubroUi == OrigenRubroUi.TODOS){
@@ -1070,6 +1078,7 @@ class MoorRubroRepository extends RubroRepository{
         }
       }
     }
+    print("rubricaEvalProcesoUiList: ${rubricaEvalProcesoUiList.length}");
     return rubricaEvalProcesoUiList;
   }
 
@@ -1166,6 +1175,7 @@ class MoorRubroRepository extends RubroRepository{
       unidadUiList.add(unidadUi);
     }
     unidadUi.unidadAprendizajeId = row.read(SQL.criterio.unidadAprendiajeId);
+    print("criterio ${row.read(SQL.criterio.tituloUnidad)}");
     unidadUi.titulo = row.read(SQL.criterio.tituloUnidad);
     unidadUi.nroUnidad = row.read(SQL.criterio.nroUnidad);
     SesionUi sesionUi = SesionUi();
@@ -1190,13 +1200,14 @@ class MoorRubroRepository extends RubroRepository{
     var queryRubro = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     queryRubro.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     queryRubro.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    queryRubro.where((tbl) => tbl.tipoFormulaId.isNull());
+    //queryRubro.where((tbl) => tbl.tipoFormulaId.isNull());
     //queryRubro.where((tbl) => tbl.tipoFormulaId.equals(0));
     queryRubro.where((tbl) => tbl.sesionAprendizajeId.isNotNull());
     queryRubro.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
 
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await queryRubro.get();
     for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in  rubroEvalProcesoList){
+      if((rubroEvaluacionProcesoData.tipoFormulaId??0)!=0)continue;
       for(SesionUi sesionUi in sesionUiList){
         if(sesionUi.sesionAprendizajeId == rubroEvaluacionProcesoData.sesionAprendizajeId || sesionUi.sesionAprendizajePadreId ==  rubroEvaluacionProcesoData.sesionAprendizajeId){
           RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
@@ -1220,7 +1231,7 @@ class MoorRubroRepository extends RubroRepository{
     queryRubro.where(SQL.rubroEvaluacionProceso.calendarioPeriodoId.equals(calendarioPeriodoId));
     queryRubro.where(SQL.rubroEvaluacionProceso.silaboEventoId.equals(silaboEventoId));
     queryRubro.where(SQL.rubroEvaluacionProceso.tiporubroid.isIn([TIPO_RUBRO_BIDIMENCIONAL_DETALLE, TIPO_RUBRO_UNIDIMENCIONAL]));
-    queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.isNull());
+    //queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.isNull());
     //queryRubro.where(SQL.rubroEvaluacionProceso.tipoFormulaId.equals(0));
     //queryRubro.where((tbl) => tbl.sesionAprendizajeId.isNotNull());
     queryRubro.where(SQL.rubroEvaluacionProceso.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
@@ -1232,8 +1243,12 @@ class MoorRubroRepository extends RubroRepository{
     Map<String,int> rubroPadresCountMap = Map();
     List<String> rubroEvalProcesoIdList = [];
     List<String> rubroTipoNotaIdList = [];
-    for(var row in await queryRubro.get()){//Puede venir repetida
+    var rows = await queryRubro.get();
+
+    for(var row in  rows){//Puede venir repetida
       RubroEvaluacionProcesoData item = row.readTable(SQL.rubroEvaluacionProceso);
+      if((item.tipoFormulaId??0)!=0)continue;
+
       RubroEvaluacionProcesoData? rubroEvaluacionProcesoData = rubroEvalProcesoList.firstWhereOrNull((element) => element.rubroEvalProcesoId ==  item.rubroEvalProcesoId);
       if(rubroEvaluacionProcesoData == null){
         rubroEvalProcesoIdList.add(item.rubroEvalProcesoId);
@@ -1273,7 +1288,7 @@ class MoorRubroRepository extends RubroRepository{
     }
 
     //print("evaluacionProcesoDataList: ${evaluacionProcesoDataList.length}");
-    List<CompetenciaUi> competenciaUiList = await getTemasCriterios(calendarioPeriodoId??0, silaboEventoId??0);
+    List<CompetenciaUi> competenciaUiList = await getTemasCriterios(calendarioPeriodoId??0, silaboEventoId??0,  null);
     for(CompetenciaUi competenciaUi in competenciaUiList){
       for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
         capacidadUi.rubricaEvalUiList = [];
@@ -1612,7 +1627,7 @@ class MoorRubroRepository extends RubroRepository{
     var query = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     query.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    query.where((tbl) => tbl.tipoFormulaId.isNull());
+    //query.where((tbl) => tbl.tipoFormulaId.isNull());
     //query.where((tbl) => tbl.tipoFormulaId.equals(0));
     query.where((tbl) => tbl.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
     query.where((tbl) => tbl.syncFlag.isIn([EstadoSync.FLAG_ADDED, EstadoSync.FLAG_UPDATED]));
@@ -1620,6 +1635,7 @@ class MoorRubroRepository extends RubroRepository{
     List<Map<String,dynamic>> listaExportar = [];
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await query.get();
     for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in rubroEvalProcesoList){
+      if((rubroEvaluacionProcesoData.tipoFormulaId??0)!=0)continue;
       listaExportar.add(await transformarRubroEvaluacionDataToSerial(SQL, rubroEvaluacionProcesoData));
     }
 
@@ -1640,16 +1656,21 @@ class MoorRubroRepository extends RubroRepository{
       }
     }
 
+    rubricaEvaluacionUi?.promedio = DomainTools.promedio(notas);
+    rubricaEvaluacionUi?.desviacionEstandar = DomainTools.desviacionEstandar(notas);
+    print("updateEvaluacion: promedio: ${DomainTools.promedio(notas)} nombre: ${rubricaEvaluacionUi?.titulo}");
     await (SQL.update(SQL.rubroEvaluacionProceso)
       ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi?.rubroEvaluacionId)))
         .write(
         RubroEvaluacionProcesoCompanion(
-          promedio:  Value(DomainTools.promedio(notas)),
-          desviacionEstandar: Value(DomainTools.desviacionEstandar(notas)),
+          promedio:  Value(rubricaEvaluacionUi?.promedio),
+          desviacionEstandar: Value(rubricaEvaluacionUi?.desviacionEstandar),
           usuarioAccionId: Value(usuarioId??0,),
           fechaAccion: Value(DateTime.now()),
           syncFlag: Value(EstadoSync.FLAG_UPDATED),
         ));
+
+
 
     for(RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvaluacionUi?.rubrosDetalleList??[]){
       List<double> notas = [];
@@ -1659,13 +1680,15 @@ class MoorRubroRepository extends RubroRepository{
           evaluacionesList.add(evaluacionUi);
         }
       }
-
+      print("promedio 1: ${DomainTools.promedio(notas)} nombre: ${rubricaEvaluacionUi.titulo}");
+      rubricaEvaluacionUi.promedio = DomainTools.promedio(notas);
+      rubricaEvaluacionUi.desviacionEstandar = DomainTools.desviacionEstandar(notas);
       await (SQL.update(SQL.rubroEvaluacionProceso)
         ..where((tbl) => tbl.rubroEvalProcesoId.equals(rubricaEvaluacionUi.rubroEvaluacionId)))
           .write(
           RubroEvaluacionProcesoCompanion(
-            promedio:  Value(DomainTools.promedio(notas)),
-            desviacionEstandar: Value(DomainTools.desviacionEstandar(notas)),
+            promedio:  Value(rubricaEvaluacionUi.promedio),
+            desviacionEstandar: Value(rubricaEvaluacionUi.desviacionEstandar),
             usuarioAccionId: Value(usuarioId??0,),
             fechaAccion: Value(DateTime.now()),
             syncFlag: Value(EstadoSync.FLAG_UPDATED),
@@ -1674,19 +1697,22 @@ class MoorRubroRepository extends RubroRepository{
 
     for(EvaluacionUi evaluacionUi in evaluacionesList){
       if(evaluacionUi.evaluacionId == null){
-        SQL.batch((batch) async {
+        print("updateEvaluacion: valorTipoNotaId: ${evaluacionUi.valorTipoNotaUi?.alias}");
+        print("updateEvaluacion: rubroEvaluacionId: ${evaluacionUi.rubroEvaluacionUi?.rubroEvaluacionId}");
+        String? key = IdGenerator.generateId();
+        await SQL.batch((batch) async {
           EvaluacionProcesoData evaluacionProcesoData = new EvaluacionProcesoData(
-            evaluacionProcesoId: IdGenerator.generateId(),
+            evaluacionProcesoId: key,
             usuarioCreacionId: usuarioId,
             fechaCreacion: DateTime.now(),
             usuarioAccionId: usuarioId,
             fechaAccion: DateTime.now(),
-            rubroEvalProcesoId: evaluacionUi.rubroEvaluacionId,
+            rubroEvalProcesoId: (evaluacionUi.rubroEvaluacionId??"").isNotEmpty?evaluacionUi.rubroEvaluacionId:evaluacionUi.rubroEvaluacionUi?.rubroEvaluacionId,
             nombres: evaluacionUi.personaUi?.nombres,
             apellidoPaterno: evaluacionUi.personaUi?.apellidoPaterno,
             apellidoMaterno: evaluacionUi.personaUi?.apellidoMaterno,
             foto: evaluacionUi.personaUi?.foto,
-            alumnoId: evaluacionUi.personaUi?.personaId,
+            alumnoId: (evaluacionUi.personaUi?.personaId??0)>0?evaluacionUi.personaUi?.personaId:evaluacionUi.alumnoId,
             calendarioPeriodoId: rubricaEvaluacionUi?.calendarioPeriodoId,
             equipoId: evaluacionUi.equipoId,
             escala: evaluacionUi.escala,
@@ -1697,8 +1723,11 @@ class MoorRubroRepository extends RubroRepository{
             nota: evaluacionUi.nota??0.0,
             sesionAprendizajeId: rubricaEvaluacionUi?.sesionAprendizajeId,
             publicado: evaluacionUi.publicado,
-            syncFlag: EstadoSync.FLAG_UPDATED,
+            syncFlag: EstadoSync.FLAG_ADDED,
           );
+
+          evaluacionUi.evaluacionId =key;
+          evaluacionUi.personaUi?.soloApareceEnElCurso = false;
 
           batch.insert(SQL.evaluacionProceso, evaluacionProcesoData, mode: InsertMode.insertOrReplace);
         });
@@ -1787,14 +1816,14 @@ class MoorRubroRepository extends RubroRepository{
 
   @override
   Future<List<RubricaEvaluacionUi>> getRubroEvaluacionSesionList(int? silaboEventoId, int? calendarioPeriodoId,  int sesionAprendizajeDocenteId, int sesionAprendizajeAlumonId) async{
-    ////print("getRubroEvaluacionSesionList ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumonId}");
+    print("getRubroEvaluacionSesionList ${sesionAprendizajeDocenteId} ${sesionAprendizajeAlumonId}");
     AppDataBase SQL = AppDataBase();
     var query = SQL.select(SQL.rubroEvaluacionProceso)..where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
     query.where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
     query.where((tbl) => tbl.sesionAprendizajeId.isIn([sesionAprendizajeDocenteId, sesionAprendizajeAlumonId]));
-    query.where((tbl) => tbl.sesionAprendizajeId.isNotIn([0]));
+    //query.where((tbl) => tbl.sesionAprendizajeId.isNotIn([0]));
     query.where((tbl) => tbl.tiporubroid.isIn([TIPO_RUBRO_BIMENSIONAL, TIPO_RUBRO_UNIDIMENCIONAL]));
-    query.where((tbl) => tbl.tipoFormulaId.isNull());
+    //query.where((tbl) => tbl.tipoFormulaId.isNull());
     //query.where((tbl) => tbl.tipoFormulaId.equals(0));
     query.where((tbl) => tbl.estadoId.isNotIn([RubroRepository.ESTADO_ELIMINADO]));
     query.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
@@ -1803,8 +1832,10 @@ class MoorRubroRepository extends RubroRepository{
     List<String> rubricaIdList =[];
     List<RubricaEvaluacionUi> rubricaEvalProcesoUiList = [];
     List<RubroEvaluacionProcesoData> rubroEvalProcesoList = await query.get();
-    //print("rubricaEvalProcesoUiList: ${rubroEvalProcesoList}");
+    print("rubricaEvalProcesoUiList: ${rubroEvalProcesoList.length}");
     for(RubroEvaluacionProcesoData rubroEvaluacionProcesoData in  rubroEvalProcesoList){
+      if((rubroEvaluacionProcesoData.tipoFormulaId??0)!=0)continue;
+      //if((rubroEvaluacionProcesoData.sesionAprendizajeId??0)==0)continue;
       rubricaIdList.add(rubroEvaluacionProcesoData.rubroEvalProcesoId);
       RubricaEvaluacionUi rubricaEvaluacionUi = convertRubricaEvaluacionUi(rubroEvaluacionProcesoData, 0.0);
       rubricaEvalProcesoUiList.add(rubricaEvaluacionUi);
@@ -1881,7 +1912,7 @@ class MoorRubroRepository extends RubroRepository{
       fechaAccion: DateTime.now(),
       usuarioAccionId: usuarioId,
     );
-
+    print("rubroEvaluacionProceso ${rubroEvaluacionProceso.titulo}");
     rubroEvaluacionData["rubroEvaluacionProceso"] = rubroEvaluacionProceso;
 
     for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi?.evaluacionUiList??[]){
@@ -1908,7 +1939,7 @@ class MoorRubroRepository extends RubroRepository{
         fechaAccion: DateTime.now(),
         usuarioAccionId: usuarioId,
       );
-
+      print("rubroEvaluacionAsociado ${procesoDetalle.titulo}");
       rubroEvaluacionData["rubroEvaluacionAsociado"]?.add(procesoDetalle);
       //batch.insert(SQL.rubroEvaluacionProceso, procesoDetalle, mode: InsertMode.insertOrReplace);
 
@@ -1959,7 +1990,7 @@ class MoorRubroRepository extends RubroRepository{
       usuarioAccionId: usuarioId,
     );
 
-
+    print("rubroEvaluacionProceso ${rubroEvaluacionProceso?.titulo}");
     rubroEvaluacionData["rubroEvaluacionProceso"] = rubroEvaluacionProceso;
 
     if(rubricaEvaluacionUi?.tipoRubroEvaluacion != TipoRubroEvaluacion.UNIDIMENSIONAL){
@@ -1973,7 +2004,7 @@ class MoorRubroRepository extends RubroRepository{
           fechaAccion: DateTime.now(),
           usuarioAccionId: usuarioId,
         );
-
+        print("rubroEvaluacionAsociado ${procesoDetalle?.titulo}");
         rubroEvaluacionData["rubroEvaluacionAsociado"]?.add(procesoDetalle);
 
         var query = SQL.select(SQL.rubroEvalRNPFormula)..where((tbl) => tbl.rubroEvaluacionPrimId.equals(rubricaEvaluacionUi?.rubroEvaluacionId));

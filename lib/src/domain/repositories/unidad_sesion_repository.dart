@@ -1,5 +1,6 @@
 import 'package:ss_crmeducativo_2/src/domain/entities/actividad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_firebase_sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_hoy_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
@@ -15,5 +16,6 @@ abstract class UnidadSesionRepository{
   Future<void> saveEstadoSesion(int? sesionAprendizajeId, int estadoId);
   Future<void> saveActividadesSesion(int? sesionAprendizajeId, List actividades);
   Future<SesionUi> getActividadSesion(int? sesionAprendizajeId);
+  List<EvaluacionFirebaseSesionUi>? transformarEvaluacionesData(Map<String, dynamic> evalaucionesSesionesData);
 
 }

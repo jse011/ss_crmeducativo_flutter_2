@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_rubro.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/preview_image_view.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
@@ -60,7 +62,7 @@ class _TableResultadoState extends State<TableResultado>{
               ),
               Padding(padding: EdgeInsets.all(4)),
               Center(
-                child: Text("Seleciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                child: Text("Selecciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
               )
             ],
           ): (widget.columns.length)<= 3?
@@ -357,61 +359,79 @@ class _TableResultadoState extends State<TableResultado>{
                   rowsTitleBuilder: (i) {
                     dynamic o = widget.rows[i];
                     if(o is PersonaUi){
-                      return  Container(
-                          constraints: BoxConstraints.expand(),
-                          child: Row(
-                            children: [
-                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 4))),
-                              Expanded(
-                                  child: Text((i+1).toString() + ".",
-                                      style: TextStyle(
-                                        color: AppTheme.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
-                                        fontFamily: AppTheme.fontTTNorms,
-                                      )
-                                  )
-                              ),
-                              Container(
-                                height: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
-                                width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
-                                margin: EdgeInsets.only(
-                                    right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 3)
+                      return  InkWell(
+                        onTap: (){
+                          Navigator.of(context).push(PreviewImageView.createRoute(o.foto));
+                        },
+                        child: Container(
+                            constraints: BoxConstraints.expand(),
+                            child: Row(
+                              children: [
+                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 4))),
+                                Expanded(
+                                    child: Text((i+1).toString() + ".",
+                                        style: TextStyle(
+                                          color: AppTheme.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 11),
+                                          fontFamily: AppTheme.fontTTNorms,
+                                        )
+                                    )
                                 ),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: HexColor(widget.cursosUi?.color3),
-                                ),
-                                child: true?
-                                CachedNetworkImage(
-                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                  imageUrl: o.foto??"",
-                                  errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded,
-                                      size: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 80)
+                                Container(
+                                  height: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
+                                  width: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 20),
+                                  margin: EdgeInsets.only(
+                                      right: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 3)
                                   ),
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: HexColor(widget.cursosUi?.color3),
+                                  ),
+                                  child: true?
+                                  CachedNetworkImage(
+                                    placeholder: (context, url) => SizedBox(
+                                      child: Shimmer.fromColors(
+                                        baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                        highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                        child: Container(
+                                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          )
+                                              color: AppTheme.blue,
+                                              shape: BoxShape.circle
+                                          ),
+                                          alignment: Alignment.center,
+                                        ),
                                       ),
-                                ):
-                                Container(),
-                              ),
-                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 1))),
-                            ],
-                          ),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
-                                right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
-                              ),
-                              color: HexColor(widget.cursosUi?.color2)
-                          )
+                                    ),
+                                    imageUrl: o.foto??"",
+                                    errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded,
+                                        size: ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 80)
+                                    ),
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.all(Radius.circular(15)),
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                        ),
+                                  ):
+                                  Container(),
+                                ),
+                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 1))),
+                              ],
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                                  right: BorderSide(color: HexColor(widget.cursosUi?.color3)),
+                                ),
+                                color: HexColor(widget.cursosUi?.color2)
+                            )
+                        ),
                       );
                     }else{
                       return  Container();

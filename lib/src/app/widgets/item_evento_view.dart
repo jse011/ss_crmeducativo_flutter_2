@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/fancy_shimer_image/fancy_shimmer_image.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
@@ -205,8 +206,19 @@ class _ItemEventoState extends State<ItemEventoView>{
                                  placeholder: (context, url) => Container(
                                    height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
                                    width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 30),
-                                   child: Center(
-                                     child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.colorPrimary,),
+                                   child: SizedBox(
+                                     child: Shimmer.fromColors(
+                                       baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                       highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                       child: Container(
+                                         padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                         decoration: BoxDecoration(
+                                             color: AppTheme.blue,
+                                             shape: BoxShape.circle
+                                         ),
+                                         alignment: Alignment.center,
+                                       ),
+                                     ),
                                    ),
                                  ),
                                  imageUrl: widget.eventoUi?.fotoEntidad??'',

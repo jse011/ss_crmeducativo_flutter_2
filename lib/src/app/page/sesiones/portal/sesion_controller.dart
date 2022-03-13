@@ -66,6 +66,8 @@ class SesionController extends Controller{
 
   @override
   void initListeners() {
+    print("calendarioPeriodoUI ${calendarioPeriodoUI.id}");
+    print("unidadUi ${unidadUi.unidadAprendizajeId}");
     _tareaUiList.clear();
     presenter.getUnidadTareaOnComplete = (List<TareaUi>? tareaUiList, bool? datosOffline, bool? errorServidor){
       // conserver el toogle
@@ -107,7 +109,6 @@ class SesionController extends Controller{
 
     presenter.updateAprendizajeOnNext = (){
       print("updateAprendizajeOnNext");
-      presenter.onGetCompetencias(sesionUi);
       refreshUI();
     };
 
@@ -172,6 +173,7 @@ class SesionController extends Controller{
     _progressTarea = true;
     _progressActividad = true;
     refreshUI();
+    presenter.onGetCompetencias(sesionUi);
     presenter.getSesionTarea(cursosUi, calendarioPeriodoUI, sesionUi);
     presenter.onActualizarCurso( calendarioPeriodoUI, cursosUi, sesionUi);
     presenter.onGetActividades(sesionUi);

@@ -16,7 +16,7 @@ class GetTemaCriterios extends UseCase<GetTemaCriteriosResponse, GetTemaCriterio
   Future<Stream<GetTemaCriteriosResponse?>> buildUseCaseStream(GetTemaCriteriosParms? params) async{
     final controller = StreamController<GetTemaCriteriosResponse>();
     try{
-      List<CompetenciaUi> temaCriterioUiList = await repository.getTemasCriterios(params?.calendarioPeriodoId??0, params?.silaboEventoId??0);
+      List<CompetenciaUi> temaCriterioUiList = await repository.getTemasCriterios(params?.calendarioPeriodoId??0, params?.silaboEventoId??0, params?.sesionAprendizajeId);
       controller.add(GetTemaCriteriosResponse(temaCriterioUiList));
       controller.close();
     } catch (e) {
@@ -33,8 +33,8 @@ class GetTemaCriteriosParms{
     String? rubricaEvaluacionId;
     int? calendarioPeriodoId;
     int? silaboEventoId;
-
-    GetTemaCriteriosParms(this.calendarioPeriodoId, this.silaboEventoId);
+    int? sesionAprendizajeId;
+    GetTemaCriteriosParms(this.calendarioPeriodoId, this.silaboEventoId, this.sesionAprendizajeId);
 }
 
 class GetTemaCriteriosResponse{

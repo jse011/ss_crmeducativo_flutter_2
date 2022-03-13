@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multiple/evaluacion_indicador_multiple_controller.dart';
@@ -280,53 +281,76 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                   crossAxisAlignment: CrossAxisAlignment.center,
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
-                                                    CachedNetworkImage(
-                                                      placeholder: (context, url) => Container(
-                                                        child: CircularProgressIndicator(),
-                                                      ),
-                                                      imageUrl: controller.personaUiSelected?.foto??"",
-                                                      errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),),
-                                                      imageBuilder: (context, imageProvider) =>
-                                                          Container(
-                                                              width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
-                                                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),
-                                                              margin: EdgeInsets.only(
-                                                                  right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
-                                                                  left: 0,
-                                                                  top: 0,
-                                                                  bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)
+                                                    InkWell(
+                                                      onTap: (){
+                                                        Navigator.of(context).push(PreviewImageView.createRoute(controller.personaUiSelected?.foto));
+                                                      },
+                                                      child: Container(
+                                                        width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                        height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                        child: CachedNetworkImage(
+                                                          placeholder: (context, url) => SizedBox(
+                                                            child: Shimmer.fromColors(
+                                                              baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                              highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                              child: Container(
+                                                                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                decoration: BoxDecoration(
+                                                                    color: HexColor(controller.cursosUi.color2),
+                                                                    shape: BoxShape.circle
+                                                                ),
+                                                                alignment: Alignment.center,
                                                               ),
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(
-                                                                    Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45))
-                                                                ),
-                                                                image: DecorationImage(
-                                                                  image: imageProvider,
-                                                                  fit: BoxFit.cover,
-                                                                ),
-                                                              )
+                                                            ),
                                                           ),
-                                                    ),
-                                                    Expanded(child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Text("${controller.personaUiSelected?.apellidos}",
-                                                          style: TextStyle(
-                                                              fontFamily: AppTheme.fontTTNorms,
-                                                              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 20),
-                                                              fontWeight: FontWeight.w900
-                                                          ),
+                                                          imageUrl: controller.personaUiSelected?.foto??"",
+                                                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),),
+                                                          imageBuilder: (context, imageProvider) =>
+                                                              Container(
+                                                                  margin: EdgeInsets.only(
+                                                                      right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0),
+                                                                      left: 0,
+                                                                      top: 0,
+                                                                      bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)
+                                                                  ),
+                                                                  decoration: BoxDecoration(
+                                                                    image: DecorationImage(
+                                                                      image: imageProvider,
+                                                                      fit: BoxFit.cover,
+                                                                    ),
+                                                                    shape: BoxShape.circle
+                                                                  )
+                                                              ),
                                                         ),
-                                                        Text("${controller.personaUiSelected?.nombres}",
-                                                          style: TextStyle(
-                                                              fontFamily: AppTheme.fontTTNorms,
-                                                              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
-                                                              fontWeight: FontWeight.w700
-                                                          ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Text("${controller.personaUiSelected?.apellidos}",
+                                                              style: TextStyle(
+                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 20),
+                                                                  fontWeight: FontWeight.w900
+                                                              ),
+                                                            ),
+                                                            Text("${controller.personaUiSelected?.nombres}",
+                                                              style: TextStyle(
+                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                                  fontWeight: FontWeight.w700
+                                                              ),
+                                                            ),
+                                                          ],
                                                         )
-                                                      ],
-                                                    )),
+                                                    ),
+                                                    Padding(
+                                                        padding: EdgeInsets.only(
+                                                          right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
+                                                        )
+                                                    )
                                                   ],
                                                 ),
                                               ),
@@ -413,7 +437,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
 
                                                       ),
                                                     ),
-                                                    Padding(padding: EdgeInsets.all(8)),
+                                                    Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16))),
                                                     Container(
                                                       decoration: BoxDecoration(
                                                         borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8))),
@@ -433,7 +457,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                         ],
                                                       ),
                                                     ),
-                                                    Padding(padding: EdgeInsets.all(8)),
+                                                    Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16))),
                                                     (evaluacionGeneralUi?.valorTipoNotaUi?.alias??"").isNotEmpty?
                                                     Container(
                                                       decoration: BoxDecoration(
@@ -493,8 +517,19 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                     child: Row(
                                                       children: [
                                                         CachedNetworkImage(
-                                                          placeholder: (context, url) => Container(
-                                                            child: CircularProgressIndicator(),
+                                                          placeholder: (context, url) => SizedBox(
+                                                            child: Shimmer.fromColors(
+                                                              baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                              highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                              child: Container(
+                                                                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                decoration: BoxDecoration(
+                                                                    color: HexColor(controller.cursosUi.color2),
+                                                                    shape: BoxShape.circle
+                                                                ),
+                                                                alignment: Alignment.center,
+                                                              ),
+                                                            ),
                                                           ),
                                                           imageUrl: controller.usuarioUi?.personaUi?.foto??"",
                                                           errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),),
@@ -592,8 +627,19 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                                 child: Row(
                                                   children: [
                                                     CachedNetworkImage(
-                                                      placeholder: (context, url) => Container(
-                                                        child: CircularProgressIndicator(),
+                                                      placeholder: (context, url) => SizedBox(
+                                                        child: Shimmer.fromColors(
+                                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                          highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                          child: Container(
+                                                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                            decoration: BoxDecoration(
+                                                                color: HexColor(controller.cursosUi.color2),
+                                                                shape: BoxShape.circle
+                                                            ),
+                                                            alignment: Alignment.center,
+                                                          ),
+                                                        ),
                                                       ),
                                                       imageUrl: controller.usuarioUi?.personaUi?.foto??"",
                                                       errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),),
@@ -1265,7 +1311,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                     ),
                                     Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                                     InkWell(
-                                      onTap: ()=> AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false),
+                                      onTap: (){
+                                        if(controller.rubroEvaluacionUi!=null){
+                                          AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false);
+                                        }
+                                      },
                                       child: Container(
                                         width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
                                         padding: EdgeInsets.only(
@@ -1306,9 +1356,13 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                     ),
                                     Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                                     InkWell(
-                                      onTap: ()=> controller.onClickEliminar(),
+                                      onTap: () {
+                                        if(controller.rubroEvaluacionUi!=null){
+                                          controller.onClickEliminar();
+                                        }
+                                      },
                                       child: Container(
-                                        width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 100),
+                                        width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
                                         padding: EdgeInsets.only(
                                             left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
                                             right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
@@ -1426,7 +1480,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
               child: StickyHeadersTableNotExpandedCustom(
                 cellDimensions: CellDimensions.variableColumnWidth(
                     stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 150),
-                    stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 60),
+                    stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
                     contentCellHeight: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50),
                     columnWidths: tablecolumnWidths
                 ),
@@ -1543,58 +1597,74 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                 rowsTitleBuilder: (i) {
                   dynamic o = controller.rowList2[i];
                   if(o is PersonaUi){
-                    return  Container(
-                        constraints: BoxConstraints.expand(),
-                        child: Row(
-                          children: [
-                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
-                            Expanded(
-                                child: Text((i+1).toString() + ".",
-                                  style: TextStyle(
-                                      color: AppTheme.darkText,
-                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11)
+                    return  InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(PreviewImageView.createRoute(o.foto));
+                      },
+                      child: Container(
+                          constraints: BoxConstraints.expand(),
+                          child: Row(
+                            children: [
+                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
+                              Expanded(
+                                  child: Text((i+1).toString() + ".",
+                                      style: TextStyle(
+                                          color: AppTheme.darkText,
+                                          fontFamily: AppTheme.fontTTNorms,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10)
+                                      )
                                   )
-                                )
-                            ),
-                            Container(
-                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 28),
-                              width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 28),
-                              margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3)),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppTheme.greyLighten2,
                               ),
-                              child: true?
-                              CachedNetworkImage(
-                                placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(),
+                              Container(
+                                height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
+                                width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
+                                margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3)),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppTheme.greyLighten2,
                                 ),
-                                imageUrl: o.foto??"",
-                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 45),),
-                                imageBuilder: (context, imageProvider) =>
-                                    Container(
+                                child: CachedNetworkImage(
+                                  placeholder: (context, url) => SizedBox(
+                                    child: Shimmer.fromColors(
+                                      baseColor: Color.fromRGBO(217, 217, 217, 0.3),
+                                      highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                      child: Container(
+                                        padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 15))),
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
+                                            color: HexColor(controller.cursosUi.color2),
+                                            shape: BoxShape.circle
+                                        ),
+                                        alignment: Alignment.center,
+                                      ),
                                     ),
-                              ):
-                              Container(),
-                            ),
-                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 1))),
-                          ],
-                        ),
-                        decoration: BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: AppTheme.greyLighten2),
-                              right: BorderSide(color: AppTheme.greyLighten2),
-                              left: BorderSide(color: AppTheme.greyLighten2),
-                            ),
-                            color: AppTheme.white
-                        )
+                                  ),
+                                  imageUrl: o.foto??"",
+                                  errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 25),),
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 15))),
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                      ),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 1))),
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color: AppTheme.greyLighten2),
+                                left: BorderSide(color: AppTheme.greyLighten2),
+                              ),
+                              color: AppTheme.white
+                          )
+                      ),
                     );
                   }else{
                     return  Container();
@@ -1614,10 +1684,10 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                  color: AppTheme.black,
                                   fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppTheme.black
+                                  fontWeight: FontWeight.w700
                               )
                             ),
                             Text(o.nombres??"",
@@ -1625,9 +1695,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
                                   fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500
                               )
                             ),
                           ],
@@ -1772,7 +1842,7 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                         ),
                         decoration: BoxDecoration(
                           border: Border(
-                            right: BorderSide(color: HexColor(controller.cursosUi.color2)),
+                            right: BorderSide(color: AppTheme.greyLighten1),
                           ),
                         )
                     ),
@@ -2151,10 +2221,20 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
             margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 6)),
             child:  CachedNetworkImage(
               imageUrl: evaluacionUi?.valorTipoNotaUi?.icono??"",
-              placeholder: (context, url) => Stack(
-                children: [
-                  CircularProgressIndicator()
-                ],
+              placeholder: (context, url) => SizedBox(
+                child: Shimmer.fromColors(
+                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                  highlightColor: Color.fromRGBO(166, 166, 166, 0.5),
+                  child: Container(
+                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                        color: HexColor(controller.cursosUi.color2),
+                        shape: BoxShape.rectangle
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                ),
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
@@ -2285,10 +2365,20 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
             ),
             child:  CachedNetworkImage(
               imageUrl: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.icono??"",
-              placeholder: (context, url) => Stack(
-                children: [
-                  CircularProgressIndicator()
-                ],
+              placeholder: (context, url) => SizedBox(
+                child: Shimmer.fromColors(
+                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                  highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                  child: Container(
+                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                        color: HexColor(controller.cursosUi.color2),
+                        shape: BoxShape.rectangle
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                ),
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
@@ -2396,10 +2486,20 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
           ),
           child: CachedNetworkImage(
             imageUrl: valorTipoNotaUi?.icono ?? "",
-            placeholder: (context, url) => Stack(
-              children: [
-                CircularProgressIndicator()
-              ],
+            placeholder: (context, url) => SizedBox(
+              child: Shimmer.fromColors(
+                baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                child: Container(
+                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                      color: HexColor(controller.cursosUi.color2),
+                      shape: BoxShape.rectangle
+                  ),
+                  alignment: Alignment.center,
+                ),
+              ),
             ),
             errorWidget: (context, url, error) => Icon(Icons.error),
           ),
@@ -2891,7 +2991,6 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
       EvaluacionIndicadorMultipleController controller =
       FlutterCleanArchitecture.getController<EvaluacionIndicadorMultipleController>(globalKey.currentContext!, listen: false);
       controller.addEvidencia(_documents, null);
-
     }
   }
 

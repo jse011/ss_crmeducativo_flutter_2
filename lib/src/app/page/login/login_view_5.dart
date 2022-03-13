@@ -38,7 +38,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
   String? email, password;
 
 
-  //Color greenColor = Color(0XFF68BDFC);
+  //Color greenColor = AppTheme.colorDocenteMentor;
   //Color greenColor = AppTheme.colorPrimaryDark;
   //Color greenColor = Color(0xFF00AF19);
 
@@ -215,244 +215,250 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                 left: ColumnCountProvider.aspectRatioForWidthLogin(context, 25),
                 right: ColumnCountProvider.aspectRatioForWidthLogin(context, 25)
               ),
-              child: ListView(
-                  padding: EdgeInsets.all(0),
-                  shrinkWrap: true,
-                  children: [
-                    SizedBox(
-                        height: ColumnCountProvider.aspectRatioForWidthLogin(context, 60)
-                    ),
-                    Container(
-                        height: ColumnCountProvider.aspectRatioForWidthLogin(context, 135),
-                        width: ColumnCountProvider.aspectRatioForWidthLogin(context, 350),
-                        child: Stack(
-                          children: [
-                            ChangeAppTheme.getApp() == AppType.EDUCAR?
-                            Container(
-                              child: Image.asset(
-                                AppImagen.login_educar,
-                              ),
-                              padding: EdgeInsets.only(bottom: 26, top: 14),
-                            ):
-                            Container(
-                              child: Image.asset(
-                                AppImagen.login_icrm,
-                              ),
-                              padding: EdgeInsets.only(bottom: 26, top: 20),
-                            ),
-                            Positioned(
-                                top: ColumnCountProvider.aspectRatioForWidthLogin(context, 115),
-                                child: Column(
-                                  children: [
-                                    Text(ChangeAppTheme.getApp() == AppType.EDUCAR?'Centro de Aprendizaje Virtual':'Social iCRM Educativo Móvil',
-                                        style:
-                                        TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 16),
-                                            fontWeight: FontWeight.w700,
-                                            color: AppTheme.lightBlueDarken1
-                                        )
-                                    ),
-                                  ],
-                                )
-                            ),
-
-                          ],
-                        )),
-                    SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 25)),
-                    if(controller.typeView==LoginTypeView.USUARIO)
-                      TextFormField(
-                          key: Key("Usuario"),
-                          initialValue: controller.usuario,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontFamily: AppTheme.fontTTNorms
-                          ),
-                          decoration: InputDecoration(
-                              labelText: 'USUARIO',
-                              labelStyle: TextStyle(
-                                  fontFamily: AppTheme.fontTTrueno,
-                                  fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
-                                  color: AppTheme.grey.withOpacity(0.5)),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
-                              )),
-                          onChanged: (value) {
-                            controller.onChangeUsuario(value);
-                          },
-                          textInputAction: TextInputAction.next,
-                          validator: (value) =>
-                          (value??"").isEmpty ? 'Ingrese un usuario' : validateEmail(value??"")
-
+              child:  Theme(
+                data:Theme.of(context).copyWith(
+                  colorScheme: ThemeData().colorScheme.copyWith(
+                    primary: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor,
+                  ),
+                ),
+                child:  ListView(
+                    padding: EdgeInsets.all(0),
+                    shrinkWrap: true,
+                    children: [
+                      SizedBox(
+                          height: ColumnCountProvider.aspectRatioForWidthLogin(context, 60)
                       ),
-                    if(controller.typeView==LoginTypeView.USUARIO)
-                      TextFormField(
-                          key: Key("Password"),
-                          textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (term){
-                            if(checkFields()) controller.onClickInciarSesion();
-                          },
-                          initialValue: controller.password,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontFamily: AppTheme.fontTTNorms
-                          ),
-                          decoration: InputDecoration(
-                            labelText: 'CONTRASEÑA',
-                            labelStyle: TextStyle(
-                                fontFamily: AppTheme.fontTTrueno,
-                                fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
-                                color: AppTheme.grey.withOpacity(0.5)),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Container(
-                                padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthLogin(context, 14)),
-                                child: Icon(controller.ocultarContrasenia
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                  size: ColumnCountProvider.aspectRatioForWidthLogin(context, 20),
+                      Container(
+                          height: ColumnCountProvider.aspectRatioForWidthLogin(context, 135),
+                          width: ColumnCountProvider.aspectRatioForWidthLogin(context, 350),
+                          child: Stack(
+                            children: [
+                              ChangeAppTheme.getApp() == AppType.EDUCAR?
+                              Container(
+                                child: Image.asset(
+                                  AppImagen.login_educar,
                                 ),
+                                padding: EdgeInsets.only(bottom: 26, top: 14),
+                              ):
+                              Container(
+                                child: Image.asset(
+                                  AppImagen.login_icrm,
+                                ),
+                                padding: EdgeInsets.only(bottom: 26, top: 20),
                               ),
-                              onPressed: (){
-                                controller.onClikMostarContrasenia();
-                              },
+                              Positioned(
+                                  top: ColumnCountProvider.aspectRatioForWidthLogin(context, 115),
+                                  child: Column(
+                                    children: [
+                                      Text(ChangeAppTheme.getApp() == AppType.EDUCAR?'Centro de Aprendizaje Virtual':'Social iCRM Educativo Móvil',
+                                          style:
+                                          TextStyle(
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 16),
+                                              fontWeight: FontWeight.w700,
+                                              color: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor//AppTheme.lightBlueDarken1
+                                          )
+                                      ),
+                                    ],
+                                  )
+                              ),
+
+                            ],
+                          )),
+                      SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 25)),
+                      if(controller.typeView==LoginTypeView.USUARIO)
+                        TextFormField(
+                            key: Key("Usuario"),
+                            initialValue: controller.usuario,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms
                             ),
-                          ),
-                          obscureText: controller.ocultarContrasenia,
-                          onChanged: (value) {
-                            controller.onChangeContrasenia(value);
-                          },
-                          validator: (value) => (value??"").isEmpty ? 'Ingrese una contraseña' : null
-                      ),
-                    if(controller.typeView==LoginTypeView.DNI)
-                      TextFormField(
-                          key: Key("DNI"),
-                          textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (term){
-                            if(checkFields()) controller.onClickInciarSesion();
-                          },
-                          initialValue: controller.dni,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontFamily: AppTheme.fontTTNorms
-                          ),
-                          decoration: InputDecoration(
-                              labelText: 'Documento de identidad'.toUpperCase(),
+                            decoration: InputDecoration(
+                                labelText: 'USUARIO',
+                                labelStyle: TextStyle(
+                                    fontFamily: AppTheme.fontTTrueno,
+                                    fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
+                                    color: AppTheme.grey.withOpacity(0.5)),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor),
+                                )),
+                            onChanged: (value) {
+                              controller.onChangeUsuario(value);
+                            },
+                            textInputAction: TextInputAction.next,
+                            validator: (value) =>
+                            (value??"").isEmpty ? 'Ingrese un usuario' : validateEmail(value??"")
+
+                        ),
+                      if(controller.typeView==LoginTypeView.USUARIO)
+                        TextFormField(
+                            key: Key("Password"),
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (term){
+                              if(checkFields()) controller.onClickInciarSesion();
+                            },
+                            initialValue: controller.password,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms
+                            ),
+                            decoration: InputDecoration(
+                              labelText: 'CONTRASEÑA',
                               labelStyle: TextStyle(
                                   fontFamily: AppTheme.fontTTrueno,
-                                  fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
                                   color: AppTheme.grey.withOpacity(0.5)),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
-                              )),
-                          onChanged: (value) {
-                            controller.onChangeDni(value);
-                          },
-                          validator: (value) => (value??"").isEmpty ? 'Ingrese un documento de identidad' : null
-                      ),
-                    if(controller.typeView==LoginTypeView.CORREO)
-                      TextFormField(
-                          key: Key("Correo"),
-                          textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (term){
-                            if(checkFields()) controller.onClickInciarSesion();
-                          },
-                          initialValue: controller.dni,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontFamily: AppTheme.fontTTNorms
-                          ),
-                          decoration: InputDecoration(
-                              labelText: 'Correo'.toUpperCase(),
-                              labelStyle: TextStyle(
-                                  fontFamily: AppTheme.fontTTrueno,
-                                  fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
-                                  color: AppTheme.grey.withOpacity(0.5)),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC)),
-                              )),
-                          onChanged: (value) {
-                            controller.onChangeCorreo(value);
-                          },
-                          validator: (value) => (value??"").isEmpty ? 'Ingrese un correo' : null
-                      ),
-                    SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 5)),
-                    controller.typeView==LoginTypeView.USUARIO?
-                    GestureDetector(
-                        onTap: () {
-                         /* Navigator.of(context).push(
+                                borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Container(
+                                  padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthLogin(context, 14)),
+                                  child: Icon(controller.ocultarContrasenia
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                    size: ColumnCountProvider.aspectRatioForWidthLogin(context, 20),
+                                  ),
+                                ),
+                                onPressed: (){
+                                  controller.onClikMostarContrasenia();
+                                },
+                              ),
+                            ),
+                            obscureText: controller.ocultarContrasenia,
+                            onChanged: (value) {
+                              controller.onChangeContrasenia(value);
+                            },
+                            validator: (value) => (value??"").isEmpty ? 'Ingrese una contraseña' : null
+                        ),
+                      if(controller.typeView==LoginTypeView.DNI)
+                        TextFormField(
+                            key: Key("DNI"),
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (term){
+                              if(checkFields()) controller.onClickInciarSesion();
+                            },
+                            initialValue: controller.dni,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms
+                            ),
+                            decoration: InputDecoration(
+                                labelText: 'Documento de identidad'.toUpperCase(),
+                                labelStyle: TextStyle(
+                                    fontFamily: AppTheme.fontTTrueno,
+                                    fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
+                                    color: AppTheme.grey.withOpacity(0.5)),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor),
+                                )),
+                            onChanged: (value) {
+                              controller.onChangeDni(value);
+                            },
+                            validator: (value) => (value??"").isEmpty ? 'Ingrese un documento de identidad' : null
+                        ),
+                      if(controller.typeView==LoginTypeView.CORREO)
+                        TextFormField(
+                            key: Key("Correo"),
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (term){
+                              if(checkFields()) controller.onClickInciarSesion();
+                            },
+                            initialValue: controller.dni,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms
+                            ),
+                            decoration: InputDecoration(
+                                labelText: 'Correo'.toUpperCase(),
+                                labelStyle: TextStyle(
+                                    fontFamily: AppTheme.fontTTrueno,
+                                    fontSize:  ColumnCountProvider.aspectRatioForWidthLogin(context, 12),
+                                    color: AppTheme.grey.withOpacity(0.5)),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor),
+                                )),
+                            onChanged: (value) {
+                              controller.onChangeCorreo(value);
+                            },
+                            validator: (value) => (value??"").isEmpty ? 'Ingrese un correo' : null
+                        ),
+                      SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 5)),
+                      controller.typeView==LoginTypeView.USUARIO?
+                      GestureDetector(
+                          onTap: () {
+                            /* Navigator.of(context).push(
                               MaterialPageRoute(builder: (context) => ResetPassword()));*/
-                        },
-                        child: Container(
-                            alignment: Alignment(1.0, 0.0),
-                            padding: EdgeInsets.only(
-                                top: ColumnCountProvider.aspectRatioForWidthLogin(context, 15),
-                                left: ColumnCountProvider.aspectRatioForWidthLogin(context, 20)
-                            ),
-                            child: InkWell(
-                                child: Text(/*'Has olvidado tu contraseña'*/"Usa tu cuenta del iCRM Educativo",
-                                    style: TextStyle(
+                          },
+                          child: Container(
+                              alignment: Alignment(1.0, 0.0),
+                              padding: EdgeInsets.only(
+                                  top: ColumnCountProvider.aspectRatioForWidthLogin(context, 15),
+                                  left: ColumnCountProvider.aspectRatioForWidthLogin(context, 20)
+                              ),
+                              child: InkWell(
+                                  child: Text(/*'Has olvidado tu contraseña'*/"Uso exclusivo de los docentes",
+                                      style: TextStyle(
                                         color: AppTheme.colorPrimary,
                                         fontFamily: AppTheme.fontTTrueno,
                                         fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 11),
                                         //decoration: TextDecoration.underline
-                                    )
-                                )
-                            )
-                        )
-                    ):
-                    GestureDetector(
-                        onTap: () {
-                          controller.onClikAtrasLogin();
-                        },
-                        child: Container(
-                            alignment: Alignment(1.0, 0.0),
-                            padding: EdgeInsets.only(
-                                top: ColumnCountProvider.aspectRatioForWidthLogin(context, 15),
-                                left: ColumnCountProvider.aspectRatioForWidthLogin(context, 20)
-                            ),
-                            child: InkWell(
-                                child: Text(controller.typeView==LoginTypeView.DNI?'Corregir usuario y contraseña':'Corregir el documento de identidad',
-                                    style: TextStyle(
-                                        color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC),
-                                        fontFamily: AppTheme.fontTTrueno,
-                                        fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 11),
-                                        decoration: TextDecoration.underline
-                                    )
-                                )
-                            )
-                        )
-                    ),
-                    SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 50)),
-                    GestureDetector(
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-
-                        if(checkFields()) controller.onClickInciarSesion();
-                      },
-                      child: Container(
-                          height: ColumnCountProvider.aspectRatioForWidthLogin(context, 50),
-                          child: Material(
-                              borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthLogin(context, 25)),
-                              shadowColor: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC),
-                              color: ChangeAppTheme.getApp() == AppType.EDUCAR?Color(0XFFEFB226):Color(0XFF68BDFC),
-                              elevation: 7.0,
-                              child: Center(
-                                  child: Text('INICIAR SESIÓN',
+                                      )
+                                  )
+                              )
+                          )
+                      ):
+                      GestureDetector(
+                          onTap: () {
+                            controller.onClikAtrasLogin();
+                          },
+                          child: Container(
+                              alignment: Alignment(1.0, 0.0),
+                              padding: EdgeInsets.only(
+                                  top: ColumnCountProvider.aspectRatioForWidthLogin(context, 15),
+                                  left: ColumnCountProvider.aspectRatioForWidthLogin(context, 20)
+                              ),
+                              child: InkWell(
+                                  child: Text(controller.typeView==LoginTypeView.DNI?'Corregir usuario y contraseña':'Corregir el documento de identidad',
                                       style: TextStyle(
-                                          color: Colors.white,
+                                          color: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor,
                                           fontFamily: AppTheme.fontTTrueno,
-                                          fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 14)
+                                          fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 11),
+                                          decoration: TextDecoration.underline
                                       )
                                   )
                               )
                           )
                       ),
-                    ),
-                    SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 20)),
-                    /*GestureDetector(
+                      SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 50)),
+                      GestureDetector(
+                        onTap: () {
+                          FocusScope.of(context).unfocus();
+
+                          if(checkFields()) controller.onClickInciarSesion();
+                        },
+                        child: Container(
+                            height: ColumnCountProvider.aspectRatioForWidthLogin(context, 50),
+                            child: Material(
+                                borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthLogin(context, 25)),
+                                shadowColor: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor,
+                                color: ChangeAppTheme.getApp() == AppType.EDUCAR?AppTheme.colorEducarTeacher:AppTheme.colorDocenteMentor,
+                                elevation: 7.0,
+                                child: Center(
+                                    child: Text('INICIAR SESIÓN',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: AppTheme.fontTTrueno,
+                                            fontSize: ColumnCountProvider.aspectRatioForWidthLogin(context, 14)
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                      ),
+                      SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 20)),
+                      /*GestureDetector(
             onTap: () {
               //AuthService().fbSignIn();
             },
@@ -482,7 +488,7 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                 )),
           ),
           SizedBox(height: 25.0),*/
-                    /*
+                      /*
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text('Nuevo en iCRM ?'),
                       SizedBox(width: ColumnCountProvider.aspectRatioForWidthLogin(context, 5)),
@@ -497,15 +503,16 @@ class _LoginViewState5 extends ViewState<LoginView5, LoginController>{
                                   fontFamily: AppTheme.fontTTrueno,
                                   decoration: TextDecoration.underline)))
                     ]),*/
-                    SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 30)),
-                    Row(
-                      children: [
-                        _educarLogo(ColumnCountProvider.aspectRatioForWidthLogin(context, 45), ColumnCountProvider.aspectRatioForWidthLogin(context, 135)),
-                        Expanded(child: Container()),
-                      ],
-                    ),
-                    SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 50)),
-                  ]
+                      SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 30)),
+                      Row(
+                        children: [
+                          _educarLogo(ColumnCountProvider.aspectRatioForWidthLogin(context, 45), ColumnCountProvider.aspectRatioForWidthLogin(context, 135)),
+                          Expanded(child: Container()),
+                        ],
+                      ),
+                      SizedBox(height: ColumnCountProvider.aspectRatioForWidthLogin(context, 50)),
+                    ]
+                ),
               ),
             ),
           ),

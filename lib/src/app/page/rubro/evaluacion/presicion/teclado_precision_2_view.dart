@@ -26,10 +26,12 @@ class TecladoPresicionView2 extends StatefulWidget {
   int? valorMinimo;
   double? valor;
 
-  TecladoPresicionView2({this.valorMaximo, this.valorMinimo,this.onSaveInput, this.onCloseButton, this.valor});
+  TecladoPresicionView2({this.valorMaximo, this.valorMinimo,this.onSaveInput, this.onCloseButton, this.valor}){
+   //this.valorMaximo = 10;
+  }
 
   @override
-  _TecladoPresicionView2 createState() => _TecladoPresicionView2(this.valor);
+  _TecladoPresicionView2 createState() => _TecladoPresicionView2(this.valor, this.valorMaximo);
 }
 
 class _TecladoPresicionView2 extends State<TecladoPresicionView2> {
@@ -46,7 +48,7 @@ class _TecladoPresicionView2 extends State<TecladoPresicionView2> {
   bool selectedUnidad = false;
   bool selectedDecimal = false;
 
-  _TecladoPresicionView2(double? valor){
+  _TecladoPresicionView2(double? valor, int? valorMaximo){
     valor = valor??0;
     List<String> substr = valor.toString().split('.');
     String entero = substr[0];
@@ -63,6 +65,11 @@ class _TecladoPresicionView2 extends State<TecladoPresicionView2> {
     if (substr.length > 0) decimals = int.parse(substr[1]);
     if(decimals.toString().length>0){
       numeroDecimal = int.parse(decimals.toString()[0]);
+    }
+
+    if((valorMaximo??0)<=9){
+      selectedDecena = false;
+      selectedUnidad = true;
     }
   }
 
@@ -451,29 +458,34 @@ class _TecladoPresicionView2 extends State<TecladoPresicionView2> {
         selectedUnidad = false;
         selectedDecimal = true;
       });
-    }else{
-      if(selectedDecena){
-        setState(() {
-          numeroDecena = int.parse(myText);
+    }else if(selectedDecena){
+      setState(() {
+        numeroDecena = int.parse(myText);
+        selectedDecena = false;
+        selectedUnidad = true;
+        selectedDecimal = false;
+      });
+    }else if(selectedUnidad){
+      setState(() {
+        numeroUnidad = int.parse(myText);
+        selectedDecena = false;
+        selectedUnidad = false;
+        selectedDecimal = true;
+      });
+    }else if(selectedDecimal){
+      setState(() {
+        numeroDecimal = int.parse(myText);
+        if((widget.valorMaximo??0)<=9){
           selectedDecena = false;
           selectedUnidad = true;
           selectedDecimal = false;
-        });
-      }else if(selectedUnidad){
-        setState(() {
-          numeroUnidad = int.parse(myText);
+        }else{
           selectedDecena = true;
           selectedUnidad = false;
           selectedDecimal = false;
-        });
-      }else if(selectedDecimal){
-        setState(() {
-          numeroDecimal = int.parse(myText);
-          selectedDecena = true;
-          selectedUnidad = false;
-          selectedDecimal = false;
-        });
-      }
+        }
+
+      });
     }
 
   }
@@ -482,21 +494,29 @@ class _TecladoPresicionView2 extends State<TecladoPresicionView2> {
 
     if(selectedDecena){
       setState(() {
-        numeroDecena = 0;
+        numeroDecimal = 0;
         selectedDecena = false;
         selectedUnidad = false;
         selectedDecimal = true;
       });
     }else if(selectedUnidad){
       setState(() {
-        numeroUnidad = 0;
-        selectedDecena = true;
-        selectedUnidad = false;
-        selectedDecimal = false;
+        if((widget.valorMaximo??0)<=9){
+          numeroDecimal = 0;
+          selectedDecena = false;
+          selectedUnidad = false;
+          selectedDecimal = true;
+        }else{
+          numeroDecena = 0;
+          selectedDecena = true;
+          selectedUnidad = false;
+          selectedDecimal = false;
+        }
+
       });
     }else if(selectedDecimal){
       setState(() {
-        numeroDecimal = 0;
+        numeroUnidad = 0;
         selectedDecena = false;
         selectedUnidad = true;
         selectedDecimal = false;

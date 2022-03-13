@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/capacidad/evaluacion_capacidad_controller.dart';
@@ -20,6 +21,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/preview_image_view.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
@@ -592,25 +594,44 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        CachedNetworkImage(
-                                          placeholder: (context, url) => Container(
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                          imageUrl: controller.evaluacionCapacidadUi.personaUi?.foto??"",
-                                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 24,),
-                                          imageBuilder: (context, imageProvider) =>
-                                              Container(
-                                                  width: 24,
-                                                  height: 24,
-                                                  margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 0),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                                                    image: DecorationImage(
-                                                      image: imageProvider,
-                                                      fit: BoxFit.cover,
+                                        InkWell(
+                                          onTap: (){
+                                            Navigator.of(context).push(PreviewImageView.createRoute(controller.evaluacionCapacidadUi.personaUi?.foto));
+                                          },
+                                          child: Container(
+                                            width:  ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
+                                            height:  ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
+                                            margin: EdgeInsets.only(
+                                                right:  ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16), left: 0, top: 0, bottom: 0),
+                                            child: CachedNetworkImage(
+                                              placeholder: (context, url) => SizedBox(
+                                                child: Shimmer.fromColors(
+                                                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                  highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                    decoration: BoxDecoration(
+                                                        color: AppTheme.blue,
+                                                        shape: BoxShape.circle
                                                     ),
-                                                  )
+                                                    alignment: Alignment.center,
+                                                  ),
+                                                ),
                                               ),
+                                              imageUrl: controller.evaluacionCapacidadUi.personaUi?.foto??"",
+                                              errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded),
+                                              imageBuilder: (context, imageProvider) =>
+                                                  Container(
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      )
+                                                  ),
+                                            ),
+                                          ),
                                         ),
                                         Text(
                                           controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"",
@@ -765,7 +786,7 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
           cellDimensions: CellDimensions.variableColumnWidth(
               stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 45),
               stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 180),
-              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 100),
+              contentCellHeight: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 90),
               columnWidths: tableTipoNotacolumnWidths
           ),
           //cellAlignments: CellAlignments.,
@@ -889,81 +910,170 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          child: Text(("${rubricaEvaluacionUi.titulo??""}".trim()),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis ,
-                            style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
-                                fontWeight: FontWeight.w900,
-                                fontFamily: AppTheme.fontTTNorms
-                            ),),
-                        ),
-                        if(rubrica)
-                          Container(
-                            padding: EdgeInsets.only(
-                                top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2)
+                        rubrica?Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(
+                                  top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2),
+                                  bottom: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2)
+                              ),
+                              child: Text("${rubricaEvaluacionUi.tituloRubroCabecera??""}".trim(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis ,
+                                style: TextStyle(
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: AppTheme.fontTTNorms
+                                  //fontStyle: FontStyle.italic
+                                ),),
                             ),
-                            child: Text("- ${rubricaEvaluacionUi.tituloRubroCabecera??""}",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis ,
-                              style: TextStyle(
-                                fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 9),
-                                fontWeight: FontWeight.w700,
-                                color: AppTheme.greyDarken1,
-                                //fontStyle: FontStyle.italic
-                              ),),
-                          ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, rubrica?4:6)
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.only(
-                                      right: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 6)
+                            Container(
+                              padding: EdgeInsets.only(
+                                  top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 4)
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        right: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 6)
+                                    ),
+                                    child:  (){
+                                      switch(controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
+                                        case TipoCompetenciaUi.BASE:
+                                          return CachedNetworkImage(
+                                            height: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                            width: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                            imageUrl: controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.url??"",
+                                            placeholder: (context, url) => SizedBox(
+                                              child: Shimmer.fromColors(
+                                                baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                  decoration: BoxDecoration(
+                                                      color: AppTheme.blue,
+                                                      shape: BoxShape.circle
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 8, height: 8,),
+                                          );
+                                        case TipoCompetenciaUi.TRANSVERSAL:
+                                          return SvgPicture.asset(AppIcon.ic_transversal,
+                                              width: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                              height: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12)
+                                          );
+                                        case TipoCompetenciaUi.ENFOQUE:
+                                          return SvgPicture.asset(AppIcon.ic_enfoque,
+                                              width: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                              height: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12)
+                                          );
+                                      }
+                                    }(),
                                   ),
-                                  child:  (){
-                                    switch(controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
-                                      case TipoCompetenciaUi.BASE:
-                                        return CachedNetworkImage(
-                                          height: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
-                                          width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
-                                          imageUrl: controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.url??"",
-                                          placeholder: (context, url) => CircularProgressIndicator(),
-                                          errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 8, height: 8,),
-                                        );
-                                      case TipoCompetenciaUi.TRANSVERSAL:
-                                        return SvgPicture.asset(AppIcon.ic_transversal,
-                                          width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
-                                          height: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12)
-                                        );
-                                      case TipoCompetenciaUi.ENFOQUE:
-                                        return SvgPicture.asset(AppIcon.ic_enfoque,
-                                          width: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12),
-                                          height: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 12)
-                                        );
-                                    }
-                                  }(),
-                                ),
-                                Expanded(
-                                  child: Text((rubricaEvaluacionUi.criterioUi?.icdTitulo?.trim()??""),
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis ,
-                                    style: TextStyle(
-                                        fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
-                                        fontFamily: AppTheme.fontTTNorms,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppTheme.textGrey
-                                    )
-                                  ),
-                                )
-                              ],
+                                  Expanded(
+                                    child: Text((rubricaEvaluacionUi.titulo?.trim()??""),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis ,
+                                        style: TextStyle(
+                                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                                            fontFamily: AppTheme.fontTTNorms,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppTheme.textGrey
+                                        )
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
+                        ):
+                        Column(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(
+                                  top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2),
+                                  bottom: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 2)
+                              ),
+                              child: Text("${rubricaEvaluacionUi.titulo??""}".trim(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis ,
+                                style: TextStyle(
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 10),
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: AppTheme.fontTTNorms
+                                  //fontStyle: FontStyle.italic
+                                ),),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(
+                                  top: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context,4)
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        right: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 6)
+                                    ),
+                                    child:  (){
+                                      switch(controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.tipoCompetenciaUi??TipoCompetenciaUi.BASE){
+                                        case TipoCompetenciaUi.BASE:
+                                          return CachedNetworkImage(
+                                            height: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                            width: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                            imageUrl: controller.evaluacionCapacidadUi.capacidadUi?.competenciaUi?.url??"",
+                                            placeholder: (context, url) => SizedBox(
+                                              child: Shimmer.fromColors(
+                                                baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                  decoration: BoxDecoration(
+                                                      color: AppTheme.blue,
+                                                      shape: BoxShape.circle
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget: (context, url, error) => SvgPicture.asset(AppIcon.ic_criterio_2, width: 8, height: 8,),
+                                          );
+                                        case TipoCompetenciaUi.TRANSVERSAL:
+                                          return SvgPicture.asset(AppIcon.ic_transversal,
+                                              width: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                              height: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12)
+                                          );
+                                        case TipoCompetenciaUi.ENFOQUE:
+                                          return SvgPicture.asset(AppIcon.ic_enfoque,
+                                              width: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12),
+                                              height: ColumnCountProvider.aspectRatioForWidthTablePesoCriterio(context, 12)
+                                          );
+                                      }
+                                    }(),
+                                  ),
+                                  Expanded(
+                                    child: Text((rubricaEvaluacionUi.criterioUi?.icdTitulo?.trim()??""),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis ,
+                                        style: TextStyle(
+                                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 10),
+                                            fontFamily: AppTheme.fontTTNorms,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppTheme.textGrey
+                                        )
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
 
                       ],

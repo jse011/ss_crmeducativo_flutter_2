@@ -56,10 +56,13 @@ class DomainTools {
 
   static DateTime convertDateTimePtBR(String? fecha, String? hora) {
     DateTime parsedDate = DateTime.parse('0001-11-30 00:00:00.000');
+    print('fecha: $fecha');
+    print('hora: $hora');
     try {
-      String day = "0001";
+      String day = "01";
       String month = "11";
       String year = "30";
+
       List<String>? validadeSplit = fecha?.split('/');
 
       if (validadeSplit != null && validadeSplit.length > 1) {
@@ -75,7 +78,7 @@ class DomainTools {
       }
     } catch (e) {
       print("Error al convertir string to DateTime" +
-          (fecha != null ? fecha : "") + " " + (hora != null ? hora : ""));
+          (fecha != null ? fecha : "") + " " + (hora != null ? hora : "")+ " ${e.toString()}");
     }
 
     return parsedDate;
@@ -166,7 +169,7 @@ class DomainTools {
   }
 
   static String changeTime12Hour(int hr, int min) {
-    print("tiempoFechaCreacionTarea: ${hr} ${min}");
+    //print("tiempoFechaCreacionTarea: ${hr} ${min}");
     String format_min = "";
     if(min<10){
       format_min = "0${min}";
@@ -174,6 +177,24 @@ class DomainTools {
       format_min =  "${min}";
     }
     String s =  "${hr==12?"12":hr%12}:${format_min} ${((hr>=12) ? "p.m." : "a.m.")}";
+
+    return s;
+  }
+
+  static String changeTime12HourSecons(int hr, int min, int secons) {
+    String format_min = "";
+    String format_secons = "";
+    if(min<10){
+      format_min = "0${min}";
+    }else {
+      format_min =  "${min}";
+    }
+    if(secons<10){
+      format_secons = "0${secons}";
+    }else {
+      format_secons =  "${secons}";
+    }
+    String s =  "${hr==12?"12":hr%12}:${format_min}:${format_secons} ${((hr>=12) ? "p.m." : "a.m.")}";
 
     return s;
   }
@@ -430,6 +451,39 @@ class DomainTools {
       return false;
     }
     return true;
+  }
+
+  static String? getNombreDia(int? day) {
+    var vobj_days = ["Dom", "Lun", "Mart", "Mié", "Jue", "Vie", "Sáb"];
+    try{
+      return vobj_days[(day??0)-1];
+    } catch(e){
+      return null;
+    }
+
+  }
+
+  static String? getNombreMes(int? month) {
+    var vobj_Meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ];
+
+    try{
+      return vobj_Meses[(month??0)-1];
+    } catch(e){
+      return null;
+    }
   }
 
 }

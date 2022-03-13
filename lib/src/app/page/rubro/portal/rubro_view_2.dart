@@ -27,6 +27,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/Item_rubro.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/error_handler.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/preview_image_view.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_periodo_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_resultado_repository.dart';
@@ -618,7 +619,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                     InkWell(
                                       onTap: ()=> controller.onClickShowDialogInformar(),
                                       child: Container(
-                                        width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 100),
+                                        width:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 110),
                                         padding: EdgeInsets.only(
                                             left:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16) ,
                                             right:  ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 16),
@@ -1368,61 +1369,75 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                     rowsTitleBuilder: (i) {
                       dynamic o = controller.rowList2[i];
                       if(o is PersonaUi){
-                        return  Container(
-                            constraints: BoxConstraints.expand(),
-                            child: Row(
-                              children: [
-                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4))),
-                                Expanded(
-                                    child: Text((i+1).toString() + ".",
-                                        style: TextStyle(
-                                          color: AppTheme.white,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
-                                          fontFamily: AppTheme.fontTTNorms,
-                                        )
-                                    )
-                                ),
-                                Container(
-                                  height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
-                                  width: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
-                                  margin: EdgeInsets.only(
-                                      right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 3)
+                        return  InkWell(
+                          onTap: (){
+                            Navigator.of(context).push(PreviewImageView.createRoute(o.foto));
+                          },
+                          child: Container(
+                              constraints: BoxConstraints.expand(),
+                              child: Row(
+                                children: [
+                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4))),
+                                  Expanded(
+                                      child: Text((i+1).toString() + ".",
+                                          style: TextStyle(
+                                            color: AppTheme.white,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 11),
+                                            fontFamily: AppTheme.fontTTNorms,
+                                          )
+                                      )
                                   ),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: HexColor(controller.cursosUi.color3),
-                                  ),
-                                  child: true?
-                                  CachedNetworkImage(
-                                    placeholder: (context, url) => CircularProgressIndicator(),
-                                    imageUrl: o.foto??"",
-                                    errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded,
-                                        size: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 80)
+                                  Container(
+                                    height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
+                                    width: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
+                                    margin: EdgeInsets.only(
+                                        right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 3)
                                     ),
-                                    imageBuilder: (context, imageProvider) =>
-                                        Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: HexColor(controller.cursosUi.color3),
+                                    ),
+                                    child: CachedNetworkImage(
+                                      placeholder: (context, url) => SizedBox(
+                                        child: Shimmer.fromColors(
+                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                          highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                          child: Container(
+                                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(15)),
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )
+                                                color: HexColor(controller.cursosUi.color2),
+                                                shape: BoxShape.circle
+                                            ),
+                                            alignment: Alignment.center,
+                                          ),
                                         ),
-                                  ):
-                                  Container(),
-                                ),
-                                Padding(padding: EdgeInsets.all(1)),
-                              ],
-                            ),
-                            decoration: BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                                  right: BorderSide(color: HexColor(controller.cursosUi.color3)),
-                                ),
-                                color: HexColor(controller.cursosUi.color2)
-                            )
+                                      ),
+                                      imageUrl: o.foto??"",
+                                      errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded),
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(Radius.circular(15)),
+                                                image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                          ),
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(1)),
+                                ],
+                              ),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                    right: BorderSide(color: HexColor(controller.cursosUi.color3)),
+                                  ),
+                                  color: HexColor(controller.cursosUi.color2)
+                              )
+                          ),
                         );
                       }else{
                         return  Container();
@@ -1763,7 +1778,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 ),
                 Padding(padding: EdgeInsets.all(4)),
                 Center(
-                  child: Text("Seleciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                  child: Text("Selecciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                 )
               ],
             ):
@@ -2337,7 +2352,21 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
               imageUrl: valorTipoNotaUi.icono??"",
               placeholder: (context, url) => Center(
                   child: SizedBox(
-                    child: CircularProgressIndicator(),
+                    child: SizedBox(
+                      child: Shimmer.fromColors(
+                        baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                        highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                        child: Container(
+                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                              color: AppTheme.colorPrimary,
+                              shape: BoxShape.rectangle
+                          ),
+                          alignment: Alignment.center,
+                        ),
+                      ),
+                    ),
                     height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
                     width: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
                   )

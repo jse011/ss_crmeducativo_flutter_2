@@ -2719,3 +2719,77 @@ Map<String, dynamic> _$BESesionHoyDocenteSerialToJson(
       'color1': instance.color1,
       'habilitadoProceso': instance.habilitadoProceso,
     };
+
+PreguntaFirebaseSerial _$PreguntaFirebaseSerialFromJson(
+        Map<String, dynamic> json) =>
+    PreguntaFirebaseSerial(
+      PreguntaPortalAlumnoId: json['PreguntaPortalAlumnoId'] as String?,
+      Pregunta: json['Pregunta'] as String?,
+      NivelLogroId: json['NivelLogroId'] as String?,
+      DesempenioIcdId: json['DesempenioIcdId'] as String?,
+    )..RubroEvalProcesoId = json['RubroEvalProcesoId'] as String?;
+
+Map<String, dynamic> _$PreguntaFirebaseSerialToJson(
+        PreguntaFirebaseSerial instance) =>
+    <String, dynamic>{
+      'PreguntaPortalAlumnoId': instance.PreguntaPortalAlumnoId,
+      'Pregunta': instance.Pregunta,
+      'NivelLogroId': instance.NivelLogroId,
+      'DesempenioIcdId': instance.DesempenioIcdId,
+      'RubroEvalProcesoId': instance.RubroEvalProcesoId,
+    };
+
+TareaFirebaseSerial _$TareaFirebaseSerialFromJson(Map<String, dynamic> json) =>
+    TareaFirebaseSerial(
+      TareaId: json['TareaId'] as String?,
+      Titulo: json['Titulo'] as String?,
+      RubroEvalProceso: json['RubroEvalProceso'] as Map<String, dynamic>?,
+    );
+
+Map<String, dynamic> _$TareaFirebaseSerialToJson(
+        TareaFirebaseSerial instance) =>
+    <String, dynamic>{
+      'TareaId': instance.TareaId,
+      'Titulo': instance.Titulo,
+      'RubroEvalProceso': instance.RubroEvalProceso,
+    };
+
+InstrumetosFirebaseSerial _$InstrumetosFirebaseSerialFromJson(
+        Map<String, dynamic> json) =>
+    InstrumetosFirebaseSerial(
+      CantidadPreguntas: json['CantidadPreguntas'] as int?,
+      FechaCierre: json['FechaCierre'] as String?,
+      FechaLanzamiento: json['FechaLanzamiento'] as String?,
+      Icono: json['Icono'] as String?,
+      Imagen: json['Imagen'] as String?,
+      InstrumentoEvalId: json['InstrumentoEvalId'] as int?,
+      Nombre: json['Nombre'] as String?,
+      RubroEvaluacionId: json['RubroEvaluacionId'] as String?,
+      SesionAprendizajeId: json['SesionAprendizajeId'] as int?,
+      SilaboEventoId: json['SilaboEventoId'] as int?,
+      TipoNotaId: json['TipoNotaId'] as String?,
+      variables: (json['variables'] as List<dynamic>?)
+          ?.map((e) => e as Map<String, dynamic>)
+          .toList(),
+      Version: json['Version'] as int?,
+      puntaje: json['puntaje'] as int?,
+    );
+
+Map<String, dynamic> _$InstrumetosFirebaseSerialToJson(
+        InstrumetosFirebaseSerial instance) =>
+    <String, dynamic>{
+      'CantidadPreguntas': instance.CantidadPreguntas,
+      'FechaCierre': instance.FechaCierre,
+      'FechaLanzamiento': instance.FechaLanzamiento,
+      'Icono': instance.Icono,
+      'Imagen': instance.Imagen,
+      'InstrumentoEvalId': instance.InstrumentoEvalId,
+      'Nombre': instance.Nombre,
+      'RubroEvaluacionId': instance.RubroEvaluacionId,
+      'SesionAprendizajeId': instance.SesionAprendizajeId,
+      'SilaboEventoId': instance.SilaboEventoId,
+      'TipoNotaId': instance.TipoNotaId,
+      'variables': instance.variables,
+      'Version': instance.Version,
+      'puntaje': instance.puntaje,
+    };

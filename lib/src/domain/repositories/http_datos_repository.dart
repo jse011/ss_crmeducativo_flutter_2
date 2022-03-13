@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:ss_crmeducativo_2/src/domain/entities/asistencia_qr_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_firebase_sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
@@ -38,13 +40,18 @@ abstract class HttpDatosRepository{
   Future<List<dynamic>?> getSesionesHoy(String urlServidorLocal, int? anioAcademicoId, int? docenteId);
   Future<Map<String, dynamic>?> getAprendizajeSesion(String urlServidorLocal, int? sesionAprendizajeId);
   Future<HttpStream?> uploadFilePersona(String urlServidorLocal, PersonaUi? personaUi, File? foto, bool? soloCambiarFoto, bool? removeFoto, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen);
-  Future<bool?> saveEstadoSesion(String urlServidorLocal, int? sesionAprendizajeId, int estado_hecho, int usuarioId);
+  Future<bool?> saveEstadoSesion(String urlServidorLocal, int? sesionAprendizajeId, int estado_hecho, List<EvaluacionFirebaseSesionUi> evaluacionFbSesionUiList, int usuarioId);
+  Future<Map<String, dynamic>?> saveEstadoSesion2(String urlServidorLocal, int? sesionAprendizajeId, int? unidadAprendizajeId, int? silaboEventoId, int? periodoId, int? calendarioPeriodoId, List<EvaluacionFirebaseSesionUi> evaluacionFbSesionUiList, int usuarioId, int personaId);
   Future<List<dynamic>?> getActividadesSesion(String urlServidorLocal, int? sesionAprendizajeId);
   Future<Map<String, dynamic>?> updateUsuario(String urlServidorLocal, int usuarioId);
   Future<bool?> cerrarCursoDocente(String urlServidorLocal, int? cargaCursoId, int? calendarioPeriodoId, int usuarioId);
   Future<bool?> updResultadoFlutter(String urlServidorLocal, int? silaboEventoId, int? cargaCursoId, int? CalendarioPeriodoId, int usuarioId, List rubrosNoEnviados);
   Future<HttpStream?> uploadFileRubroEvidencia(String urlServidorLocal, String nombre, File file, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen);
-
+  Future<Map<String, dynamic>?> getFirebaseGetEvaluaciones(String urlServidorLocal, int? silaboEventoId, int? tipoPeriodoId, int? unidadAprendizajeId, int? sesionAprendizajeId);
+  Future<String?> getFechaActualServidor(String urlServidorLocal);
+  Future<HttpStream?> uploadAsistenciaQR(String urlServidorLocal, String? codigo, int? anio, int? mes, int? dia, int? hora, int? minuto, int? segundo, HttpValueSuccess httpValueSuccess);
+  Future<bool?> saveListaAsistenciaQR(String urlServidorLocal,List<AsistenciaQRUi> asistenciaQRUiList );
+  Future<List<dynamic>?> getListaAsistencia(String urlServidorLocal, int anioAcademicoId, int min, int max, String search, String fechaInicio, String fechaFin);
 }
 
 abstract class HttpStream {

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/portal/rubro_presenter.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/table_resultado.dart';
@@ -407,8 +408,13 @@ class RubroController extends Controller{
 
   void onSelectedCalendarioPeriodo(CalendarioPeriodoUI? calendarioPeriodoUi) {
     this._calendarioPeriodoUI = calendarioPeriodoUi;
-    //_calendarioPeriodoUI?.habilitadoProceso = 1;
-    //_calendarioPeriodoUI?.habilitadoResultado = 1;
+    if (kReleaseMode) {
+
+    } else {
+      _calendarioPeriodoUI?.habilitadoProceso = 1;
+      _calendarioPeriodoUI?.habilitadoResultado = 1;
+    }
+
     for(var item in  _calendarioPeriodoList){
       item.selected = false;
     }
@@ -452,6 +458,7 @@ class RubroController extends Controller{
   void respuestaFormularioCrearRubro() {
     _progress = true;
     refreshUI();
+    print("respuestaFormularioCrearRubro");
     onListarTabsRubroEvaluacion();
   }
 
@@ -516,6 +523,7 @@ class RubroController extends Controller{
     /*Se limpia la tabla competencia*/
 
     if(!_listar_eval_sesiones){
+      print("onGetRubricaList");
       presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
     }else{
       presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);

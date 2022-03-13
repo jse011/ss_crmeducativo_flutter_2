@@ -11,6 +11,7 @@ class AppIcon {
   static const String ic_curso_agenda = "assets/icons/pack1/049-mortarboard.svg";
   static const String ic_curso_foto_alumno = "assets/icons/pack1/039-id card.svg";
   static const String ic_curso_editar_usuario = "assets/icons/pack1/028-sculpture.svg";
+  static const String ic_curso_asistencia = "assets/icons/pack1/022-school.svg";
 
   //static const String ic_curso_exam = "assets/icons/ic_documento.svg";
   //https://www.flaticon.es/packs/project-management-50

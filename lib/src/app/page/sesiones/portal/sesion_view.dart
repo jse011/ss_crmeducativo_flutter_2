@@ -48,7 +48,8 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
 
 
 
-  _CursoViewState(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI) : super(SesionController(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI, MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorRubroRepository(), MoorUnidadSesionRepository()));
+  _CursoViewState(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI) :
+        super(SesionController(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI, MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorRubroRepository(), MoorUnidadSesionRepository()));
 
   @override
   void initState() {

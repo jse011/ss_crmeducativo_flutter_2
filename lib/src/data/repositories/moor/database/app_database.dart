@@ -11,6 +11,7 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/tipo_evento.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/agenda_evento/usuario_evento.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/anio_academico.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/asistencia_qr/asistencia_qr.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/aula.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/calendario_academico.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/calendario_periodo.dart';
@@ -90,10 +91,10 @@ part 'app_database.g.dart';
   EvaluacionProceso, RubroCampotematico, RubroComentario, RubroEvalRNPFormula, ContactoDocente, CriterioRubroEvaluacion, Calendario, CalendarioListaUsuario, Evento, EventoPersona,
   ListaUsuarioDetalle, ListaUsuarios, PersonaEvento, RelacionesEvento, TipoEvento, UsuarioEvento, UnidadEvento, SesionEvento, RelUnidadEvento, RubroUpdateServidor, CalendarioPeriodoCargaCurso,
   TipoNotaResultado, ValorTipoNotaResultado, Tarea, TareaUnidad, TareaAlumno, TareaAlumnoArchivo, TareaRecursoDidactico, EventoAdjunto, TareaEvalDetalle, CompetenciaSesion, DesempenioIcdSesion, CampotematicoSesion,
-  ActividadSesion, InstrumentoEvaluacionSesion, RecursosActividadSesion, RecursoSesion])
+  ActividadSesion, InstrumentoEvaluacionSesion, RecursosActividadSesion, RecursoSesion, AsistenciaQR])
 class AppDataBase extends _$AppDataBase {
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   static final AppDataBase _singleton = AppDataBase._internal();
 
@@ -119,6 +120,14 @@ class AppDataBase extends _$AppDataBase {
           await m.createTable(tareaAlumno);
           // you also need this line for every other table not created in the first version
         }
+        print("AppDataBase from ${from}");
+        print("AppDataBase to ${to}");
+        if (from == 1) {
+          await m.createTable(asistenciaQR);
+          // you also need this line for every other table not created in the first version
+        }
+
+
       },
     );
   }

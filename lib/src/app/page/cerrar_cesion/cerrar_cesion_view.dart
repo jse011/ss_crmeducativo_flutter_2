@@ -66,7 +66,7 @@ class _CerrarSesionViewState extends ViewState<CerrarSesionView, CerrarSesionCon
                                   fontFamily: AppTheme.fontTTNormsMedium
                               ),),
                               Padding(padding: EdgeInsets.all(8),),
-                              Text("¿Esta seguro de cerrar su sesión de ${ChangeAppTheme.nameApp()}?",
+                              Text("¿Está seguro de cerrar su sesión de ${ChangeAppTheme.nameApp()}?",
                                 style: TextStyle(
                                     fontSize: 14,
                                     height: 1.5

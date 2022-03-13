@@ -70,7 +70,7 @@ class CalcularEvaluacionResultados {
     TipoNotaUi? tipoNotaUi = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi;
 
     evaluacionTransformadaUi?.nota = TransformarValoTipoNota.transformarNota(evaluacionUi?.nota, tipoNotaUi, evaluacionUi?.valorTipoNotaUi, tipoNotaUiResultado);
-
+    print("actualizarEvaluacionTransformada: ${evaluacionUi?.nota}");
     if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS||
         tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
       if(evaluacionUi?.valorTipoNotaUi!=null){
@@ -95,6 +95,7 @@ class CalcularEvaluacionResultados {
         tipoNotaUiResultado?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
       if(evaluacionTransformadaUi?.valorTipoNotaUi!=null){
         ValorTipoNotaUi? valorTipoNotaUiProceso = TransformarValoTipoNota.transformarTipoNota(evaluacionTransformadaUi?.nota, tipoNotaUiResultado, evaluacionTransformadaUi?.valorTipoNotaUi, evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi);
+        print("actualizarEvaluacionOriginal: ${valorTipoNotaUiProceso?.alias}");
         evaluacionUi?.valorTipoNotaId = valorTipoNotaUiProceso?.valorTipoNotaId;
         evaluacionUi?.valorTipoNotaUi = valorTipoNotaUiProceso;
       }else{

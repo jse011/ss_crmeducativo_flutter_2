@@ -78,6 +78,7 @@ class ErrorHandler {
                           Expanded(child: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).pop(true);
+                              data?.callback?.call();
                             },
                             style: ElevatedButton.styleFrom(
                               primary: AppTheme.nearlyDarkBlue,
@@ -115,6 +116,6 @@ class ErrorData{
   String? message;
   String? title;
   IconData? icon = Ionicons.person;
-
-  ErrorData({this.message, this.title, this.icon});
+  Function? callback;
+  ErrorData({this.message, this.title, this.icon, this.callback});
 }

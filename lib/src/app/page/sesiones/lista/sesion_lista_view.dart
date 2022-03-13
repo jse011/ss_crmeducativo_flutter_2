@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
@@ -13,12 +14,14 @@ import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/tipo_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/progress_bar.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_calendario_periodo_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_sesion_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_firebase_sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
@@ -78,6 +81,14 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
 
   Widget get view => ControlledWidgetBuilder<SesionListaController>(
       builder: (context, controller) {
+
+        SchedulerBinding.instance?.addPostFrameCallback((_) {
+          if(controller.showRealizarSesion){
+            _showRealizarSesion(context, controller);
+            controller.successShowRealizarSesion();
+          }
+        });
+
         return Scaffold(
           extendBody: true,
           backgroundColor: AppTheme.background,
@@ -213,7 +224,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                           ),
                           Padding(padding: EdgeInsets.all(4)),
                           Center(
-                            child: Text("Seleciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                            child: Text("Selecciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                           )
                         ],
                       ):
@@ -607,34 +618,40 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
             ),
           ),
           Positioned(
-            bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
-            right: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+            bottom: 0,
+            right: 0,
             child: InkWell(
               onTap: (){
-                _showRealizarSesion(context, controller, sesionUi);
+                controller.showEvaluacionSesionesFirebase(sesionUi, unidadUi);
               },
-              child: Material(
-                color: TipoSession(sesionUi.sesionEstado).color.withOpacity(0.8),
-                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
-                child: Container(
-                  margin: EdgeInsets.all(1),
-                  decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 7)) // use instead of BorderRadius.all(Radius.circular(20))
-                  ),
+              child: Container(
+                margin: EdgeInsets.only(
+                  bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+                  right: ColumnCountProvider.aspectRatioForWidthSesion(context, 12),
+                ),
+                child: Material(
+                  color: TipoSession(sesionUi.sesionEstado).color.withOpacity(0.8),
+                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
                   child: Container(
-                      padding: EdgeInsets.only(
-                          top: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
-                          left: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
-                          bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
-                          right: ColumnCountProvider.aspectRatioForWidthSesion(context, 4)),
-                      child: Text(TipoSession(sesionUi.sesionEstado).nombre,
-                        style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 9),
-                            color: TipoSession(sesionUi.sesionEstado).color.withOpacity(0.9),
-                            fontFamily: AppTheme.fontTTNorms,
-                            fontWeight: FontWeight.w700
-                        ),)
+                    margin: EdgeInsets.all(1),
+                    decoration: BoxDecoration(
+                        color: AppTheme.white,
+                        borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 7)) // use instead of BorderRadius.all(Radius.circular(20))
+                    ),
+                    child: Container(
+                        padding: EdgeInsets.only(
+                            top: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                            left: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                            bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 4),
+                            right: ColumnCountProvider.aspectRatioForWidthSesion(context, 4)),
+                        child: Text(TipoSession(sesionUi.sesionEstado).nombre,
+                          style: TextStyle(
+                              fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 9),
+                              color: TipoSession(sesionUi.sesionEstado).color.withOpacity(0.9),
+                              fontFamily: AppTheme.fontTTNorms,
+                              fontWeight: FontWeight.w700
+                          ),)
+                    ),
                   ),
                 ),
               ),
@@ -645,116 +662,401 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
     );
   }
 
-  Future<bool?> _showRealizarSesion(BuildContext context, SesionListaController controller, SesionUi? sesionUi) async {
+  Future<bool?> _showRealizarSesion(BuildContext context, SesionListaController controller) async {
+    void Function(VoidCallback fn)? refresh = null;
+    dialogState(){
+      refresh?.call((){});
+    };
+    controller.addListener(dialogState);
     return await showGeneralDialog(
         context: context,
         pageBuilder: (BuildContext buildContext,
             Animation<double> animation,
             Animation<double> secondaryAnimation) {
-          return ArsProgressWidget(
-              blur: 2,
-              backgroundColor: Color(0x33000000),
-              animationDuration: Duration(milliseconds: 500),
-              loadingWidget: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16), // if you need this
-                  side: BorderSide(
-                    color: Colors.grey.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            child: Icon(Ionicons.checkbox_outline, size: 35, color: AppTheme.white,),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppTheme.colorSesion),
-                          ),
-                          Padding(padding: EdgeInsets.all(8)),
-                          Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(padding: EdgeInsets.all(8),
-                                    child: Text("Sesión realizada", style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: AppTheme.fontTTNormsMedium
-                                    ),),
-                                  ),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("¿Seguro de terminar la sesión? ",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        height: 1.5
-                                    ),),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                ],
-                              )
-                          )
-                        ],
+          return StatefulBuilder(
+            builder: (BuildContext context, setState) {
+              refresh = setState;
+              return ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500),
+                  loadingWidget: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16), // if you need this
+                      side: BorderSide(
+                        color: Colors.grey.withOpacity(0.2),
+                        width: 1,
                       ),
-                      Row(
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(true);
-                                },
-                                child: Text('Cancelar'),
-                                style: OutlinedButton.styleFrom(
-                                  primary: AppTheme.colorSesion,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                child: Icon(Ionicons.checkbox_outline, size: 35, color: AppTheme.white,),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppTheme.colorSesion),
+                              ),
+                              Padding(padding: EdgeInsets.all(8)),
+                              Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(padding: EdgeInsets.all(8),
+                                        child: Text("Sesión realizada", style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: AppTheme.fontTTNormsMedium
+                                        ),),
+                                      ),
+                                      Padding(padding: EdgeInsets.all(4),),
+                                    ],
+                                  )
+                              )
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.all(4)),
+                          Flexible(
+                              child: SingleChildScrollView(
+                                padding: EdgeInsets.only(
+                                  left: 8,
+                                  right: 8
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ((controller.msgRealizarSesion??"").isNotEmpty)?
+                                    Column(
+                                      children: [
+                                        Padding(padding: EdgeInsets.all(4),),
+                                        Text("Error en la evaluación. Se desmarcaron los recursos que lo causaron, reintente otra vez.",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              color: AppTheme.red
+                                          ),),
+                                      ],
+                                    ):Container(),
+                                    Padding(padding: EdgeInsets.all(4),),
+                                    Text("Al aceptar se procesarán los siguientes recursos:",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: AppTheme.fontTTNorms
+                                      ),),
+                                    (controller.progressFirebase)?
+                                    Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    ):
+                                    Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        (controller.evaluacionFirebaseUiMap?.isNotEmpty??false)?
+                                        ListView.builder(
+                                          padding: EdgeInsets.only(top: 8),
+                                          shrinkWrap: true,
+                                          itemCount: controller.evaluacionFirebaseUiMap?.length??0,
+                                          physics: NeverScrollableScrollPhysics(),
+                                          itemBuilder: (BuildContext context, int index) {
+                                            EvaluacionFirebaseTipoUi? key = controller.evaluacionFirebaseUiMap?.keys.elementAt(index);
+                                            List<EvaluacionFirebaseSesionUi>? evaluacionFirebaseSesionUiList = controller.evaluacionFirebaseUiMap?[key];
+                                            return Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("${index+1}. ${(){
+                                                  switch(key){
+                                                    case EvaluacionFirebaseTipoUi.TAREA:
+                                                      return "Las evaluaciones de las tareas";
+                                                    case EvaluacionFirebaseTipoUi.INSTRUMENTO:
+                                                      return "Las evaluaciones de los instrumentos";
+                                                    case EvaluacionFirebaseTipoUi.PREGUNTA:
+                                                      return "Las evaluaciones de las preguntas";
+                                                    case EvaluacionFirebaseTipoUi.TAREAUNIDAD:
+                                                      return "Las evaluaciones de las tareas de unidad";
+                                                    default:
+                                                      return "Las evaluaciones de las tareas";
+                                                  }
+                                                }()}",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: AppTheme.fontTTNorms,
+                                                      fontWeight: FontWeight.w700
+                                                  ),),
+                                                ListView.builder(
+                                                    padding: EdgeInsets.only(top: 4),
+                                                    shrinkWrap: true,
+                                                    itemCount: evaluacionFirebaseSesionUiList?.length??0,
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                    itemBuilder: (BuildContext context, int index) {
+                                                      EvaluacionFirebaseSesionUi evaluacionFirebaseSesionUi = evaluacionFirebaseSesionUiList![index];
+                                                      return Row(
+                                                        children: [
+                                                          Checkbox(
+                                                              value: controller.checkedMap?[evaluacionFirebaseSesionUi]??false,
+                                                              onChanged: (check){
+                                                                setState((){
+                                                                  controller.onClickEvaluacionFirebase(evaluacionFirebaseSesionUi);
+                                                                });
+                                                              }),
+                                                          Expanded(child: Text("${evaluacionFirebaseSesionUi.nombre}",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                              )
+                                                          ))
+                                                        ],
+                                                      );
+                                                    }),
+                                              ],
+                                            );
+
+                                          },
+                                        ):Container(
+                                          margin: EdgeInsets.only(top: 8),
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                          ),
+                                          child: FDottedLine(
+                                            color: AppTheme.white,
+                                            strokeWidth: 3.0,
+                                            dottedLength: 10.0,
+                                            space: 3.0,
+                                            corner: FDottedLineCorner.all(14.0),
+
+                                            /// add widget
+                                            child: Container(
+                                              padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
+                                              alignment: Alignment.center,
+                                              child: Text("No se encontraron recursos a enviar en la sesión",  style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  color: AppTheme.white
+                                              ),),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(padding: EdgeInsets.all(4)),
+                                        InkWell(
+                                          onTap: (){
+                                            if(!controller.progressFirebase){
+                                              controller.onClickAgregarUnidadTarea();
+                                            }
+                                          },
+                                          child: Text("Agregar tareas de mi unidad",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  color: controller.progressFirebase?AppTheme.white:AppTheme.colorAccent
+                                              )
+                                          ),
+                                        ),
+                                        (controller.agregarunidadTarea??false)?
+                                        (controller.evaluacionFirebaseUiUnidadList?.isNotEmpty??false)?
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(padding: EdgeInsets.all(8)),
+                                            Text("${(controller.evaluacionFirebaseUiMap?.length??0)+2}. Las evaluaciones de las tareas de unidad",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontFamily: AppTheme.fontTTNorms,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                            ListView.builder(
+                                                padding: EdgeInsets.only(top: 4),
+                                                shrinkWrap: true,
+                                                itemCount: controller.evaluacionFirebaseUiUnidadList?.length??0,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                itemBuilder: (BuildContext context, int index) {
+                                                  EvaluacionFirebaseSesionUi evaluacionFirebaseSesionUi = controller.evaluacionFirebaseUiUnidadList![index];
+                                                  return Row(
+                                                    children: [
+                                                      Checkbox(
+                                                          value: controller.checkedMap?[evaluacionFirebaseSesionUi]??false,
+                                                          onChanged: (check){
+                                                            setState((){
+                                                              controller.onClickEvaluacionFirebase(evaluacionFirebaseSesionUi);
+                                                            });
+                                                          }),
+                                                      Expanded(child: Text("${evaluacionFirebaseSesionUi.nombre}",
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                          )
+                                                      ))
+                                                    ],
+                                                  );
+                                                }),
+                                          ],
+                                        ):Container(
+                                          margin: EdgeInsets.only(top: 8),
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                            borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                          ),
+                                          child: FDottedLine(
+                                            color: AppTheme.white,
+                                            strokeWidth: 3.0,
+                                            dottedLength: 10.0,
+                                            space: 3.0,
+                                            corner: FDottedLineCorner.all(14.0),
+
+                                            /// add widget
+                                            child: Container(
+                                              padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
+                                              alignment: Alignment.center,
+                                              child: Text("No se encontraron tareas a enviar en la unidad",  style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  color: AppTheme.white
+                                              ),),
+                                            ),
+                                          ),
+                                        ):Container(),
+                                        Padding(padding: EdgeInsets.all(8)),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               )
                           ),
                           Padding(padding: EdgeInsets.all(8)),
-                          Expanded(child: ElevatedButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop(true);
-                              await controller.onClickSessionHecho(sesionUi);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: AppTheme.colorSesion,
-                              onPrimary: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: Text('Cancelar'),
+                                    style: OutlinedButton.styleFrom(
+                                      primary: AppTheme.colorSesion,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  )
                               ),
-                            ),
-                            child: Padding(padding: EdgeInsets.all(4), child: Text('Aceptar'),),
-                          )),
+                              Padding(padding: EdgeInsets.all(8)),
+                              Expanded(
+                                  child:  (!controller.progressFirebase)?
+                                  ElevatedButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop(true);
+                                  bool succes = await controller.onClickSessionHecho();
+
+
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: AppTheme.colorSesion,
+                                  onPrimary: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                ),
+                                child: Padding(padding: EdgeInsets.all(4), child: Text( ((controller.msgRealizarSesion??"").isNotEmpty)?'Reintentar':'Aceptar'),),
+                              ):Container()
+                              ),
+                            ],
+                          ),
                         ],
-                      )
-                    ],
-                  ),
-                ),
-              )
-          );
+                      ),
+                    ),
+                  )
+              );
+            });
         },
         barrierDismissible: true,
         barrierLabel: MaterialLocalizations.of(context)
             .modalBarrierDismissLabel,
         barrierColor: Colors.transparent,
         transitionDuration:
-        const Duration(milliseconds: 150));
+        const Duration(milliseconds: 150))
+        .then((value){
+            controller.removeListener(dialogState);
+            refresh = null;
+          });
   }
 
 
+  Map<String, bool> cityList = {
+    'Balagam': false, 'Bangalore': false, 'Hyderabad': false, 'Chennai': false,
+    'Delhi': false, 'Surat': false, 'Junagadh': false,
+    'Porbander': false, 'Rajkot': false, 'Pune': false,
+  };
 
+  Future<Map<String, bool>?> _preLocation() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: Text('Preferred Location'),
+                actions: <Widget>[
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context, null);
+                    },
+                    child: Text('Cancle'),
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context, cityList);
+                    },
+                    child: Text('Done'),
+                  ),
+                ],
+                content: Container(
+                  width: double.minPositive,
+                  height: 300,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: cityList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      String _key = cityList.keys.elementAt(index);
+                      return CheckboxListTile(
+                        value: cityList[_key],
+                        title: Text(_key),
+                        onChanged: (val) {
+                          setState(() {
+                            cityList[_key] = val??false;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+          );
+        });
+  }
 
 }
 

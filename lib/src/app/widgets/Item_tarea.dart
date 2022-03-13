@@ -41,21 +41,23 @@ class ItemTareaState extends State<ItemTarea>{
                       top: ColumnCountProvider.aspectRatioForWidthTarea(context, 12),
                       bottom: 0),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(Icons.assignment,
                         color: widget.color1,
                         size: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
                       ),
                       Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTarea(context, 2))),
-                      Text("Tarea ${widget.tareaUi.position??""}",
+                      Expanded(child: Text("Tarea ${widget.tareaUi.position??""}${((widget.tareaUi.nroSesion??0)>0)?" - S${widget.tareaUi.nroSesion}":""}",
                           overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                           style: TextStyle(
                               fontFamily: AppTheme.fontTTNorms,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.5,
                               fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 12),
                               color: widget.color1
-                          )),
+                          ))),
                       //Text("Tarea ${index}", style: TextStyle(color: widget.color1, fontSize: 12, fontWeight: FontWeight.w500),),
                     ],
                   ),
@@ -64,7 +66,7 @@ class ItemTareaState extends State<ItemTarea>{
                   padding: EdgeInsets.only(
                       left: ColumnCountProvider.aspectRatioForWidthTarea(context, 12),
                       right: ColumnCountProvider.aspectRatioForWidthTarea(context, 12),
-                      top: ColumnCountProvider.aspectRatioForWidthTarea(context, 8),
+                      top: ColumnCountProvider.aspectRatioForWidthTarea(context, 4),
                       bottom: 0),
                   child: Text("${widget.tareaUi.titulo}",
                     maxLines: 3,

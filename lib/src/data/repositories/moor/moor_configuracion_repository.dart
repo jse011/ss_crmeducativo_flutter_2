@@ -78,6 +78,17 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   }
 
   @override
+  Future<int> getSessionPersonaId() async {
+    AppDataBase SQL = AppDataBase();
+    try{
+     UsuarioData? usuarioData = await SQL.selectSingle(SQL.usuario).getSingleOrNull();
+     return usuarioData?.personaId??0;
+    }catch(e){
+      throw Exception(e);
+    }
+  }
+
+  @override
   Future<String> getSessionUsuarioUrlServidor() async{
     AppDataBase SQL = AppDataBase();
     try{
@@ -294,7 +305,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   Future<bool> validarRol(int usuarioId) async {
     AppDataBase SQL = AppDataBase();
     try{
-      var query = SQL.select(SQL.usuarioRolGeoreferencia)..where((tbl) => tbl.usuarioId.equals(usuarioId));
+      var query = SQL.selectSingle(SQL.usuarioRolGeoreferencia)..where((tbl) => tbl.usuarioId.equals(usuarioId));
       query.where((tbl) => tbl.rolId.equals(4));
       UsuarioRolGeoreferenciaData? usuarioRolGeoreferenciaData = await query.getSingleOrNull();
       return usuarioRolGeoreferenciaData!=null;
@@ -514,13 +525,14 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
       georeferenciaUi.nombre = georeferenciaData.nombre;
       georeferenciaUi.alias = georeferenciaData.geoAlias;
       georeferenciaUi.anioAcademicoUiList = [];
-      EntidadData? entidadData = await (SQL.select(SQL.entidad)..where((tbl) => tbl.entidadId.equals(georeferenciaData.entidadId))).getSingleOrNull();
+      EntidadData? entidadData = await (SQL.selectSingle(SQL.entidad)..where((tbl) => tbl.entidadId.equals(georeferenciaData.entidadId))).getSingleOrNull();
       EntidadUi entidadUi = EntidadUi();
       entidadUi.entidadId = georeferenciaData.entidadId;
       entidadUi.nombre = entidadData?.nombre;
       entidadUi.foto = entidadData?.foto;
       georeferenciaUi.entidadUi = entidadUi;
       List<AnioAcademicoData> anioAcademicoList = await (SQL.select(SQL.anioAcademico)..where((tbl) => tbl.georeferenciaId.equals(georeferenciaData.georeferenciaId))).get();
+      print("anioAcademicoList: ${anioAcademicoList.length}");
       anioAcademicoList.sort((o2, o1) {
 
         int sComp =  DomainTools.convertDateTimePtBR(o2.fechaFin, null).compareTo(DomainTools.convertDateTimePtBR(o1.fechaFin, null));
@@ -1042,7 +1054,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   @override
   Future<String?> getServerIcono() async{
     AppDataBase SQL = AppDataBase();
-    WebConfig? webConfig = await(SQL.select(SQL.webConfigs)..where((tbl) => tbl.nombre.equals("wstr_icono_padre"))).getSingleOrNull();
+    WebConfig? webConfig = await(SQL.selectSingle(SQL.webConfigs)..where((tbl) => tbl.nombre.equals("wstr_icono_padre"))).getSingleOrNull();
     print("wstr_icono_padre: ${webConfig?.content}");
 
     return webConfig?.content;
@@ -1101,7 +1113,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
       }
 
       print("personaData: ${personaUpdate?.personaId}");
-      PersonaData? personaData =  await (SQL.select(SQL.persona)..where((tbl) => tbl.personaId.equals(personaUpdate?.personaId))).getSingleOrNull();
+      PersonaData? personaData =  await (SQL.selectSingle(SQL.persona)..where((tbl) => tbl.personaId.equals(personaUpdate?.personaId))).getSingleOrNull();
       if(personaData!=null && personaUpdate!=null){
         print("personaData: ${personaUpdate.foto}");
         SQL.update(SQL.persona).replace(personaData.copyWith(
@@ -1121,9 +1133,4 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
 
   }
-
-
-
-
-
 }

@@ -2,6 +2,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
@@ -155,6 +156,17 @@ class TareaController extends Controller{
   void onDetached() {
     super.onDetached();
     _presenter.dispose();
+  }
+
+  SesionUi? getSesionUi(TareaUi o) {
+    SesionUi? sesionUi = null;
+    if((o.sesionAprendizajeId??0)>0){
+      sesionUi = SesionUi();
+      sesionUi.sesionAprendizajeId =o.sesionAprendizajeId;
+      sesionUi.nroSesion =o.nroSesion;
+    }
+    print("sesionAprendizajeId: ${sesionUi?.sesionAprendizajeId}");
+    return sesionUi;
   }
 
 

@@ -28,12 +28,13 @@ class CalcularEvaluacionProceso {
         double peso = (evaluacionUi.rubroEvaluacionUi?.formula_peso??0)/100;
         notaDetalle += DomainTools.roundDouble((evaluacionUi.nota??0.0) * peso,2);//Para evitar calcular con muchos decimasles se redonde a dos
         tipoNotaUiDetalle = evaluacionUi.rubroEvaluacionUi?.tipoNotaUi;
-        if(evaluacionUi.valorTipoNotaId!=null)countSelecionado++;
+        if((evaluacionUi.valorTipoNotaId??"").isNotEmpty)countSelecionado++;
       }
-
+      print("modificado12:countSelecionado ${countSelecionado}");
       if(countSelecionado>0){
         double? nota = TransformarValoTipoNota.transformarNota(notaDetalle, tipoNotaUiDetalle, null, rubricaEvaluacionUi?.tipoNotaUi);
         ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.transformarTipoNota(notaDetalle, tipoNotaUiDetalle, null, rubricaEvaluacionUi?.tipoNotaUi);
+        print("modificado12:countSelecionado ${valorTipoNotaUi?.alias}");
         evaluacionUiCabecera?.valorTipoNotaId = valorTipoNotaUi?.valorTipoNotaId;
         evaluacionUiCabecera?.valorTipoNotaUi = valorTipoNotaUi;
         evaluacionUiCabecera?.nota = DomainTools.roundDouble(nota??0.0, 2);// Se redondea a dos diguitos pero se muesta solo un digito para mostar al usuario
@@ -42,8 +43,6 @@ class CalcularEvaluacionProceso {
         evaluacionUiCabecera?.valorTipoNotaUi = null;
         evaluacionUiCabecera?.nota = 0.0;// Se redondea a dos diguitos pero se muesta solo un digito para mostar al usuario
       }
-
-
     };
 
     if(personaUi?.personaId != null){

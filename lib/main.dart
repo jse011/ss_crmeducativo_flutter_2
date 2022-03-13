@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/init.dart';
@@ -32,87 +33,48 @@ class MyApp extends StatelessWidget {
         future: _initialization,
         builder: (context, snapshot) {
 
-          if (snapshot.hasError) {
-            return getErrorView();
-          }
-
-          // Once complete, show your application
-          if (snapshot.connectionState == ConnectionState.done) {
-            return getMainView(context);
-          }
-
-          // Otherwise, show something whilst waiting for initialization to complete
-          return getSplashView();
-
-        },
-    );
-  }
-
-  Widget getSplashView(){
-    return MaterialApp(
-      title: ' ',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: AppTheme.textTheme,
-        //platform: TargetPlatform.iOS,
-      ),
-      home: SplashView()
-    );
-  }
-
-  Widget getMainView(BuildContext context){
-    return MultiProvider(
-        providers: [
-          Provider(create: (_) => HomeProvider()),
-          ChangeNotifierProvider(
-            create: (_) => HomeProvider(),
-          ),
-          Provider(create: (_) => ConexionProvider()),
-          ChangeNotifierProvider(
-            create: (_) => ConexionProvider(),
-          ),
-          ChangeNotifierProvider(
-            create: (_) => ContactoProvider(),
-          ),
-        ],
-        child: MaterialApp(
-          title: ' ',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-            textTheme: AppTheme.textTheme,
-            //platform: TargetPlatform.iOS,
-          ),
-          /*theme: ThemeData(
+          return MultiProvider(
+              providers: [
+                Provider(create: (_) => HomeProvider()),
+                ChangeNotifierProvider(
+                  create: (_) => HomeProvider(),
+                ),
+                Provider(create: (_) => ConexionProvider()),
+                ChangeNotifierProvider(
+                  create: (_) => ConexionProvider(),
+                ),
+                ChangeNotifierProvider(
+                  create: (_) => ContactoProvider(),
+                ),
+              ],
+              child: MaterialApp(
+                title: ' ',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                  textTheme: AppTheme.textTheme,
+                  //platform: TargetPlatform.iOS,
+                ),
+                /*theme: ThemeData(
         primaryColor: Colors.black,
         bottomAppBarColor: Colors.white,
         bottomAppBarTheme: BottomAppBarTheme(color: Colors.white),
         brightness: Brightness.dark,
         hintColor: Colors.white,
       ),*/
-          home: HomeView(context),
-          routes: AppRouter.routes,
-          onGenerateRoute: (settings) {
-            return AppRouter.generateRoute(settings);
-          },
-        )
+                home: HomeView(context, snapshot: snapshot),
+                routes: AppRouter.routes,
+                onGenerateRoute: (settings) {
+                  return AppRouter.generateRoute(settings);
+                },
+              )
+          );
+
+
+
+        },
     );
   }
 
-  Widget getErrorView(){
-    return MaterialApp(
-        title: ' ',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          textTheme: AppTheme.textTheme,
-          //platform: TargetPlatform.iOS,
-        ),
-        home: Scaffold(
-          body: SplashErrorView(),
-        )
-    );
-  }
 
 }

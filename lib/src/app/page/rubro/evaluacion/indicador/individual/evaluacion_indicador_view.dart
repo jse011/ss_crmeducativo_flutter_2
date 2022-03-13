@@ -11,6 +11,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/individual/evaluacion_indicador_controller.dart';
@@ -376,8 +377,19 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                               child: Row(
                                                 children: [
                                                   CachedNetworkImage(
-                                                    placeholder: (context, url) => Container(
-                                                      child: CircularProgressIndicator(),
+                                                    placeholder: (context, url) => SizedBox(
+                                                      child: Shimmer.fromColors(
+                                                        baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                        highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                        child: Container(
+                                                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                          decoration: BoxDecoration(
+                                                              color: HexColor(controller.cursosUi?.color2),
+                                                              shape: BoxShape.circle
+                                                          ),
+                                                          alignment: Alignment.center,
+                                                        ),
+                                                      ),
                                                     ),
                                                     imageUrl: controller.usuarioUi?.personaUi?.foto??"",
                                                     errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),),
@@ -474,8 +486,19 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                           child: Row(
                                             children: [
                                               CachedNetworkImage(
-                                                placeholder: (context, url) => Container(
-                                                  child: CircularProgressIndicator(),
+                                                placeholder: (context, url) => SizedBox(
+                                                  child: Shimmer.fromColors(
+                                                    baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                    highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor(controller.cursosUi?.color2),
+                                                          shape: BoxShape.circle
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                    ),
+                                                  ),
                                                 ),
                                                 imageUrl: controller.usuarioUi?.personaUi?.foto??"",
                                                 errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),),
@@ -998,7 +1021,11 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                               ),
                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                               InkWell(
-                                onTap: ()=> AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false),
+                                onTap: (){
+                                  if(controller.rubroEvaluacionUi!=null){
+                                    AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false);
+                                  }
+                                },
                                 child: Container(
                                   width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
                                   padding: EdgeInsets.only(
@@ -1039,9 +1066,14 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                               ),
                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                               InkWell(
-                                onTap: ()=> controller.onClickEliminar(),
+                                onTap: (){
+                                  if(controller.rubroEvaluacionUi!=null){
+                                    controller.onClickEliminar();
+                                  }
+
+                                },
                                 child: Container(
-                                  width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 100),
+                                  width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 110),
                                   padding: EdgeInsets.only(
                                       left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
                                       right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
@@ -1148,12 +1180,15 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
       future: getData(),
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         if (!snapshot.hasData) {
-          return Stack(
+          return Container(
+            height: MediaQuery.of(context).size.height/2,
+          child: Stack(
             children: [
               Center(
                 child: CircularProgressIndicator(strokeWidth: 2,),
               )
             ],
+          ),
           );
         } else {
           return  Padding(
@@ -1255,62 +1290,78 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                 rowsTitleBuilder: (i) {
                   dynamic o = controller.rowList2[i];
                   if(o is PersonaUi){
-                    return  Container(
-                        constraints: BoxConstraints.expand(),
-                        child: Row(
-                          children: [
-                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3))),
-                            Expanded(
-                                child: Text((i+1).toString() + ".",
-                                  style: TextStyle(
-                                      color: AppTheme.darkText,
-                                      fontFamily: AppTheme.fontTTNorms,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10)
-                                  ),)
-                            ),
-                            Container(
-                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
-                              width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
-                              margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3)),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppTheme.greyLighten2,
+                    return  InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(PreviewImageView.createRoute(o.foto));
+                      },
+                      child: Container(
+                          constraints: BoxConstraints.expand(),
+                          child: Row(
+                            children: [
+                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3))),
+                              Expanded(
+                                  child: Text((i+1).toString() + ".",
+                                    style: TextStyle(
+                                        color: AppTheme.darkText,
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10)
+                                    ),)
                               ),
-                              child: true?
-                              CachedNetworkImage(
-                                placeholder: (context, url) => CircularProgressIndicator(),
-                                imageUrl: o.foto??"",
-                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 20,),
-                                imageBuilder: (context, imageProvider) =>
-                                    Container(
+                              Container(
+                                height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
+                                width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
+                                margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3)),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppTheme.greyLighten2,
+                                ),
+                                child:  CachedNetworkImage(
+                                  placeholder: (context, url) =>  SizedBox(
+                                    child: Shimmer.fromColors(
+                                      baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                      highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                      child: Container(
+                                        padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                                          image: DecorationImage(
-                                            image: imageProvider,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        )
+                                            color: HexColor(controller.cursosUi?.color2),
+                                            shape: BoxShape.circle
+                                        ),
+                                        alignment: Alignment.center,
+                                      ),
                                     ),
-                              ):
-                              Container(),
-                            ),
-                            Padding(padding: EdgeInsets.all(1)),
-                          ],
-                        ),
-                        decoration: BoxDecoration(
-                            border: (controller.cellListList.length-4) <= i ? Border(
-                              top: BorderSide(color: AppTheme.greyLighten2),
-                              right: BorderSide(color:  AppTheme.greyLighten2),
-                              left: BorderSide(color:  AppTheme.greyLighten2),
-                              bottom:  BorderSide(color:  AppTheme.greyLighten2),
-                            ):Border(
-                              top: BorderSide(color: AppTheme.greyLighten2),
-                              right: BorderSide(color:  AppTheme.greyLighten2),
-                              left: BorderSide(color:  AppTheme.greyLighten2),
-                            ),
-                            color: AppTheme.white
-                        )
+                                  ),
+                                  imageUrl: o.foto??"",
+                                  errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 20,),
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                      ),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.all(1)),
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                              border: (controller.cellListList.length-4) <= i ? Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color:  AppTheme.greyLighten2),
+                                left: BorderSide(color:  AppTheme.greyLighten2),
+                                bottom:  BorderSide(color:  AppTheme.greyLighten2),
+                              ):Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color:  AppTheme.greyLighten2),
+                                left: BorderSide(color:  AppTheme.greyLighten2),
+                              ),
+                              color: AppTheme.white
+                          )
+                      ),
                     );
                   }else {
                     return  Container();
@@ -1576,12 +1627,20 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
           padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)),
           child: CachedNetworkImage(
             imageUrl: valorTipoNotaUi?.icono ?? "",
-            placeholder: (context, url) => Stack(
-              children: [
-                CircularProgressIndicator(
-                  backgroundColor: color_texto,
-                )
-              ],
+            placeholder: (context, url) => SizedBox(
+              child: Shimmer.fromColors(
+                baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                child: Container(
+                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                      color: HexColor(controller.cursosUi?.color2),
+                      shape: BoxShape.rectangle
+                  ),
+                  alignment: Alignment.center,
+                ),
+              ),
             ),
             errorWidget: (context, url, error) => Icon(Icons.error),
           ),
@@ -1705,12 +1764,20 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
             padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)),
             child:  CachedNetworkImage(
               imageUrl: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.icono??"",
-              placeholder: (context, url) => Stack(
-                children: [
-                  CircularProgressIndicator(
-                    backgroundColor: color_texto,
-                  )
-                ],
+              placeholder: (context, url) => SizedBox(
+                child: Shimmer.fromColors(
+                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                  highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                  child: Container(
+                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                        color: HexColor(controller.cursosUi?.color2),
+                        shape: BoxShape.rectangle
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                ),
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ss_crmeducativo_2/src/app/page/asistencia_qr/buscar/asistencia_qr_buscar_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/asistencia_qr/portal/asistencia_qr_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/carga_curso/curso/curso_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/cerrar_cesion/cerrar_cesion_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/editar_usuario/editar_usuario_view.dart';
@@ -69,6 +71,10 @@ class AppRouter {
   static final String LISTA_ALUMNO = 'Curso/ListaAlumno';
   static final String EDITAR_USUARIO = '/EditarPersona';
   static final String VISTA_PREVIA_RUBRO = 'Curso/Rubro/VistaPrevia';
+  static final String ASISTENCIAQR = 'Asistencia/QR';
+  static final String BUSCARASISTENCIAQR = 'Asistencia/Buscar';
+
+
 
   static Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
     LOGIN: (BuildContext context) => LoginView5(),
@@ -299,6 +305,18 @@ class AppRouter {
           return VistaPreviaView(cursosUi, calendarioPeriodoUI);
         },
       );
+    }else if (settings.name == ASISTENCIAQR) {
+      return MaterialPageRoute(
+        builder: (context) {
+          return AsistenciaQRView();
+        },
+      );
+    }else if (settings.name == BUSCARASISTENCIAQR) {
+      return MaterialPageRoute(
+        builder: (context) {
+          return AsistenciaQRBuscarView();
+        },
+      );
     }
 
 
@@ -495,6 +513,17 @@ class AppRouter {
     );
   }
 
+  static Future<dynamic> createRouteAsistenciaQR(BuildContext context) {
+    return Navigator.pushNamed(context,
+        ASISTENCIAQR,
+    );
+  }
+
+  static Future<dynamic> showBuscarAsistenciaQR(BuildContext context) {
+    return Navigator.pushNamed(context,
+      BUSCARASISTENCIAQR,
+    );
+  }
 
 
 }

@@ -23,7 +23,7 @@ abstract class RubroRepository{
 
   Future<List<TipoNotaUi>> getGetTipoNota(int programaEducativoId);
 
-  Future<List<CompetenciaUi>> getTemasCriterios(int calendarioPeriodoId, int silaboEventoId);
+  Future<List<CompetenciaUi>> getTemasCriterios(int calendarioPeriodoId, int silaboEventoId, int? sesionAprendizajeId);
 
   Future<void> saveRubroEvaluacionData(Map<String, dynamic> rubroEvaluacionData);
 

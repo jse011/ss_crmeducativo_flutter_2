@@ -18,6 +18,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/competencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/desempenio_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_firebase_sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/icd_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/instrumento_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_hoy_ui.dart';
@@ -111,6 +112,7 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
         unidadUi.unidadAprendizajeId = unidadEvento.unidadAprendizajeId;
         unidadUi.titulo = unidadEvento.titulo;
         unidadUi.nroUnidad = unidadEvento.nroUnidad;
+        unidadUi.silaboEventoId = unidadEvento.silaboEventoId;
         unidadUi.sesionUiList = [];
         unidadEventoUiList.add(unidadUi);
       }
@@ -681,6 +683,59 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
     }
     print("actividadRecursoUiList: ${actividadRecursoUiList.length}");
     return actividadRecursoUiList;
+  }
+
+  @override
+  List<EvaluacionFirebaseSesionUi>? transformarEvaluacionesData(Map<String, dynamic> evalaucionesSesionesData) {
+    List<EvaluacionFirebaseSesionUi> evaluaciones = [];
+    if(evalaucionesSesionesData.containsKey("tareas")){
+      if(evalaucionesSesionesData.containsKey("preguntas")){
+        for(var item in evalaucionesSesionesData["preguntas"]){
+          PreguntaFirebaseSerial preguntasFirebaseSerial = PreguntaFirebaseSerial.fromJson(item);
+          EvaluacionFirebaseSesionUi evaluacionFirebaseSesionUi = new EvaluacionFirebaseSesionUi();
+          evaluacionFirebaseSesionUi.key = preguntasFirebaseSerial.PreguntaPortalAlumnoId;
+          evaluacionFirebaseSesionUi.tipo = EvaluacionFirebaseTipoUi.PREGUNTA;
+          evaluacionFirebaseSesionUi.nombre = preguntasFirebaseSerial.Pregunta;
+          evaluacionFirebaseSesionUi.data = item;
+          evaluaciones.add(evaluacionFirebaseSesionUi);
+        }
+      }
+
+      for(var item in evalaucionesSesionesData["tareas"]){
+        TareaFirebaseSerial tareasFirebaseSerial = TareaFirebaseSerial.fromJson(item);
+        EvaluacionFirebaseSesionUi evaluacionFirebaseSesionUi = new EvaluacionFirebaseSesionUi();
+        evaluacionFirebaseSesionUi.key = tareasFirebaseSerial.TareaId;
+        evaluacionFirebaseSesionUi.tipo = EvaluacionFirebaseTipoUi.TAREA;
+        evaluacionFirebaseSesionUi.nombre = tareasFirebaseSerial.Titulo;
+        evaluacionFirebaseSesionUi.data = item;
+        evaluaciones.add(evaluacionFirebaseSesionUi);
+      }
+    }
+
+    if(evalaucionesSesionesData.containsKey("instrumetos")){
+      for(var item in evalaucionesSesionesData["instrumetos"]){
+        InstrumetosFirebaseSerial preguntasFirebaseSerial = InstrumetosFirebaseSerial.fromJson(item);
+        EvaluacionFirebaseSesionUi evaluacionFirebaseSesionUi = new EvaluacionFirebaseSesionUi();
+        evaluacionFirebaseSesionUi.key = preguntasFirebaseSerial.InstrumentoEvalId?.toString();
+        evaluacionFirebaseSesionUi.tipo = EvaluacionFirebaseTipoUi.INSTRUMENTO;
+        evaluacionFirebaseSesionUi.nombre = preguntasFirebaseSerial.Nombre;
+        evaluacionFirebaseSesionUi.data = item;
+        evaluaciones.add(evaluacionFirebaseSesionUi);
+      }
+    }
+
+
+    if(evalaucionesSesionesData.containsKey("unidadTareas")){
+      for(var item in evalaucionesSesionesData["unidadTareas"]){
+        TareaFirebaseSerial tareasFirebaseSerial = TareaFirebaseSerial.fromJson(item);
+        EvaluacionFirebaseSesionUi evaluacionFirebaseSesionUi = new EvaluacionFirebaseSesionUi();
+        evaluacionFirebaseSesionUi.tipo = EvaluacionFirebaseTipoUi.TAREAUNIDAD;
+        evaluacionFirebaseSesionUi.nombre = tareasFirebaseSerial.Titulo;
+        evaluacionFirebaseSesionUi.data = tareasFirebaseSerial.toJson();
+        evaluaciones.add(evaluacionFirebaseSesionUi);
+      }
+    }
+    return evaluaciones;
   }
 }
 

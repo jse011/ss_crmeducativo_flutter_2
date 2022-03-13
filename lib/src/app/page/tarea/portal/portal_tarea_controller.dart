@@ -770,7 +770,15 @@ class PortalTareaController extends Controller{
   void hayCambioEnLaConexion()  {
     print("hayCambioEnLaConexion");
       if(onCountErrorGuardar()>0 && !progressPublicarEval){
+        print("guardarEvaluacionTarea");
         guardarEvaluacionTarea();
+      }else{
+        if(_progressSailrGuardar){
+          _cerraryactualizar = true;
+        }
+        _progressSailrGuardar = false;
+        _progressEvalTarea = false;
+        refreshUI();
       }
   }
 

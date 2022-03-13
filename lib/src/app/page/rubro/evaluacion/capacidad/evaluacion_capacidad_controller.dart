@@ -367,6 +367,7 @@ class EvaluacionCapacidadController extends Controller{
       refreshUI();
       for(MapEntry<String?, int> row in rubroModificadosMap.entries) {
         RubricaEvaluacionUi? rubricaEvaluacionUi = evaluacionCapacidadUi.capacidadUi?.rubricaEvalUiList?.firstWhereOrNull((element) => element.rubroEvaluacionId == row.key);
+
         if(rubricaEvaluacionUi != null){
 
           //String? rubroEvaluacionIdCabecera = rubroEvaluacionIdList.firstWhereOrNull((id) => id == rubricaEvaluacionUi.rubricaIdRubroCabecera);

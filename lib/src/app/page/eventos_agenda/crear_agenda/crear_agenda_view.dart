@@ -1382,7 +1382,7 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
                                       fontFamily: AppTheme.fontTTNormsMedium
                                   ),),
                                   Padding(padding: EdgeInsets.all(8),),
-                                  Text("¿Esta seguro que quiere salir?",
+                                  Text("¿Está seguro que quiere salir?",
                                     style: TextStyle(
                                         fontSize: 14,
                                         height: 1.5

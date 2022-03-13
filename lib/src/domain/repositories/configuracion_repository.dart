@@ -47,5 +47,6 @@ abstract class ConfiguracionRepository{
   PersonaUi transformarUpdatePersona(Map<String, dynamic> jsonPersona);
   Future<List<CursosUi>> getFotoAlumnos(int empleadoId, int anioAcademicoIdSelec);
   Future<void> udpateUsuario(int usuarioId, Map<String, dynamic> usuarioJson);
+  Future<int> getSessionPersonaId();
 
 }

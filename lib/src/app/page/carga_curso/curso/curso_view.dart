@@ -381,7 +381,7 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                                     ),
                                                     child: Row(
                                                       children: [
-                                                        Text("Haga clic y experimente ",
+                                                        Text("Haga clic en evaluación y experimente ",
                                                             style: TextStyle(
                                                                 color: Colors.white,
                                                                 fontFamily: AppTheme.fontTTNorms,

@@ -11,6 +11,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_scrolling.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_controller.dart';
@@ -572,7 +573,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              controller.rubricaEvaluacionUi==null?'Evaluación':'Editar Evaluación',
+                              !(controller.rubricaEvaluacionUi?.update??false)?'Evaluación':'Editar Evaluación',
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -1342,7 +1343,21 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                       height: 30,
                                       width: 30,
                                       imageUrl: obj.icono??"",
-                                      placeholder: (context, url) => CircularProgressIndicator(),
+                                      placeholder: (context, url) => SizedBox(
+                                        child: Shimmer.fromColors(
+                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                          highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                          child: Container(
+                                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                color: HexColor(controller.cursosUi?.color2),
+                                                shape: BoxShape.rectangle
+                                            ),
+                                            alignment: Alignment.center,
+                                          ),
+                                        ),
+                                      ),
                                       errorWidget: (context, url, error) => Icon(Icons.error),
                                     ),
                                   ),
@@ -2109,7 +2124,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                   SliverList(
                                     delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
                                       TemaCriterioUi temaCriterioUi = controller.temaCriterioEditList[index];
-                                      if(controller.temaCriterioEditList.isNotEmpty){
+                                      if((controller.rubricaEvaluacionUi?.rubroEvaluacionId??"").isNotEmpty){
                                         return Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
@@ -2204,7 +2219,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                                 SvgPicture.asset(AppIcon.ic_tema_criterio,
                                                   width: ColumnCountProvider.aspectRatioForWidthEditarCriterio(context, 22),
                                                   height: ColumnCountProvider.aspectRatioForWidthEditarCriterio(context, 22),
-                                                  color: AppTheme.greyDarken1,),
+                                                  color: AppTheme.white,),
                                                 Padding(padding: EdgeInsets.all(2),),
                                                 SizedBox(
                                                   height: ColumnCountProvider.aspectRatioForWidthEditarCriterio(context, 24),
@@ -2300,7 +2315,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                                       fontFamily: AppTheme.fontTTNormsMedium
                                   ),),
                                   Padding(padding: EdgeInsets.all(8),),
-                                  Text("¿Esta seguro que quiere salir?",
+                                  Text("¿Está seguro que quiere salir?",
                                     style: TextStyle(
                                         fontSize: 14,
                                         height: 1.5

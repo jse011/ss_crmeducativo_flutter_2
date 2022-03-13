@@ -736,7 +736,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                       child: Text(controller.tareaUi?.publicado??false ?"Publicado":"Sin publicar",
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            fontWeight: FontWeight.w500,
+                                            fontFamily: AppTheme.fontTTNorms,
+                                            fontWeight: FontWeight.w700,
                                             letterSpacing: 0.6,
                                             color: controller.tareaUi?.publicado??false?AppTheme.white:AppTheme.greyDarken1,
                                             fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 5 + 6  ),
@@ -803,7 +804,11 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                 });
                               },
                               //isScrollable: _indexTab == 1 && topBarOpacity == 1 && MediaQuery.of(context).orientation == Orientation.portrait,
-                              labelStyle: TextStyle(fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4), fontWeight: FontWeight.w500),
+                              labelStyle: TextStyle(
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: AppTheme.fontTTNorms
+                              ),
                               tabs: [
                                 Tab(child: Text("Instruciones", maxLines: 1, overflow: TextOverflow.ellipsis,)),
                                 Tab(child: Text("Trabajo del alumno", maxLines: 1, overflow: TextOverflow.ellipsis,)),
@@ -959,7 +964,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                           await controller.onClicPublicar();
                                                         },
                                                         child: Container(
-                                                          width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,120),
+                                                          width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,125),
                                                           padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
                                                           decoration: BoxDecoration(
                                                               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
@@ -980,8 +985,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                 child: Text("Publicar Tarea",
                                                                     overflow: TextOverflow.ellipsis,
                                                                     style: TextStyle(
-                                                                      fontWeight: FontWeight.w500,
-                                                                      letterSpacing: 0.5,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: AppTheme.fontTTNorms,
                                                                       color: controller.tareaUi?.publicado??false?AppTheme.white: AppTheme.greyDarken1,
                                                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 5 + 6) ,
                                                                     )),
@@ -1023,8 +1028,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                 child: Text("Modificar",
                                                                     overflow: TextOverflow.ellipsis,
                                                                     style: TextStyle(
-                                                                      fontWeight: FontWeight.w500,
-                                                                      letterSpacing: 0.5,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: AppTheme.fontTTNorms,
                                                                       color:AppTheme.white,
                                                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 5 + 6 - 1),
                                                                     )),
@@ -1064,8 +1069,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                 child: Text("Eliminar",
                                                                     overflow: TextOverflow.ellipsis,
                                                                     style: TextStyle(
-                                                                      fontWeight: FontWeight.w500,
-                                                                      letterSpacing: 0.5,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: AppTheme.fontTTNorms,
                                                                       color:AppTheme.white,
                                                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,5 + 6),
                                                                     )),
@@ -1078,32 +1083,56 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                   ),
                                                 ),
                                                 Container(
-                                                  margin: EdgeInsets.only(top: 24),
-                                                  child: Text("Fecha de entrega: ${(controller.tareaUi?.fechaEntrega??"sin fecha de entrega").replaceAll("\n", "")}", style: TextStyle(fontSize: 12),),
+                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
+                                                  child: Text(
+                                                    "Fecha de entrega: ${(controller.tareaUi?.fechaEntrega??"sin fecha de entrega").replaceAll("\n", "")}", 
+                                                    style: TextStyle(
+                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14),
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: AppTheme.fontTTNorms,
+                                                    ),),
                                                 ),
                                                 Container(
-                                                  margin: EdgeInsets.only(top: 8),
-                                                  child: Text("${controller.tareaUi?.titulo}", style: TextStyle(color: HexColor(controller.cursosUi?.color1) , fontSize: 18),),
+                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8)),
+                                                  child: Text("${controller.tareaUi?.titulo}",
+                                                    style: TextStyle(
+                                                        color: HexColor(controller.cursosUi?.color1) , 
+                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20),
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: AppTheme.fontTTNorms,
+                                                    )
+                                                  ),
                                                 ),
                                                 Container(
-                                                  margin: EdgeInsets.only(top: 16),
+                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16)),
                                                   height: 1,
                                                   color: HexColor(controller.cursosUi?.color1),
                                                 ),
                                                 (controller.tareaUi?.instrucciones??"").isNotEmpty?
                                                 Container(
-                                                  margin: EdgeInsets.only(top: 24),
+                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
                                                   child: Text("${controller.tareaUi?.instrucciones}",
-                                                    style: TextStyle(fontSize: 14, height: 1.5),),
+                                                    style: TextStyle(
+                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16),
+                                                        height: 1.5,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        ),
+                                                  ),
                                                 ):Container(),
                                                 controller.tareaRecursoUiList.isNotEmpty?
                                                 Container(
-                                                  margin: EdgeInsets.only(top: 16),
+                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
                                                   child: Text("Recursos",
-                                                    style: TextStyle(fontSize: 14, color: AppTheme.black, fontWeight: FontWeight.w500),),
+                                                    style: TextStyle(
+                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16), 
+                                                        color: AppTheme.black,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontWeight: FontWeight.w700
+                                                    )
+                                                  ),
                                                 ):Container(),
                                                 ListView.builder(
-                                                    padding: EdgeInsets.only(top: 8.0, bottom: 0),
+                                                    padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8), bottom: 0),
                                                     itemCount: controller.tareaRecursoUiList.length,
                                                     shrinkWrap: true,
                                                     physics: NeverScrollableScrollPhysics(),
@@ -1189,16 +1218,38 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
                                                                                     Padding(padding: EdgeInsets.all(4)),
-                                                                                    Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.blue, fontSize: 12)),
+                                                                                    Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", maxLines: 1, overflow: TextOverflow.ellipsis,
+                                                                                        style: TextStyle(
+                                                                                            color: AppTheme.blue,
+                                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                                                                                            fontFamily: AppTheme.fontTTNorms,
+                                                                                            fontWeight: FontWeight.w700
+                                                                                        )
+                                                                                    ),
                                                                                     Padding(padding: EdgeInsets.all(4)),
                                                                                   ],
                                                                                 ):Column(
                                                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
-                                                                                    Text("${tareaRecursoUi.titulo??""}", maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppTheme.greyDarken3, fontSize: 12),),
+                                                                                    Text("${tareaRecursoUi.titulo??""}", maxLines: 2, overflow: TextOverflow.ellipsis,
+                                                                                      style: TextStyle(
+                                                                                          color: AppTheme.greyDarken3,
+                                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                                                                                          fontFamily: AppTheme.fontTTNorms,
+                                                                                          fontWeight: FontWeight.w700
+                                                                                      ),
+                                                                                    ),
                                                                                     Padding(padding: EdgeInsets.all(2)),
-                                                                                    Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis,style: TextStyle(color: AppTheme.grey, fontSize: 10)),
+                                                                                    Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}",
+                                                                                        maxLines: 1, overflow: TextOverflow.ellipsis,
+                                                                                        style: TextStyle(
+                                                                                            color: AppTheme.grey,
+                                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
+                                                                                            fontFamily: AppTheme.fontTTNorms,
+                                                                                            fontWeight: FontWeight.w700
+                                                                                        )
+                                                                                    ),
                                                                                   ],
                                                                                 )
                                                                               ],
@@ -1219,14 +1270,20 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                 ),
                                                 controller.tareaRecursoUiList.isNotEmpty?
                                                 Container(
-                                                  margin: EdgeInsets.only(top: 32),
+                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 32),),
                                                   height: 1,
                                                   color: AppTheme.greyLighten1,
                                                 ):Container(),
                                                 Container(
-                                                  margin: EdgeInsets.only(top: 16),
+                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16)),
                                                   child: Text("Comentario de clase",
-                                                    style: TextStyle(fontSize: 14, color: AppTheme.black, fontWeight: FontWeight.w500),),
+                                                    style: TextStyle(
+                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16),
+                                                        color: AppTheme.black,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontWeight: FontWeight.w700
+                                                    )
+                                                  ),
                                                 ),
                                                 Container(
                                                   margin: EdgeInsets.only(top:  4),
@@ -1444,7 +1501,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                           double width_pantalla = MediaQuery.of(context).size.width;
                                           double padding_left = ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4);
                                           double padding_right = ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4);
-                                          double width_table = padding_left + padding_right + 110;
+                                          double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 145);
                                           for(double column_px in controller.tablecolumnWidths){
                                             width_table += column_px;
                                           }
@@ -1578,10 +1635,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                       child: Text("Crear rúbrica",
                                                                           overflow: TextOverflow.ellipsis,
                                                                           style: TextStyle(
-                                                                            fontWeight: FontWeight.w500,
-                                                                            letterSpacing: 0.5,
+                                                                            fontFamily: AppTheme.fontTTNorms,
+                                                                            fontWeight: FontWeight.w700,
                                                                             color:AppTheme.white,
-                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,11),
+                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
                                                                           )),
                                                                     ),
                                                                   ],
@@ -1619,10 +1676,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                       child: Text("Abrir rúbrica",
                                                                           overflow: TextOverflow.ellipsis,
                                                                           style: TextStyle(
-                                                                            fontWeight: FontWeight.w500,
-                                                                            letterSpacing: 0.5,
+                                                                            fontFamily: AppTheme.fontTTNorms,
+                                                                            fontWeight: FontWeight.w700,
                                                                             color:AppTheme.white,
-                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,11),
+                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
                                                                           )),
                                                                     ),
                                                                   ],
@@ -1659,10 +1716,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                       child: Text("Actualizar nota",
                                                                           overflow: TextOverflow.ellipsis,
                                                                           style: TextStyle(
-                                                                            fontWeight: FontWeight.w500,
-                                                                            letterSpacing: 0.5,
+                                                                            fontFamily: AppTheme.fontTTNorms,
+                                                                            fontWeight: FontWeight.w700,
                                                                             color:AppTheme.white,
-                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,11),
+                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
                                                                           )),
                                                                     ),
                                                                   ],
@@ -1731,13 +1788,16 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                   style: TextStyle(
                                                                       color: HexColor(controller.cursosUi?.color1),
                                                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
-                                                                      fontWeight: FontWeight.w500
+                                                                      fontFamily: AppTheme.fontTTNorms,
+                                                                      fontWeight: FontWeight.w700
                                                                   ),
                                                                 ),
                                                                 Text("Evaluados",
                                                                     style: TextStyle(
                                                                         color: AppTheme.greyDarken1,
-                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2)
+                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
+                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                        fontWeight: FontWeight.w500
                                                                     )
                                                                 )
                                                               ],
@@ -1769,13 +1829,16 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                                   style: TextStyle(
                                                                       color: HexColor(controller.cursosUi?.color1),
                                                                       fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
-                                                                      fontWeight: FontWeight.w500
+                                                                      fontFamily: AppTheme.fontTTNorms,
+                                                                      fontWeight: FontWeight.w700
                                                                   ),
                                                                 ),
                                                                 Text("Sin evaluar",
                                                                     style: TextStyle(
                                                                         color: AppTheme.greyDarken1,
-                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2)
+                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
+                                                                        fontFamily: AppTheme.fontTTNorms,
+                                                                        fontWeight: FontWeight.w500
                                                                     )
                                                                 )
                                                               ],
@@ -1826,7 +1889,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                         style: TextStyle(
                                                             color: HexColor(controller.cursosUi?.color1),
                                                             fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
-                                                            fontWeight: FontWeight.w500
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontWeight: FontWeight.w700
                                                         )
                                                     ),
                                                   ),
@@ -1843,7 +1907,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                         style: TextStyle(
                                                             color: HexColor(controller.cursosUi?.color1),
                                                             fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
-                                                            fontWeight: FontWeight.w500
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontWeight: FontWeight.w700
                                                         )
                                                     ),
                                                   ),
@@ -1939,9 +2004,9 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
     return SingleChildScrollView(
       child: StickyHeadersTableNotExpandedCustom(
         cellDimensions: CellDimensions.variableColumnWidth(
-            stickyLegendHeight: 35,
-            stickyLegendWidth: 110,
-            contentCellHeight: 50,
+            stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 40),
+            stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 145),
+            contentCellHeight: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 60),
             columnWidths: controller.tablecolumnWidths
         ),
         //cellAlignments: CellAlignments.,
@@ -1957,7 +2022,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                 child: Center(
                   child:  RotatedBox(
                     quarterTurns: -1,
-                    child: Text(" ", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
+                    child: Text("Nota", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
                   ),
                 ),
                 decoration: BoxDecoration(
@@ -2014,9 +2079,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 10,
                         color:  AppTheme.colorAccent,
-                        height: 1.2
+                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                      fontFamily: AppTheme.fontTTNorms,
+                      fontWeight: FontWeight.w500,
                     ),
                   )
               ),
@@ -2112,7 +2178,13 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
             ),
             Container(
                 child: Center(
-                  child: Text('Indicadores', style: TextStyle(color: AppTheme.white, fontSize: 11),),
+                  child: Text('Criterios',
+                    style: TextStyle(
+                        color: AppTheme.white,
+                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                      fontFamily: AppTheme.fontTTNorms,
+                      fontWeight: FontWeight.w700,
+                    ),),
                 ),
                 decoration: BoxDecoration(
                   border: Border(
@@ -2567,7 +2639,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
         itemBuilder: (context, index){
 
           TareaAlumnoUi tareaAlumnoUi = tareaAlumnoUiList[index];
-          print("tareaAlumnoUi success ${tareaAlumnoUi.success }");
+
 
           if(evaluadoKeyMap[tareaAlumnoUi] == null){
             evaluadoKeyMap[tareaAlumnoUi] = GlobalKey();
@@ -2603,7 +2675,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                               child: Text("${(tareaAlumnoUi.personaUi?.nombreCompleto??"").toUpperCase()}",
                                 style: TextStyle(color: HexColor(controller.cursosUi?.color1),
                                     fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
-                                    fontWeight: FontWeight.w500
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700
                                 ),
                               ),
                             )
@@ -2618,9 +2691,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                           alignment: Alignment.center,
                           child: Text((tareaAlumnoUi.entregado_retraso??false) ? "Entregado\ncon retrazo": "Entregado",
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700,
                                 color:AppTheme.white,
-                                fontSize: 10,
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
                               )),
                         ):Container(),
                         Padding(padding: EdgeInsets.all(4)),
@@ -2636,9 +2710,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                           alignment: Alignment.center,
                           child: Text("${tareaAlumnoUi.success == 1? "Guardando": tareaAlumnoUi.success == -1?"Error al\nguardar":"Evaluado" }",
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w700,
                                 color:AppTheme.white,
-                                fontSize: 10,
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
                               )),
                         ):Container()
                       ],
@@ -2743,11 +2818,32 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                         mainAxisAlignment: MainAxisAlignment.center,
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         children: [
-                                                          Text("${tareaAlumnoArchivoUi.nombre??""}", maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: AppTheme.greyDarken3, fontSize: 11),),
+                                                          Text("${tareaAlumnoArchivoUi.nombre??""}", maxLines: 2, overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                                color: AppTheme.greyDarken3,
+                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w500,
+                                                            )
+                                                          ),
                                                           Padding(padding: EdgeInsets.all(2)),
                                                           (tareaAlumnoArchivoUi.repositorio??false)?
-                                                          Text("${getDescripcion(tareaAlumnoArchivoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis ,style: TextStyle(color: AppTheme.grey, fontSize: 9)):
-                                                          Text("${tareaAlumnoArchivoUi.url??""}", maxLines: 1, overflow: TextOverflow.ellipsis ,style: TextStyle(color: AppTheme.blue, fontSize: 9))
+                                                          Text("${getDescripcion(tareaAlumnoArchivoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis ,
+                                                              style: TextStyle(
+                                                                  color: AppTheme.grey,
+                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10),
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w500,
+                                                              )
+                                                          ):
+                                                          Text("${tareaAlumnoArchivoUi.url??""}", maxLines: 1, overflow: TextOverflow.ellipsis ,
+                                                              style: TextStyle(color:
+                                                              AppTheme.blue,
+                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10),
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w500,
+                                                              )
+                                                          )
                                                         ],
                                                       ),
                                                     ),
@@ -2791,7 +2887,14 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                     padding: EdgeInsets.only(left: padding_left, right: padding_right),
                     margin: EdgeInsets.only(top:  16),
                     alignment: Alignment.centerLeft,
-                    child: Text("Comentarios privados (Sólo los ve le foto_alumno)", style: TextStyle(color: AppTheme.colorPrimary, fontSize: 10),),
+                    child: Text("Comentarios privados (Sólo los ve le alumno)",
+                      style: TextStyle(
+                          color: AppTheme.colorPrimary,
+                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.only(top:  4, bottom: 4),
@@ -3007,7 +3110,11 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
     final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Container(
       child: FloatingSearchBar(
-        hint: 'Buscar foto_alumno...',
+        hint: 'Buscar alumno...',
+        hintStyle: TextStyle(
+          fontFamily: AppTheme.fontTTNorms,
+          fontWeight: FontWeight.w500,
+        ),
         autocorrect: true,
         controller: floatingSearchBarController,
         scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
@@ -3112,7 +3219,11 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                       //Navigator.pop(context);
                     }
                   },
-                  child: Text("Cerrar")
+                  child: Text("Cerrar",
+                    style: TextStyle(
+                      fontFamily: AppTheme.fontTTNorms,
+                      fontWeight: FontWeight.w500,
+                    ),)
               );
 
             },
@@ -3136,7 +3247,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                         style: TextStyle(
                             color: AppTheme.white,
                             fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 4),
-                            fontWeight: FontWeight.w500
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w700,
                         )
                     ),
                     Padding(
@@ -3167,7 +3279,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                         style: TextStyle(
                             color: AppTheme.white,
                             fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 4),
-                            fontWeight: FontWeight.w500
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w700,
                         )
                     ),
                     Padding(
@@ -3263,18 +3376,29 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CachedNetworkImage(
-              placeholder: (context, url) => Container(
-                child: Center(child: CircularProgressIndicator(),),
+              placeholder: (context, url) => SizedBox(
+                child: Shimmer.fromColors(
+                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                  highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                  child: Container(
+                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                    decoration: BoxDecoration(
+                        color: HexColor(controller.cursosUi?.color2),
+                        shape: BoxShape.circle
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                ),
               ),
               imageUrl: tareaAlumnoUi.personaUi?.foto??"",
               errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 25,),
               imageBuilder: (context, imageProvider) =>
                   Container(
-                      width: 25,
-                      height: 25,
+                      width: 40,
+                      height: 40,
                       margin: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        shape: BoxShape.circle,
                         image: DecorationImage(
                           image: imageProvider,
                           fit: BoxFit.cover,
@@ -3290,9 +3414,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 13),
+                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14),
                             color: AppTheme.darkerText,
-                            fontWeight: FontWeight.w700
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w700,
                         )
                     ),
                     Padding(
@@ -3302,8 +3427,10 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14),
                           color: AppTheme.darkerText,
+                          fontFamily: AppTheme.fontTTNorms,
+                          fontWeight: FontWeight.w500,
                         )
                     )
                   ],

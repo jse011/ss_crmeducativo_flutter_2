@@ -19,6 +19,7 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_r
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/libs/flutter-sized-context/sized_context.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/unidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
@@ -222,7 +223,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                           ),
                           Padding(padding: EdgeInsets.all(4)),
                           Center(
-                            child: Text("Seleciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                            child: Text("Selecciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                           )
                         ],
                       ):
@@ -287,6 +288,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                         children: [
 
                                           Container(
+                                            width: double.infinity,
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthTarea(context, 8))),
                                               color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
@@ -325,7 +327,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                                       color1: HexColor(controller.cursosUi.color1),
                                                       color2: HexColor(controller.cursosUi.color2),
                                                       tareaUi: o, onTap: () async{
-                                                    dynamic? result = await AppRouter.createRouteTareaPortalRouter(context, controller.usuarioUi,  controller.cursosUi, o, controller.calendarioPeriodoUI, unidadUi, null);
+                                                    dynamic? result = await AppRouter.createRouteTareaPortalRouter(context, controller.usuarioUi,  controller.cursosUi, o, controller.calendarioPeriodoUI, unidadUi, controller.getSesionUi(o));
                                                     if(result is int) controller.refrescarListTarea(unidadUi);
                                                   });
                                                 }else{

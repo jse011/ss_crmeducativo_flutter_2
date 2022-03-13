@@ -7,6 +7,8 @@ import 'package:http/io_client.dart';
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
 import 'package:ss_crmeducativo_2/src/device/utils/http_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/asistencia_qr_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_firebase_sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
@@ -1170,11 +1172,66 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<bool?> saveEstadoSesion(String urlServidorLocal, int? sesionAprendizajeId, int estado_hecho, int usuarioId)async {
+  Future<bool?> saveEstadoSesion(String urlServidorLocal, int? sesionAprendizajeId, int estado_hecho, List<EvaluacionFirebaseSesionUi> evaluacionFbSesionUiList, int usuarioId)async {
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vint_SesionAprendizajeId"] = sesionAprendizajeId;
     parameters["vint_EstadoId"] = estado_hecho;
+    parameters["vint_Evento"] = [];
     final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("saveEstadoSesion", parameters))
+        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> saveEstadoSesion2(String urlServidorLocal, int? sesionAprendizajeId, int? unidadAprendizajeId, int? silaboEventoId , int? periodoId, int? calendarioPeriodoId, List<EvaluacionFirebaseSesionUi> evaluacionFbSesionUiList, int usuarioId, int personaId)async {
+    List<dynamic> vlst_PreguntaList = [];
+    List<dynamic> vlst_TareaList = [];
+    List<dynamic> vlst_InstrumentoList = [];
+    for(EvaluacionFirebaseSesionUi item in evaluacionFbSesionUiList){
+      if(item.tipo == EvaluacionFirebaseTipoUi.PREGUNTA){
+        vlst_PreguntaList.add(item.data);
+      }
+    }
+    for(EvaluacionFirebaseSesionUi item in evaluacionFbSesionUiList){
+      if(item.tipo == EvaluacionFirebaseTipoUi.TAREA||item.tipo == EvaluacionFirebaseTipoUi.TAREAUNIDAD){
+        vlst_TareaList.add(item.data);
+      }
+    }
+    for(EvaluacionFirebaseSesionUi item in evaluacionFbSesionUiList){
+      if(item.tipo == EvaluacionFirebaseTipoUi.INSTRUMENTO){
+        vlst_InstrumentoList.add(item.data);
+      }
+    }
+
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_SilaboId"] = silaboEventoId;
+    parameters["vint_PeriodoId"] = periodoId;
+    parameters["vint_UnidadId"] = unidadAprendizajeId;
+    parameters["vint_SesionId"] = sesionAprendizajeId;
+    parameters["vlst_PreguntaList"] = vlst_PreguntaList;
+    parameters["vlst_TareaList"] = vlst_TareaList;
+    parameters["vlst_InstrumentoList"] = vlst_InstrumentoList;
+    parameters["vint_CalendarioPeriodoId"] = calendarioPeriodoId;
+    parameters["vint_UsuarioId"] = usuarioId;
+    parameters["vint_PersonaId"] = personaId;
+
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("saveEstadoSesion2", parameters))
         .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load tarea eval');});
 
     if (response.statusCode == 200) {
@@ -1443,6 +1500,172 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     });
 
     return dioCancellation;
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getFirebaseGetEvaluaciones(String urlServidorLocal, int? silaboEventoId, int? tipoPeriodoId, int? unidadAprendizajeId, int? sesionAprendizajeId) async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_SilaboEventoId"] = silaboEventoId;
+    parameters["vint_TipoPeriodoId"] = tipoPeriodoId;
+    parameters["vint_UnidadAprendizajeId"] = unidadAprendizajeId;
+    parameters["vint_SesionAprendizajeId"] = sesionAprendizajeId;
+
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("f_FirebaseGetEvaluaciones",parameters))
+        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load updateUsuario');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load crear_agenda 0');
+    }
+  }
+
+  @override
+  Future<String?> getFechaActualServidor(String urlServidorLocal) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getFechaActualServidor2",parameters))
+        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load updateUsuario');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load crear_agenda 0');
+    }
+  }
+
+  @override
+  Future<HttpStream?> uploadAsistenciaQR(String urlServidorLocal, String? codigo, int? anio, int? mes, int? dia, int? hora, int? minuto, int? segundo, HttpValueSuccess httpSuccessListen) async{
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    Map<String, dynamic> bEAsistenciaQR = Map<String, dynamic>();
+    bEAsistenciaQR["codigo"] = codigo;
+    bEAsistenciaQR["anio"] = anio;
+    bEAsistenciaQR["mes"] = mes;
+    bEAsistenciaQR["dia"] = dia;
+    bEAsistenciaQR["hora"] = hora;
+    bEAsistenciaQR["minuto"] = minuto;
+    bEAsistenciaQR["segundo"] = segundo;
+    parameters["bEAsistenciaQR"] = bEAsistenciaQR;
+    Dio dio = new Dio();
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data:  getBody("saveAsistenciaQR2", parameters),
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        print("Response success");
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(true, body["Value"]);
+          print("Response success ${body["Value"]}");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, null);
+          print("Response null ${response.data}");
+        }
+      }
+    });
+
+    return dioCancellation;
+  }
+
+  @override
+  Future<bool?> saveListaAsistenciaQR(String urlServidorLocal, List<AsistenciaQRUi> asistenciaQRUiList) async{
+    print("saveListaAsistenciaQR ${urlServidorLocal}");
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    List<Map<String, dynamic>> bEAsistenciaQRList = [];
+    for(AsistenciaQRUi asistenciaQRUi in asistenciaQRUiList){
+      Map<String, dynamic> bEAsistenciaQR = Map<String, dynamic>();
+      bEAsistenciaQR["codigo"] = asistenciaQRUi.codigo;
+      bEAsistenciaQR["anio"] = asistenciaQRUi.anio;
+      bEAsistenciaQR["mes"] = asistenciaQRUi.mes;
+      bEAsistenciaQR["dia"] = asistenciaQRUi.dia;
+      bEAsistenciaQR["hora"] = asistenciaQRUi.hora;
+      bEAsistenciaQR["minuto"] = asistenciaQRUi.minuto;
+      bEAsistenciaQR["segundo"] = asistenciaQRUi.segundo;
+      bEAsistenciaQRList.add(bEAsistenciaQR);
+    }
+
+    parameters["bEAsistenciaQRList"] = bEAsistenciaQRList;
+    print("saveListaAsistenciaQR2");
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("saveListaAsistenciaQR", parameters))
+        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load tarea eval');});
+    print("saveListaAsistenciaQR3");
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<List?> getListaAsistencia(String urlServidorLocal, int anioAcademicoId, int min, int max, String search, String fechaInicio, String fechaFin)async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vstr_ProgramaId"] = "0";
+    parameters["vstr_Grado"] = "0";
+    parameters["vstr_Seccion"] = "0";
+    parameters["vstr_Anio"] = anioAcademicoId.toString();
+    parameters["mint_min"] = min;
+    parameters["mint_max"] = max;
+    parameters["vstr_searchValue"] = search;
+    parameters["vstr_FechaInicio"] = fechaInicio;
+    parameters["vstr_FechaFin"] = fechaFin;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("List_ObtenerAsistenciaGeneral",parameters))
+        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load getActividadesSesion');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load getListaAsistencia 0');
+    }
   }
 
 }

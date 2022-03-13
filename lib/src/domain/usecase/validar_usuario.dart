@@ -29,6 +29,15 @@ class ValidarUsuario extends UseCase<ValidarUsuarioCaseResponse, ValidarUsuarioC
     return controller.stream;
   }
 
+  Future<bool> execut(ValidarUsuarioCaseParams params) async{
+    try {
+      return this.repository.validarUsuario();
+    } catch (e) {
+      print('ValidarUsuario unsuccessful: ' + e.toString());
+      return false;
+    }
+  }
+
 
 
 }

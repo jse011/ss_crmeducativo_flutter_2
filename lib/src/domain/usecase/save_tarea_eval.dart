@@ -64,7 +64,13 @@ class SaveTareaEval{
     if(await repository.isRubroSincronizado(rubricaEvaluacionUi.rubroEvaluacionId)){
       Map<String, dynamic>? data = await repository.getRubroEvaluacionIdSerial(rubricaEvaluacionUi.rubroEvaluacionId??"");
       if(data!=null){
-        success = await httpDatosRepository.updateEvaluacionRubroFlutter(urlServidorLocal, params.calendarioPeriodoUI?.id??0, params.tareaUi?.silaboEventoId??0, georeferenciaId, usuarioId, data)??false;
+        try{
+          success = await httpDatosRepository.updateEvaluacionRubroFlutter(urlServidorLocal, params.calendarioPeriodoUI?.id??0, params.tareaUi?.silaboEventoId??0, georeferenciaId, usuarioId, data)??false;
+        }catch(e){
+          success = false;
+          print(e.toString());
+        }
+
         if(success){
           await repository.saveRubroEvaluacionData(dataBDEvaluacion);
           await repository.cambiarEstadoActualizado(rubricaEvaluacionUi.rubroEvaluacionId??"");

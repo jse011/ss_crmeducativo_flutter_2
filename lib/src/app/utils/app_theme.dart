@@ -29,14 +29,14 @@ abstract class ChangeAppTheme{
       case AppType.EDUCAR:
         return 'Educar Teacher';
       case AppType.ICRM:
-        return 'Padre Mentor 3.0';
+        return 'Docente Mentor 3.0';
     }
   }
 
-  static Color colorEspera({AppType app = _app}){
+  static Color getcolorApp({AppType app = _app}){
     switch(app){
       case AppType.EDUCAR:
-        return AppTheme.colorEducarDocente;
+        return AppTheme.colorEducarTeacher;
       case AppType.ICRM:
         return AppTheme.colorDocenteMentor;
     }
@@ -65,9 +65,9 @@ abstract class ChangeAppTheme{
 class AppTheme  {
   AppTheme._();
 
-  static const Color colorEducarDocente = Color(0xFFEFB226);
-  static const Color colorDocenteMentor = Color(0xFF6BBFFE);
-  static const Color colorAlumnoMentor = Color(0xFF84DC54);
+  static const Color colorEducarTeacher = Color(0XFFEFB226);
+  static const Color colorDocenteMentor = Color(0XFF9C2B6E);
+  static const Color colorAlumnoMentor = Color(0XFFFDCA09);
 
   static const Color notWhite = Color(0xFFEDF0F2);
   static const Color nearlyWhite = Color(0xFFFAFAFA);

@@ -8,7 +8,8 @@ class TransformarValoTipoNota {
 
   static ValorTipoNotaUi? transformarTipoNota(double? notaEntrada, TipoNotaUi? tipoNotaEntraUi, ValorTipoNotaUi? valorTipoNotaEntradaUi, TipoNotaUi? tipoNotaSalidaUi)
   {
-
+    print("actualizarEvaluacionOriginal: ${tipoNotaSalidaUi?.resultado}");
+    print("actualizarEvaluacionOriginal: ${tipoNotaEntraUi?.resultado}");
     if((tipoNotaSalidaUi?.resultado??false)||(tipoNotaEntraUi?.resultado??false)){
       double? notaRubro = 0;
       switch(tipoNotaEntraUi?.tipoNotaTiposUi){
@@ -16,11 +17,13 @@ class TransformarValoTipoNota {
         case TipoNotaTiposUi.SELECTOR_ICONOS:
 
           notaRubro = valorTipoNotaEntradaUi?.valorNumericoTransf??0;
+          print("notaRubro: ${notaRubro}");
           break;
         case TipoNotaTiposUi.SELECTOR_NUMERICO:
         case TipoNotaTiposUi.VALOR_NUMERICO:
         default:
           notaRubro = notaEntrada;
+          print("notaEntrada: ${notaEntrada}");
           break;
       }
 
@@ -108,7 +111,10 @@ class TransformarValoTipoNota {
     {
       bool valorInferior = false;
       bool valorSuperior = false;
-
+      print("notaRubro titulo: ${tipoNotaResultadoUi?.tipoNotaId}");
+      print("notaRubro icono: ${bEValorTipoNota.icono}");
+      print("notaRubro limiteSuperiorTransf: ${bEValorTipoNota.limiteSuperiorTransf}");
+      print("notaRubro limiteInferiorTransf: ${bEValorTipoNota.limiteInferiorTransf}");
       if (bEValorTipoNota.incluidoLSuperiorTransf??false)
       {
         if ((bEValorTipoNota.limiteSuperiorTransf??0) >= (nota??0))

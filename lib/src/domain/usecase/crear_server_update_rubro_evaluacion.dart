@@ -27,6 +27,7 @@ class CrearServerUpdateRubroEvaluacion {
     bool offline = false;
 
     Map<String, dynamic>? dataBD =  await repository.updateRubroEvaluacionData(params.rubricaEvaluacionUi, usuarioId);
+    print("rubroEvaluacionProceso dataBD");
     Map<String, dynamic>? dataSerial = await repository.getRubroEvaluacionSerial(dataBD);
 
     if(dataSerial!=null){

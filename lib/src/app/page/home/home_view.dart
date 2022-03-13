@@ -26,6 +26,7 @@ import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/barra_navegacion.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/bottom_navigation.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/splash.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/splash_error.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
@@ -34,8 +35,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 class HomeView extends View{
   static const TAG = "HomePage";
   BuildContext context;
-
-  HomeView(this.context);
+  AsyncSnapshot? snapshot;
+  HomeView(this.context, {this.snapshot});
 
   @override
   _HomePageState createState(){
@@ -87,12 +88,12 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
       );
       // You can let the plugin handle fetching the status and showing a dialog,
       // or you can fetch the status and display your own dialog, or no dialog.
-      const simpleBehavior = true;
+      const simpleBehavior = false;
 
       if (simpleBehavior) {
         basicStatusCheck(newVersion);
       } else {
-        advancedStatusCheck(newVersion);
+        advancedStatusCheck(newVersion, info);
       }
     }
     );
@@ -102,19 +103,17 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
     newVersion.showAlertIfNecessary(context: context);
   }
 
-  advancedStatusCheck(NewVersion newVersion) async {
-    final status = await newVersion.getVersionStatus();
-    if (status != null) {
-      debugPrint(status.releaseNotes);
-      debugPrint(status.appStoreLink);
-      debugPrint(status.localVersion);
-      debugPrint(status.storeVersion);
-      debugPrint(status.canUpdate.toString());
+  advancedStatusCheck(NewVersion newVersion, PackageInfo info) async {
+    final versionStatus = await newVersion.getVersionStatus();
+    if (versionStatus != null && versionStatus.canUpdate) {
+
       newVersion.showUpdateDialog(
-        context: context,
-        versionStatus: status,
-        dialogTitle: 'Actualizar',
-        dialogText: 'Actualización disponible',
+          context: context,
+          versionStatus: versionStatus,
+          dialogTitle: 'Actualizar ${info.appName}',
+          dialogText: 'Ahora puede actualizar esta aplicación de ${versionStatus.localVersion} a ${versionStatus.storeVersion}',
+          dismissButtonText: "Más tarde",
+          updateButtonText: "Actualizar"
       );
     }
   }
@@ -136,7 +135,6 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
       builder: (context, controller) {
 
         return Container(
-          //color: AppTheme.nearlyWhite,
           child: SafeArea(
               top: false,
               bottom: false,
@@ -156,100 +154,29 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
                 ]
             ),*/
                   body: (){
-                    if(controller.showLoggin == 0){
-                      return Container(
-                        color:  ChangeAppTheme.colorEspera(),
-                      );
-                    }else if(controller.showLoggin == 1){
-                      SchedulerBinding.instance?.addPostFrameCallback((_) {
-                        // fetch data
-                        AppRouter.createRouteLogin(context);
-                      });
-                      return Container(
-                        color:  ChangeAppTheme.colorEspera(),
-                      );
 
-                    }else{
-                      changeIndex(controller.vistaActual, controller);
-                      return OfflineBuilder(
-                          connectivityBuilder: (
-                              BuildContext context,
-                              ConnectivityResult connectivity,
-                              Widget child,
-                          ){
-                            bool connected = connectivity != ConnectivityResult.none;
-                            if(_connected!=null && connected != _connected){
-                              _onChangeConnected?.call(connected);
-                              controller.changeConnected(connected);
-                            }
-                            _connected = connected;
-                            return Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                child,
-                                Positioned(
-                                  height: 32.0,
-                                  left: 0.0,
-                                  right: 0.0,
-                                  child: AnimatedOpacity(
-                                    opacity: !connected ? 1.0 : 0.0,
-                                    duration: const Duration(milliseconds: 3000),
-                                    child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 350),
-                                      color: connected ?  Color(0xFF00EE44) : Color(0xFFEE4400),
-                                      child: AnimatedSwitcher(
-                                        duration: const Duration(milliseconds: 350),
-                                        child: connected
-                                            ? Text('Conectado')
-                                            : Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: const <Widget>[
-                                            Text('Sin conexión'),
-                                            SizedBox(width: 8.0),
-                                            SizedBox(
-                                              width: 12.0,
-                                              height: 12.0,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2.0,
-                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        child: Stack(
-                            children:[
-                              DrawerUserController(
-                                photoUser: controller.usuario == null ? '' : '${controller.usuario?.personaUi?.foto??""}',
-                                nameUser: controller.usuario == null ? '' : '${controller.usuario?.personaUi?.nombreCompleto??""}',
-                                correo: '',
-                                screenView: _screenView,
-                                menuListaView: _menuScreenView,
-                                drawerWidth: MediaQuery
-                                    .of(context)
-                                    .size
-                                    .width * 0.70,
-                                onClickCerrarCession: () async{
-                                  AppRouter.createRouteCerrarSesion(context);
-                                },
-                                drawerIsOpen: (bool ) { },
-                                onTapImagePerfil: () {
-                                  AppRouter.showEditarUsuarioView(context, controller.usuario);
-                                },
-                                closeMenuCallback: (closeSesion) {
-                                  _closeMenu = closeSesion;
-                                },
-                              ),
-                            ]
-                        ),
+
+                    if(widget.snapshot !=null){
+                      Widget splash;
+                      if (widget.snapshot!.hasError) {
+                        splash =SplashErrorView();
+                      }else{
+                        splash = SplashView();
+                      }
+                      return Stack(
+                        children: [
+                          splash,
+                          (widget.snapshot!.connectionState == ConnectionState.done)?
+                          getMainView(controller):
+                          Container(),
+                        ],
                       );
+                    }else{
+                      return getMainView(controller);
                     }
+
+
+
                   }()
               )
           ),
@@ -320,6 +247,103 @@ class _HomePageState extends ViewState<HomeView, HomeController> with TickerProv
         );
         //_screenView = InviteFriend();
         break;
+    }
+  }
+
+  Widget getMainView(HomeController controller) {
+    if(controller.showLoggin == 0){
+      return Container(
+        color: Colors.transparent,
+      );
+    }else if(controller.showLoggin == 1){
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        // fetch data
+        AppRouter.createRouteLogin(context);
+      });
+      return Container(
+        color: Colors.transparent,
+      );
+
+    }else{
+      changeIndex(controller.vistaActual, controller);
+      return OfflineBuilder(
+        connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+            ){
+          bool connected = connectivity != ConnectivityResult.none;
+          if(_connected!=null && connected != _connected){
+            _onChangeConnected?.call(connected);
+            controller.changeConnected(connected);
+          }
+          _connected = connected;
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              child,
+              Positioned(
+                height: 32.0,
+                left: 0.0,
+                right: 0.0,
+                child: AnimatedOpacity(
+                  opacity: !connected ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 3000),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    color: connected ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      child: connected
+                          ? Text('Conectado')
+                          : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const <Widget>[
+                          Text('Sin conexión'),
+                          SizedBox(width: 8.0),
+                          SizedBox(
+                            width: 12.0,
+                            height: 12.0,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.0,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+        child: Stack(
+            children:[
+              DrawerUserController(
+                photoUser: controller.usuario == null ? '' : '${controller.usuario?.personaUi?.foto??""}',
+                nameUser: controller.usuario == null ? '' : '${controller.usuario?.personaUi?.nombreCompleto??""}',
+                correo: '',
+                screenView: _screenView,
+                menuListaView: _menuScreenView,
+                drawerWidth: MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.70,
+                onClickCerrarCession: () async{
+                  AppRouter.createRouteCerrarSesion(context);
+                },
+                drawerIsOpen: (bool ) { },
+                onTapImagePerfil: () {
+                  AppRouter.showEditarUsuarioView(context, controller.usuario);
+                },
+                closeMenuCallback: (closeSesion) {
+                  _closeMenu = closeSesion;
+                },
+              ),
+            ]
+        ),
+      );
     }
   }
 

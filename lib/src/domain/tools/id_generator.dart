@@ -14,7 +14,7 @@ import 'dart:math';
 ///
 /// This code is based on a Firebase blog post and ported to Dart.
 /// https://firebase.googleblog.com/2015/02/the-2120-ways-to-ensure-unique_68.html
-class IdGenerator {
+class IdGenerator2 {
   // ignore: constant_identifier_names
   static const String PUSH_CHARS =
       '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
@@ -54,6 +54,7 @@ class IdGenerator {
   }
 
   static void _incrementArray() {
+    List<String> repets = [];
     for (int i = 11; i >= 0; i--) {
       if (_lastRandChars[i] != 63) {
         _lastRandChars[i] = _lastRandChars[i] + 1;
@@ -63,3 +64,57 @@ class IdGenerator {
     }
   }
 }
+/*Importante los servidores db habese no diferencia las mayusculas*/
+class IdGenerator {
+  // ignore: constant_identifier_names
+  //static const String PUSH_CHARS =
+  //  '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';//64
+  static const String PUSH_CHARS =
+      '-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_';//38
+
+  static final Random _random = Random();
+
+  static int? _lastPushTime;
+
+  static final List<int> _lastRandChars = List.filled(12, 0);
+
+  static String generateId() {
+    int now = DateTime.now().millisecondsSinceEpoch;
+    final bool duplicateTime = now == _lastPushTime;
+    _lastPushTime = now;
+
+    final List<String> timeStampChars = List.filled(8, '');
+    for (int i = 7; i >= 0; i--) {
+      timeStampChars[i] = PUSH_CHARS[now % PUSH_CHARS.length];
+      now = (now / 64).floor();
+    }
+    assert(now == 0);
+
+    final StringBuffer result = StringBuffer(timeStampChars.join());
+
+    if (!duplicateTime) {
+      for (int i = 0; i < 12; i++) {
+        _lastRandChars[i] = _random.nextInt(PUSH_CHARS.length);
+      }
+    } else {
+      _incrementArray();
+    }
+    for (int i = 0; i < 12; i++) {
+      result.write(PUSH_CHARS[_lastRandChars[i]]);
+    }
+    assert(result.length == 20);
+    return result.toString().toUpperCase();
+  }
+
+  static void _incrementArray() {
+    List<String> repets = [];
+    for (int i = 11; i >= 0; i--) {
+      if (_lastRandChars[i] != PUSH_CHARS.length - 1) {
+        _lastRandChars[i] = _lastRandChars[i] + 1;
+        return;
+      }
+      _lastRandChars[i] = 0;
+    }
+  }
+}
+

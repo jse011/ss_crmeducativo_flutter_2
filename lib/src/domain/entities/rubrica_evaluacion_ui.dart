@@ -54,6 +54,7 @@ class RubricaEvaluacionUi{
   double? desviacionEstandar;
   TipoRubroEvaluacion?  tipoRubroEvaluacion;
   int? competenciaId;
+  bool? update;
 
 }
 

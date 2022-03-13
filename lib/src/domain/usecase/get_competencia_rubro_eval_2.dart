@@ -55,7 +55,7 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
             for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
               if((rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS ||
                   rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES) ){
-                if(evaluacionUi.valorTipoNotaId != null){
+                if((evaluacionUi.valorTipoNotaId??"").isNotEmpty){
                   cantidadEvaluados++;
                 }
               }else {
@@ -69,6 +69,7 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
               evaluableCapacidad =  true;
             }
           }
+          print("evaluableCapacidad: ${evaluableCapacidad}");
           if(evaluableCapacidad){
             capacidadUiList.add(capacidadUi);
             evaluableCompetencia = true;
@@ -80,6 +81,7 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
         });
         competenciaUi.capacidadUiList = capacidadUiList;
         competenciaUi.evaluable = evaluableCompetencia;
+
       }
       competenciaUiList.removeWhere((element) => !(element.evaluable??false));
 
@@ -116,7 +118,7 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
             for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
               if((rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS ||
                   rubricaEvaluacionUi.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES) ){
-                  if(evaluacionUi.valorTipoNotaId != null){
+                  if((evaluacionUi.valorTipoNotaId??"").isNotEmpty){
                     cantidadEvaluados++;
                   }
               }else {
@@ -141,6 +143,7 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
                 alumnoCurso.soloApareceEnElCurso = true;
                 rubricaEvaluacionUi.evaluacionUiList?.add(evaluacionUi);
                 evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
+                evaluacionUi.rubroEvaluacionId = rubricaEvaluacionUi.rubroEvaluacionId;
                 evaluacionUi.alumnoId = alumnoCurso.personaId;
               }
               evaluacionUi.personaUi = alumnoCurso;

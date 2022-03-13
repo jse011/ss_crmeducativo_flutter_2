@@ -67,8 +67,8 @@ class RubroCrearPresenter extends Presenter{
     _getTipoNota.execute(_GetTipoNotaCase(this), GetTipoNotaParms());
   }
 
-  void getTemaCriterios(RubricaEvaluacionUi? rubricaEvaluacionUi, CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI){
-    _getTemaCriterios.execute(_GetTemaCriteriosCase(this), GetTemaCriteriosParms(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId));
+  void getTemaCriterios(RubricaEvaluacionUi? rubricaEvaluacionUi, CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, SesionUi? sesionUi){
+    _getTemaCriterios.execute(_GetTemaCriteriosCase(this), GetTemaCriteriosParms(calendarioPeriodoUI?.id, cursosUi?.silaboEventoId, sesionUi?.sesionAprendizajeId));
   }
 
   Future<HttpStream?> save(RubricaEvaluacionUi? rubricaEvaluacionUi) async{
