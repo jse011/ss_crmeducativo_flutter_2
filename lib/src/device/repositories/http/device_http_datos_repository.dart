@@ -1638,7 +1638,10 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<List?> getListaAsistencia(String urlServidorLocal, int anioAcademicoId, int min, int max, String search, String fechaInicio, String fechaFin)async {
+  Future<HttpStream?> getListaAsistencia(String urlServidorLocal, int anioAcademicoId, int min, int max, String search, String fechaInicio, String fechaFin, HttpSuccessValue2 httpSuccessListen)async {
+
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vstr_ProgramaId"] = "0";
     parameters["vstr_Grado"] = "0";
@@ -1649,23 +1652,72 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vstr_searchValue"] = search;
     parameters["vstr_FechaInicio"] = fechaInicio;
     parameters["vstr_FechaFin"] = fechaFin;
-    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("List_ObtenerAsistenciaGeneral",parameters))
-        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load getActividadesSesion');});
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      Map<String,dynamic> body = json.decode(response.body);
-      if(body.containsKey("Successful")&&body.containsKey("Value")){
-        return body["Value"];
-      }else{
-        return null;
+    Dio dio = new Dio();
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data:  getBody("List_ObtenerAsistenciaGeneral", parameters),
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(body["Value"], false, );
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(null, false);
+          print("Response null ${response.data}");
+        }
+      }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+            print("Request to API server was cancelled");
+            httpSuccessListen.call(false, false);
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, true);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(null, false);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            print("Send timeout in connection with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          default:
+            httpSuccessListen.call(false, false);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(null, false);
       }
 
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load getListaAsistencia 0');
-    }
+    });
+
+    return dioCancellation;
   }
 
 }

@@ -14,16 +14,15 @@ class AsistenciaQRBuscarPresenter extends Presenter{
         this.uploadListaAsistenciaQR = GetListaAsistenciaQR(configuracionRepository, httpDatosRepository, asistenciaQRRepository);
 
 
-  Future<List<AsistenciaUi>?> getAsistenciaUiList(int min, int max, String search, DateTime? fechaInicio, DateTime? fechaFin)async{
-    var response = await uploadListaAsistenciaQR.execute(min ,max, search, fechaInicio, fechaFin);
-    uploadListaAsistenciaQROnSucces(response.success, response.offline);
-    return response.asistenciaUiList;
+  Future<HttpStream?> getAsistenciaUiList(int min, int max, String search, DateTime? fechaInicio, DateTime? fechaFin)async{
+    return uploadListaAsistenciaQR.execute(min ,max, search, fechaInicio, fechaFin, (response) {
+      uploadListaAsistenciaQROnSucces(response.success, response.offline, response.asistenciaUiList, min);
+    });
   }
 
 
   @override
   void dispose() {
-
   }
 
 }

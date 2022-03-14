@@ -51,7 +51,7 @@ abstract class HttpDatosRepository{
   Future<String?> getFechaActualServidor(String urlServidorLocal);
   Future<HttpStream?> uploadAsistenciaQR(String urlServidorLocal, String? codigo, int? anio, int? mes, int? dia, int? hora, int? minuto, int? segundo, HttpValueSuccess httpValueSuccess);
   Future<bool?> saveListaAsistenciaQR(String urlServidorLocal,List<AsistenciaQRUi> asistenciaQRUiList );
-  Future<List<dynamic>?> getListaAsistencia(String urlServidorLocal, int anioAcademicoId, int min, int max, String search, String fechaInicio, String fechaFin);
+  Future<HttpStream?> getListaAsistencia(String urlServidorLocal, int anioAcademicoId, int min, int max, String search, String fechaInicio, String fechaFin, HttpSuccessValue2 httpSuccessListen);
 }
 
 abstract class HttpStream {

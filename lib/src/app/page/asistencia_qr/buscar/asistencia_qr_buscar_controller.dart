@@ -9,10 +9,6 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.
 class AsistenciaQRBuscarController extends Controller{
   AsistenciaQRBuscarPresenter presenter;
 
-
-
-
-
   AsistenciaQRBuscarController(ConfiguracionRepository configuracionRepository,
       HttpDatosRepository httpDatosRepository,
       AsistenciaQRRepository asistenciaQRRepository):
@@ -40,14 +36,16 @@ class AsistenciaQRBuscarController extends Controller{
   int get paginaActual => _paginaActual;
   int _maxpaginas = 0;
   int get maxpaginas => _maxpaginas;
-
+  HttpStream? http = null;
   int _min = 0;
   int get min => _min;
   @override
   void initListeners() {
     _fechaIncio = DateTime.now();
     _fechaFin = DateTime.now();
-    presenter.uploadListaAsistenciaQROnSucces = (bool? success, bool? offline){
+    presenter.uploadListaAsistenciaQROnSucces = (bool? success, bool? offline, List<AsistenciaUi> asistenciaList, int? minimo){
+      _list = asistenciaList;
+      _min = minimo??0;
       if(offline??false){
         _dialogUi = DialogUi.errorInternet();
         refreshUI();
@@ -55,6 +53,37 @@ class AsistenciaQRBuscarController extends Controller{
         _dialogUi = DialogUi.errorServidor();
         refreshUI();
       }
+
+      if(list.isNotEmpty){
+        _total = _list[0].total??0;
+      }
+
+      if((total/maximoRegistros % 1) == 0){
+        _maxpaginas =  (_total/maximoRegistros).toInt();
+      }else{
+        _maxpaginas =  (_total/maximoRegistros).toInt()+1;
+      }
+
+      _circulos = [];
+      int cantMaxCirculos = 8;
+      int paginaActualCirculos = 0;
+      if(((paginaActual/cantMaxCirculos)% 1) == 0){
+        paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt();
+      }else{
+        paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt() + 1;
+      }
+
+
+
+      for(var index = 0; index < 8; index++){
+        int circulo = (paginaActualCirculos * cantMaxCirculos) - index;
+        _circulos.insert(0,circulo);
+      }
+
+      _progress = false;
+      refreshUI();
+
+
     };
   }
 
@@ -66,14 +95,17 @@ class AsistenciaQRBuscarController extends Controller{
 
   void changeFechaFin(DateTime? value) {
     _fechaFin = value;
+    getListaAsistencia();
   }
 
   void changeFechaInicio(DateTime? value) {
     _fechaIncio = value;
+    getListaAsistencia();
   }
 
   @override
   void dispose() {
+    http?.cancel();
     presenter.dispose();
     super.dispose();
   }
@@ -81,39 +113,11 @@ class AsistenciaQRBuscarController extends Controller{
   void getListaAsistencia() async{
     int max = paginaActual * maximoRegistros ;//2 * 10
 
-    _min = ((paginaActual-1) * maximoRegistros)  ;
+    int min = ((paginaActual-1) * maximoRegistros)  ;
     _progress = true;
     refreshUI();
-    _list = await presenter.getAsistenciaUiList(min,max, search??"", fechaIncio, fechaFin)??[];
-    if(list.isNotEmpty){
-      _total = _list[0].total??0;
-    }
-
-    if((total/maximoRegistros % 1) == 0){
-      _maxpaginas =  (_total/maximoRegistros).toInt();
-    }else{
-      _maxpaginas =  (_total/maximoRegistros).toInt()+1;
-    }
-
-    _circulos = [];
-    if(_maxpaginas<=8){
-      for (var index = 0; index < 8; index++){
-        _circulos.add(index+1);
-      }
-    }else{
-      for (var index = 0; index < 8; index++){
-        if(_paginaActual > 8){
-          _circulos.insert(0,_paginaActual-index);
-        }else{
-          _circulos.add(index+1);
-        }
-
-
-      }
-    }
-
-    _progress = false;
-    refreshUI();
+    http?.cancel();
+    http = await presenter.getAsistenciaUiList(min,max, search??"", fechaIncio, fechaFin);
   }
 
   void clearDialog() {
@@ -124,6 +128,23 @@ class AsistenciaQRBuscarController extends Controller{
     _paginaActual = pagina;
     refreshUI();
     getListaAsistencia();
+  }
+
+  void onClickNextPagina() {
+    if(paginaActual != maxpaginas){
+      _paginaActual ++;
+      refreshUI();
+      getListaAsistencia();
+    }
+
+  }
+
+  void onClickPreviusPagina() {
+    if(paginaActual != 1){
+      _paginaActual --;
+      refreshUI();
+      getListaAsistencia();
+    }
   }
 
 }

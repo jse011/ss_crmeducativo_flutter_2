@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/src/app/page/asistencia_qr/buscar/asistencia_qr_buscar_controller.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/error_handler.dart';
@@ -119,11 +121,6 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                   children: <Widget>[
                     getMainTab(),
                     getAppBarUI(),
-                    controller.progress ? ArsProgressWidget(
-                        blur: 2,
-                        backgroundColor: Color(0x33000000),
-                        animationDuration: Duration(milliseconds: 500)
-                    ) : Container()
                   ],
                 ),
               ),
@@ -280,10 +277,10 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                                   decoration: InputDecoration(
                                     labelText: "Fecha fin",
                                     labelStyle: TextStyle(
-                                        color: AppTheme.colorPrimary,
-                                        fontFamily: AppTheme.fontTTNorms,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
+                                      color: AppTheme.colorPrimary,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                     helperText: " ",
                                     contentPadding: EdgeInsets.all(15.0),
@@ -447,92 +444,162 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                             )
                           ],
                         ),
-                        for (var index = 0; index < controller.list.length; index++)
-                          (){
-                            AsistenciaUi asistenciaUi = controller.list[index];
-                            return  Row(
+                        Stack(
+                          children: [
+                            controller.list.isNotEmpty?Column(
                               children: [
-                                getRow(columnWidth, rowHeight, "${ (controller.min + 1)+ index}.", index),
-                                Container(
-                                  width: columnWidthAlumno,
-                                  height: rowHeight,
-                                  child: Row(
-                                    children: [
-                                      getCell("${asistenciaUi.nombreNivelAcademico}", index,flex: 2),
-                                      getCell("${asistenciaUi.nombrePeriodo}", index,flex: 2),
-                                      getCell("${asistenciaUi.nombreGrupo}", index,),
-                                      getCell(
-                                          "${asistenciaUi.nombre}", index, flex: 4),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: columnWidthApoderado,
-                                  height: rowHeight,
-                                  child: Row(
-                                    children: [
-                                      getCell(
-                                          "${asistenciaUi.nombreApoderado}", index, flex: 4),
-                                      getCell("${asistenciaUi.celularApoderado}", index,flex: 3),
-                                      //geColumn("Correo", flex: 2),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: columnWidthIngreso,
-                                  height: rowHeight,
-                                  child: Row(
-                                    children: [
-                                      getCell("${asistenciaUi.horaIngreso??""}", index,flex: 4),
-                                      getCell("${asistenciaUi.estadoIngreso??""}", index,flex: 3),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: columnWidthSalida,
-                                  height: rowHeight,
-                                  child: Row(
-                                    children: [
-                                      getCell("00:00:00", index,flex: 4),
-                                      getCell("", index,flex: 3),
-                                    ],
-                                  ),
-                                )
+                                for (var index = 0; index < controller.list.length; index++)
+                                      (){
+                                    AsistenciaUi asistenciaUi = controller.list[index];
+                                    return  Row(
+                                      children: [
+                                        getRow(columnWidth, rowHeight, "${ (controller.min + 1)+ index}.", index),
+                                        Container(
+                                          width: columnWidthAlumno,
+                                          height: rowHeight,
+                                          child: Row(
+                                            children: [
+                                              getCell("${asistenciaUi.nombreNivelAcademico}", index,flex: 2),
+                                              getCell("${asistenciaUi.nombrePeriodo}", index,flex: 2),
+                                              getCell("${asistenciaUi.nombreGrupo}", index,),
+                                              getCell(
+                                                  "${asistenciaUi.nombre}", index, flex: 4),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          width: columnWidthApoderado,
+                                          height: rowHeight,
+                                          child: Row(
+                                            children: [
+                                              getCell(
+                                                  "${asistenciaUi.nombreApoderado}", index, flex: 4),
+                                              getCell("${asistenciaUi.celularApoderado}", index,flex: 3),
+                                              //geColumn("Correo", flex: 2),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          width: columnWidthIngreso,
+                                          height: rowHeight,
+                                          child: Row(
+                                            children: [
+                                              getCell("${asistenciaUi.horaIngreso??""}", index,flex: 4),
+                                              getCell("${asistenciaUi.estadoIngreso??""}", index,flex: 3),
+                                            ],
+                                          ),
+                                        ),
+                                        Container(
+                                          width: columnWidthSalida,
+                                          height: rowHeight,
+                                          child: Row(
+                                            children: [
+                                              getCell("00:00:00", index,flex: 4),
+                                              getCell("", index,flex: 3),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }(),
                               ],
-                            );
-                          }(),
+                            ):
+                            Container(
+                              width: width,
+                              color: AppTheme.white,
+                              padding: EdgeInsets.only(top: 24),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(4)),
+                                  Center(
+                                    child: Text("Lista asistencia vacía",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: AppTheme.grey,
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 12,
+                                          fontFamily: AppTheme.fontTTNorms
+                                      ),),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(24)),
+                                ],
+                              ),
+                            ),
+                            controller.progress ?
+                            Positioned(
+                              top: 0,
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                color: AppTheme.black.withOpacity(0.4),
+                                child: Center(
+                                  child: Container(
+                                    padding: EdgeInsets.all(10.0),
+                                    height: 100.0,
+                                    width: 100.0,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white,
+                                    ),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ):Container(),
+                          ],
+                        ),
                         Container(
                           padding: EdgeInsets.only(top: 10),
                           width: width,
                           child: Row(
                             children: [
-                              Container(
-                                margin: EdgeInsets.all(8),
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                    color: AppTheme.white,
-                                    shape: BoxShape.circle
-                                ),
-                                child: Center(
-                                  child: Icon(Icons.arrow_left, color: AppTheme.colorPrimary,)
+                              controller.paginaActual != 1?
+                              getCircular("1",1, false, controller):Container(),
+                              InkWell(
+                                onTap: (){
+                                  controller.onClickPreviusPagina();
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.all(8),
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                      color: AppTheme.white,
+                                      shape: BoxShape.circle
+                                  ),
+                                  child: Center(
+                                      child: Icon(Icons.arrow_left, color: AppTheme.colorPrimary,)
+                                  ),
                                 ),
                               ),
                               for (var index = 0; index < controller.circulos.length; index++)
-                                (){
+                                    (){
                                   int pagina = controller.circulos[index];
                                   return getCircular("${pagina}", pagina, controller.paginaActual == pagina, controller);
                                 }(),
-                              Container(
-                                margin: EdgeInsets.all(8),
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                    color: AppTheme.white,
-                                    shape: BoxShape.circle
-                                ),
-                                child: Center(
-                                    child: Icon(Icons.arrow_right, color: AppTheme.colorPrimary,)
+                              InkWell(
+                                onTap: (){
+                                  controller.onClickNextPagina();
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.all(8),
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                      color: AppTheme.white,
+                                      shape: BoxShape.circle
+                                  ),
+                                  child: Center(
+                                      child: Icon(Icons.arrow_right, color: AppTheme.colorPrimary,)
+                                  ),
                                 ),
                               ),
                               controller.paginaActual != controller.maxpaginas?

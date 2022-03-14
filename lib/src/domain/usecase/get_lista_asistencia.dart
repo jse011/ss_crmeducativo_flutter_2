@@ -15,29 +15,25 @@ class GetListaAsistenciaQR{
   GetListaAsistenciaQR(this.configuracionRepository, this.httpDatosRepository,
       this.asistenciaQRRepository);
 
-  Future<GetListaAsistenciaQRResponse> execute(int min, int max, String search, DateTime? dateTimeIncio , DateTime? dateTimeFin) async{
+  Future<HttpStream?> execute(int min, int max, String search, DateTime? dateTimeIncio , DateTime? dateTimeFin, SuccessListen listen) async{
     String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
     int anioAcademicoId = await configuracionRepository.getSessionAnioAcademicoId();
     bool? success = false;
-    bool offline = false;
+
     List<AsistenciaUi> asistenciaUiList = [];
-    try{
+    //GetListaAsistenciaQRResponse
+    String fechaInicio = DateFormat('dd/MM/yyyy').format(dateTimeIncio??DateTime.now());
+    String fechaFin = DateFormat('dd/MM/yyyy').format(dateTimeFin??DateTime.now());
 
-
-      String fechaInicio = DateFormat('dd/MM/yyyy').format(dateTimeIncio??DateTime.now());
-      String fechaFin = DateFormat('dd/MM/yyyy').format(dateTimeFin??DateTime.now());
-
-      List<dynamic>? response = await httpDatosRepository.getListaAsistencia(urlServidorLocal, anioAcademicoId, min, max, search, fechaInicio, fechaFin);
+    return await httpDatosRepository.getListaAsistencia(urlServidorLocal, anioAcademicoId, min, max, search, fechaInicio, fechaFin,
+          (response, sinConexion) async{
       success = response!=null;
-      if(success){
+      if(success??false){
         asistenciaUiList = await asistenciaQRRepository.transformarAsistencia(response);
       }
+      listen.call(GetListaAsistenciaQRResponse(success, sinConexion, asistenciaUiList ));
+    },);
 
-    }catch(e){
-      print("error: ${e.toString()}");
-      offline = true;
-    }
-    return GetListaAsistenciaQRResponse(success, offline, asistenciaUiList );
   }
 
 }
@@ -49,3 +45,5 @@ class GetListaAsistenciaQRResponse{
 
   GetListaAsistenciaQRResponse(this.success, this.offline, this.asistenciaUiList);
 }
+
+typedef SuccessListen = void Function(GetListaAsistenciaQRResponse response);
