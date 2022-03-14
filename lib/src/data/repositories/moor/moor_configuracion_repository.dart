@@ -1080,7 +1080,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
   }
 
   @override
-  Future<void> udpateUsuario(int usuarioId, Map<String, dynamic> usuarioJson) async{
+  Future<void> udpateUsuarioAnioAcademico(int usuarioId, Map<String, dynamic> usuarioJson) async{
     AppDataBase SQL = AppDataBase();
     UsuarioUi usuarioUi = UsuarioUi();
     UsuarioData usuarioData = UsuarioData.fromJson(usuarioJson);
@@ -1088,6 +1088,46 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     if(usuarioJson.containsKey("persona")){
       personaUpdate = SerializableConvert.converSerializePersona(usuarioJson["persona"]);
     }
+
+    await SQL.batch((batch) async {
+      if(usuarioJson.containsKey("entidades")){
+        //personaSerelizable.addAll(datosInicioPadre["usuariosrelacionados"]);
+        //database.personaDao.insertAllTodo(SerializableConvert.converListSerializePersona(datosInicioPadre["personas"]));
+        batch.deleteWhere(SQL.entidad, (row) => const Constant(true));
+        batch.insertAll(SQL.entidad, SerializableConvert.converListSerializeEntidad(usuarioJson["entidades"]), mode: InsertMode.insertOrReplace);
+      }
+
+      if(usuarioJson.containsKey("georeferencias")){
+        batch.deleteWhere(SQL.georeferencia, (row) => const Constant(true));
+        batch.insertAll(SQL.georeferencia, SerializableConvert.converListSerializeGeoreferencia(usuarioJson["georeferencias"]), mode: InsertMode.insertOrReplace );
+      }
+
+      if(usuarioJson.containsKey("usuarioRolGeoreferencias")){
+        //personaSerelizable.addAll(datosInicioPadre["usuariosrelacionados"]);
+        batch.deleteWhere(SQL.usuarioRolGeoreferencia, (row) => const Constant(true));
+        batch.insertAll(SQL.usuarioRolGeoreferencia, SerializableConvert.converListSerializeUsuarioRolGeoreferencia(usuarioJson["usuarioRolGeoreferencias"]), mode: InsertMode.insertOrReplace);
+      }
+
+      if(usuarioJson.containsKey("anioAcademicos")){
+
+        List<AnioAcademicoData> anioAcademicoList = [];
+        List<AnioAcademicoData> anioAcademicoLast = await SQL.select(SQL.anioAcademico).get();
+        for(AnioAcademicoData academicoData in SerializableConvert.converListSerializeAnioAcademico(usuarioJson["anioAcademicos"])){
+
+          AnioAcademicoData? last = anioAcademicoLast.firstWhereOrNull((element) => academicoData.idAnioAcademico == element.idAnioAcademico);
+          if(last!=null){
+            anioAcademicoList.add(academicoData.copyWith(toogle: last.toogle));
+          }else{
+            anioAcademicoList.add(academicoData);
+          }
+
+        }
+        batch.deleteWhere(SQL.anioAcademico, (row) => const Constant(true));
+        batch.insertAll(SQL.anioAcademico, anioAcademicoList, mode: InsertMode.insertOrReplace );
+
+        print("anioAcademicos finished");
+      }
+    });
 
 
     if(usuarioData.usuarioId == usuarioId){

@@ -30,7 +30,7 @@ class UpdateUsuario extends UseCase<UpdateUsuarioResponse, UpdateUsuarioParams> 
           Map<String, dynamic>? usuarioJson = await httpDatosRepo.updateUsuario(urlServidorLocal, usuarioId);
           errorServidor = usuarioJson == null;
           if (!errorServidor) {
-           await repository.udpateUsuario(usuarioId, usuarioJson);
+           await repository.udpateUsuarioAnioAcademico(usuarioId, usuarioJson);
           }
         } catch (e) {
           offlineServidor = true;

@@ -1278,8 +1278,8 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   @override
   Future<Map<String, dynamic>?> updateUsuario(String urlServidorLocal, int usuarioId)async {
     Map<String, dynamic> parameters = Map<String, dynamic>();
-    parameters["vint_usuarioId"] = usuarioId;
-    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("fobj_ObtenerUsuarioSimple",parameters))
+    parameters["vint_UsuarioId"] = usuarioId;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("flst_getusuarioAnioAcademico",parameters))
         .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load updateUsuario');});
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,

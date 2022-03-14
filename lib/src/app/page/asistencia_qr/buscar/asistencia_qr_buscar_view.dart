@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/src/app/page/asistencia_qr/buscar/asistencia_qr_buscar_controller.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_debouncer.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
@@ -18,6 +19,8 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_asistencia_qr_
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/asistencia_ui.dart';
+
+import '../../../widgets/search_bar.dart';
 
 class AsistenciaQRBuscarView extends View{
 
@@ -35,11 +38,18 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
 
   GlobalKey globalKey = GlobalKey();
   final format = DateFormat("dd/MM/yyyy");
-  
+
+  late TextEditingController _buscarEventocontroller;
+
+  FocusNode _focusNode = FocusNode();
+
+  final _debouncer = AppDebouncer(milliseconds: 500);
+
   AsistenciaQRBuscarViewState() : super(AsistenciaQRBuscarController(MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorAsistenciaQRRepository()));
 
   @override
   void initState() {
+    _buscarEventocontroller = TextEditingController()..addListener(_onTextChanged);
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
         if (topBarOpacity != 1.0) {
@@ -87,6 +97,7 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
 
   @override
   void dispose() {
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -170,6 +181,97 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                           width: width,
                           child: Row(
                             children: [
+                              Container(
+                                width: 250,
+                                padding: EdgeInsets.only(left: 24, right: 24, top: 8),
+                                child: TextFormField(
+                                  autofocus: false,
+                                  controller: _buscarEventocontroller,
+                                  focusNode: _focusNode,
+                                  textAlign: TextAlign.start,
+                                  style: Theme.of(context).textTheme.caption?.copyWith(
+                                    fontFamily: AppTheme.fontName,
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                  decoration: InputDecoration(
+                                    labelText: "Buscar",
+                                    labelStyle: TextStyle(
+                                        color: AppTheme.colorPrimary,
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14
+                                    ),
+                                    helperText: " ",
+                                    contentPadding: EdgeInsets.all(15.0),
+                                    prefixIcon: Icon(
+                                      Ionicons.search,
+                                      color: AppTheme.colorPrimary,
+                                    ),
+
+                                    suffixIcon:(controller.search?.isNotEmpty??false) ?
+                                    IconButton(
+                                      onPressed: (){
+                                        controller.clearSearch();
+                                        _buscarEventocontroller.clear();
+                                        _focusNode.unfocus();
+                                      },
+                                      icon: Icon(
+                                        Ionicons.close_circle,
+                                        color: AppTheme.colorPrimary,
+                                      ),
+                                    ):null,
+                                    errorStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                        color: AppTheme.colorPrimary,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                        color: AppTheme.colorPrimary,
+                                      ),
+                                    ),
+                                    focusedErrorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                          color: AppTheme.colorPrimary
+                                      ),
+                                    ),
+                                    errorBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                        color: AppTheme.colorPrimary,
+                                      ),
+                                    ),
+                                    hintText: "",
+                                    hintStyle: Theme.of(context).textTheme.caption?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppTheme.fontTTNormsMedium,
+                                      fontSize: 14,
+                                      color: AppTheme.colorPrimary,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      borderSide: BorderSide(
+                                        color: AppTheme.colorPrimary,
+                                      ),
+                                    ),
+                                    focusColor: AppTheme.colorAccent,
+                                  ),
+                                  onChanged: (str) {
+                                    controller.changeTitulo(str);
+                                  },
+                                  onSaved: (str) {
+                                    //  To do
+                                  },
+                                ),
+                              ),
                               Container(
                                 width: 250,
                                 padding: EdgeInsets.only(left: 24, right: 24, top: 8),
@@ -602,7 +704,7 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                                   ),
                                 ),
                               ),
-                              controller.paginaActual != controller.maxpaginas?
+                              (controller.paginaActual != controller.maxpaginas && controller.maxpaginas != 0)?
                               getCircular("${controller.maxpaginas}",controller.maxpaginas, false, controller):Container(),
                             ],
                           ),
@@ -706,6 +808,24 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
     );
   }
 
+  _onTextChanged() {
+    String string = _buscarEventocontroller.text;
+    AsistenciaQRBuscarController contactosController = FlutterCleanArchitecture.getController<AsistenciaQRBuscarController>(globalKey.currentContext!, listen: false);
+    _debouncer.run(() {
+      setState(() {
+        /*if(string.isEmpty){
+
+        }else{
+
+        }*/
+        contactosController.searchTitulo();
+
+      });
+    });
+
+  }
+
+
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
@@ -788,4 +908,6 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
   }
 
 
+
 }
+

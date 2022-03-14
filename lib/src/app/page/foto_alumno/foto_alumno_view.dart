@@ -195,235 +195,262 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
-                    child:   Text("Cambiar la foto de mis alumnos de",
-                      style: TextStyle(
-                          color: AppTheme.darkText,
-                          fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: AppTheme.fontTTNorms
-                      )
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
-                    child: DropDownFormField2<CursosUi>(
-                      inputDecoration: InputDecoration(
-                        labelText: "",
-                        labelStyle: TextStyle(
-                          color:  AppTheme.colorPrimary,
-                          fontFamily: AppTheme.fontTTNorms,
-                          fontSize: 14,
-                        ),
-                        contentPadding: EdgeInsets.all(15.0),
-                        suffixIcon:  IconButton(
-                          onPressed: (){
-
-                          },
-                          icon: Icon(
-                            Ionicons.caret_down,
-                            color: AppTheme.colorPrimary,
-                          ),
-                          iconSize: 15,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(
-                            color: Color(0XFFF26FC2).withOpacity(0.5),
-                          ),
+                  controller.cursosUiList.isNotEmpty?
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24, right: 24, top: 32),
+                        child:   Text("Cambiar la foto de mis alumnos de",
+                            style: TextStyle(
+                                color: AppTheme.darkText,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms
+                            )
                         ),
                       ),
-                      onChanged: (item){
-                        controller.onSelectCursoUi(item);
-                      },
-                      menuItems: controller.cursosUiList.map<DropdownMenuItem<CursosUi>>((e){
-                        return  DropdownMenuItem<CursosUi>(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 0),
-                            child: Text("${e.nombreCurso??""} ${e.gradoSeccion??""} ${e.nivelAcademico??""}", style: TextStyle(
-                              fontFamily: AppTheme.fontName,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24, right: 24, top: 8),
+                        child: DropDownFormField2<CursosUi>(
+                          inputDecoration: InputDecoration(
+                            labelText: "",
+                            labelStyle: TextStyle(
+                              color:  AppTheme.colorPrimary,
+                              fontFamily: AppTheme.fontTTNorms,
                               fontSize: 14,
-                              color: Colors.black
-                            )
+                            ),
+                            contentPadding: EdgeInsets.all(15.0),
+                            suffixIcon:  IconButton(
+                              onPressed: (){
+
+                              },
+                              icon: Icon(
+                                Ionicons.caret_down,
+                                color: AppTheme.colorPrimary,
+                              ),
+                              iconSize: 15,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                color: Color(0XFFF26FC2).withOpacity(0.5),
+                              ),
                             ),
                           ),
-                          value: e,
-                        );
-                      }).toList(),
-                      value: controller.cursosUiSelected,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 8, left: 24, right: 24, bottom: 8),
-                    child: Row(
-                      children: [
-                        Text("Buscar:",
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppTheme.fontTTNorms
-                          )),
-                        Expanded(
-                          child: Container(
-                            height: 45,
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.all(8),
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: TextField(
-                                              maxLines: 1,
-                                              focusNode: null,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                              decoration: InputDecoration(
-                                                  isDense: true,
-                                                  contentPadding: EdgeInsets.symmetric(vertical: 0),
-                                                  hintText: "Digite un nombre",
-                                                  hintStyle: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontFamily: AppTheme.fontTTNorms
+                          onChanged: (item){
+                            controller.onSelectCursoUi(item);
+                          },
+                          menuItems: controller.cursosUiList.map<DropdownMenuItem<CursosUi>>((e){
+                            return  DropdownMenuItem<CursosUi>(
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 0),
+                                child: Text("${e.nombreCurso??""} ${e.gradoSeccion??""} ${e.nivelAcademico??""}", style: TextStyle(
+                                    fontFamily: AppTheme.fontName,
+                                    fontSize: 14,
+                                    color: Colors.black
+                                )
+                                ),
+                              ),
+                              value: e,
+                            );
+                          }).toList(),
+                          value: controller.cursosUiSelected,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 8, left: 24, right: 24, bottom: 8),
+                        child: Row(
+                          children: [
+                            Text("Buscar:",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: AppTheme.fontTTNorms
+                                )),
+                            Expanded(
+                              child: Container(
+                                height: 45,
+                                child: Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: TextField(
+                                                  maxLines: 1,
+                                                  focusNode: null,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
                                                   ),
-                                                  border: InputBorder.none),
-                                              onChanged: (string) {
-                                                _debouncer.run(() {
-                                                  setState(() {
-                                                    if(string.isEmpty){
-                                                      filteredUsers = null;
-                                                    }else{
-                                                      filteredUsers = controller.personasUiList
-                                                          .where((u){
-                                                        if(u is PersonaUi){
-                                                          return u.nombreCompleto?.toLowerCase().contains(string.toLowerCase())??false;
+                                                  decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: EdgeInsets.symmetric(vertical: 0),
+                                                      hintText: "Digite un nombre",
+                                                      hintStyle: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                          fontFamily: AppTheme.fontTTNorms
+                                                      ),
+                                                      border: InputBorder.none),
+                                                  onChanged: (string) {
+                                                    _debouncer.run(() {
+                                                      setState(() {
+                                                        if(string.isEmpty){
+                                                          filteredUsers = null;
                                                         }else{
-                                                          return false;
+                                                          filteredUsers = controller.personasUiList
+                                                              .where((u){
+                                                            if(u is PersonaUi){
+                                                              return u.nombreCompleto?.toLowerCase().contains(string.toLowerCase())??false;
+                                                            }else{
+                                                              return false;
+                                                            }
+                                                          }).toList();
                                                         }
-                                                      }).toList();
-                                                    }
 
-                                                  });
-                                                });
-                                              }
-                                          ),
+                                                      });
+                                                    });
+                                                  }
+                                              ),
 
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Container(
+                        height: 1,
+                        color: AppTheme.colorLine,
+                      ),
+                      ListView.builder(
+                        padding: EdgeInsets.only(top: 0, bottom: 64, left: 24, right: 24),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index){
+                          PersonaUi o =  filteredUsers!=null?filteredUsers![index]: controller.personasUiList[index];
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 0, top: 16),
+                            child: Row(
+                              children: [
+                                CachedNetworkImage(
+                                  placeholder: (context, url) => Container(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  imageUrl: o.foto??"",
+                                  errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 38,),
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                          width: 48,
+                                          height: 48,
+                                          margin: EdgeInsets.only(right: 0, left: 0, top: 0, bottom: 0),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                      ),
+                                ),
+                                Padding(padding: EdgeInsets.all(8)),
+                                InkWell(
+                                  onTap: (){
+                                    controller.onClickEditarFotoAlumno(o);
+                                    imagePicker.showDialog(context,
+                                        botonRemoverImagen:
+                                        (o.foto != null && !(o.foto?.contains("default.png")??false))?
+                                            () async{
+                                          FotoAlumnoController controller =
+                                          FlutterCleanArchitecture.getController<FotoAlumnoController>(globalKey.currentContext!, listen: false);
+                                          await _showRemoverPersona(context, controller, controller.personaUiSelected);
+                                        }:null
+                                    );
+                                  },
+                                  child: FDottedLine(
+                                    color: Color(0XFFF26FC2),
+                                    strokeWidth: 3.0,
+                                    dottedLength: 10.0,
+                                    space: 3.0,
+                                    corner: FDottedLineCorner.all(14.0),
+                                    /// add widget
+                                    child: Container(
+                                      height: 56,
+                                      width: 56,
+                                      child: Stack(
+                                        children: [
+                                          Center(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 0, right: 0),
+                                                  child: Icon(Icons.camera_alt_outlined,
+                                                    color: Color(0XFFF26FC2),
+                                                    size: 18,),
+                                                ),
+                                                Text("Editar", style: TextStyle(
+                                                    color: Color(0XFFF26FC2),
+                                                    fontFamily: AppTheme.fontTTNorms,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 12
+                                                )
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
+                                Padding(padding: EdgeInsets.all(16),),
+                                Expanded(child: Text("${o.nombreCompleto}",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppTheme.fontTTNorms
+                                    )
+                                ))
                               ],
                             ),
-                          ),
+                          );
+                        },
+                        itemCount: filteredUsers!=null? filteredUsers?.length :controller.personasUiList.length,
+                      )
+                    ],
+                  ): Container(
+                    padding: EdgeInsets.only(top: 150),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
                         ),
+                        Padding(padding: EdgeInsets.all(4)),
+                        Center(
+                          child: Text("No se le asigno como responsable\nde ninguna sección.\n ",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: AppTheme.grey,
+                                fontStyle: FontStyle.italic,
+                                fontSize: 12,
+                                fontFamily: AppTheme.fontTTNorms
+                            ),),
+                        )
                       ],
                     ),
                   ),
 
-                  Container(
-                    height: 1,
-                    color: AppTheme.colorLine,
-                  ),
-                  ListView.builder(
-                    padding: EdgeInsets.only(top: 0, bottom: 64, left: 24, right: 24),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index){
-                      PersonaUi o =  filteredUsers!=null?filteredUsers![index]: controller.personasUiList[index];
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 0, top: 16),
-                        child: Row(
-                          children: [
-                            CachedNetworkImage(
-                              placeholder: (context, url) => Container(
-                                child: CircularProgressIndicator(),
-                              ),
-                              imageUrl: o.foto??"",
-                              errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 38,),
-                              imageBuilder: (context, imageProvider) =>
-                                  Container(
-                                      width: 48,
-                                      height: 48,
-                                      margin: EdgeInsets.only(right: 0, left: 0, top: 0, bottom: 0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                                        image: DecorationImage(
-                                          image: imageProvider,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                  ),
-                            ),
-                            Padding(padding: EdgeInsets.all(8)),
-                            InkWell(
-                              onTap: (){
-                                controller.onClickEditarFotoAlumno(o);
-                                imagePicker.showDialog(context,
-                                    botonRemoverImagen:
-                                    (o.foto != null && !(o.foto?.contains("default.png")??false))?
-                                        () async{
-                                      FotoAlumnoController controller =
-                                      FlutterCleanArchitecture.getController<FotoAlumnoController>(globalKey.currentContext!, listen: false);
-                                      await _showRemoverPersona(context, controller, controller.personaUiSelected);
-                                    }:null
-                                );
-                              },
-                              child: FDottedLine(
-                                color: Color(0XFFF26FC2),
-                                strokeWidth: 3.0,
-                                dottedLength: 10.0,
-                                space: 3.0,
-                                corner: FDottedLineCorner.all(14.0),
-                                /// add widget
-                                child: Container(
-                                  height: 56,
-                                  width: 56,
-                                  child: Stack(
-                                    children: [
-                                      Center(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(left: 0, right: 0),
-                                              child: Icon(Icons.camera_alt_outlined,
-                                                color: Color(0XFFF26FC2),
-                                                size: 18,),
-                                            ),
-                                            Text("Editar", style: TextStyle(
-                                                color: Color(0XFFF26FC2),
-                                                fontFamily: AppTheme.fontTTNorms,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 12
-                                            )
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(padding: EdgeInsets.all(16),),
-                            Expanded(child: Text("${o.nombreCompleto}",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: AppTheme.fontTTNorms
-                                )
-                            ))
-                          ],
-                        ),
-                      );
-                    },
-                    itemCount: filteredUsers!=null? filteredUsers?.length :controller.personasUiList.length,
-                  )
                 ],
               ),
             ),

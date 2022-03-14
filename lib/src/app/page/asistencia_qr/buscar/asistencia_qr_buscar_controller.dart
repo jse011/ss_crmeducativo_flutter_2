@@ -26,7 +26,7 @@ class AsistenciaQRBuscarController extends Controller{
   DialogUi? get dialogUi => _dialogUi;
   String? _search = null;
   String? get search => _search;
-  int _maximoRegistros = 10;
+  int _maximoRegistros = 15;
   int get maximoRegistros => _maximoRegistros;
   int _total = 0;
   int get total => _total;
@@ -65,7 +65,7 @@ class AsistenciaQRBuscarController extends Controller{
       }
 
       _circulos = [];
-      int cantMaxCirculos = 8;
+      int cantMaxCirculos = _maxpaginas<8?_maxpaginas:8;
       int paginaActualCirculos = 0;
       if(((paginaActual/cantMaxCirculos)% 1) == 0){
         paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt();
@@ -75,10 +75,14 @@ class AsistenciaQRBuscarController extends Controller{
 
 
 
-      for(var index = 0; index < 8; index++){
+      for(var index = 0; index < cantMaxCirculos ; index++){
+
         int circulo = (paginaActualCirculos * cantMaxCirculos) - index;
         _circulos.insert(0,circulo);
+
       }
+
+      _circulos.removeWhere((element) => element > maxpaginas);
 
       _progress = false;
       refreshUI();
@@ -145,6 +149,19 @@ class AsistenciaQRBuscarController extends Controller{
       refreshUI();
       getListaAsistencia();
     }
+  }
+
+  void clearSearch() {
+    _search = null;
+  }
+
+  void changeTitulo(String str) {
+    _search = str;
+  }
+
+  void searchTitulo() {
+    _paginaActual = 1;
+    getListaAsistencia();
   }
 
 }

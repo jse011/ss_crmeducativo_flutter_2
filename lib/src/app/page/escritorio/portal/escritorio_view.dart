@@ -753,8 +753,8 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                 ),
                                 child: GestureDetector(
                                   onTap: () async {
-                                   //await AppRouter.createRouteAsistenciaQR(context);
-                                    await AppRouter.showBuscarAsistenciaQR(context);
+                                   await AppRouter.createRouteAsistenciaQR(context);
+                                    //await AppRouter.showBuscarAsistenciaQR(context);
 
                                   },
                                   child: Container(
