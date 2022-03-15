@@ -1773,6 +1773,7 @@ class ContactosSerial {
   int? contratoEstadoId;
   int? idEmpleadoTutor;
   bool? contratoVigente;
+  String? relacion;
 
   ContactosSerial(
       {this.personaId,
@@ -1780,7 +1781,9 @@ class ContactosSerial {
         this.cargaCursoId,
         this.contratoEstadoId,
         this.idEmpleadoTutor,
-        this.contratoVigente});
+        this.contratoVigente,
+        this.relacion,
+      });
   factory ContactosSerial.fromJson(Map<String, dynamic> json) => _$ContactosSerialFromJson(json);
 
   Map<String, dynamic> toJson() => _$ContactosSerialToJson(this);

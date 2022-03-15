@@ -1772,6 +1772,7 @@ ContactosSerial _$ContactosSerialFromJson(Map<String, dynamic> json) =>
       contratoEstadoId: json['contratoEstadoId'] as int?,
       idEmpleadoTutor: json['idEmpleadoTutor'] as int?,
       contratoVigente: json['contratoVigente'] as bool?,
+      relacion: json['relacion'] as String?,
     );
 
 Map<String, dynamic> _$ContactosSerialToJson(ContactosSerial instance) =>
@@ -1782,6 +1783,7 @@ Map<String, dynamic> _$ContactosSerialToJson(ContactosSerial instance) =>
       'contratoEstadoId': instance.contratoEstadoId,
       'idEmpleadoTutor': instance.idEmpleadoTutor,
       'contratoVigente': instance.contratoVigente,
+      'relacion': instance.relacion,
     };
 
 CargaCursosContactoSerial _$CargaCursosContactoSerialFromJson(

@@ -14,10 +14,10 @@ class ContactosController extends Controller{
   List<dynamic> get directivosList => _directivosList;
   List<dynamic> _doncentesList = [];
   List<dynamic> get doncentesList => _doncentesList;
-  ContactoUi? _companiero = null;
-  ContactoUi? get companiero => _companiero;
   bool _isLoading = false;
   get isLoading => _isLoading;
+  ContactoUi? _showContacto = null;
+  ContactoUi? get showContacto => _showContacto;
 
   ContactosController(confRepo):
         presenter = ContactosPresenter(confRepo);
@@ -62,6 +62,16 @@ class ContactosController extends Controller{
 
   void hideProgress(){
     _isLoading = false;
+  }
+
+  void showInformacion(ContactoUi contactoUi) {
+    _showContacto = contactoUi;
+    refreshUI();
+  }
+
+  void hideShowContactos() {
+    _showContacto = null;
+    refreshUI();
   }
 
 }

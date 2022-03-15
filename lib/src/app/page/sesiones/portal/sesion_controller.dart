@@ -28,8 +28,7 @@ class SesionController extends Controller{
   SesionUi sesionUi;
   UnidadUi unidadUi;
   CalendarioPeriodoUI calendarioPeriodoUI;
-  bool _datosOffline =  false;
-  bool get datosOffline =>  _datosOffline;
+
 
   List<dynamic> _tareaUiList = [];
   List<dynamic> get tareaUiList => _tareaUiList;
@@ -61,6 +60,18 @@ class SesionController extends Controller{
   bool _contenedorInstrumentos =  true;
   bool get contenedorInstrumentos =>  _contenedorInstrumentos;
 
+  bool _conexionTareaUnidad = true;
+  bool get conexionTareaUnidad => _conexionTareaUnidad;
+
+  bool _conexionRubro = true;
+  bool get conexionRubro => _conexionRubro;
+
+  bool _conexionAprendizaje = true;
+  bool get conexionAprendizaje => _conexionAprendizaje;
+
+  bool _conexionActividades = true;
+  bool get conexionActividades => _conexionActividades;
+
   SesionController(this.usuarioUi, this.cursosUi, this.unidadUi, this.sesionUi, this.calendarioPeriodoUI, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, RubroRepository rubroRepo, UnidadSesionRepository unidadSesionRepo):
         presenter = SesionPresenter(configuracionRepo, httpDatosRepo, unidadTareaRepo, rubroRepo, unidadSesionRepo);
 
@@ -71,7 +82,15 @@ class SesionController extends Controller{
     _tareaUiList.clear();
     presenter.getUnidadTareaOnComplete = (List<TareaUi>? tareaUiList, bool? datosOffline, bool? errorServidor){
       // conserver el toogle
-      _datosOffline = datosOffline??false;
+      if(datosOffline??false){
+        _conexionTareaUnidad = false;
+      }else if(errorServidor??false){
+        _conexionTareaUnidad = false;
+      }else{
+        _conexionTareaUnidad = true;
+      }
+
+
       _tareaUiList.clear();
 
       //if(calendarioPeriodoUI.habilitado==1)
@@ -90,12 +109,20 @@ class SesionController extends Controller{
     presenter.getUnidadTareaOnError = (e){
       _tareaUiList = [];
       _progressTarea = false;
+      _conexionTareaUnidad = false;
       refreshUI();
     };
 
     presenter.updateDatosCrearRubroOnNext = (bool? errorConexion, bool? errorServidor){
       //_progress = true;
       print("updateDatosCrearRubroOnNext");
+      if(errorConexion??false){
+        _conexionRubro = false;
+      }else if(errorServidor??false){
+        _conexionRubro = false;
+      }else{
+        _conexionRubro = true;
+      }
       presenter.onGetSesionRubroEval(cursosUi, calendarioPeriodoUI, sesionUi);
       refreshUI();
     };
@@ -104,6 +131,7 @@ class SesionController extends Controller{
       _progressEvaluacion = false;
       _progressAprendizaje = false;
       _progressActividad = false;
+      _conexionRubro = false;
       refreshUI();
     };
 
@@ -137,6 +165,14 @@ class SesionController extends Controller{
     };
 
     presenter.getAprendizajeOnNext = (bool? errorServidor, bool? offline, List<CompetenciaUi>? competenciaUiList,  List<TemaCriterioUi>? temaCriterioUiList, List<SesionRecursoUi>? sesionRecursoUiList){
+      if(offline??false){
+        _conexionAprendizaje = false;
+      }else if(errorServidor??false){
+        _conexionAprendizaje = false;
+      }else{
+        _conexionAprendizaje = true;
+      }
+
       _competenciaUiList = competenciaUiList??[];
       _temaCriterioUiList = temaCriterioUiList??[];
       _sesionRecursoUiList = sesionRecursoUiList??[];
@@ -152,12 +188,20 @@ class SesionController extends Controller{
     };
 
     presenter.getActividadesSesionOnNext = (bool? errorServidor, bool? offline, List<ActividadUi>? actividadUiList, List<InstrumentoEvaluacionUi>? instrumentoEvaluacionUiList){
+      if(offline??false){
+        _conexionActividades = false;
+      }else if(errorServidor??false){
+        _conexionActividades = false;
+      }else{
+        _conexionActividades = true;
+      }
       _actividadUiList = actividadUiList??[];
       _instrumentoEvaluacionUiList = instrumentoEvaluacionUiList??[];
       _progressActividad = false;
       refreshUI();
     };
     presenter.getActividadesSesionOnError = (e){
+      _conexionActividades = false;
       _actividadUiList = [];
       _instrumentoEvaluacionUiList = [];
       _progressActividad = false;
@@ -242,6 +286,29 @@ class SesionController extends Controller{
       }
     }
     refreshUI();
+  }
+
+  void changeConnected(bool connected) {
+    if(!_conexionTareaUnidad && connected){
+      _progressTarea = true;
+      refreshUI();
+      presenter.getSesionTarea(cursosUi, calendarioPeriodoUI, sesionUi);
+    }
+    if(!_conexionRubro && connected){
+      _progressEvaluacion = true;
+      refreshUI();
+      presenter.onActualizarCurso( calendarioPeriodoUI, cursosUi, sesionUi);
+    }
+    if(!_conexionAprendizaje && connected){
+      _progressAprendizaje = true;
+      refreshUI();
+      presenter.onGetCompetencias(sesionUi);
+    }
+    if(!_conexionActividades && connected){
+      _progressActividad = true;
+      refreshUI();
+      presenter.onGetActividades(sesionUi);
+    }
   }
 
 

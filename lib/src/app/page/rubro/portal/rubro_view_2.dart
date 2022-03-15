@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -14,6 +15,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
+import 'package:ss_crmeducativo_2/libs/flutterOffline/src/main.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_rubro.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/portal/rubro_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/table_resultado.dart';
@@ -74,6 +76,8 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
   int? _seletedItem = 0;
+  Function(bool connected)? _onChangeConnected;
+  bool? _connected;
 
   @override
   void initState() {
@@ -128,17 +132,69 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
 
         }
 
-
         return Stack(
           children: [
             Scaffold(
               backgroundColor: AppTheme.background,
               extendBody: true,
-              body: Stack(
-                children: [
-                  getMainTab(),
-                  getAppBarUI(),
-                ],
+              body: OfflineBuilder(
+                connectivityBuilder: (
+                    BuildContext context,
+                    ConnectivityResult connectivity,
+                    Widget child,
+                    ){
+                  bool connected = connectivity != ConnectivityResult.none;
+                  if(_connected!=null && connected != _connected){
+                    _onChangeConnected?.call(connected);
+                    controller.changeConnected(connected);
+                  }
+                  _connected = connected;
+                  return Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      child,
+                      Positioned(
+                        height: 32.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: AnimatedOpacity(
+                          opacity: !connected ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 3000),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 350),
+                            color: connected ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 350),
+                              child: connected
+                                  ? Text('Conectado')
+                                  : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const <Widget>[
+                                  Text('Sin conexión'),
+                                  SizedBox(width: 8.0),
+                                  SizedBox(
+                                    width: 12.0,
+                                    height: 12.0,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.0,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                child:  Stack(
+                  children: [
+                    getMainTab(),
+                    getAppBarUI(),
+                  ],
+                ),
               ),
               bottomNavigationBar: Padding(
                 padding: const EdgeInsets.all(30.0),
@@ -174,7 +230,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                           BottomNavigationBarItem(
                               icon: Container(),
                               label: 'Registro'
-                              //title: Text('Registro', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))
+                            //title: Text('Registro', style: TextStyle( fontFamily: AppTheme.fontTTNorms, fontWeight: FontWeight.w700))
                           ),
                           BottomNavigationBarItem(
                               icon: Container(),
@@ -312,8 +368,8 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SvgPicture.asset(AppIcon.ic_procesear_nota,
-                            width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
-                            height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40)
+                              width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
+                              height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40)
                           ),
                           Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
                           Container(
@@ -337,7 +393,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Icon(Ionicons.send , color: AppTheme.white,
-                                    size: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14)
+                                      size: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14)
                                   ),
                                   Padding(padding: EdgeInsets.all(4),),
                                   Text("Informar registro".toUpperCase(),
@@ -360,11 +416,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SvgPicture.asset(AppIcon.ic_cerrar_curso,
-                            width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
-                            height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40)
+                              width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
+                              height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40)
                           ),
                           Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 8))),
-                          
+
                           Container(
                             width: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 250),
                             height: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 40),
@@ -421,12 +477,12 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                                 ),
                               ),
                               child: Text('Atras'.toUpperCase(),
-                                style: TextStyle(
-                                    fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14),
-                                    color: AppTheme.white,
-                                    fontFamily: AppTheme.fontTTNorms,
-                                    fontWeight: FontWeight.w700
-                                )
+                                  style: TextStyle(
+                                      fontSize: ColumnCountProvider.aspectRatioForWidthButtonRubroRegistro(context, 14),
+                                      color: AppTheme.white,
+                                      fontFamily: AppTheme.fontTTNorms,
+                                      fontWeight: FontWeight.w700
+                                  )
                               ),
                             ),
                           )
@@ -1123,7 +1179,13 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 ),
                 Padding(padding: EdgeInsets.all(4)),
                 Center(
-                  child: Text("Registro sin criterios de evaluación.\nCrea una evaluación en el apartado rúbrica.", textAlign: TextAlign.center,style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                  child: Text("Registro sin criterios de evaluación.\nCrea una evaluación en el apartado rúbrica.", textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: AppTheme.grey,
+                        fontSize: 12,
+                        fontFamily: AppTheme.fontTTNorms
+                    )
+                    ,),
                 )
               ],
             ):
@@ -1778,7 +1840,13 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 ),
                 Padding(padding: EdgeInsets.all(4)),
                 Center(
-                  child: Text("Selecciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                  child: Text("Selecciona un bimestre o trimestre",
+                      style: TextStyle(
+                          color: AppTheme.grey,
+                          fontSize: 12,
+                          fontFamily: AppTheme.fontTTNorms
+                      )
+                  ),
                 )
               ],
             ):
@@ -1791,7 +1859,13 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 ),
                 Padding(padding: EdgeInsets.all(4)),
                 Center(
-                  child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                  child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}",
+                    style: TextStyle(
+                        color: AppTheme.grey,
+                        fontSize: 12,
+                        fontFamily: AppTheme.fontTTNorms
+                    )
+                    ,),
                 )
               ],
             ):Container(),

@@ -77,6 +77,26 @@ class _TabActividadesSatate extends State<TabActividades>{
                       height: 2,
                       color: HexColor(controller.cursosUi.color1),
                     ),
+                    controller.actividadUiList.isEmpty && !controller.progressActividad?
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                        ),
+                        Padding(padding: EdgeInsets.all(4)),
+                        Center(
+                          child: Text("Lista vacía${!controller.conexionActividades?", revice su conexión a internet":""}",
+                            style: TextStyle(
+                                color: AppTheme.grey,
+                                fontSize: 12,
+                                fontFamily: AppTheme.fontTTNorms
+                            )
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.all(16)),
+                      ],
+                    ):Container(),
                     ListView.builder(
                         padding: EdgeInsets.only(top: 0, bottom: 0),
                         itemCount: controller.actividadUiList.length,

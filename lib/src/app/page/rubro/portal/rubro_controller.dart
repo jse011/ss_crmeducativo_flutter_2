@@ -658,6 +658,10 @@ class RubroController extends Controller{
     return calendarioPeriodoUI?.habilitadoResultado!=1;
   }
 
+  void changeConnected(bool connected) {
+
+  }
+
   
 }
 

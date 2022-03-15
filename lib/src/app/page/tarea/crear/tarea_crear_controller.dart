@@ -228,6 +228,7 @@ class TareaCrearController extends Controller{
       tareaUi?.instrucciones = instruccionesTarea;
       if(!(tareaUi?.publicado??false)) tareaUi?.publicado = publicar;
       tareaUi?.fechaEntregaTime = fechaTarea;
+      tareaUi?.fechaEntrega = DomainTools.tiempoFechaCreacionTarea(DomainTools.convertDateTimePtBR2(fechaTarea?.millisecondsSinceEpoch, horaTarea));
       tareaUi?.horaTarea = horaTarea;
       tareaUi?.recursos = tareaRecursoList;
 

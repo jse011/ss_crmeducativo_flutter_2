@@ -742,6 +742,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
     }
 
     EventosListaEnvioUi? eventosListaEnvioUi = listEventosListaEventoUi.firstWhereOrNull((element) => (element.cargaCursoId??0) == (cargaCursoId??0) && element.cargaAdemicaId == cargaAcademicaId);
+
     if(eventosListaEnvioUi != null){
       List<EventoPersonaUi>  eventoPersonasUiList = eventosListaEnvioUi.personasUiList??[];
 
@@ -778,9 +779,13 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
 
         for(EventoPersonaUi eventoPersonaUi in eventoPersonasUiList){
           eventoPersonaUi.selectedAlumno = seleccionarAllAlumno;
-          eventoPersonaUi.selectedAlumno = seleccionarAllPadres;
+          eventoPersonaUi.selectedPadre = seleccionarAllPadres;
         }
+
+        //print("seleccionarAllPadres: ${seleccionarAllAlumno.toString()}");
       }
+
+
 
     }else{
 

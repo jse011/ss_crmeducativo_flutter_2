@@ -53,7 +53,12 @@ class _TabTareasState extends State<TabTareas>{
             ),
             Padding(padding: EdgeInsets.all(4)),
             Center(
-              child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+              child: Text("Lista vacía${!controller.conexionTareaUnidad?", revice su conexión a internet":""}",
+                  style: TextStyle(
+                      color: AppTheme.grey,
+                      fontSize: 12,
+                      fontFamily: AppTheme.fontTTNorms
+                  )),
             )
           ],
         ):Container(),

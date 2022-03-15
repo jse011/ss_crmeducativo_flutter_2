@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/asistencia_qr/portal/asistencia_qr_presenter.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/asistencia_qr_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/asistencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/dialog_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/grupo_asistencia_qr_ui.dart';
@@ -199,7 +200,11 @@ class AsistenciaQRController extends Controller{
     _showEvaluacionesNoEnviadas = false;
     _progress = true;
     refreshUI();
-    bool success = await presenter.guardarListAsistenciaQR(asistenciaQRList);
+    List<AsistenciaQRUi> asistenciaUiList = [];
+    for(var grupo in _grupoAsistenciaQRUiList){
+      asistenciaUiList.addAll(grupo.asistenciaQRUiList??[]);
+    }
+    bool success = await presenter.guardarListAsistenciaQR(asistenciaUiList);
     await existenAsistenciaNoEnviadas();
     if(success){
       if(_intencionSalirApp){
@@ -240,7 +245,11 @@ class AsistenciaQRController extends Controller{
   void guardarAhora() async{
     _progress = true;
     refreshUI();
-    await presenter.guardarListAsistenciaQR(asistenciaQRList);
+    List<AsistenciaQRUi> asistenciaUiList = [];
+    for(var grupo in _grupoAsistenciaQRUiList){
+      asistenciaUiList.addAll(grupo.asistenciaQRUiList??[]);
+    }
+    await presenter.guardarListAsistenciaQR(asistenciaUiList);
     await existenAsistenciaNoEnviadas();
     _progress = false;
     refreshUI();

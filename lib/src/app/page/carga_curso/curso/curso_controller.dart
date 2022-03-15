@@ -54,4 +54,8 @@ class CursoController extends Controller{
     refreshUI();
   }
 
+  void changeConnected(bool connected) {
+
+  }
+
 }

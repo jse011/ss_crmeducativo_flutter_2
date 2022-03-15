@@ -19,10 +19,7 @@ class TareaController extends Controller{
   CalendarioPeriodoUI? _calendarioPeriodoUI = null;
 
   bool _progress = true;
-
   bool get progress => _progress;
-  bool _datosOffline = false;
-  bool get datosOffline => _datosOffline;
   List<UnidadUi> _unidadUiList = [];
   List<UnidadUi> get unidadUiList => _unidadUiList;
   Map<UnidadUi, List<dynamic>> _unidadItemsMap = Map();
@@ -30,6 +27,8 @@ class TareaController extends Controller{
   CalendarioPeriodoUI? get calendarioPeriodoUI => _calendarioPeriodoUI;
   List<CalendarioPeriodoUI> get calendarioPeriodoList => _calendarioPeriodoList;
   TareaPresenter _presenter;
+  bool _conexion = true;
+  bool get conexion => _conexion;
 
   TareaController(this.usuarioUi, this.cursosUi, ConfiguracionRepository configuracionRepo, CalendarioPeriodoRepository calendarioPeriodoRepo, HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo):
         _presenter = TareaPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadTareaRepo);
@@ -57,7 +56,13 @@ class TareaController extends Controller{
 
     _presenter.updateUnidadTareaOnComplete = (bool? datosOffline, bool? errorServidor){
       // conserver el toogle
-      _datosOffline = datosOffline??false;
+      if(datosOffline??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
 
        _presenter.getUnidadTarea(cursosUi, calendarioPeriodoUI);
     };
@@ -126,13 +131,13 @@ class TareaController extends Controller{
     }
     calendarioPeriodoUI?.selected = true;
     _progress = true;
-    refreshUI();
+
     if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
       _presenter.updateUnidadTarea(cursosUi, calendarioPeriodoUI);
     }else{
       _progress = false;
     }
-
+    refreshUI();
 
   }
 
@@ -167,6 +172,18 @@ class TareaController extends Controller{
     }
     print("sesionAprendizajeId: ${sesionUi?.sesionAprendizajeId}");
     return sesionUi;
+  }
+
+  void changeConnected(bool connected) {
+    if(!_conexion && connected){
+      _progress = true;
+      refreshUI();
+      if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
+        _presenter.updateUnidadTarea(cursosUi, calendarioPeriodoUI);
+      }else{
+        _progress = false;
+      }
+    }
   }
 
 

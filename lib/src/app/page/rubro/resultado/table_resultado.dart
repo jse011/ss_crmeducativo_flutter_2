@@ -62,7 +62,13 @@ class _TableResultadoState extends State<TableResultado>{
               ),
               Padding(padding: EdgeInsets.all(4)),
               Center(
-                child: Text("Selecciona un bimestre o trimestre", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                child: Text("Selecciona un bimestre o trimestre",
+                    style: TextStyle(
+                        color: AppTheme.grey,
+                        fontSize: 12,
+                        fontFamily: AppTheme.fontTTNorms
+                    )
+                ),
               )
             ],
           ): (widget.columns.length)<= 3?
@@ -76,7 +82,13 @@ class _TableResultadoState extends State<TableResultado>{
               Padding(
                   padding: EdgeInsets.only(left: 32, right: 32),
                 child: Center(
-                  child: Text("Resultado sin competencias.${widget.datosOffline??false?"\nRevice su conexión a internet":""}", textAlign: TextAlign.center,style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                  child: Text("Resultado sin competencias.${widget.datosOffline??false?"\nRevice su conexión a internet":""}", textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: AppTheme.grey,
+                          fontSize: 12,
+                          fontFamily: AppTheme.fontTTNorms
+                      )
+                  ),
                 ),
               )
             ],
@@ -97,9 +109,9 @@ class _TableResultadoState extends State<TableResultado>{
         } else if(s is CalendarioPeriodoUI){
           tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 70)*3);
         }else if(s is ResultadoCapacidadUi){
-          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 70));
+          tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthButtonRubroResultado(context, 75));
         }else if(s is ResultadoCompetenciaUi){
-          double widths = ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70);
+          double widths = ColumnCountProvider.aspectRatioForWidthTableRubro(context, 75);
           if((s.resulCapacidadUiList?.length??0)==0){
             widths = widths * 3;
           } else if((s.resulCapacidadUiList?.length??0)==1){
@@ -122,7 +134,7 @@ class _TableResultadoState extends State<TableResultado>{
           tableheadWidths.add(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70)*3);
         }else if(s is ResultadoCompetenciaUi){
 
-          double widths = ColumnCountProvider.aspectRatioForWidthTableRubro(context, 70);
+          double widths = ColumnCountProvider.aspectRatioForWidthTableRubro(context, 75);
           if((s.resulCapacidadUiList?.length??0)==0){
             widths = widths * 3;
           } else if((s.resulCapacidadUiList?.length??0)==1){

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
+import 'package:ss_crmeducativo_2/libs/flutterOffline/src/main.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/sesion_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/tab/tab_actividades.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/portal/tab/tab_aprendizaje.dart';
@@ -45,8 +47,8 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
 
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
-
-
+  bool? _connected;
+  Function(bool connected)? _onChangeConnected;
 
   _CursoViewState(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI) :
         super(SesionController(usuarioUi, cursoUi, unidadUi, sesionUi, calendarioPeriodoUI, MoorConfiguracionRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorRubroRepository(), MoorUnidadSesionRepository()));
@@ -182,67 +184,121 @@ class _CursoViewState extends ViewState<SesionView, SesionController> with Ticke
   Widget getMainTab() {
     return ControlledWidgetBuilder<SesionController>(
         builder: (context, controller) {
-          return Container(
-              padding: EdgeInsets.only(
-                  top: AppBar().preferredSize.height +
-                      MediaQuery.of(context).padding.top +
-                      8,
-                  left: 0,
-                  right: 0
-              ),
-              child: DefaultTabController(
-                length: 4,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(left: 24),
-                      constraints: BoxConstraints.expand(height: 50),
-                      child: TabBar(
-                          onTap: (value) {
-                            switch(value){
-                              case 0:
-                                controller.onTabAprendizaje();
-                                break;
-                              case 1:
-                                controller.onTabActividades();
-                                break;
-                              case 2:
-                                controller.onTabEvaluacion();
-                                break;
-                              case 3:
-                                controller.onTrabajo();
-                                break;
-                            }
-                          },
-                          indicatorColor: AppTheme.colorSesion,
-                          labelColor: AppTheme.colorSesion,
-                          unselectedLabelColor: Colors.grey,
-                          isScrollable: true,
-                          labelStyle: TextStyle(
-                            fontFamily: AppTheme.fontTTNorms,
-                            fontWeight: FontWeight.w700
-                          ),
-                          tabs: [
-                            Tab(text: "APRENDIZAJE"),
-                            Tab(text: "ACTIVIDADES"),
-                            Tab(text: "EVALUACIÓN"),
-                            Tab(text: "TAREA"),
-                          ]),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: TabBarView(children: [
-                          TabAprendizaje(),
-                          TabActividades(),
-                          TabRubros(),
-                          TabTareas(),
 
-                        ]),
+          return OfflineBuilder(
+            connectivityBuilder: (
+                BuildContext context,
+                ConnectivityResult connectivity,
+                Widget child,
+                ){
+              bool connected = connectivity != ConnectivityResult.none;
+              if(_connected!=null && connected != _connected){
+                _onChangeConnected?.call(connected);
+                controller.changeConnected(connected);
+              }
+              _connected = connected;
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  child,
+                  Positioned(
+                    height: 32.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: AnimatedOpacity(
+                      opacity: !connected ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 3000),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 350),
+                        color: connected ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 350),
+                          child: connected
+                              ? Text('Conectado')
+                              : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const <Widget>[
+                              Text('Sin conexión'),
+                              SizedBox(width: 8.0),
+                              SizedBox(
+                                width: 12.0,
+                                height: 12.0,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    )
-                  ],
+                    ),
+                  ),
+                ],
+              );
+            },
+            child: Container(
+                padding: EdgeInsets.only(
+                    top: AppBar().preferredSize.height +
+                        MediaQuery.of(context).padding.top +
+                        8,
+                    left: 0,
+                    right: 0
                 ),
-              )
+                child: DefaultTabController(
+                  length: 4,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(left: 24),
+                        constraints: BoxConstraints.expand(height: 50),
+                        child: TabBar(
+                            onTap: (value) {
+                              switch(value){
+                                case 0:
+                                  controller.onTabAprendizaje();
+                                  break;
+                                case 1:
+                                  controller.onTabActividades();
+                                  break;
+                                case 2:
+                                  controller.onTabEvaluacion();
+                                  break;
+                                case 3:
+                                  controller.onTrabajo();
+                                  break;
+                              }
+                            },
+                            indicatorColor: AppTheme.colorSesion,
+                            labelColor: AppTheme.colorSesion,
+                            unselectedLabelColor: Colors.grey,
+                            isScrollable: true,
+                            labelStyle: TextStyle(
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700
+                            ),
+                            tabs: [
+                              Tab(text: "APRENDIZAJE"),
+                              Tab(text: "ACTIVIDADES"),
+                              Tab(text: "EVALUACIÓN"),
+                              Tab(text: "TAREA"),
+                            ]),
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: TabBarView(children: [
+                            TabAprendizaje(),
+                            TabActividades(),
+                            TabRubros(),
+                            TabTareas(),
+
+                          ]),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+            ),
           );
         });
   }

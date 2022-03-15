@@ -575,7 +575,7 @@ class _TabAprendizajeState extends State<TabAprendizaje>{
                                   ),
                                   Padding(padding: EdgeInsets.all(4)),
                                   Center(
-                                    child: Text("Sin temas de la sesión${controller.datosOffline?", revice su conexión a internet":""}",
+                                    child: Text("Sin temas de la sesión${!controller.conexionAprendizaje?", revice su conexión a internet":""}",
                                         style: TextStyle(
                                             color: AppTheme.grey,
                                             fontStyle: FontStyle.italic,
@@ -764,7 +764,7 @@ class _TabAprendizajeState extends State<TabAprendizaje>{
                                   ),
                                   Padding(padding: EdgeInsets.all(4)),
                                   Center(
-                                    child: Text("Sesión sin recursos de Aprendizaje${controller.datosOffline?", revice su conexión a internet":""}",
+                                    child: Text("Sesión sin recursos de Aprendizaje${!controller.conexionAprendizaje?", revice su conexión a internet":""}",
                                         style: TextStyle(
                                             color: AppTheme.grey,
                                             fontStyle: FontStyle.italic,

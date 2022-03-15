@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:ss_crmeducativo_2/libs/flutterOffline/src/main.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_rubro.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/resultado/resultado_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -37,6 +39,8 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
   late final ScrollController scrollController = ScrollController();
   late final ScrollControllers scrollControllers = ScrollControllers();
   Key? key;
+  Function(bool connected)? _onChangeConnected;
+  bool? _connected;
 
   _ResultadoState(CursosUi cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, {this.key}) : super(ResultadoController(cursosUi, calendarioPeriodoUI, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), MoorResultadoRepository(), DeviceHttpDatosRepositorio()));
 
@@ -64,17 +68,75 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
           key: key,
           extendBody: true,
           backgroundColor: AppTheme.background,
-          body: Stack(
-            children: [
-              getMainTab(),
-              getAppBarUI(),
-              controller.progress?
-              ArsProgressWidget(
-                  blur: 2,
-                  backgroundColor: Color(0x33000000),
-                  animationDuration: Duration(milliseconds: 500)):
-              Container(),
-            ],
+          body: OfflineBuilder(
+            connectivityBuilder: (
+                BuildContext context,
+                ConnectivityResult connectivity,
+                Widget child,
+                ){
+              bool connected = connectivity != ConnectivityResult.none;
+              if(_connected!=null && connected != _connected){
+                _onChangeConnected?.call(connected);
+                if (mounted) {
+                  WidgetsBinding.instance?.addPostFrameCallback((_){
+                    controller.changeConnected(connected);
+                  });
+                }
+
+              }
+              _connected = connected;
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  child,
+                  Positioned(
+                    height: 32.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: AnimatedOpacity(
+                      opacity: !connected ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 3000),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 350),
+                        color: connected ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 350),
+                          child: connected
+                              ? Text('Conectado')
+                              : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const <Widget>[
+                              Text('Sin conexión'),
+                              SizedBox(width: 8.0),
+                              SizedBox(
+                                width: 12.0,
+                                height: 12.0,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            child: Stack(
+              children: [
+                getMainTab(),
+                getAppBarUI(),
+                controller.progress?
+                ArsProgressWidget(
+                    blur: 2,
+                    backgroundColor: Color(0x33000000),
+                    animationDuration: Duration(milliseconds: 500)):
+                Container(),
+              ],
+            ),
           ),
         );
       });
@@ -224,7 +286,7 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                   cells: controller.cells,
                   headers: controller.headers,
                   columns: controller.columns,
-                  datosOffline: controller.datosOffline,
+                  datosOffline: !controller.conexion,
                   cursosUi: controller.cursosUi,
                   precision: controller.precision,
                   scrollControllers: scrollControllers,

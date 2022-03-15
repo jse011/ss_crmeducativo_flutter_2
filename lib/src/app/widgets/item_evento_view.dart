@@ -145,7 +145,7 @@ class _ItemEventoState extends State<ItemEventoView>{
                                Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,4)),),
                                FittedBox(
                                  fit: BoxFit.scaleDown,
-                                 child: Text("Elimnar",
+                                 child: Text("Eliminar",
                                      overflow: TextOverflow.ellipsis,
                                      style: TextStyle(
                                        fontWeight: FontWeight.w700,

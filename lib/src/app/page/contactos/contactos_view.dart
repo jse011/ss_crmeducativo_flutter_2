@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/close_sesion.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_format_number.dart';
@@ -17,6 +21,7 @@ import 'package:ss_crmeducativo_2/src/app/widgets/search_bar.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../widgets/preview_image_view.dart';
 import 'contactos_controller.dart';
 
 class ContactosView extends View{
@@ -75,27 +80,232 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
         SchedulerBinding.instance?.addPostFrameCallback((_) {
           widget.menuBuilder?.call(getMenuView(controller));
         });
-        return  WillPopScope(
-            onWillPop: () async {
-          return await widget.closeSessionHandler.closeSession()??false;
-        },
-          child: Container(
-            color: AppTheme.background,
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: Stack(
-                children: <Widget>[
-                  getAppBarUI(),
-                  getMainTab(),
-                  ControlledWidgetBuilder<ContactosController>(
-                      builder: (context, controller){
-                        return Container();
-                      }
-                  )
-                ],
-              ),
-            ),
-          ),
+        return  ControlledWidgetBuilder<ContactosController>(
+            builder: (context, controller){
+              return WillPopScope(
+                onWillPop: () async {
+                  return await widget.closeSessionHandler.closeSession()??false;
+                },
+                child: Container(
+                  color: AppTheme.background,
+                  child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: Stack(
+                      children: <Widget>[
+                        getAppBarUI(),
+                        getMainTab(),
+                        controller.showContacto!=null?
+                        ArsProgressWidget(
+                            blur: 2,
+                            backgroundColor: Color(0x33000000),
+                            animationDuration: Duration(milliseconds: 500),
+                            loadingWidget: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16), // if you need this
+                                side: BorderSide(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 24),
+                                constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        InkWell(
+                                          onTap: (){
+                                            Navigator.of(context).push(PreviewImageView.createRoute(controller.showContacto?.personaUi?.foto));
+                                          },
+                                          child: CachedNetworkImage(
+                                              height: ColumnCountProvider.aspectRatioForWidthContactos(context, 80),
+                                              width: ColumnCountProvider.aspectRatioForWidthContactos(context, 80),
+                                              placeholder: (context, url) => Center(
+                                                child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.colorPrimary),
+                                              ),
+                                              imageUrl: '${controller.showContacto?.personaUi?.foto}',
+                                              imageBuilder: (context, imageProvider) =>
+                                                  Container(
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.all(Radius.circular(50)),
+                                                        image: DecorationImage(
+                                                          image: imageProvider,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      )
+                                                  )
+                                          ),
+                                        ),
+                                        Padding(padding: EdgeInsets.all(8)),
+                                        Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(padding: EdgeInsets.all(4),),
+                                                Text(
+                                                  "${controller.showContacto?.personaUi?.nombreCompleto}", style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontFamily: AppTheme.fontTTNormsMedium
+                                                ),),
+                                                Padding(padding: EdgeInsets.all(4),),
+                                              ],
+                                            )
+                                        )
+                                      ],
+                                    ),
+                                    Padding(padding: EdgeInsets.all(4),),
+                                    (controller.showContacto?.personaUi?.telefono??"").isNotEmpty?
+                                    Column(
+                                      children: [
+                                        Padding(padding: EdgeInsets.all(4),),
+                                        Row(
+                                          children: [
+                                            Text("Telefono: ",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppTheme.colorPrimary
+                                              ),),
+                                            Expanded(
+                                                child: InkWell(
+                                                  onTap: (){
+                                                    if((controller.showContacto?.personaUi?.telefono??"").isNotEmpty){
+                                                      launch("tel://${controller.showContacto?.personaUi?.telefono}");
+                                                    }else{
+                                                      Fluttertoast.showToast(
+                                                          msg: "Sin número",
+                                                          toastLength: Toast.LENGTH_SHORT,
+                                                          gravity: ToastGravity.BOTTOM,
+                                                          timeInSecForIosWeb: 1
+                                                      );
+                                                    }
+                                                  },
+                                                  child: Text("${AppFormatNumber.getFormatCelular(controller.showContacto?.personaUi?.telefono)??""}",
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontWeight: FontWeight.w700,
+                                                        color: AppTheme.blue
+                                                    ),),
+                                                )
+                                            )
+                                          ],
+                                        )
+                                      ],
+                                    ):Container(),
+                                    (controller.showContacto?.apoderadoTelfono??"").isNotEmpty?
+                                        Column(
+                                          children: [
+                                            Padding(padding: EdgeInsets.all(4),),
+                                            Row(
+                                              children: [
+                                                Text("Telefono apoderado: ",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: AppTheme.fontTTNorms,
+                                                      fontWeight: FontWeight.w700,
+                                                      color: AppTheme.colorPrimary
+                                                  ),),
+                                                Expanded(
+                                                    child: InkWell(
+                                                      onTap: (){
+                                                        if((controller.showContacto?.apoderadoTelfono??"").isNotEmpty){
+                                                          launch("tel://${controller.showContacto?.apoderadoTelfono}");
+                                                        }else{
+                                                          Fluttertoast.showToast(
+                                                              msg: "Sin número",
+                                                              toastLength: Toast.LENGTH_SHORT,
+                                                              gravity: ToastGravity.BOTTOM,
+                                                              timeInSecForIosWeb: 1
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Text("${AppFormatNumber.getFormatCelular(controller.showContacto?.apoderadoTelfono)??""}",
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontWeight: FontWeight.w700,
+                                                            color: AppTheme.blue
+                                                        ),),
+                                                    )
+
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ):Container(),
+                                    Padding(padding: EdgeInsets.all(4),),
+                                    Row(
+                                      children: [
+                                        Text("Correo: ",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontWeight: FontWeight.w700,
+                                              color: AppTheme.colorPrimary
+                                          ),),
+                                        Expanded(
+                                            child: InkWell(
+                                              onTap: () async{
+                                                if((controller.showContacto?.personaUi?.correo??"").isNotEmpty){
+                                                  String url = 'mailto:${controller.showContacto?.personaUi?.correo}';
+                                                  if (await canLaunch(url)) {
+                                                    await launch(url);
+                                                  } else {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(content: new Text("Error")));
+                                                  }
+                                                }
+                                              },
+                                              child: Text("${controller.showContacto?.personaUi?.correo??"Sin correo"}",
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: AppTheme.fontTTNorms,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: AppTheme.blue
+                                                ),),
+                                            )
+
+                                        )
+                                      ],
+                                    ),
+                                    Padding(padding: EdgeInsets.all(8),),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                            child: OutlinedButton(
+                                              onPressed: () {
+                                                controller.hideShowContactos();
+                                              },
+                                              child: Text('Atras',  style: TextStyle(fontSize: 14)),
+                                              style: OutlinedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                primary: AppTheme.darkText,
+                                              ),
+                                            )
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ):Container()
+
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
         );
       });
 
@@ -352,7 +562,7 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                               launch("tel://${contactoUi.personaUi?.telefono}");
                                                                             }else{
                                                                               Fluttertoast.showToast(
-                                                                                  msg: "Compañero sin número",
+                                                                                  msg: "Sin número",
                                                                                   toastLength: Toast.LENGTH_SHORT,
                                                                                   gravity: ToastGravity.BOTTOM,
                                                                                   timeInSecForIosWeb: 1
@@ -430,7 +640,8 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                                                       splashColor: AppTheme.colorPrimary.withOpacity(0.2),
                                                                       onTap: () {
-
+                                                                        String? number = (contactoUi.personaUi?.telefono??"").isEmpty?contactoUi.apoderadoTelfono:contactoUi.personaUi?.telefono;
+                                                                        openMessage(number);
                                                                       },
                                                                       child: Container(
                                                                         child: Column(
@@ -462,7 +673,7 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                                                       splashColor: AppTheme.colorPrimary.withOpacity(0.2),
                                                                       onTap: () {
-
+                                                                          controller.showInformacion(contactoUi);
                                                                       },
                                                                       child: Container(
                                                                         child: Column(
@@ -572,26 +783,31 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                         height: 10,
                                                         width: 10,
                                                       ),
-                                                      leading: CachedNetworkImage(
-                                                          height: ColumnCountProvider.aspectRatioForWidthContactos(context, 50),
-                                                          width: ColumnCountProvider.aspectRatioForWidthContactos(context, 50),
-                                                          placeholder: (context, url) => Center(
-                                                            child: CircularProgressIndicator(
-                                                                strokeWidth: 2,
-                                                                color: AppTheme.colorPrimary
+                                                      leading: InkWell(
+                                                        onLongPress: (){
+                                                          Navigator.of(context).push(PreviewImageView.createRoute(contactoUi.personaUi?.foto));
+                                                        },
+                                                        child: CachedNetworkImage(
+                                                            height: ColumnCountProvider.aspectRatioForWidthContactos(context, 50),
+                                                            width: ColumnCountProvider.aspectRatioForWidthContactos(context, 50),
+                                                            placeholder: (context, url) => Center(
+                                                              child: CircularProgressIndicator(
+                                                                  strokeWidth: 2,
+                                                                  color: AppTheme.colorPrimary
+                                                              ),
                                                             ),
-                                                          ),
-                                                          imageUrl: contactoUi.personaUi?.foto??'',
-                                                          imageBuilder: (context, imageProvider) =>
-                                                              Container(
-                                                                  decoration: BoxDecoration(
-                                                                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                                                                    image: DecorationImage(
-                                                                      image: imageProvider,
-                                                                      fit: BoxFit.cover,
-                                                                    ),
-                                                                  )
-                                                              )
+                                                            imageUrl: contactoUi.personaUi?.foto??'',
+                                                            imageBuilder: (context, imageProvider) =>
+                                                                Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                                                                      image: DecorationImage(
+                                                                        image: imageProvider,
+                                                                        fit: BoxFit.cover,
+                                                                      ),
+                                                                    )
+                                                                )
+                                                        ),
                                                       ),
                                                       children: [
                                                         Container(
@@ -644,7 +860,8 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                                                       splashColor: AppTheme.colorPrimary.withOpacity(0.2),
                                                                       onTap: () {
-
+                                                                        String? number = (contactoUi.personaUi?.telefono??"").isEmpty?contactoUi.apoderadoTelfono:contactoUi.personaUi?.telefono;
+                                                                        openMessage(number);
                                                                       },
                                                                       child: Container(
                                                                         child: Column(
@@ -669,7 +886,7 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                                                       splashColor: AppTheme.colorPrimary.withOpacity(0.2),
                                                                       onTap: () {
-
+                                                                        controller.showInformacion(contactoUi);
                                                                       },
                                                                       child: Container(
                                                                         child: Column(
@@ -756,7 +973,7 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                 )
                                                             ),
                                                             Padding(padding: EdgeInsets.all(0)),
-                                                            Text("${contactoUi.relacion}",
+                                                            Text("${contactoUi.relacion??""}",
                                                                 maxLines: 1,
                                                                 overflow: TextOverflow.ellipsis,
                                                                 style: TextStyle(
@@ -851,7 +1068,8 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                                                       splashColor: AppTheme.colorPrimary.withOpacity(0.2),
                                                                       onTap: () {
-
+                                                                        String? number = AppFormatNumber.getFormatCelular((contactoUi.personaUi?.telefono??"").isEmpty?contactoUi.apoderadoTelfono:contactoUi.personaUi?.telefono);
+                                                                        openMessage(number);
                                                                       },
                                                                       child: Container(
                                                                         child: Column(
@@ -876,7 +1094,7 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
                                                                       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
                                                                       splashColor: AppTheme.colorPrimary.withOpacity(0.2),
                                                                       onTap: () {
-
+                                                                        controller.showInformacion(contactoUi);
                                                                       },
                                                                       child: Container(
                                                                         child: Column(
@@ -933,6 +1151,52 @@ class _ContactosViewState extends ViewState<ContactosView, ContactosController> 
         focusNode: _focusNode,
       ),
     );
+  }
+
+  openMessage(String? whatsapp)async{
+    // Android
+    String uri = 'sms:$whatsapp';
+    if (await canLaunch(uri)) {
+      await launch(uri);
+    } else {
+      // iOS
+      String uri = 'sms:$whatsapp';
+      if (await canLaunch(uri)) {
+        await launch(uri);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: new Text("Error")));
+      }
+    }
+  }
+  openwhatsapp(String? whatsapp) async{
+    //var whatsapp ="+919144040888";
+    var whatsappURl_android = "whatsapp://send?phone="+(whatsapp??"")+"&text=hello";
+    var whatappURL_ios ="https://wa.me/$whatsapp?text=${Uri.parse("hello")}";
+    if(Platform.isIOS){
+      // for iOS phone only
+      if( await canLaunch(whatappURL_ios)){
+        await launch(whatappURL_ios, forceSafariVC: false);
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: new Text("whatsapp no installed")));
+
+      }
+
+    }else{
+      // android , web
+      print("whatsapp");
+      if( await canLaunch(whatsappURl_android)){
+        await launch(whatsappURl_android);
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: new Text("whatsapp no installed")));
+
+      }
+
+
+    }
+
   }
 
   void _onTextChanged() {

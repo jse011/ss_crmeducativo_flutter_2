@@ -911,7 +911,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
               periodoNombre: cargaCursosContactoSerial?.periodoNombre,
               //hijoRelacionId: contactosSerial.hijoRelacionId,
               //relacionId: contactosSerial.relacionId,
-              //relacion: contactosSerial.relacion,
+              relacion: contactosSerial.relacion,
               //estadoId: contactosSerial.estadoId,
               nombres: personasContactoSerial?.nombres,
               apellidoPaterno: personasContactoSerial?.apellidoPaterno,

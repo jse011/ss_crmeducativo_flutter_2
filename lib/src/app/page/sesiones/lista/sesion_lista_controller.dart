@@ -46,8 +46,11 @@ class SesionListaController extends Controller{
   bool _progressFirebase = false;
   bool get progressFirebase => _progressFirebase;
 
-  bool _datosOffline = false;
-  bool get datosOffline => _datosOffline;
+  bool _conexion = true;
+  bool get conexion => _conexion;
+
+  bool _conexionPublicarFirebase = true;
+  bool get conexionPublicarFirebase => _conexionPublicarFirebase;
 
   SesionListaController(this.usuarioUi, this.cursosUi, configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo):
       presenter = SesionListaPresenter(configuracionRepo, calendarioPeriodoRepo, httpDatosRepo, unidadSesionRepo);
@@ -60,8 +63,14 @@ class SesionListaController extends Controller{
       //_calendarioPeriodoUI?.habilitadoProceso = 1;
       //_calendarioPeriodoUI?.habilitadoResultado = 1;
       _progressDocente = true;
+      if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
+        presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);
+      }else{
+        _progressDocente = false;
+      }
       refreshUI();
-      presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);
+
+
 
     };
 
@@ -74,7 +83,13 @@ class SesionListaController extends Controller{
     presenter.getUnidadSesionDocenteOnComplete = (List<UnidadUi>? unidadUiList, bool? datosOffline, bool? errorServidor){
       _unidadUiDocenteList = unidadUiList??[];
       _progressDocente = false;
-      _datosOffline = datosOffline??false;
+      if(datosOffline??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
 
 
       unidadItemsMap.clear();
@@ -140,6 +155,13 @@ class SesionListaController extends Controller{
     };
 
     presenter.getEvaluacionSesionesFirebaseOnComplete = (Map<EvaluacionFirebaseTipoUi?, List<EvaluacionFirebaseSesionUi>>? evaluacionFirebaseUiMap, bool? datosOffline, bool? errorServidor){
+      if(datosOffline??false){
+        _conexionPublicarFirebase = false;
+      }else if(errorServidor??false){
+        _conexionPublicarFirebase = false;
+      }else{
+        _conexionPublicarFirebase = true;
+      }
       _evaluacionFirebaseUiMap = Map();
       _evaluacionFirebaseUiUnidadList = [];
       evaluacionFirebaseUiMap?.forEach((key, value) {
@@ -255,6 +277,20 @@ class SesionListaController extends Controller{
 
   void successShowRealizarSesion() {
     _showRealizarSesion = false;
+  }
+
+  void changeConnected(bool connected) {
+    if(!_conexion && connected){
+      _progressDocente = true;
+
+      if(_calendarioPeriodoUI!=null&&(_calendarioPeriodoUI?.id??0) > 0){
+        presenter.getUnidadAprendizajeDocente(cursosUi, calendarioPeriodoUI);
+      }else{
+        _progressDocente = false;
+      }
+
+      refreshUI();
+    }
   }
 
 

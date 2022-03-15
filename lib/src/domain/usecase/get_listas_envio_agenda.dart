@@ -28,6 +28,7 @@ class GetListaEnvioAgenda extends UseCase<GetListaEnvioAgendaResponse, GetListaE
       for(EventosListaEnvioUi salonUi in alumnoCursoList){
         salonUi.personasUiList?.sort((o1, o2) => (o1.personaUi?.nombreCompleto??"").compareTo((o2.personaUi?.nombreCompleto??"")));
       }
+      logger.severe('GetListaEnvioAgendaResponse alumnoCursoList: ${alumnoCursoList.length}');
       controller.add(GetListaEnvioAgendaResponse(alumnoCursoList));
       controller.close();
     } catch (e) {

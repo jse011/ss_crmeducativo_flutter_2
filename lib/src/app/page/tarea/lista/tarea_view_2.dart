@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
+import 'package:ss_crmeducativo_2/libs/flutterOffline/src/main.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/lista/tarea_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -38,7 +40,8 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
 
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
-
+  Function(bool connected)? _onChangeConnected;
+  bool? _connected;
   _TareaViewState(cursoUi, usuarioUi) : super(TareaController(usuarioUi, cursoUi, MoorConfiguracionRepository(), MoorCalendarioPeriodoRepository(), DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository()));
 
   @override
@@ -85,17 +88,75 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
         return Scaffold(
           extendBody: true,
           backgroundColor: AppTheme.background,
-          body: Stack(
-            children: [
-              getMainTab(),
-              getAppBarUI(),
-              controller.progress?
-              ArsProgressWidget(
-                  blur: 2,
-                  backgroundColor: Color(0x33000000),
-                  animationDuration: Duration(milliseconds: 500)):
-              Container(),
-            ],
+          body: OfflineBuilder(
+            connectivityBuilder: (
+                BuildContext context,
+                ConnectivityResult connectivity,
+                Widget child,
+                ){
+              bool connected = connectivity != ConnectivityResult.none;
+              if(_connected!=null && connected != _connected){
+                _onChangeConnected?.call(connected);
+                if (mounted) {
+                  WidgetsBinding.instance?.addPostFrameCallback((_){
+                    controller.changeConnected(connected);
+                  });
+                }
+
+              }
+              _connected = connected;
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  child,
+                  Positioned(
+                    height: 32.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: AnimatedOpacity(
+                      opacity: !connected ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 3000),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 350),
+                        color: connected ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 350),
+                          child: connected
+                              ? Text('Conectado')
+                              : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const <Widget>[
+                              Text('Sin conexión'),
+                              SizedBox(width: 8.0),
+                              SizedBox(
+                                width: 12.0,
+                                height: 12.0,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            child:  Stack(
+              children: [
+                getMainTab(),
+                getAppBarUI(),
+                controller.progress?
+                ArsProgressWidget(
+                    blur: 2,
+                    backgroundColor: Color(0x33000000),
+                    animationDuration: Duration(milliseconds: 500)):
+                Container(),
+              ],
+            ),
           ),
         );
       });
@@ -236,7 +297,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                           ),
                           Padding(padding: EdgeInsets.all(4)),
                           Center(
-                            child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                            child: Text("Lista vacía${!controller.conexion?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                           )
                         ],
                       ):Container(),

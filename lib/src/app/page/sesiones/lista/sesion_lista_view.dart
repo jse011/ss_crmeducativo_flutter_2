@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
+import 'package:ss_crmeducativo_2/libs/flutterOffline/src/main.dart';
 import 'package:ss_crmeducativo_2/src/app/page/sesiones/lista/sesion_lista_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
@@ -38,6 +40,8 @@ class SesionListaView extends View{
 
 class _CursoListaViewState extends ViewState<SesionListaView, SesionListaController> with TickerProviderStateMixin{
 
+  Function(bool connected)? _onChangeConnected;
+  bool? _connected;
 
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
@@ -92,17 +96,75 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
         return Scaffold(
           extendBody: true,
           backgroundColor: AppTheme.background,
-          body: Stack(
-            children: [
-              getMainTab(),
-              getAppBarUI(),
-              if(controller.progressDocente)
-                ArsProgressWidget(
-                  blur: 2,
-                  backgroundColor: Color(0x33000000),
-                  animationDuration: Duration(milliseconds: 500),
-                ),
-            ],
+          body: OfflineBuilder(
+            connectivityBuilder: (
+                BuildContext context,
+                ConnectivityResult connectivity,
+                Widget child,
+                ){
+              bool connected = connectivity != ConnectivityResult.none;
+              if(_connected!=null && connected != _connected){
+                _onChangeConnected?.call(connected);
+                if (mounted) {
+                  WidgetsBinding.instance?.addPostFrameCallback((_){
+                    controller.changeConnected(connected);
+                  });
+                }
+
+              }
+              _connected = connected;
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  child,
+                  Positioned(
+                    height: 32.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: AnimatedOpacity(
+                      opacity: !connected ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 3000),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 350),
+                        color: connected ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 350),
+                          child: connected
+                              ? Text('Conectado')
+                              : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const <Widget>[
+                              Text('Sin conexión'),
+                              SizedBox(width: 8.0),
+                              SizedBox(
+                                width: 12.0,
+                                height: 12.0,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            child: Stack(
+              children: [
+                getMainTab(),
+                getAppBarUI(),
+                if(controller.progressDocente)
+                  ArsProgressWidget(
+                    blur: 2,
+                    backgroundColor: Color(0x33000000),
+                    animationDuration: Duration(milliseconds: 500),
+                  ),
+              ],
+            ),
           ),
         );
       }
@@ -237,7 +299,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                           ),
                           Padding(padding: EdgeInsets.all(4)),
                           Center(
-                            child: Text("Lista vacía${controller.datosOffline?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
+                            child: Text("Lista vacía${!controller.conexion?", revice su conexión a internet":""}", style: TextStyle(color: AppTheme.grey, fontStyle: FontStyle.italic, fontSize: 12),),
                           )
                         ],
                       ):Container(),
@@ -275,11 +337,11 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                             }
 
                             return Container(
-                                margin: EdgeInsets.only(
+                              margin: EdgeInsets.only(
                                 bottom: controller.unidadUiDocenteList.length == index + 1 ?
                                 ColumnCountProvider.aspectRatioForWidthSesion(context, 70):
                                 ColumnCountProvider.aspectRatioForWidthSesion(context, 30),
-                                ),
+                              ),
                               child: Column(
                                 children: [
                                   Container(
@@ -398,11 +460,11 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                         ]),
                                   ),
                                   if(isVisibleVerMas)
-                                   Padding(
-                                       padding: EdgeInsets.only(
-                                         left: 8,
-                                         right: 16
-                                       ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 8,
+                                          right: 16
+                                      ),
                                       child:  InkWell(
                                         onTap: (){
                                           controller.onClickVerMas(unidadUi);
@@ -417,15 +479,15 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                           ),
                                           child: Center(
                                             child: Text("${toogle?"Ver solo las últimas sesiones":"Ver más sesiones"}",
-                                              style: TextStyle(
-                                                  color: AppTheme.black,
-                                                  fontSize: 12,
-                                                  fontFamily: AppTheme.fontTTNorms,
-                                                  fontWeight: FontWeight.w500)),
+                                                style: TextStyle(
+                                                    color: AppTheme.black,
+                                                    fontSize: 12,
+                                                    fontFamily: AppTheme.fontTTNorms,
+                                                    fontWeight: FontWeight.w500)),
                                           ),
                                         ),
                                       ),
-                                   )
+                                    )
                                 ],
                               ),
                             );
@@ -500,6 +562,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
               )
             ],
           );
+
         });
   }
 
