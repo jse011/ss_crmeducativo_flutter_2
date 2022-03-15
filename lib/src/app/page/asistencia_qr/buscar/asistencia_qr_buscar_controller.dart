@@ -56,43 +56,49 @@ class AsistenciaQRBuscarController extends Controller{
 
       if(list.isNotEmpty){
         _total = _list[0].total??0;
-      }
+        if((total/maximoRegistros % 1) == 0){
+          _maxpaginas =  (_total/maximoRegistros).toInt();
+        }else{
+          _maxpaginas =  (_total/maximoRegistros).toInt()+1;
+        }
 
-      if((total/maximoRegistros % 1) == 0){
-        _maxpaginas =  (_total/maximoRegistros).toInt();
-      }else{
-        _maxpaginas =  (_total/maximoRegistros).toInt()+1;
-      }
+        _circulos = [];
+        int cantMaxCirculos = _maxpaginas<8?_maxpaginas:8;
+        int paginaActualCirculos = 0;
+        if(((paginaActual/cantMaxCirculos)% 1) == 0){
+          try{
+            paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt();
+          }catch(e){
+            cantMaxCirculos = 0;
+          }
 
-      _circulos = [];
-      int cantMaxCirculos = _maxpaginas<8?_maxpaginas:8;
-      int paginaActualCirculos = 0;
-      if(((paginaActual/cantMaxCirculos)% 1) == 0){
-        try{
-          paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt();
-        }catch(e){
+        }else{
+          try{
+            paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt() + 1;
+          }catch(e){
+            cantMaxCirculos = 0;
+          }
 
         }
 
-      }else{
-        try{
-          paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt() + 1;
-        }catch(e){
+
+
+        for(var index = 0; index < cantMaxCirculos ; index++){
+
+          int circulo = (paginaActualCirculos * cantMaxCirculos) - index;
+          _circulos.insert(0,circulo);
 
         }
 
+        _circulos.removeWhere((element) => element > maxpaginas);
+
+
+      }else{
+        _min = 0;
+        _maxpaginas = 0;
+        _circulos = [];
+
       }
-
-
-
-      for(var index = 0; index < cantMaxCirculos ; index++){
-
-        int circulo = (paginaActualCirculos * cantMaxCirculos) - index;
-        _circulos.insert(0,circulo);
-
-      }
-
-      _circulos.removeWhere((element) => element > maxpaginas);
 
       _progress = false;
       refreshUI();
