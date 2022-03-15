@@ -25,7 +25,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Esta app requiere acceso de la cámara para capturar un recursos</string>
+	<string>Esta app requiere acceso de la cámara para capturar un recursos o escanear codigos QR</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Esta app requiere acceso del micrófono para grabar un video en recursos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -51,5 +51,7 @@
 	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

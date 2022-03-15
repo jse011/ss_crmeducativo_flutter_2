@@ -68,9 +68,19 @@ class AsistenciaQRBuscarController extends Controller{
       int cantMaxCirculos = _maxpaginas<8?_maxpaginas:8;
       int paginaActualCirculos = 0;
       if(((paginaActual/cantMaxCirculos)% 1) == 0){
-        paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt();
+        try{
+          paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt();
+        }catch(e){
+
+        }
+
       }else{
-        paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt() + 1;
+        try{
+          paginaActualCirculos = (paginaActual/cantMaxCirculos).toInt() + 1;
+        }catch(e){
+
+        }
+
       }
 
 
