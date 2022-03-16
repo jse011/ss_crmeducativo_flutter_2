@@ -36,12 +36,12 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
-  GlobalKey globalKey = GlobalKey();
+  //GlobalKey globalKey = GlobalKey();
   final format = DateFormat("dd/MM/yyyy");
 
   late TextEditingController _buscarEventocontroller;
 
-  FocusNode _focusNode = FocusNode();
+  //FocusNode _focusNode = FocusNode();
 
   final _debouncer = AppDebouncer(milliseconds: 500);
 
@@ -97,7 +97,7 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    //_focusNode.dispose();
     super.dispose();
   }
 
@@ -124,10 +124,10 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
             }
 
             return Container(
-              key: globalKey,
-              color: AppTheme.background,
+              //key: globalKey,
               child: Scaffold(
-                backgroundColor: Colors.transparent,
+                extendBody: true,
+                backgroundColor: AppTheme.white,
                 body: Stack(
                   children: <Widget>[
                     getMainTab(),
@@ -160,8 +160,7 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                     MediaQuery
                         .of(context)
                         .padding
-                        .top +
-                    0,
+                        .top + 0,
               ),
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -187,7 +186,7 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                                 child: TextFormField(
                                   autofocus: false,
                                   controller: _buscarEventocontroller,
-                                  focusNode: _focusNode,
+                                  //focusNode: _focusNode,
                                   textAlign: TextAlign.start,
                                   style: Theme.of(context).textTheme.caption?.copyWith(
                                     fontFamily: AppTheme.fontName,
@@ -214,7 +213,7 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                                       onPressed: (){
                                         controller.clearSearch();
                                         _buscarEventocontroller.clear();
-                                        _focusNode.unfocus();
+                                        //_focusNode.unfocus();
                                       },
                                       icon: Icon(
                                         Ionicons.close_circle,
@@ -880,23 +879,6 @@ class AsistenciaQRBuscarViewState extends ViewState<AsistenciaQRBuscarView, Asis
                         ),
                       ),
                     ),
-                    Positioned(
-                                  right: 10,
-                                  child: ClipOval(
-                                    child: Material(
-                                      color: AppTheme.colorPrimary.withOpacity(0.1), // button color
-                                      child: InkWell(
-                                        splashColor: AppTheme.colorPrimary, // inkwell color
-                                        child: SizedBox(width: 43 + 6 - 8 * topBarOpacity, height: 43 + 6 - 8 * topBarOpacity,
-                                          child: Icon(Ionicons.search, size: 24 + 6 - 8 * topBarOpacity,color: AppTheme.colorPrimary, ),
-                                        ),
-                                        onTap: () {
-                                          //controller.onSyncronizarCurso();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
                   ],
                 ),
               )
