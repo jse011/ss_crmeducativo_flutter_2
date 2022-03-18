@@ -39,7 +39,7 @@ class PortalTareaPresenter extends Presenter{
   late Function saveRubroEvaluacionAllSucces, saveRubroEvaluacionAllError;
   GetUrlDownloadTareaEvaluacion _getUrlDownloadTareaEvaluacion;
   late Function getUrlDownloadTareaEvaluacionOnComplete, getUrlDownloadTareaEvaluacionOnError;
-
+ 
   UpdateDatosCrearRubro _getDatosCrearRubro;
   late Function updateDatosCrearRubroOnNext, updateDatosCrearRubroOnError;
 
@@ -57,6 +57,7 @@ class PortalTareaPresenter extends Presenter{
 
 
   void getInformacionTarea(TareaUi? tareaUi, CursosUi? cursosUi, int? unidadEventoId){
+    _getInformacionTarea.dispose();
     _getInformacionTarea.execute(_GetInformacionTareaCase(this), GetInformacionTareaParams(tareaUi, cursosUi?.cargaCursoId, cursosUi?.silaboEventoId, unidadEventoId));
   }
 
@@ -85,6 +86,7 @@ class PortalTareaPresenter extends Presenter{
   }
 
   void getRubroEvaluacion(String? tareaId, CursosUi? cursosUi ){
+    _getRubroEvaluacion.dispose();
     _getRubroEvaluacion.execute(_GetRubroEvaluacionCase(this), GetRubroEvalTareaParms(tareaId, cursosUi?.cargaCursoId));
   }
 

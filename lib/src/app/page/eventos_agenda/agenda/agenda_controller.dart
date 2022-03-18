@@ -18,8 +18,8 @@ class AgendaController extends Controller{
   bool get showDialogEliminar => _showDialogEliminar;
   EventoUi? _eventoUiSelected = null;
   EventoUi? get eventoUiSelected => _eventoUiSelected;
-  String? _msgConexion = null;
-  String? get msgConexion => _msgConexion;
+  bool _conexion = true;
+  bool get conexion => _conexion;
 
   bool _dialogAdjuntoDownload = false;
   bool get dialogAdjuntoDownload => _dialogAdjuntoDownload;
@@ -32,12 +32,18 @@ class AgendaController extends Controller{
     _presenter.getEventoAgendaOnError = (e){
       _eventoUiList = [];
       _progress = false;
+      _conexion = false;
       refreshUI();
     };
-    _presenter.getEventoAgendaOnNext = (List<TipoEventoUi>? tipoEvantoList, List<EventoUi>? eventoList, bool errorServidor, bool datosOffline){
+    _presenter.getEventoAgendaOnNext = (List<TipoEventoUi>? tipoEvantoList, List<EventoUi>? eventoList, bool? errorServidor, bool? datosOffline){
       _eventoUiList = eventoList??[];
-      _msgConexion = errorServidor? "!Oops! Al parecer ocurrió un error involuntario.":null;
-      _msgConexion = datosOffline? "No hay Conexión a Internet...":null;
+      if(datosOffline??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
       _progress = false;
       refreshUI();
     };

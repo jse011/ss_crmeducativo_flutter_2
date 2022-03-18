@@ -192,7 +192,138 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                 child:  Stack(
                   children: [
                     getMainTab(),
+                    if((controller.progress||controller.progressServerRubrica) && (controller.seletedItem == 1||controller.seletedItem == 0))
+                      ArsProgressWidget(
+                        blur: 2,
+                        backgroundColor: Color(0x33000000),
+                        animationDuration: Duration(milliseconds: 500),
+                      ),
+                    if(controller.progressResultado && (controller.seletedItem == 2))
+                      ArsProgressWidget(
+                        blur: 2,
+                        backgroundColor: Color(0x33000000),
+                        animationDuration: Duration(milliseconds: 500),
+                      ),
+                    if(controller.progressResultado && (controller.seletedItem == 2))
+                      Center(
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 150),
+                            child: Text("Actualizando sus resultados",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  color: AppTheme.white
+                              ),
+                            ),
+                          )
+                      ),
+                    if(controller.progressServerRubrica && (controller.seletedItem == 1||controller.seletedItem == 0))
+                      Center(
+                          child: Container(
+                            margin: EdgeInsets.only(top: 200),
+                            child: ClipOval(
+                              child: Material(
+                                color: Colors.white, // button color
+                                child: InkWell(
+                                  splashColor: Colors.black.withOpacity(0.2), // inkwell color
+                                  child: SizedBox(width:50, height: 50,
+                                      child: Icon(Ionicons.close, size: 30,
+                                          color: Colors.blue
+                                      )
+                                  ),
+                                  onTap: () {
+                                    controller.onClicContinuarOfflineRubrica();
+                                  },
+                                ),
+                              ),
+                            ),
+                          )
+                      ),
+                    if(controller.progress && (controller.seletedItem == 1||controller.seletedItem == 0))
+                      Center(
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 150),
+                            child: Text("Actualizando sus evaluaciones",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  color: AppTheme.white
+                              ),
+                            ),
+                          )
+                      ),
                     getAppBarUI(),
+                    if(!controller.progressServerRubrica && (controller.seletedItem == 1||controller.seletedItem == 0))
+                      Positioned(
+                        height: 32.0,
+                        left: 0.0,
+                        right: 0.0,
+                        top: 0,
+                        child: AnimatedOpacity(
+                          opacity: !controller.conexionRubrica ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 3000),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 350),
+                            color: controller.conexionRubrica ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 350),
+                              child: controller.conexionRubrica
+                                  ? Text('Conectado')
+                                  : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const <Widget>[
+                                  Text('Sin conexión'),
+                                  SizedBox(width: 8.0),
+                                  SizedBox(
+                                    width: 12.0,
+                                    height: 12.0,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.0,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    if(!controller.progressResultado && controller.seletedItem == 2)
+                      Positioned(
+                        height: 32.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: AnimatedOpacity(
+                          opacity: !controller.conexionRubrica ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 3000),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 350),
+                            color: controller.conexionRubrica ?  Color(0xFF00EE44) : Color(0xFFEE4400),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 350),
+                              child: controller.conexionRubrica
+                                  ? Text('Conectado')
+                                  : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const <Widget>[
+                                  Text('Sin conexión'),
+                                  SizedBox(width: 8.0),
+                                  SizedBox(
+                                    width: 12.0,
+                                    height: 12.0,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.0,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -247,22 +378,13 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                     )),
               ),
             ),
-            if(controller.progress && (controller.seletedItem == 1||controller.seletedItem == 0))ArsProgressWidget(
-              blur: 2,
-              backgroundColor: Color(0x33000000),
-              animationDuration: Duration(milliseconds: 500),
-            ),
-            if(controller.progressResultado && (controller.seletedItem == 2))ArsProgressWidget(
-              blur: 2,
-              backgroundColor: Color(0x33000000),
-              animationDuration: Duration(milliseconds: 500),
-            ),
+
             if(controller.showDialogModoOffline)
               ArsProgressWidget(
                 blur: 2,
                 backgroundColor: Color(0x33000000),
                 animationDuration: Duration(milliseconds: 500),
-                loadingWidget:  Card(
+                loadingWidget: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16), // if you need this
                     side: BorderSide(
@@ -343,7 +465,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
               blur: 2,
               backgroundColor: Color(0x33000000),
               animationDuration: Duration(milliseconds: 500),
-              onDismiss: (){
+              onDismiss: (bool backgraund){
                 controller.onClickSalirDialogInformar();
               },
               loadingWidget:  Card(
@@ -499,6 +621,11 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
       }
   );
 
+  Future<bool> progressDelay() async {
+    await Future<dynamic>.delayed(const Duration(milliseconds: 20000));
+    return true;
+  }
+
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
@@ -550,7 +677,13 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                               children: [
                                 InkWell(
                                     onTap: (){
-                                      showDialogButtom(controller);
+                                      if(controller.progressResultado && (controller.seletedItem == 2)){
+
+                                      }else  if((controller.progress||controller.progressServerRubrica) && (controller.seletedItem == 1||controller.seletedItem == 0)){
+
+                                      }else{
+                                        showDialogButtom(controller);
+                                      }
                                     },
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -890,7 +1023,7 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
                         cells: controller.cellsResultado,
                         columns: controller.columnsResultado,
                         headers: controller.headersResultado,
-                        datosOffline: controller.datosOfflineResultado,
+                        datosOffline: !controller.conexionResultado,
                         cursosUi: controller.cursosUi,
                         precision: controller.precisionResultado,
                         scrollControllers: scrollControllersProceso,

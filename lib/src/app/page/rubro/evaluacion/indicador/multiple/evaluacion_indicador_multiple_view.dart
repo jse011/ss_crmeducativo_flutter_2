@@ -139,7 +139,11 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
               }else{
                 bool  se_a_modicado = await controller.onSave();
                 if(se_a_modicado){
-                  Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                  try{
+                    Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                  }catch(e){
+
+                  }
                   return false;
                 }else{
                   return true;
@@ -924,7 +928,15 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                 )),
                                 Container(
                                   color: AppTheme.white,
-                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                  margin: EdgeInsets.only(
+                                    right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16)
+                                  ),
+                                  padding: EdgeInsets.only(
+                                    top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                                    bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                                    left: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8),
+                                    right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)
+                                  ),
                                   child: Row(
                                     children: [
                                       Expanded(child: Container()),
@@ -940,7 +952,9 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                                         child: Text(
                                           'Finalizar'.toUpperCase(),
                                           style: TextStyle(
-                                              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14)
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
+                                                  fontWeight: FontWeight.w700
+                                                  ,fontFamily:  AppTheme.fontTTNorms
                                           ),
                                         ),
                                       ),
@@ -990,6 +1004,28 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
                           blur: 2,
                           backgroundColor: Color(0x33000000),
                           animationDuration: Duration(milliseconds: 500)),
+                    if(controller.showDialog)
+                      Center(
+                          child: Container(
+                            margin: EdgeInsets.only(top: 200),
+                            child: ClipOval(
+                              child: Material(
+                                color: Colors.white, // button color
+                                child: InkWell(
+                                  splashColor: Colors.black.withOpacity(0.2), // inkwell color
+                                  child: SizedBox(width:50, height: 50,
+                                      child: Icon(Ionicons.close, size: 30,
+                                          color: Colors.blue
+                                      )
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                                  },
+                                ),
+                              ),
+                            ),
+                          )
+                      ),
                     if(controller.showDialogEliminar)
                       ArsProgressWidget(
                           blur: 2,
@@ -1139,9 +1175,15 @@ class _EvaluacionIndicadorMultiplePortalState extends ViewState<EvaluacionIndica
 
                             bool?  modificado = await controller.onSave();
                             if(modificado){
+
                               if (mounted) {
                                 WidgetsBinding.instance?.addPostFrameCallback((_){
-                                  Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                                  try{
+                                    Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                                  }catch(e){
+
+                                  }
+
                                 });
                               }
                             }else{

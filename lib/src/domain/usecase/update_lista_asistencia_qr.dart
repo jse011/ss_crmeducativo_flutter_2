@@ -22,6 +22,7 @@ class UploadListaAsistenciaQR{
       if(success??false){
         for(AsistenciaQRUi asistenciaQRUi in asistenciaQRUiList){
           asistenciaQRUi.guardado = true;
+          asistenciaQRUi.progreso = false;
           await asistenciaQRRepository.updateAsistenciaQR(asistenciaQRUi);
         }
       }

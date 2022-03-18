@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class PersonaUi{
   int? personaId;
   String? foto;
@@ -13,4 +15,8 @@ class PersonaUi{
   String? correo;
   String? fechaNacimiento;
   String? fechaNacimiento2;
+  bool? progress;
+  double? progressCount;
+  bool? success;
+  File? file;
 }

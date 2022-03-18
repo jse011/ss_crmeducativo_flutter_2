@@ -280,6 +280,7 @@ class SesionListaController extends Controller{
   }
 
   void changeConnected(bool connected) {
+    print("_progressDocente");
     if(!_conexion && connected){
       _progressDocente = true;
 

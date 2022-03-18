@@ -221,8 +221,9 @@ class PortalTareaController extends Controller{
       }
 
       refreshCountEvaluados();
-      initLista(alumnoCursoList, rubricaEvalUI);
       refreshUI();
+      initLista(alumnoCursoList, rubricaEvalUI);
+
     };
 
     presenter.getRubroEvaluacionOnError = (e){
@@ -322,20 +323,20 @@ class PortalTareaController extends Controller{
     presenter.getUrlDownloadTareaEvaluacionOnError = (bool errorServidor, bool errorConexion, bool errorInterno, TareaAlumnoArchivoUi? tareaAlumnoArchivoUi){
       tareaAlumnoArchivoUi?.upload = false;
       _abrirTareaAlumnoArchivo = tareaAlumnoArchivoUi;
-      print("getUrlDownloadTareaEvaluacionOnError");
+
       refreshUI();
     };
 
     presenter.getUrlDownloadTareaEvaluacionOnComplete = (TareaAlumnoArchivoUi? tareaAlumnoArchivoUi){
       tareaAlumnoArchivoUi?.upload = false;
       _abrirTareaAlumnoArchivo = tareaAlumnoArchivoUi;
-      print("getUrlDownloadTareaEvaluacionOnComplete");
+
       refreshUI();
     };
 
   }
 
-  void initLista(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubricaEvalUI) {
+  Future<void> initLista(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubricaEvalUI) async{
 
     for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
 
@@ -431,16 +432,17 @@ class PortalTareaController extends Controller{
         }
       }
     }
+    refreshUI();
   }
 
   @override
   void onInitState() {
-    super.onInitState();
+
     _progress = true;
     _progressRubro = true;
     refreshUI();
     presenter.getInformacionTarea(tareaUi, cursosUi, tareaUi?.unidadAprendizajeId);
-
+    super.onInitState();
   }
 
   @override

@@ -124,7 +124,11 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
           onWillPop: () async {
             bool?  se_a_modicado = await controller.onSave();
             if(se_a_modicado??false){
-              Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+              try{
+                Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+              }catch(e){
+
+              }
               await Future.delayed(Duration(seconds: 1));
               return false;
             }else{
@@ -138,12 +142,35 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
               body: Stack(
                 children: <Widget>[
                   getMainTab(controller),
-                  getAppBarUI(controller),
+
                   if(controller.showDialog)
                     ArsProgressWidget(
                         blur: 2,
                         backgroundColor: Color(0x33000000),
                         animationDuration: Duration(milliseconds: 500)),
+                  if(controller.showDialog)
+                    Center(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 200),
+                          child: ClipOval(
+                            child: Material(
+                              color: Colors.white, // button color
+                              child: InkWell(
+                                splashColor: Colors.black.withOpacity(0.2), // inkwell color
+                                child: SizedBox(width:50, height: 50,
+                                    child: Icon(Ionicons.close, size: 30,
+                                        color: Colors.blue
+                                    )
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista;
+                                },
+                              ),
+                            ),
+                          ),
+                        )
+                    ),
+                  getAppBarUI(controller),
                   if(controller.showDialogEliminar)
                     ArsProgressWidget(
                         blur: 2,
@@ -855,7 +882,11 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                           onPressed: () async {
                             bool? respuesta = await controller.onSave();
                             if(respuesta??false){
-                              Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                              try{
+                                Navigator.of(context).pop(1);//si devuelve un entero se actualiza toda la lista
+                              }catch(e){
+
+                              }
                             }else{
                               Navigator.of(context).pop(false);
                             }

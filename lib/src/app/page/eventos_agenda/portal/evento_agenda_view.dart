@@ -641,7 +641,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                          left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                                          right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                                          top: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 0),
-                                         bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                                         bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16),
                                        ),
                                        child: Stack(
                                          children: [
@@ -691,6 +691,62 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                          ],
                                        ),
                                      ),
+                                   ])
+                               ),
+                             if(!controller.conexion && !controller.isLoading)
+                               SliverList(
+                                   delegate: SliverChildListDelegate([
+                                     Stack(
+                                       children: [
+                                         Center(
+                                           child: Container(
+                                               constraints: BoxConstraints(
+                                                 //minWidth: 200.0,
+                                                 maxWidth: 600.0,
+                                               ),
+                                               height: 45,
+                                               margin: EdgeInsets.only(
+                                                 bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                                                 left: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 32),
+                                                 right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 32),
+
+                                               ),
+                                               decoration: BoxDecoration(
+                                                   color: AppTheme.redLighten5,
+                                                   borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 8)))
+                                               ),
+                                               child: Row(
+                                                 crossAxisAlignment: CrossAxisAlignment.center,
+                                                 mainAxisAlignment: MainAxisAlignment.center,
+                                                 children: [
+                                                   Container(
+                                                       width: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                                                       height: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
+                                                       child: Center(
+                                                         child: CircularProgressIndicator(
+                                                           strokeWidth: 2,
+                                                           color:  Colors.red,
+                                                         ),
+                                                       )
+                                                   ),
+                                                   Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 4))),
+                                                   Container(
+                                                     padding: EdgeInsets.all(8),
+                                                     child: Text('Sin conexión',
+                                                         style: TextStyle(
+                                                             color:  Colors.red,
+                                                             fontWeight: FontWeight.w700,
+                                                             fontSize: 14,
+                                                             fontFamily: AppTheme.fontTTNorms
+                                                         )
+                                                     ),
+                                                   ),
+                                                 ],
+                                               )
+                                           ),
+                                         ),
+                                       ],
+                                     )
                                    ])
                                ),
                              SliverList(

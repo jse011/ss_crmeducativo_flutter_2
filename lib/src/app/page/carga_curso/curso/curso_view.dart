@@ -138,12 +138,20 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
             child:  Stack(
               children: <Widget>[
                 getMainTab(controller),
-                getAppBarUI(controller),
-                if(controller.progress)ArsProgressWidget(
+                controller.showProgress?  ArsProgressWidget(
                   blur: 2,
                   backgroundColor: Color(0x33000000),
                   animationDuration: Duration(milliseconds: 500),
-                ),
+                  dismissable: true,
+                  onDismiss: (backgraund){
+                    if(!backgraund){
+                      controller.cerrarProgreso();
+                    }
+
+                  },
+                ):Container(),
+                getAppBarUI(controller),
+
               ],
             ),
           ),
@@ -308,7 +316,110 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                 SliverList(
                     delegate: SliverChildListDelegate(
                       [
-                        Padding(padding: EdgeInsets.only( top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,50))),
+                        Padding(padding: EdgeInsets.only( top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context, 50))),
+                        (controller.progress)?
+                        Center(
+                          child: Container(
+                              constraints: BoxConstraints(
+                                //minWidth: 200.0,
+                                maxWidth: 600.0,
+                              ),
+                              height: 45,
+                              margin: EdgeInsets.only(
+                                  top: 0,
+                                  left: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                  right: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                  bottom: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 16)
+                              ),
+                              decoration: BoxDecoration(
+                                  color: HexColor("#e5faf3"),
+                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 8)))
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 8))),
+                                  Container(
+                                      width: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                      height: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: HexColor("#00c985"),
+                                        ),
+                                      )
+                                  ),
+                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 4))),
+                                  Flexible(
+                                    child:  Container(
+                                      padding: EdgeInsets.all(8),
+                                      child: Text('Actualizando el bimestres o trimestres',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color:  HexColor("#00c985"),
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 14,
+                                              fontFamily: AppTheme.fontTTNorms
+                                          )
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 4))),
+                                ],
+                              )
+                          ),
+                        ): Container(),
+                        (!controller.conexion && !controller.progress)?
+                        Center(
+                          child: Container(
+                              constraints: BoxConstraints(
+                                //minWidth: 200.0,
+                                maxWidth: 600.0,
+                              ),
+                              height: 45,
+                              margin: EdgeInsets.only(
+                                  top: 0,
+                                  left: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                  right: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                  bottom: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 16)
+                              ),
+                              decoration: BoxDecoration(
+                                  color: AppTheme.redLighten5,
+                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 8)))
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      width: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                      height: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color:  Colors.red,
+                                        ),
+                                      )
+                                  ),
+                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 4))),
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    child: Text('Sin conexión',
+                                        style: TextStyle(
+                                            color:  Colors.red,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                            fontFamily: AppTheme.fontTTNorms
+                                        )
+                                    ),
+                                  ),
+                                ],
+                              )
+                          ),
+                        ): Container(),
+
                         Stack(
                           children: [
                             Center(
@@ -520,22 +631,18 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                           child: ClipOval(
                                             child: Material(
                                               color: HexColor(controller.cursos?.color1), // button color
-                                              child: InkWell(
-                                                splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -606,22 +713,18 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                           child: ClipOval(
                                             child: Material(
                                               color: HexColor(controller.cursos?.color1), // button color
-                                              child: InkWell(
-                                                splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -691,22 +794,18 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                           child: ClipOval(
                                             child: Material(
                                               color: HexColor(controller.cursos?.color1), // button color
-                                              child: InkWell(
-                                                splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -771,22 +870,18 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                         child: ClipOval(
                                           child: Material(
                                             color: HexColor(controller.cursos?.color1), // button color
-                                            child: InkWell(
-                                              splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                              child: SizedBox(
-                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                    ),
-                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                  )),
-                                              onTap: () {},
-                                            ),
+                                            child: SizedBox(
+                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                      top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                  ),
+                                                  child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                )),
                                           ),
                                         ),
                                       ),
@@ -856,22 +951,18 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                           child: ClipOval(
                                             child: Material(
                                               color: HexColor(controller.cursos?.color1), // button color
-                                              child: InkWell(
-                                                splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -940,22 +1031,18 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                                           child: ClipOval(
                                             child: Material(
                                               color: HexColor(controller.cursos?.color1), // button color
-                                              child: InkWell(
-                                                splashColor: HexColor(controller.cursos?.color3), // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child:SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),

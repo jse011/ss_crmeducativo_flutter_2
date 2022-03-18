@@ -43,6 +43,53 @@ class _TabAprendizajeState extends State<TabAprendizaje>{
               padding: EdgeInsets.only(left: 24, right: 24),
               sliver: SliverList(
                   delegate: SliverChildListDelegate([
+                    (!controller.conexionAprendizaje && !controller.progressAprendizaje)?
+                    Center(
+                      child: Container(
+                          constraints: BoxConstraints(
+                            //minWidth: 200.0,
+                            maxWidth: 600.0,
+                          ),
+                          height: 45,
+                          margin: EdgeInsets.only(
+                            top: 16,
+                            left: 0,
+                            right: 0,
+                          ),
+                          decoration: BoxDecoration(
+                              color: AppTheme.redLighten5,
+                              borderRadius: BorderRadius.all(Radius.circular(8))
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  width:24,
+                                  height: 24,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color:  Colors.red,
+                                    ),
+                                  )
+                              ),
+                              Padding(padding: EdgeInsets.all(4)),
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                child: Text('Sin conexión',
+                                    style: TextStyle(
+                                        color:  Colors.red,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14,
+                                        fontFamily: AppTheme.fontTTNorms
+                                    )
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
+                    ): Container(),
                     Container(
                       margin: EdgeInsets.only(top: 24, left: 0, right: 0),
                       height: 170,

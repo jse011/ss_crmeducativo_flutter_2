@@ -103,6 +103,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                 Widget child,
                 ){
               bool connected = connectivity != ConnectivityResult.none;
+
               if(_connected!=null && connected != _connected){
                 _onChangeConnected?.call(connected);
                 if (mounted) {
@@ -156,13 +157,19 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
             child: Stack(
               children: [
                 getMainTab(),
+                controller.progressDocente?  ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500),
+                  dismissable: true,
+                  onDismiss: (backgraund){
+                    if(!backgraund){
+                      Navigator.of(this.context).pop();
+                    }
+
+                  },
+                ):Container(),
                 getAppBarUI(),
-                if(controller.progressDocente)
-                  ArsProgressWidget(
-                    blur: 2,
-                    backgroundColor: Color(0x33000000),
-                    animationDuration: Duration(milliseconds: 500),
-                  ),
               ],
             ),
           ),
@@ -306,192 +313,246 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                       SingleChildScrollView(
                         physics: ScrollPhysics(),
                         controller: scrollController,
-                        child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: controller.unidadUiDocenteList.length,
-                          itemBuilder: (BuildContext ctxt, int index){
-                            UnidadUi unidadUi =  controller.unidadUiDocenteList[index];
-                            List<dynamic> unidadItemList = controller.unidadItemsMap[unidadUi]??[];
-                            int cant_sesiones = unidadItemList.length;
-                            int columnas = ColumnCountProvider.columnsForWidthSesion(context);
-                            bool toogle = unidadUi.toogle??false;
-                            int cant_reducida = columnas * 2;
-                            bool isVisibleVerMas = cant_reducida < cant_sesiones;
-                            if(unidadUi.cantUnidades == 1){
-                              isVisibleVerMas = false;
-                            }
-
-                            int cant_lista;
-                            if(toogle){
-                              if(isVisibleVerMas){
-
-                              }
-                              cant_lista = cant_sesiones;
-                            }else{
-                              if(isVisibleVerMas){
-                                cant_lista = cant_reducida;
-                              }else{
-                                cant_lista = cant_sesiones;
-                              }
-                            }
-
-                            return Container(
-                              margin: EdgeInsets.only(
-                                bottom: controller.unidadUiDocenteList.length == index + 1 ?
-                                ColumnCountProvider.aspectRatioForWidthSesion(context, 70):
-                                ColumnCountProvider.aspectRatioForWidthSesion(context, 30),
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: double.infinity,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
-                                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                            ),
-                                            margin: EdgeInsets.only(
-                                                top: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
-                                                bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 20)
-                                            ),
-                                            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthSesion(context, 16)),
-                                            child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
-                                              style: TextStyle(
-                                                  fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
-                                                  fontWeight: FontWeight.w700,
-                                                  fontFamily: AppTheme.fontTTNorms
-                                              ),
-                                            ),
-                                          ),
-                                          cant_sesiones > 0?
-                                          GridView.builder(
-                                              padding: EdgeInsets.only(top: 0,
-                                                  left: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
-                                                  right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16)
-                                              ),
-                                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                crossAxisCount: columnas,
-                                                mainAxisSpacing: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
-                                                crossAxisSpacing: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
-                                              ),
-                                              physics: NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
-                                              itemCount: cant_lista,
-                                              itemBuilder: (context, index){
-                                                dynamic o = unidadItemList[index];
-                                                if(o is SesionUi){
-                                                  return getViewItemSesion(unidadUi, o, controller);
-                                                }else {
-                                                  return InkWell(
-                                                    onTap: () async{
-                                                      //dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi.unidadAprendizajeId, null);
-                                                      //if(result is int) controller.refrescarListTarea(unidadUi);
-                                                    },
-                                                    child: Container(
-                                                      padding: EdgeInsets.all(8),
-                                                      decoration: BoxDecoration(
-                                                        color: HexColor(controller.cursosUi.color2),
-                                                        borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                                                      ),
-                                                      child: FDottedLine(
-                                                        color: AppTheme.white,
-                                                        strokeWidth: 3.0,
-                                                        dottedLength: 10.0,
-                                                        space: 3.0,
-                                                        corner: FDottedLineCorner.all(14.0),
-
-                                                        /// add widget
-                                                        child: Container(
-                                                          alignment: Alignment.center,
-                                                          child:  Column(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              Icon(Ionicons.add, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthTarea(context, 40),),
-                                                              Padding(padding: EdgeInsets.only(top: 4)),
-                                                              Text("Crear tarea",
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(
-                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
-                                                                    fontWeight: FontWeight.w700,
-                                                                    letterSpacing: 0.5,
-                                                                    color: AppTheme.white
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                }
-
-                                              }
-                                          )
-                                              :Container(
-                                            padding: EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                              borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                                            ),
-                                            child: FDottedLine(
-                                              color: AppTheme.white,
-                                              strokeWidth: 3.0,
-                                              dottedLength: 10.0,
-                                              space: 3.0,
-                                              corner: FDottedLineCorner.all(14.0),
-
-                                              /// add widget
-                                              child: Container(
-                                                padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
-                                                alignment: Alignment.center,
-                                                child: Text("Unidad sin sesiones",  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    color: AppTheme.white
-                                                ),),
-                                              ),
-                                            ),
-                                          )
-                                        ]),
+                        child: Column(
+                          children: [
+                            (!controller.conexion && !controller.progressDocente)?
+                            Center(
+                              child: Container(
+                                  constraints: BoxConstraints(
+                                    //minWidth: 200.0,
+                                    maxWidth: 600.0,
                                   ),
-                                  if(isVisibleVerMas)
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 8,
-                                          right: 16
-                                      ),
-                                      child:  InkWell(
-                                        onTap: (){
-                                          controller.onClickVerMas(unidadUi);
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.only(top: 18),
-                                          padding: EdgeInsets.all(10),
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                              color: AppTheme.white,
-                                              borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
-                                          ),
+                                  height: 45,
+                                  margin: EdgeInsets.only(
+                                      top: ColumnCountProvider.aspectRatioForWidthSesion(context, 16),
+                                      left: ColumnCountProvider.aspectRatioForWidthSesion(context, 20),
+                                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 20),
+                                  ),
+                                  decoration: BoxDecoration(
+                                      color: AppTheme.redLighten5,
+                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8)))
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                          width: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
+                                          height: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
                                           child: Center(
-                                            child: Text("${toogle?"Ver solo las últimas sesiones":"Ver más sesiones"}",
-                                                style: TextStyle(
-                                                    color: AppTheme.black,
-                                                    fontSize: 12,
-                                                    fontFamily: AppTheme.fontTTNorms,
-                                                    fontWeight: FontWeight.w500)),
-                                          ),
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color:  Colors.red,
+                                            ),
+                                          )
+                                      ),
+                                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthSesion(context, 4))),
+                                      Container(
+                                        padding: EdgeInsets.all(8),
+                                        child: Text('Sin conexión',
+                                            style: TextStyle(
+                                                color:  Colors.red,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 14,
+                                                fontFamily: AppTheme.fontTTNorms
+                                            )
                                         ),
                                       ),
-                                    )
-                                ],
+                                    ],
+                                  )
                               ),
-                            );
-                          },
+                            ): Container(),
+                            ListView.builder(
+                              padding: EdgeInsets.only(
+                                top: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
+                              ),
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: controller.unidadUiDocenteList.length,
+                              itemBuilder: (BuildContext ctxt, int index){
+                                UnidadUi unidadUi =  controller.unidadUiDocenteList[index];
+                                List<dynamic> unidadItemList = controller.unidadItemsMap[unidadUi]??[];
+                                int cant_sesiones = unidadItemList.length;
+                                int columnas = ColumnCountProvider.columnsForWidthSesion(context);
+                                bool toogle = unidadUi.toogle??false;
+                                int cant_reducida = columnas * 2;
+                                bool isVisibleVerMas = cant_reducida < cant_sesiones;
+                                if(unidadUi.cantUnidades == 1){
+                                  isVisibleVerMas = false;
+                                }
+
+                                int cant_lista;
+                                if(toogle){
+                                  if(isVisibleVerMas){
+
+                                  }
+                                  cant_lista = cant_sesiones;
+                                }else{
+                                  if(isVisibleVerMas){
+                                    cant_lista = cant_reducida;
+                                  }else{
+                                    cant_lista = cant_sesiones;
+                                  }
+                                }
+
+                                return Container(
+                                  margin: EdgeInsets.only(
+                                    bottom: controller.unidadUiDocenteList.length == index + 1 ?
+                                    ColumnCountProvider.aspectRatioForWidthSesion(context, 70):
+                                    ColumnCountProvider.aspectRatioForWidthSesion(context, 30),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthSesion(context, 8))),
+                                                  color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                ),
+                                                margin: EdgeInsets.only(
+                                                    top: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+                                                    bottom: ColumnCountProvider.aspectRatioForWidthSesion(context, 20)
+                                                ),
+                                                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthSesion(context, 16)),
+                                                child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
+                                                  style: TextStyle(
+                                                      fontSize: ColumnCountProvider.aspectRatioForWidthSesion(context, 14),
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: AppTheme.fontTTNorms
+                                                  ),
+                                                ),
+                                              ),
+                                              cant_sesiones > 0?
+                                              GridView.builder(
+                                                  padding: EdgeInsets.only(top: 0,
+                                                      left: ColumnCountProvider.aspectRatioForWidthSesion(context, 8),
+                                                      right: ColumnCountProvider.aspectRatioForWidthSesion(context, 16)
+                                                  ),
+                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: columnas,
+                                                    mainAxisSpacing: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
+                                                    crossAxisSpacing: ColumnCountProvider.aspectRatioForWidthSesion(context, 24),
+                                                  ),
+                                                  physics: NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: cant_lista,
+                                                  itemBuilder: (context, index){
+                                                    dynamic o = unidadItemList[index];
+                                                    if(o is SesionUi){
+                                                      return getViewItemSesion(unidadUi, o, controller);
+                                                    }else {
+                                                      return InkWell(
+                                                        onTap: () async{
+                                                          //dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi.unidadAprendizajeId, null);
+                                                          //if(result is int) controller.refrescarListTarea(unidadUi);
+                                                        },
+                                                        child: Container(
+                                                          padding: EdgeInsets.all(8),
+                                                          decoration: BoxDecoration(
+                                                            color: HexColor(controller.cursosUi.color2),
+                                                            borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                          ),
+                                                          child: FDottedLine(
+                                                            color: AppTheme.white,
+                                                            strokeWidth: 3.0,
+                                                            dottedLength: 10.0,
+                                                            space: 3.0,
+                                                            corner: FDottedLineCorner.all(14.0),
+
+                                                            /// add widget
+                                                            child: Container(
+                                                              alignment: Alignment.center,
+                                                              child:  Column(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Icon(Ionicons.add, color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthTarea(context, 40),),
+                                                                  Padding(padding: EdgeInsets.only(top: 4)),
+                                                                  Text("Crear tarea",
+                                                                    textAlign: TextAlign.center,
+                                                                    style: TextStyle(
+                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
+                                                                        fontWeight: FontWeight.w700,
+                                                                        letterSpacing: 0.5,
+                                                                        color: AppTheme.white
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+
+                                                  }
+                                              )
+                                                  :Container(
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                  borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                ),
+                                                child: FDottedLine(
+                                                  color: AppTheme.white,
+                                                  strokeWidth: 3.0,
+                                                  dottedLength: 10.0,
+                                                  space: 3.0,
+                                                  corner: FDottedLineCorner.all(14.0),
+
+                                                  /// add widget
+                                                  child: Container(
+                                                    padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
+                                                    alignment: Alignment.center,
+                                                    child: Text("Unidad sin sesiones",  style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.w800,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        color: AppTheme.white
+                                                    ),),
+                                                  ),
+                                                ),
+                                              )
+                                            ]),
+                                      ),
+                                      if(isVisibleVerMas)
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 8,
+                                              right: 16
+                                          ),
+                                          child:  InkWell(
+                                            onTap: (){
+                                              controller.onClickVerMas(unidadUi);
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.only(top: 18),
+                                              padding: EdgeInsets.all(10),
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                  color: AppTheme.white,
+                                                  borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
+                                              ),
+                                              child: Center(
+                                                child: Text("${toogle?"Ver solo las últimas sesiones":"Ver más sesiones"}",
+                                                    style: TextStyle(
+                                                        color: AppTheme.black,
+                                                        fontSize: 12,
+                                                        fontFamily: AppTheme.fontTTNorms,
+                                                        fontWeight: FontWeight.w500)),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                          ],
                         ),
                       )
                     ],

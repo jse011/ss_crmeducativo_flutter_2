@@ -114,16 +114,16 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
 
       var query = SQL.delete(SQL.tareaUnidad)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
       query.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
-      query.go();
+      await query.go();
 
       var queryTarea = SQL.delete(SQL.tarea)..where((tbl) => tbl.silaboEventoId.equals(silaboEventoId));
       queryTarea.where((tbl) => tbl.calendarioPeriodoId.equals(calendarioPeriodoId));
-      queryTarea.go();
+      await queryTarea.go();
 
       if(unidadSesion.containsKey("tarea")){
         print("unidadAprendizaje tarea");
         batch.insertAll(SQL.tarea, SerializableConvert.converListSerializeTarea(unidadSesion["tarea"])  , mode: InsertMode.insertOrReplace );
-        print("unidadAprendizaje tarea 2");
+
       }
 
       print("unidadAprendizaje 1");
@@ -145,16 +145,16 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       // await the whole batch afterwards.
 
       var queryTareaRecurso = SQL.delete(SQL.tareaRecursoDidactico)..where((tbl) => tbl.tareaId.equals(tareaId));
-      queryTareaRecurso.go();
+      await queryTareaRecurso.go();
 
       var queryTareaAlumno = SQL.delete(SQL.tareaAlumno)..where((tbl) => tbl.tareaId.equals(tareaId));
-      queryTareaAlumno.go();
+      await queryTareaAlumno.go();
 
       var queryTareaAlumnoArchivo = SQL.delete(SQL.tareaAlumnoArchivo)..where((tbl) => tbl.tareaId.equals(tareaId));
-      queryTareaAlumnoArchivo.go();
+      await queryTareaAlumnoArchivo.go();
 
       var queryTareaEvaluacion = SQL.delete(SQL.tareaEvalDetalle)..where((tbl) => tbl.tareaId.equals(tareaId));
-      queryTareaEvaluacion.go();
+      await queryTareaEvaluacion.go();
 
       if(unidadTarea.containsKey("bETareaAlumnos")){
         print("bETareaAlumnos");
@@ -350,7 +350,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       batch.insert(SQL.tarea, SerializableConvert.converSerializeTarea(data), mode: InsertMode.insertOrReplace);
 
       var queryTareaRecurso = SQL.delete(SQL.tareaRecursoDidactico)..where((tbl) => tbl.tareaId.equals(serial.tareaId));
-      queryTareaRecurso.go();
+      await queryTareaRecurso.go();
 
       if(data.containsKey("tareasRecursosList")){
         batch.insertAll(SQL.tareaRecursoDidactico, SerializableConvert.converListSerializeTareaRecursoDidactico(data["tareasRecursosList"])  , mode: InsertMode.insertOrReplace );
@@ -462,7 +462,7 @@ class MoorUnidadTareaRepository extends UnidadTareaRepository{
       // await the whole batch afterwards.
 
       var queryTarea = SQL.delete(SQL.tarea)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId));
-      queryTarea.go();
+      await queryTarea.go();
 
       if(unidadTareaSesion.containsKey("tarea")){
         batch.insertAll(SQL.tarea, SerializableConvert.converListSerializeTarea(unidadTareaSesion["tarea"])  , mode: InsertMode.insertOrReplace );

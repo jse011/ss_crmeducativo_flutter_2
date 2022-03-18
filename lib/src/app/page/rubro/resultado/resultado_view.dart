@@ -128,13 +128,20 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
             child: Stack(
               children: [
                 getMainTab(),
+                controller.progress?  ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500),
+                  dismissable: true,
+                  onDismiss: (backgraund){
+                    if(!backgraund){
+                      Navigator.of(this.context).pop();
+                    }
+
+                  },
+                ):Container(),
                 getAppBarUI(),
-                controller.progress?
-                ArsProgressWidget(
-                    blur: 2,
-                    backgroundColor: Color(0x33000000),
-                    animationDuration: Duration(milliseconds: 500)):
-                Container(),
+
               ],
             ),
           ),
@@ -280,16 +287,71 @@ class _ResultadoState extends ViewState<ResultadoView, ResultadoController> with
                   left: 0, //24,
                   right: 0, //48
                 ),
-                child: TableResultado(
-                  calendarioPeriodoUI: controller.calendarioPeriodoUI,
-                  rows: controller.rows,
-                  cells: controller.cells,
-                  headers: controller.headers,
-                  columns: controller.columns,
-                  datosOffline: !controller.conexion,
-                  cursosUi: controller.cursosUi,
-                  precision: controller.precision,
-                  scrollControllers: scrollControllers,
+                child: Column(
+                  children: [
+                    (!controller.conexion && !controller.progress)?
+                    Center(
+                      child: Container(
+                          constraints: BoxConstraints(
+                            //minWidth: 200.0,
+                            maxWidth: 600.0,
+                          ),
+                          height: 45,
+                          margin: EdgeInsets.only(
+                            top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 24),
+                            left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
+                            right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 20),
+                          ),
+                          decoration: BoxDecoration(
+                              color: AppTheme.redLighten5,
+                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8)))
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  width: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 24),
+                                  height: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 24),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color:  Colors.red,
+                                    ),
+                                  )
+                              ),
+                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTableRubro(context, 4))),
+                              Container(
+                                padding: EdgeInsets.all(8),
+                                child: Text('Sin conexión',
+                                    style: TextStyle(
+                                        color:  Colors.red,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 14,
+                                        fontFamily: AppTheme.fontTTNorms
+                                    )
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
+                    ): Container(),
+                    Expanded(
+                        child: Center(
+                      child: TableResultado(
+                        calendarioPeriodoUI: controller.calendarioPeriodoUI,
+                        rows: controller.rows,
+                        cells: controller.cells,
+                        headers: controller.headers,
+                        columns: controller.columns,
+                        datosOffline: !controller.conexion,
+                        cursosUi: controller.cursosUi,
+                        precision: controller.precision,
+                        scrollControllers: scrollControllers,
+                      ),
+                    )
+                    )
+                  ],
                 ),
               ),
               Positioned(

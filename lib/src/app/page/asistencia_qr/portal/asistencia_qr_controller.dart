@@ -40,7 +40,8 @@ class AsistenciaQRController extends Controller{
   bool  _intencionSalirApp = false ;
   bool get salirApp => _salirApp;
   bool _salirApp = false;
-
+  bool _conexion = true;
+  bool get conexion => _conexion;
 
   AsistenciaQRController(HttpDatosRepository httpDatosRepo, ConfiguracionRepository configuracionRepo, AsistenciaQRRepository asistenciaQRRepo):
     presenter = AsistenciaQRPresenter(httpDatosRepo, configuracionRepo, asistenciaQRRepo);
@@ -53,6 +54,7 @@ class AsistenciaQRController extends Controller{
       _dfechaServidor = null;
       stopTimer();
       _progress = false;
+      _conexion = false;
       _asistenciaQRList = [];
       refreshUI();
     };
@@ -71,6 +73,14 @@ class AsistenciaQRController extends Controller{
       }else{
         _showEvaluacionesNoEnviadas = false;
 
+      }
+
+      if(offlineServidor??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
       }
       refreshUI();
     };
@@ -92,6 +102,7 @@ class AsistenciaQRController extends Controller{
         _dialogUi = DialogUi.errorServidor();
         refreshUI();
       }
+
     };
 
   }
@@ -184,6 +195,7 @@ class AsistenciaQRController extends Controller{
   void reintentar(AsistenciaQRUi asistenciaQRUi)async {
     asistenciaQRUi.progreso = true;
     //mapRecurso[asistenciaQRUi]?.cancel();
+    refreshUI();
     mapRecurso[asistenciaQRUi] = await presenter.uploadAsistenciaQR(asistenciaQRUi);
   }
 
@@ -248,6 +260,12 @@ class AsistenciaQRController extends Controller{
     List<AsistenciaQRUi> asistenciaUiList = [];
     for(var grupo in _grupoAsistenciaQRUiList){
       asistenciaUiList.addAll(grupo.asistenciaQRUiList??[]);
+    }
+    for(var asistencia in _asistenciaQRList){
+      if(!(asistencia.repetido??false)){
+        asistenciaUiList.removeWhere((element) => element.aistenciaQRId == asistencia.aistenciaQRId);
+        asistenciaUiList.add(asistencia);
+      }
     }
     await presenter.guardarListAsistenciaQR(asistenciaUiList);
     await existenAsistenciaNoEnviadas();

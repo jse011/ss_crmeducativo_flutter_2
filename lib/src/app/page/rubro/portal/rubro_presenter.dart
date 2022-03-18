@@ -45,6 +45,7 @@ class RubroPresenter extends Presenter{
   UpdateCalendarioPerido _updateCalendarioPerido;
   late Function updateCalendarioPeridoOnComplete, updateCalendarioPeridoOnError;
 
+  List<UpdateDatosCrearRubroParams> cancels = [];
   RubroPresenter(CalendarioPeriodoRepository calendarioPeriodoRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo, RubroRepository rubroRepo, ResultadoRepository resultadoRepo) :
                           _getCalendarioPerido = new GetCalendarioPerido(configuracionRepo, calendarioPeriodoRepo),
                           _getDatosCrearRubro = new UpdateDatosCrearRubro(httpDatosRepo, configuracionRepo, rubroRepo),
@@ -75,8 +76,20 @@ class RubroPresenter extends Presenter{
   }
 
   void onActualizarCurso(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi cursosUi) {
+    for(var item in cancels){
+      item.cancelar = true;
+    }
     _getDatosCrearRubro.dispose();
-    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, null,null, false, false));
+    var params = UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, null,null, false, false);
+    cancels.add(params);
+    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), params);
+  }
+
+  void onCancelarActualizarCurso() {
+    for(var item in cancels){
+      item.cancelar = true;
+    }
+    _getDatosCrearRubro.dispose();
   }
 
   void onGetRubricaList(CursosUi? cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI, OrigenRubroUi? origenRubroUi){

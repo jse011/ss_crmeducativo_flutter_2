@@ -27,7 +27,7 @@ class UpdateProgramasEducativos extends UseCase<GetProgramasEducativosResponse, 
       Future<void> executeDatos() async {
         bool offlineServidor = false;
         bool errorServidor = false;
-
+        await getProgramaLocal(controller, repository, empleadoId, anioAcademicoIdSelect, offlineServidor, errorServidor, true);
         try {
           String urlServidorLocal = await repository
               .getSessionUsuarioUrlServidor();
@@ -49,27 +49,8 @@ class UpdateProgramasEducativos extends UseCase<GetProgramasEducativosResponse, 
           print("getProgramaEducativo datos principales webconfig 3");
         }
 
-        ProgramaEducativoUi? programaEducativoUiSelected;
-        int programaEducativoId = await repository
-            .getSessionProgramaEducativoId();
-        List<ProgramaEducativoUi> programaEducativoUiList = await repository.getListProgramaEducativo(empleadoId, anioAcademicoIdSelect);
 
-        for (ProgramaEducativoUi programaEducativoUi in programaEducativoUiList) {
-          if (programaEducativoUi.idPrograma == programaEducativoId) {
-            programaEducativoUiSelected = programaEducativoUi;
-            programaEducativoUiSelected.seleccionado = true;
-          }
-        }
-
-        if(programaEducativoUiSelected==null&&programaEducativoUiList.isNotEmpty){
-          programaEducativoUiSelected = programaEducativoUiList[0];
-          programaEducativoUiSelected.seleccionado = true;
-        }
-
-        repository.updateSessionProgramaEducativoId(programaEducativoUiSelected?.idPrograma??0);
-        print("getProgramaEducativo datos principales webconfig 4");
-        controller.add(GetProgramasEducativosResponse(offlineServidor, errorServidor, programaEducativoUiSelected, programaEducativoUiList));
-
+        await getProgramaLocal(controller, repository, empleadoId, anioAcademicoIdSelect, offlineServidor, errorServidor, false);
         controller.close();
       }
 
@@ -88,16 +69,40 @@ class UpdateProgramasEducativos extends UseCase<GetProgramasEducativosResponse, 
 
 }
 
+Future<void> getProgramaLocal(StreamController<GetProgramasEducativosResponse> controller, ConfiguracionRepository repository, int empleadoId, int anioAcademicoIdSelect,   bool? offlineServidor, bool? errorServidor, bool? datosAntesActualizar) async{
+  ProgramaEducativoUi? programaEducativoUiSelected;
+  int programaEducativoId = await repository
+      .getSessionProgramaEducativoId();
+  List<ProgramaEducativoUi> programaEducativoUiList = await repository.getListProgramaEducativo(empleadoId, anioAcademicoIdSelect);
+
+  for (ProgramaEducativoUi programaEducativoUi in programaEducativoUiList) {
+    if (programaEducativoUi.idPrograma == programaEducativoId) {
+      programaEducativoUiSelected = programaEducativoUi;
+      programaEducativoUiSelected.seleccionado = true;
+    }
+  }
+
+  if(programaEducativoUiSelected==null&&programaEducativoUiList.isNotEmpty){
+    programaEducativoUiSelected = programaEducativoUiList[0];
+    programaEducativoUiSelected.seleccionado = true;
+  }
+
+  repository.updateSessionProgramaEducativoId(programaEducativoUiSelected?.idPrograma??0);
+  print("getProgramaEducativo datos principales webconfig 4");
+  controller.add(GetProgramasEducativosResponse(offlineServidor, errorServidor, datosAntesActualizar, programaEducativoUiSelected, programaEducativoUiList));
+}
+
 
 class GetProgramasEducativosParams {
 
 }
 class GetProgramasEducativosResponse{
-  bool datosOffline;
-  bool errorServidor;
+  bool? datosOffline;
+  bool? errorServidor;
+  bool? datosAntesActualizar;
   ProgramaEducativoUi? programaEducativoUi;
   List<ProgramaEducativoUi> programaEducativoUiList;
 
-  GetProgramasEducativosResponse(this.datosOffline, this.errorServidor,
+  GetProgramasEducativosResponse(this.datosOffline, this.errorServidor, this.datosAntesActualizar,
       this.programaEducativoUi, this.programaEducativoUiList);
 }

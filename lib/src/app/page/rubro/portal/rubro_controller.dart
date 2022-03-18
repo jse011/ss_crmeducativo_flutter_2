@@ -43,6 +43,8 @@ class RubroController extends Controller{
   String? get msgToast => _msgToast;
   bool _progress = true;
   bool get progress => _progress;
+  bool _progressServerRubrica = false;
+  bool get progressServerRubrica => _progressServerRubrica;
   List<dynamic> _headList2 = [];
   List<dynamic> get headList2 => _headList2;
   List<dynamic> _columnList2 = [];
@@ -96,6 +98,14 @@ class RubroController extends Controller{
   DialogUi? _dialogUi = null;
   DialogUi? get dialogUi => _dialogUi;
 
+  bool? _updateResultado;
+
+  bool _conexionResultado = true;
+  bool get conexionResultado => _conexionResultado;
+
+  bool _conexionRubrica = true;
+  bool get conexionRubrica => _conexionRubrica;
+
   RubroController(this.cursosUi, calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
       :this.presenter = RubroPresenter(calendarioPeriodoRepo, configuracionRepo, httpDatosRepo, rubroRepo, resultadoRepo)
   , super();
@@ -104,7 +114,7 @@ class RubroController extends Controller{
   void initListeners() {
     presenter.getCalendarioPeridoOnComplete = (List<CalendarioPeriodoUI>? calendarioPeridoList, CalendarioPeriodoUI? calendarioPeriodoUI, bool? updateResultado){
       _calendarioPeriodoList = calendarioPeridoList??[];
-
+      _updateResultado = updateResultado;
       if(_calendarioPeriodoUI != null){
         for(CalendarioPeriodoUI calendarioPeriodoUI in calendarioPeridoList??[]){
           calendarioPeriodoUI.selected = false;
@@ -121,15 +131,17 @@ class RubroController extends Controller{
 
       //_calendarioPeriodoUI?.habilitadoProceso = 1;
       //_calendarioPeriodoUI?.habilitadoResultado = 1;
-      if(!(updateResultado??false)){
+      if(!(_updateResultado??false)){
         _origenRubroUi = OrigenRubroUi.TODOS;
         _progress = true;
         _progressResultado = true;
+        _progressServerRubrica = true;
         refreshUI();
         //presenter.onGetRubricaList(cursosUi, calendarioPeriodoUI, _origenRubroUi);
         //presenter.onGetUnidadRubroEval(cursosUi, calendarioPeriodoUI);
         //presenter.onGetCompetenciaRubroEval(cursosUi, calendarioPeriodoUI);
         ////print("Finish updateDatosCrearRubroOnNext");
+
         presenter.onActualizarCurso(_calendarioPeriodoUI, cursosUi);
       }
 
@@ -141,25 +153,40 @@ class RubroController extends Controller{
       _calendarioPeriodoUI = null;
       _origenRubroUi = OrigenRubroUi.TODOS;
       _progress = false;
+      _progressResultado = false;
+      _progressServerRubrica =false;
       refreshUI();
     };
 
     presenter.updateDatosCrearRubroOnNext = (bool? errorConexion, bool? errorServidor){
       _progress = true;
-      _msgToast = (errorServidor??false)? "!Oops! Al parecer ocurrió un error involuntario.":null;
-      _msgToast = (errorConexion??false)? "No hay Conexión a Internet...":null;
-      //_showDialogModoOffline = errorConexion??false;
-      ////print("Finish updateDatosCrearRubroOnNext");
+      _progressServerRubrica = false;
+
+      if(errorConexion??false){
+        _conexionRubrica = false;
+      }else if(errorServidor??false){
+        _conexionRubrica = false;
+      }else{
+        _conexionRubrica = true;
+      }
+      print("updateDatosCrearRubroOnNext");
       onListarTabsRubroEvaluacion();
 
       refreshUI();
     };
 
     presenter.updateDatosCrearRubroOnError = (e){
+      print("updateDatosCrearRubroOnError");
+      _progressServerRubrica = false;
+      _progress = true;
+      _conexionRubrica = false;
+      onListarTabsRubroEvaluacion();
 
+      refreshUI();
     };
 
     presenter.getRubroEvaluacionOnNext = (List<RubricaEvaluacionUi> rubricaEvalUiList){
+
       _rubricaEvaluacionUiList = [];
       if(calendarioPeriodoUI!=null&&(calendarioPeriodoUI?.habilitadoProceso??0)==1){
         _rubricaEvaluacionUiList?.add("add");
@@ -174,7 +201,7 @@ class RubroController extends Controller{
 
       if(_seletedItem==0||_seletedItem==2)_progress = false;//ocultar el progress cuando se esta en el tab rubro
 
-      ////print("_seletedItem: ${_seletedItem}");
+
       refreshUI();
     };
 
@@ -357,6 +384,14 @@ class RubroController extends Controller{
       _cellsResultado = [];
       _headersResultado = [];
 
+      if(offlineServidor??false){
+        _conexionResultado = false;
+      }else if(errorServidor??false){
+        _conexionResultado = false;
+      }else{
+        _conexionResultado = true;
+      }
+
       var result = TableResultadoUtils.getTableResulData(matrizResultadoUi, calendarioPeriodoUI);
       _rowsResultado.addAll(result.rows??[]);
       _columnsResultado.addAll(result.columns??[]);
@@ -373,6 +408,7 @@ class RubroController extends Controller{
       _rowsResultado.clear();
       _columnsResultado.clear();
       _progressResultado = false;
+      _conexionResultado = false;
       //print("_seletedItem: ${_seletedItem}");
       refreshUI();
     };
@@ -421,6 +457,7 @@ class RubroController extends Controller{
     calendarioPeriodoUI?.selected = true;
     _origenRubroUi = OrigenRubroUi.TODOS;
     _progress = true;
+    _progressServerRubrica = true;
     //presenter.getEvaluacion(calendarioPeriodoUi);
 
     //if(_seletedItem == 2){
@@ -451,6 +488,7 @@ class RubroController extends Controller{
 
   void onSyncronizarCurso() {
     _progress = true;
+    _progressServerRubrica = true;
     presenter.onActualizarCurso(calendarioPeriodoUI, cursosUi);
     refreshUI();
   }
@@ -659,6 +697,20 @@ class RubroController extends Controller{
   }
 
   void changeConnected(bool connected) {
+
+  }
+
+  void onClicContinuarOfflineRubrica() {
+    _progress = true;
+    _progressServerRubrica = false;
+    _showDialogModoOffline = false;
+    _conexionRubrica = false;
+    presenter.onCancelarActualizarCurso();
+    refreshUI();
+    onListarTabsRubroEvaluacion();
+  }
+
+  void onClicSegirEsperandoRubrica() {
 
   }
 

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -20,8 +21,11 @@ class FotoAlumnoController extends Controller{
   List<PersonaUi> get personasUiList => _personasUiList;
   PersonaUi? _personaUiSelected = null;
   PersonaUi? get personaUiSelected => _personaUiSelected;
-  File? _fotoFile = null;
-  File? get fotoFile => _fotoFile;
+  Map<PersonaUi?, HttpStream?> https = new Map();
+  bool _conexion = true;
+  bool get conexion => _conexion;
+  String? _mensaje = null;
+  String? get mensaje => _mensaje;
 
   FotoAlumnoController(this.cursosUi, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo):
           presenter = FotoAlumnoPresenter(configuracionRepo, httpDatosRepo);
@@ -30,9 +34,18 @@ class FotoAlumnoController extends Controller{
   void initListeners() {
     presenter.updateContactoDocenteOnComplete = (bool? datosOffline,bool? errorServidor){
       presenter.getFotoAlumnos();
+      if(datosOffline??false){
+        _conexion = false;
+      }else if(errorServidor??false){
+        _conexion = false;
+      }else{
+        _conexion = true;
+      }
+      refreshUI();
     };
     presenter.updateContactoDocenteOnError = (e){
       _progress = false;
+      _conexion = false;
       presenter.getFotoAlumnos();
       refreshUI();
     };
@@ -52,15 +65,29 @@ class FotoAlumnoController extends Controller{
       refreshUI();
     };
 
-    presenter.uploadPersonaOnProgress = (double? progress){
-
+    presenter.uploadPersonaOnProgress = (double? progress, PersonaUi? personaUi){
+      personaUi?.progressCount = progress;
+      refreshUI();
     };
 
     presenter.uploadPersonaOnSucces = (bool? sucess, PersonaUi? personaUi){
-      _progress = false;
-      if(sucess??false){
-       _personaUiSelected = personaUi;
+      personaUi?.progress = false;
+      if(personaUi?.file == null){
+        personaUi?.success = null;
+      }else{
+        personaUi?.success = sucess;
       }
+
+      if(!(sucess??false)){
+        if(personaUi?.file!=null){
+          _mensaje = "Error al subir la foto";
+        }else{
+          _mensaje = "Error al borrar la foto";
+        }
+      }else{
+        personaUi?.file = null;
+      }
+
       refreshUI();
     };
 
@@ -90,17 +117,47 @@ class FotoAlumnoController extends Controller{
     _personaUiSelected = personaUi;
   }
 
-  void updateImage(File? image) {
-    _progress = true;
-    if(_personaUiSelected!=null){
-      _fotoFile = image;
-      presenter.onUpdate(_personaUiSelected, image, true, false);
+  void updateImage(File? image)async {
+    _personaUiSelected?.success = null;
+    _personaUiSelected?.progress = true;
+    _personaUiSelected?.progressCount = 0;
+    refreshUI();
+    if(_personaUiSelected!=null&&image != null){
+      _personaUiSelected?.file = image;
+      https[_personaUiSelected] = await presenter.onUpdate(_personaUiSelected, image, true, false);
+    }else{
+      _personaUiSelected?.progress = false;
+      _mensaje = "Error desconocido";
+      refreshUI();
+      return null;
     }
   }
 
-  onClickRemoverFotoPersona(PersonaUi? personaUi) {
-    _progress = true;
-    presenter.onUpdate(_personaUiSelected, null, true, true);
+ void onClickRemoverFotoPersona(PersonaUi? personaUi) async{
+   personaUi?.progress = true;
+   personaUi?.success = null;
+   personaUi?.progressCount = 0;
+   personaUi?.file = null;
+    refreshUI();
+    https[personaUi] = await presenter.onUpdate(personaUi, null, true, true);
+  }
+
+  void cerrarProgress() {
+    _progress = false;
+    refreshUI();
+  }
+
+  void onClickGuardarVerMasTarde() {
+
+  }
+
+  void successMsg() {
+    _mensaje = null;
+  }
+
+  void reintentarSubirFoto(PersonaUi o) {
+    _personaUiSelected = o;
+    updateImage(o.file);
   }
 
 }

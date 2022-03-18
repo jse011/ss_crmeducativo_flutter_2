@@ -1,12 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
 class ArsProgressWidget extends StatelessWidget {
   /// Main widget of dialog,
   Widget? loadingWidget;
 
   /// This function will trigger when user dismisses dialog
-  final Function? onDismiss;
+  final Function(bool backgraund)? onDismiss;
 
   /// Amount of background blur
   final double blur;
@@ -17,11 +19,13 @@ class ArsProgressWidget extends StatelessWidget {
   /// Whether dialog can dismiss by touching outside or not
   final bool dismissable;
 
+  /// Whether dialog can dismiss by touching outside or not
+
   /// Duration of blur and background color animation
   final Duration animationDuration;
 
   ArsProgressWidget({
-    this.dismissable: true,
+    this.dismissable: false,
     this.onDismiss,
     this.backgroundColor: const Color(0x99000000),
     this.loadingWidget,
@@ -72,7 +76,7 @@ class _DialogBackground extends StatelessWidget {
   final bool? dismissable;
 
   /// Action before dialog dismissed
-  final Function? onDismiss;
+  final Function(bool backgraund)? onDismiss;
 
   /// Creates an background filter that applies a Gaussian blur.
   /// Default = 0
@@ -108,8 +112,8 @@ class _DialogBackground extends StatelessWidget {
             color: color.withOpacity(((val??0.0) as double)  * (_colorOpacity??0.0)),
             child: WillPopScope(
               onWillPop: () async {
-                if (dismissable ?? true) {
-                  if (onDismiss != null)onDismiss!();
+                if (dismissable??false) {
+                  if (onDismiss != null)onDismiss!(false);
                 }
                 return false;
               },
@@ -118,14 +122,13 @@ class _DialogBackground extends StatelessWidget {
                 alignment: Alignment.center,
                 children: <Widget>[
                   GestureDetector(
-                      onTap: dismissable ?? true
-                          ? () {
-                        if (onDismiss != null) {
-                          onDismiss!();
+                      onTap:() {
+                        if(dismissable?? false){
+                          if (onDismiss != null) {
+                            onDismiss!(true);
+                          }
                         }
-
-                      }
-                          : () {},
+                      },
                       child: BackdropFilter(
                         filter: ImageFilter.blur(
                           sigmaX: (val as double) * (blur??0.0),
@@ -135,7 +138,28 @@ class _DialogBackground extends StatelessWidget {
                           color: Colors.transparent,
                         ),
                       )),
-                  dialog??Container()
+                  dialog??Container(),
+                  /*(dismissable??false)?
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 16,
+                      right: 32,
+                      child: ClipOval(
+                    child: Material(
+                      color: Colors.white, // button color
+                      child: InkWell(
+                        splashColor: Colors.black.withOpacity(0.2), // inkwell color
+                        child: SizedBox(width:50, height: 50,
+                            child: Icon(Ionicons.close, size: 30,
+                                color: Colors.blue
+                            )
+                        ),
+                        onTap: () {
+                          onDismiss?.call(false);
+                        },
+                      ),
+                    ),
+                  )
+                  ):Container(),*/
                 ],
               ),
             ),

@@ -35,7 +35,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
       leftOuterJoin(SQL.tipoEvento, SQL.evento.tipoEventoId.equalsExp(SQL.tipoEvento.tipoId))
     ]);
     eventoWhere.where(SQL.calendario.usuarioId.equals(usuarioId));
-    if(cargaCursoId != null){
+    if(cargaCursoId != null && cargaCursoId > 0){
       eventoWhere.where(SQL.calendario.cargaCursoId.equals(cargaCursoId));
     }
     //eventoWhere.where(SQL.calendario.usuarioId.equals(19));
@@ -53,7 +53,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
     eventoWhereExterno.where(SQL.listaUsuarioDetalle.usuarioId.equals(usuarioId));
     //eventoWhereExterno.where(SQL.listaUsuarioDetalle.usuarioId.equals(19));
     //eventoWhereExterno.orderBy([OrderingTerm(expression: SQL.evento.fechaEvento, mode: OrderingMode.desc)]);
-    if(cargaCursoId != null){
+    if(cargaCursoId != null&& cargaCursoId > 0){
       eventoWhereExterno.where(SQL.calendario.cargaCursoId.equals(cargaCursoId));
     }
     if(tipoEventoId>0){

@@ -32,9 +32,9 @@ class FotoAlumnoPresenter extends Presenter{
     _getFotoAlumnos.execute(_GetFotoAlumnosCase(this), GetFotoAlumnosCaseParams());
   }
 
-  void onUpdate(PersonaUi? personaUi, File? file, bool soloCambiarFoto, bool removeFoto) {
-    uploadPersona.execute(personaUi, file, soloCambiarFoto, removeFoto, (progress) {
-      uploadPersonaOnProgress(progress);
+  Future<HttpStream?> onUpdate(PersonaUi? personaUi, File? file, bool soloCambiarFoto, bool removeFoto) {
+   return uploadPersona.execute(personaUi, file, soloCambiarFoto, removeFoto, (progress) {
+      uploadPersonaOnProgress(progress, personaUi);
     }, (success, personaUI) {
       uploadPersonaOnSucces(success, personaUI);
     });

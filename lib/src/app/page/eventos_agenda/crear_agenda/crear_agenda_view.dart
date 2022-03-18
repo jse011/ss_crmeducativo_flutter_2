@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
@@ -70,7 +69,7 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
   _CrearAgendaViewState(EventoUi? eventoUi, CursosUi? cursosUi) : super(CrearAgendaController(eventoUi, cursosUi, MoorConfiguracionRepository(), MoorAgendaEventoRepository(), DeviceHttpDatosRepositorio()));
 
   @override
-  void initState() {
+  void initState() async{
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {

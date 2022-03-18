@@ -136,7 +136,7 @@ class _GetProgramaEducativoCase extends Observer<GetProgramasEducativosResponse>
   @override
   void onNext(GetProgramasEducativosResponse? response) {
     assert(presenter.getProgramasEducativosOnComplete != null);
-    presenter.getProgramasEducativosOnComplete(response?.programaEducativoUi, response?.programaEducativoUiList, response?.datosOffline, response?.errorServidor);
+    presenter.getProgramasEducativosOnComplete(response?.programaEducativoUi, response?.programaEducativoUiList, response?.datosOffline, response?.errorServidor, response?.datosAntesActualizar);
 
   }
 

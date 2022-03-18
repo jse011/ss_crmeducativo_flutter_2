@@ -108,8 +108,13 @@ class EvaluacionIndicadorController extends Controller{
   }
   @override
   void dispose() {
-    presenter.dispose();
     super.dispose();
+  }
+
+  @override
+  void onDisposed() {
+    presenter.dispose();
+    super.onDisposed();
   }
 
   void initTable(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubroEvaluacionUi){

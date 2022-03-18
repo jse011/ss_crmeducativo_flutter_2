@@ -246,6 +246,102 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                                     delegate: SliverChildListDelegate(
                                       [
                                         Padding(padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 16))),
+                                        (controller.isLoading && controller.cursosUiList.isNotEmpty)?
+                                        Center(
+                                          child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 600.0,
+                                              ),
+                                              height: 45,
+                                              margin: EdgeInsets.only(
+                                                  top: 0,
+                                                  left: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                                  right: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                                  bottom: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 16)
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  color: HexColor("#e5faf3"),
+                                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 8)))
+                                              ),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                      width: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                                      height: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                                      child: Center(
+                                                        child: CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color: HexColor("#00c985"),
+                                                        ),
+                                                      )
+                                                  ),
+                                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 4))),
+                                                  Container(
+                                                    padding: EdgeInsets.all(8),
+                                                    child: Text('Actualizando sus cursos',
+                                                      style: TextStyle(
+                                                          color:  HexColor("#00c985"),
+                                                          fontWeight: FontWeight.w700,
+                                                          fontSize: 14,
+                                                        fontFamily: AppTheme.fontTTNorms
+                                                      )
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                          ),
+                                        ): Container(),
+                                        (!controller.conexion && !controller.isLoading)?
+                                        Center(
+                                          child: Container(
+                                              constraints: BoxConstraints(
+                                                //minWidth: 200.0,
+                                                maxWidth: 600.0,
+                                              ),
+                                              height: 45,
+                                              margin: EdgeInsets.only(
+                                                  top: 0,
+                                                  left: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                                  right: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
+                                                  bottom: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 16)
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  color: AppTheme.redLighten5,
+                                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 8)))
+                                              ),
+                                              child: Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                      width: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                                      height: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 24),
+                                                      child: Center(
+                                                        child: CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color:  Colors.red,
+                                                        ),
+                                                      )
+                                                  ),
+                                                  Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthListaCurso(context, 4))),
+                                                  Container(
+                                                    padding: EdgeInsets.all(8),
+                                                    child: Text('Sin conexión',
+                                                        style: TextStyle(
+                                                            color:  Colors.red,
+                                                            fontWeight: FontWeight.w700,
+                                                            fontSize: 14,
+                                                            fontFamily: AppTheme.fontTTNorms
+                                                        )
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                          ),
+                                        ): Container(),
                                         Center(
                                           child: InkWell(
                                             onTap: (){
@@ -345,9 +441,15 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                                 ),
                               ],
                             ),
-                            controller.isLoading ?  Container(child: Center(
-                              child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.colorPrimary,),
-                            )): Container(),
+                            controller.isLoading && controller.cursosUiList.isEmpty?
+                            Container(
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppTheme.colorPrimary,
+                                  ),
+                                )
+                            ): Container(),
                           ],
                         );
                       })
@@ -372,6 +474,8 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
       },
     );*/
   }
+
+
 
 
   Widget getCuros( UsuarioUi? usuarioUi, CursosUi cursoUi, ProgramaEducativoUi? programaEducativoUi, AnioAcademicoUi? anioAcademicoUi){
@@ -515,6 +619,10 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
     );
   }
 
+  Future<bool> progressDelay() async {
+    await Future<dynamic>.delayed(const Duration(milliseconds: 10000));
+    return true;
+  }
 
   Future<bool?> showDialogButtom(PortalDocenteController controller) async {
     void Function(VoidCallback fn)? refresh = null;
@@ -811,7 +919,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                                                 color: AppTheme.colorPrimary.withOpacity(0.5),
                                               ),
                                             ),
-                                            suffixIcon: !controller.isLoading? IconButton(
+                                            suffixIcon: (!controller.isLoading || controller.programaEducativoUiList.isNotEmpty)? IconButton(
                                               onPressed: (){
                                                 //controller.clearTitulo();
                                                 //_tiuloRubricacontroller.clear();
@@ -823,7 +931,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                                               iconSize: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 15),
                                             ):null,
                                           ),
-                                          onChanged:  !controller.isLoading?(item){
+                                          onChanged:  (!controller.isLoading || controller.programaEducativoUiList.isNotEmpty)?(item){
                                             controller.onSelectPrograma(item);
                                           }:null,
                                           menuItems: controller.programaEducativoUiList.map<DropdownMenuItem<ProgramaEducativoUi>>((item) {
@@ -841,7 +949,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                                                           )
                                                       ),
                                                     )
-                                                ),  controller.isLoading?
+                                                ),  (controller.isLoading && controller.programaEducativoUiList.isEmpty)?
                                                 Container(
                                                   height: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
                                                   width: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
@@ -1178,7 +1286,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                           color: AppTheme.colorPrimary.withOpacity(0.5),
                         ),
                       ),
-                      suffixIcon: !controller.isLoading? IconButton(
+                      suffixIcon: (!controller.isLoading || controller.programaEducativoUiList.isNotEmpty)? IconButton(
                         onPressed: (){
                           //controller.clearTitulo();
                           //_tiuloRubricacontroller.clear();
@@ -1190,7 +1298,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                         iconSize: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 15),
                       ):null,
                     ),
-                    onChanged:  !controller.isLoading?(item){
+                    onChanged:  (!controller.isLoading || controller.programaEducativoUiList.isNotEmpty)?(item){
                       controller.onSelectPrograma(item);
                     }:null,
                     menuItems: controller.programaEducativoUiList.map<DropdownMenuItem<ProgramaEducativoUi>>((item) {
@@ -1208,7 +1316,7 @@ class _PortalDocenteViewState extends ViewState<PortalDocenteView, PortalDocente
                                     )
                                 ),
                               )
-                          ),  controller.isLoading?
+                          ),  (controller.isLoading && controller.programaEducativoUiList.isEmpty)?
                           Container(
                             height: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),
                             width: ColumnCountProvider.aspectRatioForWidthListaCurso(context, 20),

@@ -446,7 +446,7 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                                               child: Container(
                                                                 padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
                                                                 alignment: Alignment.center,
-                                                                child: Text("Sin sesiones hoy",  style: TextStyle(
+                                                                child: Text(controller.conexion?"Sin sesiones hoy":"Sin conexión",  style: TextStyle(
                                                                     fontSize: 16,
                                                                     fontWeight: FontWeight.w800,
                                                                     fontFamily: AppTheme.fontTTNorms,
@@ -546,22 +546,18 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                           child: ClipOval(
                                             child: Material(
                                               color: Color(0XFFafd981), // button color
-                                              child: InkWell(
-                                                splashColor: AppTheme.colorPrimary, // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -633,22 +629,18 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                           child: ClipOval(
                                             child: Material(
                                               color:  Color(0XFFF26FC2),
-                                              child: InkWell(
-                                                splashColor: AppTheme.colorPrimary, // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -720,22 +712,18 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                           child: ClipOval(
                                             child: Material(
                                               color: Color(0XFFdcb7f6), // button color
-                                              child: InkWell(
-                                                splashColor: AppTheme.colorPrimary, // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),
@@ -809,22 +797,18 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                           child: ClipOval(
                                             child: Material(
                                               color: Color(0XFFBAD3F5), // button color
-                                              child: InkWell(
-                                                splashColor: AppTheme.colorPrimary, // inkwell color
-                                                child: SizedBox(
-                                                    width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
-                                                          bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
-                                                      ),
-                                                      child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                    )),
-                                                onTap: () {},
-                                              ),
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthSesionHoy(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
                                             ),
                                           ),
                                         ),

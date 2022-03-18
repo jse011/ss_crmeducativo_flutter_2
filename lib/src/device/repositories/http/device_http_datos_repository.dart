@@ -407,35 +407,42 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
         }
       }
     }).catchError((dioError, stackTrace) {
-      switch (dioError.type) {
-        case DioErrorType.cancel:
-        //message = "Request to API server was cancelled";
-          break;
-        case DioErrorType.connectTimeout:
-          print("Connection timeout with API server");
-          httpSuccessListen.call(false, true);
-          break;
-        case DioErrorType.other:
-          print("Connection to API server failed due to internet connection");
-          httpSuccessListen.call(false, true);
-          break;
-        case DioErrorType.receiveTimeout:
-          httpSuccessListen.call(false, true);
-          print("Receive timeout in connection with API server");
-          break;
-        case DioErrorType.response:
-        /// When the server response, but with a incorrect status, such as 404, 503...
-          httpSuccessListen.call(false, false);
-          print("Response error 404, 503 ...");
-          break;
-        case DioErrorType.sendTimeout:
-          throw Exception("Send timeout in connection with API server");
-        default:
-          httpSuccessListen.call(false, false);
-          print("Response error Something went wrong");
-          //message = "Something went wrong";
-          break;
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, true);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, false);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, false);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(null, false);
       }
+
     });
 
     return dioCancellation;
@@ -592,6 +599,43 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
           print("Response null");
         }
       }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, true);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, false);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, false);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(false, false);
+      }
+
     });
 
     return dioCancellation;
@@ -741,7 +785,44 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
           print("Response null ${response.data}");
         }
       }
-    });
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, null);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, null);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, null);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(false, null);
+      }
+
+    });;
 
     return dioCancellation;
   }
@@ -874,37 +955,42 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       }
     }).catchError((dioError, stackTrace) {
       dioCancellation.finishesd = true;
-      switch (dioError.type) {
-        case DioErrorType.cancel:
-          print("Request to API server was cancelled");
-          httpSuccessListen.call(false, false);
-          break;
-        case DioErrorType.connectTimeout:
-          print("Connection timeout with API server");
-          httpSuccessListen.call(false, true);
-          break;
-        case DioErrorType.other:
-          print("Connection to API server failed due to internet connection");
-          httpSuccessListen.call(false, true);
-          break;
-        case DioErrorType.receiveTimeout:
-          httpSuccessListen.call(false, true);
-          print("Receive timeout in connection with API server");
-          break;
-        case DioErrorType.response:
-        /// When the server response, but with a incorrect status, such as 404, 503...
-          httpSuccessListen.call(null, false);
-          print("Response error 404, 503 ...");
-          break;
-        case DioErrorType.sendTimeout:
-          print("Send timeout in connection with API server");
-          httpSuccessListen.call(false, true);
-          break;
-        default:
-          httpSuccessListen.call(false, false);
-          print("Response error Something went wrong");
-          //message = "Something went wrong";
-          break;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+            print("Request to API server was cancelled");
+            httpSuccessListen.call(false, false);
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, true);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(null, false);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            print("Send timeout in connection with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          default:
+            httpSuccessListen.call(false, false);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(null, false);
       }
     });
 
@@ -1140,6 +1226,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
       formData = getBody("uploadPersonaDocente", parameters);
     }
 
+    print("foto: ${foto!=null}");
     Dio dio = new Dio();
     dio.post(
       Uri2.validate(urlServidorLocal),
@@ -1166,6 +1253,43 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
           print("Response null ${response.data}");
         }
       }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, null);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, null);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, null);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(false, null);
+      }
+
     });
 
     return dioCancellation;
@@ -1330,34 +1454,39 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
         }
       }
     }).catchError((dioError, stackTrace) {
-      switch (dioError.type) {
-        case DioErrorType.cancel:
-        //message = "Request to API server was cancelled";
-          break;
-        case DioErrorType.connectTimeout:
-          print("Connection timeout with API server");
-          httpSuccessListen.call(false, true);
-          break;
-        case DioErrorType.other:
-          print("Connection to API server failed due to internet connection");
-          httpSuccessListen.call(false, true);
-          break;
-        case DioErrorType.receiveTimeout:
-          httpSuccessListen.call(false, true);
-          print("Receive timeout in connection with API server");
-          break;
-        case DioErrorType.response:
-        /// When the server response, but with a incorrect status, such as 404, 503...
-          httpSuccessListen.call(false, false);
-          print("Response error 404, 503 ...");
-          break;
-        case DioErrorType.sendTimeout:
-          throw Exception("Send timeout in connection with API server");
-        default:
-          httpSuccessListen.call(false, false);
-          print("Response error Something went wrong");
-          //message = "Something went wrong";
-          break;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, true);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, true);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, false);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, false);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(null, false);
       }
     });
 
@@ -1455,6 +1584,43 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
           print("Response null ${response.data}");
         }
       }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpValueSuccess.call(false, null);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpValueSuccess.call(false, null);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpValueSuccess.call(false, null);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpValueSuccess.call(false, null);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpValueSuccess.call(false, null);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpValueSuccess.call(false, null);
+      }
+
     });
 
     return dioCancellation;
@@ -1497,6 +1663,43 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
           print("Response null ${response.data}");
         }
       }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, null);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, null);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, null);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(false, null);
+      }
+
     });
 
     return dioCancellation;
@@ -1592,6 +1795,43 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
           print("Response null ${response.data}");
         }
       }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, null);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, null);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, null);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(false, null);
+      }
+
     });
 
     return dioCancellation;
@@ -1772,6 +2012,7 @@ class Uri2{
       //url = url.replaceAll("CRMMovil", "CRMMovil2");
       //url = modificarServidorLocalCata(url);
       //print("modificarServidorLocalCata3: ${url}");
+      //url = "http://192.168.0.6:3000/PortalAcadMovil.ashx";
       return Uri.parse(url);
     }
 
@@ -1787,6 +2028,7 @@ class Uri2{
       //url = url.replaceAll("CRMMovil", "CRMMovil2");
       //url = modificarServidorLocalCata(url);
       //print("modificarServidorLocalCata4: ${url}");
+      //url = "http://192.168.0.6:3000/PortalAcadMovil.ashx";
       return url;
     }
 

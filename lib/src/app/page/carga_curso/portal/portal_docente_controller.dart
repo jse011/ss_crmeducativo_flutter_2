@@ -26,6 +26,7 @@ class PortalDocenteController extends Controller{
   bool get isLoading => _isLoading;
   bool _conexion = true;
   bool get conexion => _conexion;
+  bool? _datosAntesActualizar;
 
   PortalDocenteController(usuarioConfiRepo, httpDatosRepo)
       :this.presenter = PortalDocentePresenter(usuarioConfiRepo, httpDatosRepo)
@@ -62,21 +63,27 @@ class PortalDocenteController extends Controller{
       refreshUI();
     };
 
-    presenter.getProgramasEducativosOnComplete = (ProgramaEducativoUi? programaEducativoUi, List<ProgramaEducativoUi>? programaEducativoList, bool? datosOffline, bool? errorServidor){
+    presenter.getProgramasEducativosOnComplete = (ProgramaEducativoUi? programaEducativoUi, List<ProgramaEducativoUi>? programaEducativoList, bool? datosOffline, bool? errorServidor, bool? datosAntesActualizar){
+      _datosAntesActualizar = datosAntesActualizar;
+      if(!(_datosAntesActualizar??false)){
+        if(datosOffline??false){
+          _conexion = false;
+        }else if(errorServidor??false){
+          _conexion = false;
+        }else{
+          _conexion = true;
+        }
+      }
+      presenter.getCursos(programaEducativoUi);
+
       _programaEducativoUi = programaEducativoUi;
       _programaEducativoUiList = programaEducativoList??[];
       refreshUI();
-      if(datosOffline??false){
-        _conexion = false;
-      }else if(errorServidor??false){
-        _conexion = false;
-      }else{
-        _conexion = true;
-      }
-      presenter.getCursos(programaEducativoUi);
+
     };
 
     presenter.getProgramasEducativosOnError = (e){
+      _datosAntesActualizar = false;
       _programaEducativoUi = null;
       _programaEducativoUiList = [];
       refreshUI();
@@ -85,7 +92,10 @@ class PortalDocenteController extends Controller{
 
     presenter.getCursosOnComplete = (List<CursosUi> cursosUiList){
       _cursosUiList = cursosUiList;
-      _isLoading = false;
+      print("_datosAntesActualizar ${_datosAntesActualizar}");
+      if(!(_datosAntesActualizar??false)){
+        _isLoading = false; //No ocultar el progreso si aun no se actualizo la data
+      }
       refreshUI();
     };
 

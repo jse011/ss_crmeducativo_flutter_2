@@ -58,12 +58,12 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
           unidadEventoIdList.add(unidadEvento.unidadAprendizajeId);
         }
 
-        (SQL.delete(SQL.relUnidadEvento)..where((tbl) => tbl.unidadaprendizajeId.isIn(unidadEventoIdList) )).go();
-        (SQL.delete(SQL.unidadEvento)..where((tbl) => tbl.unidadAprendizajeId.isIn(unidadEventoIdList) )).go();
+        await (SQL.delete(SQL.relUnidadEvento)..where((tbl) => tbl.unidadaprendizajeId.isIn(unidadEventoIdList) )).go();
+        await (SQL.delete(SQL.unidadEvento)..where((tbl) => tbl.unidadAprendizajeId.isIn(unidadEventoIdList) )).go();
         var queryDeleteSesion = SQL.delete(SQL.sesionEvento)..where((tbl) => tbl.unidadAprendizajeId.isIn(unidadEventoIdList));
         if(rolId>0) queryDeleteSesion.where((tbl) => tbl.rolId.equals(rolId));
 
-        queryDeleteSesion.go();
+        await queryDeleteSesion.go();
 
         if(unidadSesion.containsKey("unidadAprendizaje")){
           batch.insertAll(SQL.unidadEvento, SerializableConvert.converListSerializeUnidadEvento(unidadSesion["unidadAprendizaje"])  , mode: InsertMode.insertOrReplace );
@@ -246,10 +246,10 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
       // await the whole batch afterwards.
 
 
-      (SQL.delete(SQL.competenciaSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
-      (SQL.delete(SQL.desempenioIcdSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
-      (SQL.delete(SQL.campotematicoSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
-      (SQL.delete(SQL.recursoSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
+      await (SQL.delete(SQL.competenciaSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
+      await (SQL.delete(SQL.desempenioIcdSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
+      await (SQL.delete(SQL.campotematicoSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
+      await (SQL.delete(SQL.recursoSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
 
 
       if(unidadAprendizaje.containsKey("competencias")){
@@ -468,8 +468,8 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
     AppDataBase SQL = AppDataBase();
 
     await SQL.batch((batch) async {
-      (SQL.delete(SQL.actividadSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
-      (SQL.delete(SQL.instrumentoEvaluacionSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
+      await (SQL.delete(SQL.actividadSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
+      await (SQL.delete(SQL.instrumentoEvaluacionSesion)..where((tbl) => tbl.sesionAprendizajeId.equals(sesionAprendizajeId) )).go();
 
 
       List<ActividadSesionData> list = [];
@@ -513,7 +513,7 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
         actividadIdList.add(actividad.actividadAprendizajeId);
       }
 
-      (SQL.delete(SQL.recursosActividadSesion)..where((tbl) => tbl.actividadAprendizajeId.isIn(actividadIdList) )).go();
+      await (SQL.delete(SQL.recursosActividadSesion)..where((tbl) => tbl.actividadAprendizajeId.isIn(actividadIdList) )).go();
 
       batch.insertAll(SQL.actividadSesion,list, mode: InsertMode.insertOrReplace );
       batch.insertAll(SQL.instrumentoEvaluacionSesion, intrumentoList, mode: InsertMode.insertOrReplace );

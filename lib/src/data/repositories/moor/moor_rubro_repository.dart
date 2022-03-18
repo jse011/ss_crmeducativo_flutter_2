@@ -1496,6 +1496,52 @@ class MoorRubroRepository extends RubroRepository{
       rubroEvaluacionUiEvaluacionList.add(rubricaEvaluacionUi);
     }
 
+    
+    
+    var queryEvidencia = SQL.select(SQL.archivoRubro).join([
+      innerJoin(SQL.evaluacionProceso, SQL.evaluacionProceso.evaluacionProcesoId.equalsExp(SQL.archivoRubro.evaluacionProcesoId)),
+      innerJoin(SQL.rubroEvaluacionProceso, SQL.rubroEvaluacionProceso.rubroEvalProcesoId.equalsExp(SQL.evaluacionProceso.rubroEvalProcesoId)),
+    ]);
+    queryEvidencia.where(SQL.rubroEvaluacionProceso.rubroEvalProcesoId.isIn(rubroEvaluacionIdEvaluacionList));
+    List<RubroEvidenciaUi> rubroEvidenciaUiList = [];
+    for(var row in await queryEvidencia.get()){
+      ArchivoRubroData item = row.readTable(SQL.archivoRubro);
+      EvaluacionProcesoData evaluacionProcesoData = row.readTable(SQL.evaluacionProceso);
+      if(item.delete == 1)continue;
+      RubroEvidenciaUi rubroEvidenciaUi = RubroEvidenciaUi();
+      rubroEvidenciaUi.archivoRubroId = item.archivoRubroId;
+      rubroEvidenciaUi.titulo = item.url?.split("/").last;
+      rubroEvidenciaUi.url = item.url;
+      rubroEvidenciaUi.tipoRecurso = getTipoArchivo(item);
+      rubroEvidenciaUi.eliminar = item.delete==1;
+      rubroEvidenciaUi.evaluacionUi = EvaluacionUi();
+      rubroEvidenciaUi.evaluacionUi?.evaluacionId =evaluacionProcesoData.evaluacionProcesoId;
+      //rubroEvidenciaUi.evaluacionUi = evaluacionUi;
+      rubroEvidenciaUi.rubroEvaluacionId = evaluacionProcesoData.rubroEvalProcesoId;
+      rubroEvidenciaUi.fechaCreacion = item.fechaCreacion;
+      rubroEvidenciaUiList.add(rubroEvidenciaUi);
+
+    }
+    var queryComentario = SQL.select(SQL.rubroComentario).join([
+      innerJoin(SQL.evaluacionProceso, SQL.evaluacionProceso.evaluacionProcesoId.equalsExp(SQL.rubroComentario.evaluacionProcesoId)),
+      innerJoin(SQL.rubroEvaluacionProceso, SQL.rubroEvaluacionProceso.rubroEvalProcesoId.equalsExp(SQL.evaluacionProceso.rubroEvalProcesoId)),
+    ]);
+    queryComentario.where(SQL.rubroEvaluacionProceso.rubroEvalProcesoId.isIn(rubroEvaluacionIdEvaluacionList));
+    List<RubroComentarioUi> rubroComentarioUiList = [];
+    for(var row in await queryComentario.get()){
+      RubroComentarioData item = row.readTable(SQL.rubroComentario);
+      EvaluacionProcesoData evaluacionProcesoData = row.readTable(SQL.evaluacionProceso);
+      if(item.delete == 1)continue;
+      RubroComentarioUi rubroComentarioUi = RubroComentarioUi();
+      rubroComentarioUi.evaluacionRubroComentarioId = item.evaluacionProcesoComentarioId;
+      rubroComentarioUi.comentario = item.descripcion;
+      rubroComentarioUi.evaluacionId = evaluacionProcesoData.evaluacionProcesoId;
+      rubroComentarioUi.rubroEvaluacionId = evaluacionProcesoData.rubroEvalProcesoId;
+      //print("descripcion: ${item.descripcion}");
+      rubroComentarioUi.fechaCreacion = item.fechaCreacion;
+      rubroComentarioUiList.add(rubroComentarioUi);
+    }
+    
     if(rubroEvaluacionProcesoData?.formaEvaluacionId == FORMA_EVAL_INDIVIDUAL){
       List<EvaluacionProcesoData> evaluacionProcesoDataList = await (SQL.select(SQL.evaluacionProceso)..where((tbl) => tbl.rubroEvalProcesoId.isIn(rubroEvaluacionIdEvaluacionList))).get();
       for(RubricaEvaluacionUi rubricaEvaluacionUi in rubroEvaluacionUiEvaluacionList){
@@ -1506,45 +1552,18 @@ class MoorRubroRepository extends RubroRepository{
             ValorTipoNotaUi? valorTipoNotaUi = rubricaEvaluacionUi.tipoNotaUi?.valorTipoNotaList?.firstWhereOrNull((element) => element.valorTipoNotaId == evaluacionUi.valorTipoNotaId);
             evaluacionUi.valorTipoNotaUi = valorTipoNotaUi;
             evaluacionUi.rubroEvaluacionUi =  rubricaEvaluacionUi;
+            evaluacionUi.comentarios = [];
+            var comentarios = rubroComentarioUiList.where((element) => element.evaluacionId == evaluacionProcesoData.evaluacionProcesoId);
+            comentarios.sorted((a, b) => (b.fechaCreacion??DateTime(1950)).compareTo(a.fechaCreacion??DateTime(1950)));
+            evaluacionUi.comentarios?.addAll(comentarios);
 
-
-            List<RubroComentarioUi> rubroComentarioUiList = [];
-            var queryComentario = SQL.select(SQL.rubroComentario)..where((tbl) => tbl.evaluacionProcesoId.equals(evaluacionUi.evaluacionId));
-            queryComentario.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
-
-            for(RubroComentarioData item in await queryComentario.get()){
-              if(item.delete == 1)continue;
-              RubroComentarioUi rubroComentarioUi = RubroComentarioUi();
-              rubroComentarioUi.evaluacionRubroComentarioId = item.evaluacionProcesoComentarioId;
-              rubroComentarioUi.comentario = item.descripcion;
-              rubroComentarioUi.evaluacionId = item.evaluacionProcesoId;
-              rubroComentarioUi.rubroEvaluacionId = evaluacionUi.rubroEvaluacionId;
-              //print("descripcion: ${item.descripcion}");
-              rubroComentarioUi.fechaCreacion = item.fechaCreacion;
-              rubroComentarioUiList.add(rubroComentarioUi);
+            var evidencias = rubroEvidenciaUiList.where((element) => element.evaluacionUi?.evaluacionId == evaluacionProcesoData.evaluacionProcesoId);
+            evidencias.sorted((a, b) => (b.fechaCreacion??DateTime(1950)).compareTo(a.fechaCreacion??DateTime(1950)));
+            evaluacionUi.evidencias = [];
+            for(RubroEvidenciaUi item in evidencias){
+              item.evaluacionUi = evaluacionUi;
+              evaluacionUi.evidencias?.add(item);
             }
-
-            evaluacionUi.comentarios = rubroComentarioUiList;
-
-            List<RubroEvidenciaUi> rubroEvidenciaUiList = [];
-            var queryEvidencia = SQL.select(SQL.archivoRubro)..where((tbl) => tbl.evaluacionProcesoId.equals(evaluacionUi.evaluacionId));
-            queryEvidencia.orderBy([(tbl)=> OrderingTerm.desc(tbl.fechaCreacion)]);
-            for(ArchivoRubroData item in await queryEvidencia.get()){
-              if(item.delete == 1)continue;
-              RubroEvidenciaUi rubroEvidenciaUi = RubroEvidenciaUi();
-              rubroEvidenciaUi.archivoRubroId = item.archivoRubroId;
-              rubroEvidenciaUi.titulo = item.url?.split("/").last;
-              rubroEvidenciaUi.url = item.url;
-              rubroEvidenciaUi.tipoRecurso = getTipoArchivo(item);
-              rubroEvidenciaUi.eliminar = item.delete==1;
-              rubroEvidenciaUi.evaluacionUi = evaluacionUi;
-              rubroEvidenciaUi.rubroEvaluacionId = evaluacionUi.rubroEvaluacionId;
-              rubroEvidenciaUi.fechaCreacion = item.fechaCreacion;
-              rubroEvidenciaUiList.add(rubroEvidenciaUi);
-
-            }
-            evaluacionUi.evidencias = rubroEvidenciaUiList;
-
             rubricaEvaluacionUi.evaluacionUiList?.add(evaluacionUi);
           }
         }
@@ -1608,8 +1627,10 @@ class MoorRubroRepository extends RubroRepository{
             syncFlag: Value(EstadoSync.FLAG_EXPORTED),
           ));
 
+
+
       await (SQL.update(SQL.evaluacionProceso)
-        ..where((tbl) => tbl.evaluacionProcesoId.isIn(evaluacionIdList)))
+        ..where((tbl) => tbl.rubroEvalProcesoId.isIn(rubroEvaluacionIdList)))//ya so  se filtra por el evaluacion por que generta error por la cantidad masiva
           .write(
           EvaluacionProcesoCompanion(
             syncFlag: Value(EstadoSync.FLAG_EXPORTED),

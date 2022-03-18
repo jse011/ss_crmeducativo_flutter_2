@@ -8,11 +8,14 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/fdottedline/fdottedline.dart';
 import 'package:ss_crmeducativo_2/src/app/page/foto_alumno/foto_alumno_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_theme.dart';
+import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/dropdown_formfield_2.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/image_picker/image_picker_handler.dart';
@@ -85,23 +88,47 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
   @override
   Widget get view => ControlledWidgetBuilder<FotoAlumnoController>(
     builder: (context, controller) {
+
+      if(controller.mensaje!=null&&controller.mensaje!.isNotEmpty){
+        Fluttertoast.showToast(
+          msg: controller.mensaje!,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+        );
+        controller.successMsg();
+      }
+
       return Scaffold(
         key: globalKey,
         backgroundColor: AppTheme.background,
         body: Stack(
           children: [
             getMainTab(),
+            controller.progress?  ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+              dismissable: true,
+              onDismiss: (backgraund){
+                if(!backgraund){
+                  Navigator.of(this.context).pop();
+                }
+
+              },
+            ):Container(),
             getAppBarUI(),
-            controller.progress?ArsProgressWidget(
-                blur: 2,
-                backgroundColor: Color(0x33000000),
-                animationDuration: Duration(milliseconds: 500)
-            ):Container()
           ],
         ),
       );
     },
   );
+
+  Future<bool> progressDelay() async {
+    await Future<dynamic>.delayed(const Duration(milliseconds: 10000));
+    return true;
+  }
+
   Widget getAppBarUI() {
     return Column(
       children: <Widget>[
@@ -195,6 +222,53 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  (!controller.conexion && !controller.progress)?
+                  Center(
+                    child: Container(
+                        constraints: BoxConstraints(
+                          //minWidth: 200.0,
+                          maxWidth: 600.0,
+                        ),
+                        height: 45,
+                        margin: EdgeInsets.only(
+                          top: 24,
+                          left: 20,
+                          right: 20,
+                        ),
+                        decoration: BoxDecoration(
+                            color: AppTheme.redLighten5,
+                            borderRadius: BorderRadius.all(Radius.circular(8))
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                                width:24,
+                                height: 24,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color:  Colors.red,
+                                  ),
+                                )
+                            ),
+                            Padding(padding: EdgeInsets.all(4)),
+                            Container(
+                              padding: EdgeInsets.all(8),
+                              child: Text('Sin conexión',
+                                  style: TextStyle(
+                                      color:  Colors.red,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      fontFamily: AppTheme.fontTTNorms
+                                  )
+                              ),
+                            ),
+                          ],
+                        )
+                    ),
+                  ): Container(),
                   controller.cursosUiList.isNotEmpty?
                   Column(
                     children: [
@@ -333,59 +407,109 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                         color: AppTheme.colorLine,
                       ),
                       ListView.builder(
-                        padding: EdgeInsets.only(top: 0, bottom: 64, left: 24, right: 24),
+                        padding: EdgeInsets.only(top: 0, bottom: 64, left: 0, right: 0),
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index){
                           PersonaUi o =  filteredUsers!=null?filteredUsers![index]: controller.personasUiList[index];
                           return Container(
-                            margin: EdgeInsets.only(bottom: 0, top: 16),
+                            //margin: EdgeInsets.only(bottom: 0, top: 16),
+                            padding: EdgeInsets.only(bottom: 16, top: 16),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: AppTheme.colorLine,
+                                  width: 1
+                                )
+                              )
+                            ),
                             child: Row(
                               children: [
-                                CachedNetworkImage(
-                                  placeholder: (context, url) => Container(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                  imageUrl: o.foto??"",
-                                  errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 38,),
-                                  imageBuilder: (context, imageProvider) =>
-                                      Container(
-                                          width: 48,
-                                          height: 48,
-                                          margin: EdgeInsets.only(right: 0, left: 0, top: 0, bottom: 0),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.all(Radius.circular(16)),
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
+                                Padding(padding: EdgeInsets.all(16)),
+                                Container(
+                                    width: 48,
+                                    height: 48,
+                                    margin: EdgeInsets.only(right: 0, left: 0, top: 0, bottom: 0),
+                                    child:    CachedNetworkImage(
+                                      placeholder: (context, url) => SizedBox(
+                                        child: Shimmer.fromColors(
+                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                          highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                          child: Container(
+                                            padding: EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                                color: AppTheme.grey,
+                                                borderRadius: BorderRadius.all(Radius.circular(16)),
                                             ),
-                                          )
+                                            alignment: Alignment.center,
+                                          ),
+                                        ),
                                       ),
+                                      imageUrl: o.foto??"",
+                                      errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 38,),
+                                      imageBuilder: (context, imageProvider) =>
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(Radius.circular(16)),
+                                                image: DecorationImage(
+                                                  image: imageProvider,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                          ),
+                                    ),
                                 ),
                                 Padding(padding: EdgeInsets.all(8)),
                                 InkWell(
                                   onTap: (){
-                                    controller.onClickEditarFotoAlumno(o);
-                                    imagePicker.showDialog(context,
-                                        botonRemoverImagen:
-                                        (o.foto != null && !(o.foto?.contains("default.png")??false))?
-                                            () async{
-                                          FotoAlumnoController controller =
-                                          FlutterCleanArchitecture.getController<FotoAlumnoController>(globalKey.currentContext!, listen: false);
-                                          await _showRemoverPersona(context, controller, controller.personaUiSelected);
-                                        }:null
-                                    );
+                                    if(!(o.progress??false)){
+                                      controller.onClickEditarFotoAlumno(o);
+                                      imagePicker.showDialog(context,
+                                          botonRemoverImagen:
+                                          (o.foto != null && !(o.foto?.contains("default.png")??false))?
+                                              () async{
+                                            FotoAlumnoController controller =
+                                            FlutterCleanArchitecture.getController<FotoAlumnoController>(globalKey.currentContext!, listen: false);
+                                            await _showRemoverPersona(context, controller, controller.personaUiSelected);
+                                          }:null
+                                      );
+                                    }
                                   },
-                                  child: FDottedLine(
+                                  child: (o.progress??false)?
+                                  Stack(
+                                    children: [
+                                      Container(
+                                        height: 56,
+                                        width: 56,
+                                        child:  CircularProgressIndicator(
+                                          color: Color(0XFFF26FC2),
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                      Container(
+                                        height: 56,
+                                        width: 56,
+                                        alignment: Alignment.center,
+                                        child: Text("${o.progressCount?.toInt()??100}%",
+                                          style: TextStyle(
+                                              color: Color(0XFFF26FC2),
+                                              fontSize: 12,
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontWeight: FontWeight.w700
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ):FDottedLine(
                                     color: Color(0XFFF26FC2),
-                                    strokeWidth: 3.0,
+                                    strokeWidth: 2.0,
                                     dottedLength: 10.0,
-                                    space: 3.0,
+                                    space: 2.0,
                                     corner: FDottedLineCorner.all(14.0),
                                     /// add widget
                                     child: Container(
-                                      height: 56,
-                                      width: 56,
+                                      height: 45,
+                                      width: 45,
                                       child: Stack(
                                         children: [
                                           Center(
@@ -402,7 +526,7 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                                                     color: Color(0XFFF26FC2),
                                                     fontFamily: AppTheme.fontTTNorms,
                                                     fontWeight: FontWeight.w700,
-                                                    fontSize: 12
+                                                    fontSize: 10
                                                 )
                                                 )
                                               ],
@@ -413,14 +537,50 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                                     ),
                                   ),
                                 ),
-                                Padding(padding: EdgeInsets.all(16),),
+                                Padding(padding: EdgeInsets.all(8),),
                                 Expanded(child: Text("${o.nombreCompleto}",
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 12,
                                         fontWeight: FontWeight.w700,
-                                        fontFamily: AppTheme.fontTTNorms
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        color: (o.success == false)? AppTheme.red: null,
                                     )
-                                ))
+                                )),
+                                if(o.success==false)
+                                Padding(padding: EdgeInsets.all(8)),
+                                if(o.success==false)
+                                InkWell(
+                                  onTap: (){
+                                    controller.reintentarSubirFoto(o);
+                                  },
+                                  child: Container(
+                                      width: 42,
+                                      height: 42,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                                        color: Colors.white
+                                      ),
+                                      child: Icon(Icons.refresh),
+                                  ),
+                                ),
+                                if(isDefaulFoto(o))
+                                Padding(padding: EdgeInsets.all(8)),
+                                if(isDefaulFoto(o))
+                                InkWell(
+                                  onTap: (){
+                                    _showRemoverPersona(context, controller,o);
+                                  },
+                                  child: Container(
+                                    width: 42,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                                        color: Colors.white
+                                    ),
+                                    child: Icon(Ionicons.close),
+                                  ),
+                                ),
+                                Padding(padding: EdgeInsets.all(16)),
                               ],
                             ),
                           );
@@ -461,6 +621,11 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
   @override
   userDocument(List<File?> _documents) {
 
+  }
+
+
+  bool isDefaulFoto(PersonaUi personaUi){
+    return (personaUi.foto != null && !(personaUi.foto?.contains("default.png")??false));
   }
 
   @override
@@ -516,17 +681,18 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(padding: EdgeInsets.all(8),
-                                    child: Text("Remover foto de ${personaUi?.nombres??""}", style: TextStyle(
+                                    child: Text("Borrar la foto de ${personaUi?.nombreCompleto ??""}", style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
-                                        fontFamily: AppTheme.fontTTNormsMedium
+                                        fontFamily: AppTheme.fontTTNorms
                                     ),),
                                   ),
                                   Padding(padding: EdgeInsets.all(4),),
-                                  Text("¿Seguro de remover la foto de ${personaUi?.nombreCompleto??""}? ",
+                                  Text("¿Seguro de borrar la foto de ${personaUi?.nombreCompleto??""}? ",
                                     style: TextStyle(
                                         fontSize: 14,
-                                        height: 1.5
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: AppTheme.fontTTNorms
                                     ),),
                                   Padding(padding: EdgeInsets.all(4),),
                                 ],
@@ -541,7 +707,10 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                                 onPressed: () {
                                   Navigator.of(context).pop(true);
                                 },
-                                child: Text('Cancelar'),
+                                child: Text('Cancelar' , style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: AppTheme.fontTTNorms
+                                ),),
                                 style: OutlinedButton.styleFrom(
                                   primary: Color(0XFFF26FC2),
                                   shape: RoundedRectangleBorder(
@@ -554,7 +723,7 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                           Expanded(child: ElevatedButton(
                             onPressed: () async {
                               Navigator.of(context).pop(true);
-                              await controller.onClickRemoverFotoPersona(personaUi);
+                               controller.onClickRemoverFotoPersona(personaUi);
                             },
                             style: ElevatedButton.styleFrom(
                               primary: Color(0XFFF26FC2),
@@ -564,7 +733,10 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            child: Padding(padding: EdgeInsets.all(4), child: Text('Aceptar'),),
+                            child: Padding(padding: EdgeInsets.all(4), child: Text('Aceptar', style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppTheme.fontTTNorms
+                            )),),
                           )),
                         ],
                       )

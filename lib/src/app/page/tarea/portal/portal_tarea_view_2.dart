@@ -225,17 +225,24 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
             body: Stack(
               children: [
                 getMainTab(),
+                controller.progress?
+                ArsProgressWidget(
+                  blur: 2,
+                  backgroundColor: Color(0x33000000),
+                  animationDuration: Duration(milliseconds: 500),
+                  dismissable: true,
+                  onDismiss: (backgraund){
+                    if(!backgraund){
+                      Navigator.of(this.context).pop();
+                    }
+
+                  },
+                ):
+                Container(),
                 getAppBarUI(),
                 if(controller.alumnoSearch)
                   buildFloatingSearchBar(context, controller),
 
-
-                controller.progress?
-                ArsProgressWidget(
-                    blur: 2,
-                    backgroundColor: Color(0x33000000),
-                    animationDuration: Duration(milliseconds: 500)):
-                Container(),
                 controller.showDialogEliminar?
                   ArsProgressWidget(
                       blur: 2,
