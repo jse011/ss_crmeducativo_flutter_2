@@ -25,10 +25,15 @@ class UpdateDatosCrearRubro extends UseCase<UpdateDatosCrearRubroResponse, Updat
 
 
     int usuarioId = await repository.getSessionUsuarioId();
+
     int georeferenciaId = await repository.getGeoreferenciaId();
     int empleadoId = await repository.getSessionEmpleadoId();
     int anioAcademicoId = await repository.getSessionAnioAcademicoId();
     int programaEducativoId = await repository.getSessionProgramaEducativoId();
+    if((params?.programaIdSesionHoy??0)>0){
+      programaEducativoId = params?.programaIdSesionHoy??0;
+    }
+
     String urlServidorLocal = await repository.getSessionUsuarioUrlServidor();
 
 
@@ -180,8 +185,9 @@ class UpdateDatosCrearRubroParams{
   bool? casoTarea;
   bool? casoSesion;
   bool? cancelar;
+  int? programaIdSesionHoy;
 
-  UpdateDatosCrearRubroParams(this.calendarioPeriodoId, this.silaboEventoId, this.sesionUi, this.tareaId, this.casoTarea, this.casoSesion);
+  UpdateDatosCrearRubroParams(this.calendarioPeriodoId, this.silaboEventoId, this.sesionUi, this.tareaId, this.casoTarea, this.casoSesion, this.programaIdSesionHoy);
 
 }
 class UpdateDatosCrearRubroResponse {

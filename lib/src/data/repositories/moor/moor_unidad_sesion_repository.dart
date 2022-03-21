@@ -197,6 +197,7 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
      sesionUi.fechaEjecucionFin = (serial.fechaEjecucionFin??0) > 943938000000? DomainTools.f_fecha_letras(DateTime.fromMillisecondsSinceEpoch(serial.fechaEjecucionFin??0)):null;
      sesionUi.nroSesion = serial.nroSesion;
      sesionUi.rolId = serial.rolId;
+
      sesionHoyUi.sesionUi = sesionUi;
 
      UnidadUi unidadUi = UnidadUi();
@@ -214,7 +215,8 @@ class MoorUnidadSesionRepository extends UnidadSesionRepository{
      cursosUi.color3 = serial.color3;
      cursosUi.banner = serial.path;
      cursosUi.silaboEventoId = serial.silaboEventoId;
-     sesionHoyUi.cursosUi = cursosUi;
+     sesionUi.programaIdSesionHoy = serial.programaId;
+         sesionHoyUi.cursosUi = cursosUi;
      CalendarioPeriodoUI calendarioPeriodoUI = CalendarioPeriodoUI();
      calendarioPeriodoUI.id = serial.calendarioPeriodoId;
      calendarioPeriodoUI.tipoId = serial.calendarioPerTipoId;

@@ -80,7 +80,7 @@ class RubroPresenter extends Presenter{
       item.cancelar = true;
     }
     _getDatosCrearRubro.dispose();
-    var params = UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, null,null, false, false);
+    var params = UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, null,null, false, false, null);
     cancels.add(params);
     _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), params);
   }

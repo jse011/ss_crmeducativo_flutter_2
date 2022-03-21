@@ -31,6 +31,7 @@ class SesionUi{
   List<InstrumentoEvaluacionUi>? instrumentoEvaluacionUiList;
   List<CompetenciaUi>? competenciaUiList;
   List<SesionRecursoUi>? recursosUiList;
+  int? programaIdSesionHoy;
 }
 
 enum SesionEstado{

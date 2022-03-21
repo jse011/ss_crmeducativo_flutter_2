@@ -303,7 +303,7 @@ class RubroCrearController extends Controller{
   void onInitState() {
     presenter.getFormaEvaluacion();
     presenter.getTipoEvaluacion();
-    presenter.getTipoNota();
+    presenter.getTipoNota(sesionUi);
     presenter.getTemaCriterios(rubricaEvaluacionUi, cursosUi, calendarioPeriodoUI, sesionUi);
 
     //print("tareaId ${tareaUi?.tareaId}");

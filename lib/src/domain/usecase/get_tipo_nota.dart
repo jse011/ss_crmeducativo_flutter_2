@@ -18,6 +18,10 @@ class GetTipoNota extends UseCase<GetTipoNotaResponse, GetTipoNotaParms>{
     final controller = StreamController<GetTipoNotaResponse>();
     try{
       int programaEducativoId = await configuracionRepository.getSessionProgramaEducativoId();
+      if((params?.programaIdSesionHoy??0)>0){
+        programaEducativoId = params?.programaIdSesionHoy??0;
+      }
+
 
       TipoNotaUi? tipoNotaUi;
       List<TipoNotaUi> tipoNotaUiList = await repository.getGetTipoNota(programaEducativoId);
@@ -37,7 +41,9 @@ class GetTipoNota extends UseCase<GetTipoNotaResponse, GetTipoNotaParms>{
 }
 
 class GetTipoNotaParms{
+  int? programaIdSesionHoy;
 
+  GetTipoNotaParms(this.programaIdSesionHoy);
 }
 
 class GetTipoNotaResponse{

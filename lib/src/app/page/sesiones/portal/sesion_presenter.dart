@@ -51,7 +51,7 @@ class SesionPresenter extends Presenter{
 
   void onActualizarCurso(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi cursosUi, SesionUi sesionUi) {
     _getDatosCrearRubro.dispose();
-    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, sesionUi, null, false, true));
+    _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi.silaboEventoId??0, sesionUi, null, false, true, sesionUi.programaIdSesionHoy));
   }
 
   void onGetSesionRubroEval(CursosUi cursosUi, CalendarioPeriodoUI calendarioPeriodoUI, SesionUi sesionUi) {

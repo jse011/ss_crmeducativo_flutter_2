@@ -30,20 +30,6 @@ class _TabTareasState extends State<TabTareas>{
 
     return  Stack(
       children: [
-        if(controller.progressTarea)
-        Padding(padding: EdgeInsets.only(top: 4),
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16)
-              ),
-              child: ArsProgressWidget(
-                blur: 2,
-                backgroundColor: Color(0x33000000),
-                animationDuration: Duration(milliseconds: 500),
-              ),
-            ),
-          ),
         controller.tareaUiList.isEmpty?
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -62,6 +48,20 @@ class _TabTareasState extends State<TabTareas>{
             )
           ],
         ):Container(),
+        if(controller.progressTarea)
+          Padding(padding: EdgeInsets.only(top: 4),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16)
+              ),
+              child: ArsProgressWidget(
+                blur: 2,
+                backgroundColor: Color(0x33000000),
+                animationDuration: Duration(milliseconds: 500),
+              ),
+            ),
+          ),
         SingleChildScrollView(
           physics: ScrollPhysics(),
           child:  GridView.builder(
@@ -116,7 +116,7 @@ class _TabTareasState extends State<TabTareas>{
                                 style: TextStyle(
                                     fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 16),
                                     fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.5,
+                                    fontFamily: AppTheme.fontTTNorms,
                                     color: AppTheme.white
                                 ),
                               )

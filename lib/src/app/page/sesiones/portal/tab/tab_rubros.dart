@@ -127,7 +127,7 @@ class _TabRubrosState extends State<TabRubros>{
                                             style: TextStyle(
                                                 fontSize: ColumnCountProvider.aspectRatioForWidthRubro(context, 16),
                                                 fontWeight: FontWeight.w700,
-                                                letterSpacing: 0.5,
+                                                fontFamily: AppTheme.fontTTNorms,
                                                 color: AppTheme.white
                                             ),
                                           )
