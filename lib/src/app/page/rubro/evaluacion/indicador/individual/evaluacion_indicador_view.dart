@@ -382,7 +382,63 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
+                                        Center(
+                                            child: Container(
+                                              width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 80),
+                                              height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 80),
+                                              child: CachedNetworkImage(
+                                                placeholder: (context, url) => SizedBox(
+                                                  child: Shimmer.fromColors(
+                                                    baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                    highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                      decoration: BoxDecoration(
+                                                          color: HexColor(controller.cursosUi?.color2),
+                                                          shape: BoxShape.circle
+                                                      ),
+                                                      alignment: Alignment.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                                imageUrl: controller.evaluacionUiSelected?.personaUi?.foto??"",
+                                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 40),),
+                                                imageBuilder: (context, imageProvider) =>
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),
+                                                            left: 0,
+                                                            top: 0,
+                                                            bottom: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 8)),
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                                                          image: DecorationImage(
+                                                            image: imageProvider,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        )
+                                                    ),
+                                              ),
+                                            ),
+                                        ),
+                                        Stack(
+                                            children: [
+                                              Center(
+                                                  child: Text(controller.evaluacionUiSelected?.personaUi?.nombreCompleto??"",
+                                                      maxLines: 1,
+                                                      textAlign: TextAlign.center,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
+                                                          fontFamily: AppTheme.fontTTNorms,
+                                                          fontWeight: FontWeight.w700
+                                                      )
+                                                  ),
+                                              )
+                                            ],
+                                        ),
                                         Container(
+                                          padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 28)),
                                           child: Text("Comentarios privados (Sólo lo ve el padre)",
                                               style: TextStyle(
                                                   fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
@@ -730,6 +786,8 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                                       children: [
                                                                         Text("${rubroEvidenciaUi.titulo??""}",
+                                                                            maxLines: 1,
+                                                                            overflow: TextOverflow.ellipsis,
                                                                             style: TextStyle(
                                                                               color: AppTheme.greyDarken3,
                                                                               fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
@@ -1497,9 +1555,10 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                         controller.onClickComentario(o.evaluacionUi);
                       },
                       child: Container(
+
                         child: Icon(Ionicons.chatbox_ellipses_outline,
                           size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 30),
-                          color: AppTheme.tealDarken4,),
+                          color:  ((o.evaluacionUi?.comentarios??[]).isNotEmpty||(o.evaluacionUi?.evidencias??[]).isNotEmpty)? AppTheme.tealDarken4:AppTheme.grey ),
                       ),
                     );
                   }else if(o is EvaluacionPublicadoUi){//publicado
