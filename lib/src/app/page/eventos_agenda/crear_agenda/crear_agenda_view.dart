@@ -69,7 +69,7 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
   _CrearAgendaViewState(EventoUi? eventoUi, CursosUi? cursosUi) : super(CrearAgendaController(eventoUi, cursosUi, MoorConfiguracionRepository(), MoorAgendaEventoRepository(), DeviceHttpDatosRepositorio()));
 
   @override
-  void initState() async{
+  void initState() {
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {

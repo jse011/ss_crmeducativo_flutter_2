@@ -359,195 +359,196 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                           ): Container(
                             padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthTarea(context, 16)),
                           ),
-                          SingleChildScrollView(
-                            physics: ScrollPhysics(),
-                            controller: scrollController,
-                            child: ListView.builder(
-                              padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthTarea(context, 16)),
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: controller.unidadUiList.length,
-                              itemBuilder: (BuildContext ctxt, int index){
+                          Expanded(
+                              child: SingleChildScrollView(
+                                controller: scrollController,
+                                child: ListView.builder(
+                                  padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthTarea(context, 16)),
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: controller.unidadUiList.length,
+                                  itemBuilder: (BuildContext ctxt, int index){
 
-                                UnidadUi unidadUi =  controller.unidadUiList[index];
-                                List<dynamic> unidadItemList = controller.unidadItemsMap[unidadUi]??[];
-                                int cant_tareas = unidadItemList.length;
-                                int columnas = ColumnCountProvider.columnsForWidthTarea(context);
-                                bool toogle = unidadUi.toogle??false;
-                                int cant_reducida = columnas * 2;
-                                bool isVisibleVerMas = cant_reducida < cant_tareas;
-                                if(unidadUi.cantUnidades == 1){
-                                  isVisibleVerMas = false;
-                                }
+                                    UnidadUi unidadUi =  controller.unidadUiList[index];
+                                    List<dynamic> unidadItemList = controller.unidadItemsMap[unidadUi]??[];
+                                    int cant_tareas = unidadItemList.length;
+                                    int columnas = ColumnCountProvider.columnsForWidthTarea(context);
+                                    bool toogle = unidadUi.toogle??false;
+                                    int cant_reducida = columnas * 2;
+                                    bool isVisibleVerMas = cant_reducida < cant_tareas;
+                                    if(unidadUi.cantUnidades == 1){
+                                      isVisibleVerMas = false;
+                                    }
 
-                                int cant_lista;
-                                if(toogle){
-                                  if(isVisibleVerMas){
+                                    int cant_lista;
+                                    if(toogle){
+                                      if(isVisibleVerMas){
 
-                                  }
-                                  cant_lista = cant_tareas;
-                                }else{
-                                  if(isVisibleVerMas){
-                                    cant_lista = cant_reducida;
-                                  }else{
-                                    cant_lista = cant_tareas;
-                                  }
-                                }
+                                      }
+                                      cant_lista = cant_tareas;
+                                    }else{
+                                      if(isVisibleVerMas){
+                                        cant_lista = cant_reducida;
+                                      }else{
+                                        cant_lista = cant_tareas;
+                                      }
+                                    }
 
-                                return Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: controller.unidadUiList.length == index + 1 ?
-                                    ColumnCountProvider.aspectRatioForWidthTarea(context, 70):
-                                    ColumnCountProvider.aspectRatioForWidthTarea(context, 30),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                        bottom: controller.unidadUiList.length == index + 1 ?
+                                        ColumnCountProvider.aspectRatioForWidthTarea(context, 70):
+                                        ColumnCountProvider.aspectRatioForWidthTarea(context, 30),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
 
-                                              Container(
-                                                width: double.infinity,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthTarea(context, 8))),
-                                                  color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                                ),
-                                                margin: EdgeInsets.only(
-                                                    top: ColumnCountProvider.aspectRatioForWidthTarea(context, 8),
-                                                    bottom: ColumnCountProvider.aspectRatioForWidthTarea(context, 20)
-                                                ),
-                                                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTarea(context, 16)),
-                                                child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
-                                                  style: TextStyle(
-                                                      fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
-                                                      fontWeight: FontWeight.w700,
-                                                      fontFamily: AppTheme.fontTTNorms
+                                                  Container(
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthTarea(context, 8))),
+                                                      color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                    ),
+                                                    margin: EdgeInsets.only(
+                                                        top: ColumnCountProvider.aspectRatioForWidthTarea(context, 8),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthTarea(context, 20)
+                                                    ),
+                                                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTarea(context, 16)),
+                                                    child: Text("U${unidadUi.nroUnidad??""}: ${unidadUi.titulo??""}",
+                                                      style: TextStyle(
+                                                          fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
+                                                          fontWeight: FontWeight.w700,
+                                                          fontFamily: AppTheme.fontTTNorms
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                              cant_tareas > 0?
-                                              GridView.builder(
-                                                  padding: EdgeInsets.only(top: 0,
-                                                      left: ColumnCountProvider.aspectRatioForWidthTarea(context, 8),
-                                                      right: ColumnCountProvider.aspectRatioForWidthTarea(context, 16)
-                                                  ),
-                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: columnas,
-                                                    mainAxisSpacing: ColumnCountProvider.aspectRatioForWidthTarea(context, 24),
-                                                    crossAxisSpacing: ColumnCountProvider.aspectRatioForWidthTarea(context, 24),
-                                                  ),
-                                                  physics: NeverScrollableScrollPhysics(),
-                                                  shrinkWrap: true,
-                                                  itemCount: cant_lista,
-                                                  itemBuilder: (context, index){
-                                                    dynamic o = unidadItemList[index];
-                                                    if(o is TareaUi){
-                                                      return ItemTarea(
-                                                          color1: HexColor(controller.cursosUi.color1),
-                                                          color2: HexColor(controller.cursosUi.color2),
-                                                          tareaUi: o, onTap: () async{
-                                                        dynamic? result = await AppRouter.createRouteTareaPortalRouter(context, controller.usuarioUi,  controller.cursosUi, o, controller.calendarioPeriodoUI, unidadUi, controller.getSesionUi(o));
-                                                        if(result is int) controller.refrescarListTarea(unidadUi);
-                                                      });
-                                                    }else{
-                                                      return InkWell(
-                                                        onTap: () async{
-                                                          dynamic? result = await AppRouter.createRouteTareaCrearRouter(context, controller.usuarioUi, controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi, null);
-                                                          if(result is int) controller.refrescarListTarea(unidadUi);
-                                                        },
-                                                        child: Container(
-                                                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTarea(context, 8)),
-                                                          decoration: BoxDecoration(
-                                                            color: HexColor(controller.cursosUi.color2),
-                                                            borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                                                          ),
-                                                          child: FDottedLine(
-                                                            color: AppTheme.white,
-                                                            strokeWidth: 3.0,
-                                                            dottedLength: 10.0,
-                                                            space: 3.0,
-                                                            corner: FDottedLineCorner.all(14.0),
-                                                            /// add widget
+                                                  cant_tareas > 0?
+                                                  GridView.builder(
+                                                      padding: EdgeInsets.only(top: 0,
+                                                          left: ColumnCountProvider.aspectRatioForWidthTarea(context, 8),
+                                                          right: ColumnCountProvider.aspectRatioForWidthTarea(context, 16)
+                                                      ),
+                                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisCount: columnas,
+                                                        mainAxisSpacing: ColumnCountProvider.aspectRatioForWidthTarea(context, 24),
+                                                        crossAxisSpacing: ColumnCountProvider.aspectRatioForWidthTarea(context, 24),
+                                                      ),
+                                                      physics: NeverScrollableScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      itemCount: cant_lista,
+                                                      itemBuilder: (context, index){
+                                                        dynamic o = unidadItemList[index];
+                                                        if(o is TareaUi){
+                                                          return ItemTarea(
+                                                              color1: HexColor(controller.cursosUi.color1),
+                                                              color2: HexColor(controller.cursosUi.color2),
+                                                              tareaUi: o, onTap: () async{
+                                                            dynamic? result = await AppRouter.createRouteTareaPortalRouter(context, controller.usuarioUi,  controller.cursosUi, o, controller.calendarioPeriodoUI, unidadUi, controller.getSesionUi(o));
+                                                            if(result is int) controller.refrescarListTarea(unidadUi);
+                                                          });
+                                                        }else{
+                                                          return InkWell(
+                                                            onTap: () async{
+                                                              dynamic? result = await AppRouter.createRouteTareaCrearRouter(context, controller.usuarioUi, controller.cursosUi, null, controller.calendarioPeriodoUI, unidadUi, null);
+                                                              if(result is int) controller.refrescarListTarea(unidadUi);
+                                                            },
                                                             child: Container(
-                                                              alignment: Alignment.center,
-                                                              child:  Column(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                children: [
-                                                                  Icon(Ionicons.add, color: AppTheme.white,
-                                                                    size: ColumnCountProvider.aspectRatioForWidthTarea(context, 36),),
-                                                                  Padding(padding: EdgeInsets.only(top: 4)),
-                                                                  Text("Crear tarea",
-                                                                    textAlign: TextAlign.center,
-                                                                    style: TextStyle(
-                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
-                                                                        fontWeight: FontWeight.w700,
-                                                                        letterSpacing: 0.5,
-                                                                        color: AppTheme.white
-                                                                    ),
-                                                                  )
-                                                                ],
+                                                              padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthTarea(context, 8)),
+                                                              decoration: BoxDecoration(
+                                                                color: HexColor(controller.cursosUi.color2),
+                                                                borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                              ),
+                                                              child: FDottedLine(
+                                                                color: AppTheme.white,
+                                                                strokeWidth: 3.0,
+                                                                dottedLength: 10.0,
+                                                                space: 3.0,
+                                                                corner: FDottedLineCorner.all(14.0),
+                                                                /// add widget
+                                                                child: Container(
+                                                                  alignment: Alignment.center,
+                                                                  child:  Column(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    children: [
+                                                                      Icon(Ionicons.add, color: AppTheme.white,
+                                                                        size: ColumnCountProvider.aspectRatioForWidthTarea(context, 36),),
+                                                                      Padding(padding: EdgeInsets.only(top: 4)),
+                                                                      Text("Crear tarea",
+                                                                        textAlign: TextAlign.center,
+                                                                        style: TextStyle(
+                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
+                                                                            fontWeight: FontWeight.w700,
+                                                                            letterSpacing: 0.5,
+                                                                            color: AppTheme.white
+                                                                        ),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ),
-                                                      );
+                                                          );
 
-                                                    }
-                                                  }
-                                              )
-                                                  :Container(
-                                                padding: EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                  color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
-                                                  borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
-                                                ),
-                                                child: FDottedLine(
-                                                  color: AppTheme.white,
-                                                  strokeWidth: 3.0,
-                                                  dottedLength: 10.0,
-                                                  space: 3.0,
-                                                  corner: FDottedLineCorner.all(14.0),
+                                                        }
+                                                      }
+                                                  )
+                                                      :Container(
+                                                    padding: EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: HexColor(controller.cursosUi.color1).withOpacity(0.1),
+                                                      borderRadius: BorderRadius.circular(14), // use instead of BorderRadius.all(Radius.circular(20))
+                                                    ),
+                                                    child: FDottedLine(
+                                                      color: AppTheme.white,
+                                                      strokeWidth: 3.0,
+                                                      dottedLength: 10.0,
+                                                      space: 3.0,
+                                                      corner: FDottedLineCorner.all(14.0),
 
-                                                  /// add widget
-                                                  child: Container(
-                                                    padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
-                                                    alignment: Alignment.center,
-                                                    child: Text("Unidad sin tareas",  style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w800,
-                                                        fontFamily: AppTheme.fontTTNorms,
-                                                        color: AppTheme.white
-                                                    ),),
-                                                  ),
-                                                ),
-                                              )
-                                            ]),
-                                      ),
-                                      if(isVisibleVerMas)
-                                        InkWell(
-                                          onTap: (){
-                                            controller.onClickVerMas(unidadUi);
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(top: 18),
-                                            padding: EdgeInsets.all(10),
-                                            width: double.infinity,
-                                            decoration: BoxDecoration(
-                                                color: AppTheme.white,
-                                                borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
-                                            ),
-                                            child: Center(
-                                              child: Text("${toogle?"Ver solo las últimas tareas":"Ver más tareas"}", style: TextStyle(color: AppTheme.black, fontSize: 12, fontWeight: FontWeight.w500),),
-                                            ),
+                                                      /// add widget
+                                                      child: Container(
+                                                        padding: EdgeInsets.only(right: 16, left: 16, top: 16, bottom: 16),
+                                                        alignment: Alignment.center,
+                                                        child: Text("Unidad sin tareas",  style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight: FontWeight.w800,
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            color: AppTheme.white
+                                                        ),),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ]),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                                          if(isVisibleVerMas)
+                                            InkWell(
+                                              onTap: (){
+                                                controller.onClickVerMas(unidadUi);
+                                              },
+                                              child: Container(
+                                                margin: EdgeInsets.only(top: 18),
+                                                padding: EdgeInsets.all(10),
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                    color: AppTheme.white,
+                                                    borderRadius: BorderRadius.circular(14) // use instead of BorderRadius.all(Radius.circular(20))
+                                                ),
+                                                child: Center(
+                                                  child: Text("${toogle?"Ver solo las últimas tareas":"Ver más tareas"}", style: TextStyle(color: AppTheme.black, fontSize: 12, fontWeight: FontWeight.w500),),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                          )
                         ],
                       )
                     ],

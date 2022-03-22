@@ -11,7 +11,7 @@ enum AppType{
 abstract class ChangeAppTheme{
   ChangeAppTheme._();
 
-  static const AppType _app = AppType.EDUCAR;
+  static const AppType _app = AppType.ICRM;
 
   static AppType getApp() => _app;
 
