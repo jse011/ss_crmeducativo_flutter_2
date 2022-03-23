@@ -10,6 +10,9 @@ import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/crear_agenda/crear
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_info_complejo_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/informacion/evento_info_simple_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/foto_alumno/foto_alumno_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/grupos/crear/equipo/equipo_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/grupos/crear/grupo/grupo_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/grupos/lista/lista_grupos_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/home/home_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/login/login_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/login/login_view_2.dart';
@@ -36,9 +39,11 @@ import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/equipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_adjunto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/grupo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
@@ -73,6 +78,9 @@ class AppRouter {
   static final String VISTA_PREVIA_RUBRO = 'Curso/Rubro/VistaPrevia';
   static final String ASISTENCIAQR = 'Asistencia/QR';
   static final String BUSCARASISTENCIAQR = 'Asistencia/Buscar';
+  static final String LISTAGRUPOS = 'Grupos/ListaGrupos';
+  static final String TIPOS_CREAR_GRUPOS = 'Grupos/TiposCrearGrupos';
+  static final String TIPOS_CREAR_EQUIPOS = 'Grupos/TiposCrearEquipos';
 
 
 
@@ -317,6 +325,32 @@ class AppRouter {
           return AsistenciaQRBuscarView();
         },
       );
+    }else if (settings.name == LISTAGRUPOS) {
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi? cursosUi = arguments['cursosUi'];
+          return ListaGruposView(cursosUi);
+        },
+      );
+    }else if (settings.name == TIPOS_CREAR_GRUPOS) {
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi? cursosUi = arguments['cursosUi'];
+          GrupoUi? grupoUi = arguments['grupoUi'];
+          return GrupoView(cursosUi,grupoUi);
+        },
+      );
+    }else if (settings.name == TIPOS_CREAR_EQUIPOS) {
+      final Map arguments = settings.arguments as Map;
+      return MaterialPageRoute(
+        builder: (context) {
+          CursosUi? cursosUi = arguments['cursosUi'];
+          EquipoUi? equipoUi = arguments['equipoUi'];
+          return EquipoView(cursosUi,equipoUi);
+        },
+      );
     }
 
 
@@ -505,6 +539,36 @@ class AppRouter {
     );
   }
 
+  static Future<dynamic> showListaGruposView(BuildContext context, CursosUi? cursosUi) {
+    return Navigator.pushNamed(context,
+        LISTAGRUPOS,
+        arguments: {'cursosUi': cursosUi
+        }
+    );
+  }
+
+
+  static Future<dynamic> showTiposCrearGruposView(BuildContext context, CursosUi? cursosUi, GrupoUi? grupoUi) {
+    return Navigator.pushNamed(context,
+        TIPOS_CREAR_GRUPOS,
+        arguments: {
+          'cursosUi': cursosUi,
+          'grupoUi': grupoUi
+        }
+    );
+  }
+
+  static Future<dynamic> showTiposCrearEquiposView(BuildContext context, CursosUi? cursosUi, EquipoUi? equipoUi) {
+    return Navigator.pushNamed(context,
+        TIPOS_CREAR_EQUIPOS,
+        arguments: {
+          'cursosUi': cursosUi,
+          'equipoUi': equipoUi
+        }
+    );
+  }
+
+
   static Future<dynamic> showVistaPreviaRubro(BuildContext context, CursosUi cursosUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
 
     return Navigator.pushNamed(context,
@@ -524,6 +588,8 @@ class AppRouter {
       BUSCARASISTENCIAQR,
     );
   }
+
+
 
 
 }

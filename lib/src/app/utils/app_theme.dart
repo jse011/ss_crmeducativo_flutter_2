@@ -68,6 +68,7 @@ class AppTheme  {
   static const Color colorEducarTeacher = Color(0XFFEFB226);
   static const Color colorDocenteMentor = Color(0XFF9C2B6E);
   static const Color colorAlumnoMentor = Color(0XFFFDCA09);
+  static const Color colorGrupos = Color(0XFFE068BD);
 
   static const Color notWhite = Color(0xFFEDF0F2);
   static const Color nearlyWhite = Color(0xFFFAFAFA);

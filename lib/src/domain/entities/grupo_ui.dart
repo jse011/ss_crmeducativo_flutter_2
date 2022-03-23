@@ -1,0 +1,3 @@
+class GrupoUi{
+  bool? modoAletorio;
+}

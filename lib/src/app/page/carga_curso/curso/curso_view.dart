@@ -821,72 +821,79 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                         Stack(
                           children: [
                             Center(
-                              child: Container(
-                                constraints: BoxConstraints(
-                                  //minWidth: 200.0,
-                                  maxWidth: 550.0,
-                                ),
-                                child:  Container(
-                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
-                                  margin: EdgeInsets.only(
-                                      top: 0,
-                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
-                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                              child: InkWell(
+                                onTap: (){
+                                  if(context!=null && controller.cursos != null){
+                                    AppRouter.showListaGruposView(context, controller.cursos!);
+                                  }
+                                },
+                                child: Container(
+                                  constraints: BoxConstraints(
+                                    //minWidth: 200.0,
+                                    maxWidth: 550.0,
                                   ),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: HexColor(controller.cursos?.color1).withOpacity(0.2),
-                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
-                                      ),
-                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
-                                        decoration: BoxDecoration(
-                                            color: HexColor("#FFECFA"),
-                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                  child:  Container(
+                                    height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,90),
+                                    margin: EdgeInsets.only(
+                                        top: 0,
+                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,24),
+                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20)
+                                    ),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: HexColor(controller.cursos?.color1).withOpacity(0.2),
+                                            width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,2)
                                         ),
-                                        width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
-                                        child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_grupo),),
-                                      ),
-                                      Padding(padding: EdgeInsets.only(left: 8)),
-                                      Expanded(
-                                          child: Text("Grupos", style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
-                                            color: AppTheme.darkerText,
-                                            letterSpacing: 0.8,
-                                          ),)
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
-                                            right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
+                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,22)))
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8)),
+                                          decoration: BoxDecoration(
+                                              color: HexColor("#FFECFA"),
+                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalCurso(context,16)))
+                                          ),
+                                          width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,65),
+                                          child: Padding(padding: EdgeInsets.all(10), child: SvgPicture.asset(AppIcon.ic_curso_grupo),),
                                         ),
-                                        child: ClipOval(
-                                          child: Material(
-                                            color: HexColor(controller.cursos?.color1), // button color
-                                            child: SizedBox(
-                                                width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                      right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                      top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
-                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
-                                                  ),
-                                                  child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
-                                                )),
+                                        Padding(padding: EdgeInsets.only(left: 8)),
+                                        Expanded(
+                                            child: Text("Grupos", style: TextStyle(
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,20),
+                                              color: AppTheme.darkerText,
+                                              letterSpacing: 0.8,
+                                            ),)
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,8),
+                                              right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,28)
+                                          ),
+                                          child: ClipOval(
+                                            child: Material(
+                                              color: HexColor(controller.cursos?.color1), // button color
+                                              child: SizedBox(
+                                                  width: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  height: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,42),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        right: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        top: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalCurso(context,14)
+                                                    ),
+                                                    child: SvgPicture.asset(AppIcon.ic_curso_flecha, color: AppTheme.white,),
+                                                  )),
+                                            ),
                                           ),
                                         ),
-                                      ),
 
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
