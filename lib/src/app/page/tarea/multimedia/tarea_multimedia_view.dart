@@ -30,11 +30,11 @@ class TareaMultimediaView extends StatefulWidget{
   _TareaMultimediaViewState createState() => _TareaMultimediaViewState();
 
 
-  static Future<dynamic?> showDialog(BuildContext context,  String? id, TareaMultimediaTipoArchivo? tipoArchivo){
-    return showGeneralDialog(
+  static void showDialog(BuildContext context,  String? id, TareaMultimediaTipoArchivo? tipoArchivo){
+     showGeneralDialog(
       context: context,
       barrierColor: Colors.black12.withOpacity(0.6), // Background color
-      barrierDismissible: false,
+      barrierDismissible: true,
       barrierLabel: 'Dialog',
       transitionDuration: Duration(milliseconds: 400), // How long it takes to popup dialog after button click
       pageBuilder: (context, animation, secondaryAnimation) {
@@ -43,7 +43,29 @@ class TareaMultimediaView extends StatefulWidget{
         );
       },
     );
+
+    //Navigator.of(context).push(RoutecreateRoute(id, tipoArchivo));
   }
+
+  static RoutecreateRoute(String? youtubeVideoId, TareaMultimediaTipoArchivo? tipoArchivo) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => TareaMultimediaView(youtubeVideoId, tipoArchivo),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(0.0, 1.0);
+        var end = Offset.zero;
+        var curve = Curves.ease;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+
 
 }
 
@@ -267,7 +289,8 @@ class _TareaMultimediaViewState extends State<TareaMultimediaView>{
                   left: 16,
                   child: GestureDetector(
                     onTap: (){
-                      Navigator.of(context).pop(true);
+                      print("Salir");
+                      Navigator.of(context).pop();
                     },
                     child: Container(
                       width: 35,

@@ -255,7 +255,11 @@ class RubroController extends Controller{
      //_tipoNotaUi?.tipoId = 409;
      //_tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_ICONOS;
       _rowList2.clear();
+
+
+
       _rowList2.addAll(personaUiList);
+
       _rowList2.add("");//Espacio
       _rowList2.add("");//Espacio
       _rowList2.add("");//Espacio

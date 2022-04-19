@@ -58,27 +58,40 @@ class SaveTareaEval{
     String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
     int georeferenciaId = await configuracionRepository.getGeoreferenciaId();
     //print("SaveRubroEvaluacionResponse");
-    Map<String, dynamic>? dataBDEvaluacion =  await repository.getUpdateRubroEvaluacionData(rubricaEvaluacionUi, usuarioId);
+    Map<String, dynamic>? dataBDEvaluacion =  await repository.getUpdateRubroEvaluacionTareaData(rubricaEvaluacionUi, usuarioId);
 
-    bool success = true;
+    bool success = false;
+    bool offline = false;
+    bool errorServidor = false;
+    bool errorInterno  =false;
     if(await repository.isRubroSincronizado(rubricaEvaluacionUi.rubroEvaluacionId)){
-      Map<String, dynamic>? data = await repository.getRubroEvaluacionIdSerial(rubricaEvaluacionUi.rubroEvaluacionId??"");
+      //Map<String, dynamic>? dataSerial = await repository.getRubroEvaluacionIdSerial(rubricaEvaluacionUi.rubroEvaluacionId??"");
+      Map<String, dynamic>? data = await repository.getRubroEvaluacionSerial(dataBDEvaluacion);
+
+
       if(data!=null){
         try{
           success = await httpDatosRepository.updateEvaluacionRubroFlutter(urlServidorLocal, params.calendarioPeriodoUI?.id??0, params.tareaUi?.silaboEventoId??0, georeferenciaId, usuarioId, data)??false;
+          if(success){
+
+            await repository.saveRubroEvaluacionData(dataBDEvaluacion);
+
+            await repository.cambiarEstadoActualizado(rubricaEvaluacionUi.rubroEvaluacionId??"");
+          }else{
+            errorServidor = true;
+          }
         }catch(e){
-          success = false;
+          offline = true;
           print(e.toString());
         }
-
-        if(success){
-          await repository.saveRubroEvaluacionData(dataBDEvaluacion);
-          await repository.cambiarEstadoActualizado(rubricaEvaluacionUi.rubroEvaluacionId??"");
-        }
+      }else{
+        errorInterno = true;
       }
     }
 
-    Map<String, dynamic>? dataSerial = await repository.getRubroEvaluacionSerial(dataBDEvaluacion);
+    successListen.call(SaveTareaEvalResponse(dataBDEvaluacion,success, offline, errorServidor, errorInterno));
+
+    /*
 
     if(dataSerial!=null && success){
       return await httpDatosRepository.saveTareaEvalDocente(urlServidorLocal, georeferenciaId, usuarioId, params.calendarioPeriodoUI?.id,params.tareaUi?.silaboEventoId, params.tareaUi?.unidadAprendizajeId ,params.tareaUi?.tareaId,dataSerial,
@@ -97,9 +110,9 @@ class SaveTareaEval{
 
     }else{
       successListen.call(SaveTareaEvalResponse(dataBDEvaluacion,false, false, false, true));
-      return null;
-    }
 
+    }*/
+    return null;
   }
 }
 typedef UploadSuccessListen = void Function(SaveTareaEvalResponse response);

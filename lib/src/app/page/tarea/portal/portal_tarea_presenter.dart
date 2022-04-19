@@ -2,6 +2,7 @@ import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_tarea_alumnoUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -33,7 +34,6 @@ class PortalTareaPresenter extends Presenter{
   EliminarTareaDocente _eliminarTareaDocente;
   late Function eliminarTareaOnMessage;
   GetRubroEvalTarea _getRubroEvaluacion;
-  late Function getRubroEvaluacionOnError, getRubroEvaluacionOnNext;
   SaveTareaEval _saveTareaEval;
   late Function saveRubroEvaluacionSucces, saveRubroEvaluacionError;
   late Function saveRubroEvaluacionAllSucces, saveRubroEvaluacionAllError;
@@ -48,7 +48,7 @@ class PortalTareaPresenter extends Presenter{
   PortalTareaPresenter(HttpDatosRepository httpDatosRepo, UnidadTareaRepository unidadTareaRepo, ConfiguracionRepository configuracionRepo, RubroRepository rubroRepo):
         _getInformacionTarea  = GetInformacionTarea(httpDatosRepo, unidadTareaRepo, configuracionRepo),
         _publicarTareaDocente = PublicarTareaDocente(httpDatosRepo, configuracionRepo, unidadTareaRepo),
-        _eliminarTareaDocente = EliminarTareaDocente(httpDatosRepo, configuracionRepo, unidadTareaRepo),
+        _eliminarTareaDocente = EliminarTareaDocente(httpDatosRepo, configuracionRepo, unidadTareaRepo, rubroRepo),
         _getDatosCrearRubro = UpdateDatosCrearRubro(httpDatosRepo, configuracionRepo, rubroRepo),
         _getRubroEvaluacion = GetRubroEvalTarea(rubroRepo, configuracionRepo),
         _saveTareaEval = SaveTareaEval(configuracionRepo,rubroRepo, httpDatosRepo),
@@ -65,7 +65,6 @@ class PortalTareaPresenter extends Presenter{
   void dispose() {
     _getInformacionTarea.dispose();
     _getDatosCrearRubro.dispose();
-    _getRubroEvaluacion.dispose();
   }
 
   Future<bool> publicarTarea(TareaUi? tareaUi) async{
@@ -81,27 +80,22 @@ class PortalTareaPresenter extends Presenter{
   }
 
   void onActualizarRubro(CalendarioPeriodoUI? calendarioPeriodoUI, CursosUi? cursosUi, SesionUi? sesionUi, TareaUi? tareaUi) {
-    _getDatosCrearRubro.dispose();
     _getDatosCrearRubro.execute(_GetDatosCrearRubroCase(this), new UpdateDatosCrearRubroParams(calendarioPeriodoUI?.id??0, cursosUi?.silaboEventoId??0, sesionUi, tareaUi?.tareaId, true, false, sesionUi?.programaIdSesionHoy));
   }
 
-  void getRubroEvaluacion(String? tareaId, CursosUi? cursosUi ){
-    _getRubroEvaluacion.dispose();
-    _getRubroEvaluacion.execute(_GetRubroEvaluacionCase(this), GetRubroEvalTareaParms(tareaId, cursosUi?.cargaCursoId));
+  Future<GetRubroEvalTareaResponse> getRubroEvaluacion(String? tareaId, CursosUi? cursosUi ){
+    return _getRubroEvaluacion.execute(GetRubroEvalTareaParms(tareaId, cursosUi?.cargaCursoId));
   }
 
 
-  Future<HttpStream?> updateEvalAlumnoUi(RubricaEvaluacionUi? rubricaEvaluacionUi, RubricaEvaluacionUi? rubricaEvalDetalleUi ,TareaAlumnoUi? tareaAlumnoUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI, bool cambiosEvaluacionFirebase) {
+  Future<HttpStream?> updateEvalAlumnoUi(RubricaEvaluacionUi? rubricaEvaluacionUi, RubricaEvaluacionTareaAlumnoUi? rubricaEvaluacionTareaAlumnoUi, TareaUi? tareaUi, CalendarioPeriodoUI? calendarioPeriodoUI) {
     List<int?> personaIdList = [];
-    personaIdList.add(tareaAlumnoUi?.personaUi?.personaId);
-    if(cambiosEvaluacionFirebase){
-      rubricaEvalDetalleUi = null;//Si la data es diferente en la base datos y el firebase enviar la rubrica completa
-    }
-    return _saveTareaEval.execute(SaveTareaEvalParms(rubricaEvaluacionUi, personaIdList, rubricaEvalDetalleUi?.rubroEvaluacionId, tareaUi, calendarioPeriodoUI), (response){
+    personaIdList.add(rubricaEvaluacionTareaAlumnoUi?.tareaAlumnoUi?.personaUi?.personaId);
+    return _saveTareaEval.execute(SaveTareaEvalParms(rubricaEvaluacionUi, personaIdList, rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.rubroEvaluacionId, tareaUi, calendarioPeriodoUI), (response){
       if(response.success){
-        saveRubroEvaluacionSucces(rubricaEvaluacionUi, rubricaEvalDetalleUi, tareaAlumnoUi);
+        saveRubroEvaluacionSucces(rubricaEvaluacionUi, rubricaEvaluacionTareaAlumnoUi);
       }else {
-        saveRubroEvaluacionError(rubricaEvaluacionUi, rubricaEvalDetalleUi, tareaAlumnoUi, response.errorServidor, response.offline, response.errorInterno);
+        saveRubroEvaluacionError(rubricaEvaluacionUi, rubricaEvaluacionTareaAlumnoUi, response.errorServidor, response.offline, response.errorInterno);
       }
     });
   }
@@ -136,6 +130,7 @@ class PortalTareaPresenter extends Presenter{
   }
 
   Future<HttpStream?> procesarTareaEvaluacion(RubricaEvaluacionUi? rubricaEvaluacionUi, CalendarioPeriodoUI? calendarioPeriodoUI, TareaUi ? tareaUi) {
+    print("procesarTareaEvaluacion");
     return _procesarTareaEvaluacion.execute(ProcesarTareaEvaluacionParms( calendarioPeriodoUI?.id, tareaUi?.silaboEventoId, tareaUi?.unidadAprendizajeId, rubricaEvaluacionUi?.rubroEvaluacionId, tareaUi?.tareaId), (response){
       if(response.success){
         procesarRubroEvaluacionSucces();
@@ -207,31 +202,6 @@ class _GetDatosCrearRubroCase extends Observer<UpdateDatosCrearRubroResponse>{
   void onNext(UpdateDatosCrearRubroResponse? response) {
     assert(presenter.updateDatosCrearRubroOnNext!=null);
     presenter.updateDatosCrearRubroOnNext(response?.errorConexion, response?.errorServidor);
-  }
-
-}
-
-class _GetRubroEvaluacionCase extends Observer<GetRubroEvalTareaResponse> {
-  PortalTareaPresenter presenter;
-
-  _GetRubroEvaluacionCase(this.presenter);
-
-  @override
-  void onComplete() {
-    // TODO: implement onComplete
-  }
-
-  @override
-  void onError(e) {
-    assert(presenter.getRubroEvaluacionOnError != null);
-    presenter.getRubroEvaluacionOnError(e);
-  }
-
-  @override
-  void onNext(GetRubroEvalTareaResponse? response) {
-    assert(presenter.getRubroEvaluacionOnNext != null);
-    presenter.getRubroEvaluacionOnNext(
-        response?.rubricaEvaluacionUi, response?.alumnoCursoList);
   }
 
 }

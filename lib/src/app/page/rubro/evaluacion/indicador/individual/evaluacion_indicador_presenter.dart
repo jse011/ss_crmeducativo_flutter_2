@@ -85,6 +85,10 @@ class EvaluacionIndicadorPresenter extends Presenter{
   Future<void> saveRubroEvidenciaUi(RubroEvidenciaUi? rubroEvidenciaUi) {
     return _saveRubroEvidencia.execute(rubroEvidenciaUi);
   }
+
+  void updateEvaluacionEquipo(RubricaEvaluacionUi? rubroEvaluacionUi, String? equipoId) {
+    _updateEvalaucionIndividual.executeEquipo(rubroEvaluacionUi, equipoId);
+  }
 }
 
 class _GetRubroEvaluacionCase extends Observer<GetRubroEvaluacionResponse> {

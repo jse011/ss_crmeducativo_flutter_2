@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/foto_alumno/foto_alumno_presenter.dart';
@@ -72,20 +73,20 @@ class FotoAlumnoController extends Controller{
 
     presenter.uploadPersonaOnSucces = (bool? sucess, PersonaUi? personaUi){
       personaUi?.progress = false;
-      if(personaUi?.file == null){
+      if(personaUi?.fileFoto == null){
         personaUi?.success = null;
       }else{
         personaUi?.success = sucess;
       }
 
       if(!(sucess??false)){
-        if(personaUi?.file!=null){
+        if(personaUi?.fileFoto!=null){
           _mensaje = "Error al subir la foto";
         }else{
           _mensaje = "Error al borrar la foto";
         }
       }else{
-        personaUi?.file = null;
+        personaUi?.fileFoto = null;
       }
 
       refreshUI();
@@ -117,14 +118,14 @@ class FotoAlumnoController extends Controller{
     _personaUiSelected = personaUi;
   }
 
-  void updateImage(File? image)async {
+  void _updateImage(FileFoto? fileFoto)async {
     _personaUiSelected?.success = null;
     _personaUiSelected?.progress = true;
-    _personaUiSelected?.progressCount = 0;
+    _personaUiSelected?.progressCount = 1;
     refreshUI();
-    if(_personaUiSelected!=null&&image != null){
-      _personaUiSelected?.file = image;
-      https[_personaUiSelected] = await presenter.onUpdate(_personaUiSelected, image, true, false);
+    if(_personaUiSelected!=null&&fileFoto != null){
+      _personaUiSelected?.fileFoto = fileFoto;
+      https[_personaUiSelected] = await presenter.onUpdate(_personaUiSelected, fileFoto, true, false);
     }else{
       _personaUiSelected?.progress = false;
       _mensaje = "Error desconocido";
@@ -133,11 +134,17 @@ class FotoAlumnoController extends Controller{
     }
   }
 
+  void updateImage(File? file)async {
+    FileFoto fileFoto = FileFoto();
+    fileFoto.file = file;
+    _updateImage(fileFoto);
+  }
+
  void onClickRemoverFotoPersona(PersonaUi? personaUi) async{
    personaUi?.progress = true;
    personaUi?.success = null;
    personaUi?.progressCount = 0;
-   personaUi?.file = null;
+   personaUi?.fileFoto = null;
     refreshUI();
     https[personaUi] = await presenter.onUpdate(personaUi, null, true, true);
   }
@@ -157,7 +164,14 @@ class FotoAlumnoController extends Controller{
 
   void reintentarSubirFoto(PersonaUi o) {
     _personaUiSelected = o;
-    updateImage(o.file);
+    _updateImage(o.fileFoto);
   }
+
+  void updateImageCrop(Uint8List? image) {
+    FileFoto fileFoto = FileFoto();
+    fileFoto.filebyte = image;
+    _updateImage(fileFoto);
+  }
+
 
 }

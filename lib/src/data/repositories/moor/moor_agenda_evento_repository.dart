@@ -111,6 +111,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
     eventoUi.tipoEventoUi?.nombre = tipoEventoData?.nombre;
     eventoUi.rolEmisor = calendarioData.cargo;
     eventoUi.nombreEmisor = calendarioData.nUsuario;
+    eventoUi.usuarioId = calendarioData.usuarioId;
     eventoUi.fechaPublicacion = DateTime.fromMillisecondsSinceEpoch(eventoData.fechaPublicacion??0);
     eventoUi.fecaCreacion = DateTime.fromMillisecondsSinceEpoch(eventoData.fechaCreacion??0);
     eventoUi.publicado = eventoData.estadoPublicacion;
@@ -451,7 +452,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
   }
 
   @override
-  Future<List<EventosListaEnvioUi>> getListaAlumnos(int empleadoId) async{
+  Future<List<EventosListaEnvioUi>> getListaAlumnos(int empleadoId, int anioAcademicoId) async{
     AppDataBase appSQL = AppDataBase();
     List<EventosListaEnvioUi> eventosListaEnvioUiListTutoria = [];
     List<EventosListaEnvioUi> eventosListaEnvioUiList = [];
@@ -471,7 +472,7 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
 
 
     for(ContactoDocenteData contactoData  in await queryTutor.get()){
-
+      if(!(contactoData.contratoVigente??false))continue;
       EventosListaEnvioUi? eventosListaTutorUi = eventosListaEnvioUiListTutoria.firstWhereOrNull((element) => element.cargaAdemicaId == contactoData.cargaAcademicaId);
       if(eventosListaTutorUi==null){
         eventosListaTutorUi = EventosListaEnvioUi();
@@ -701,8 +702,8 @@ class MoorAgendaEventoRepository extends AgendaEventoRepository {
   }
 
   @override
-  Future<List<EventosListaEnvioUi>> getListaAlumnosSelecionado(int empleadoId, String enventoId) async{
-    List<EventosListaEnvioUi> listEventosListaEventoUi = await getListaAlumnos(empleadoId);
+  Future<List<EventosListaEnvioUi>> getListaAlumnosSelecionado(int empleadoId, String enventoId, int anioAcademicoId) async{
+    List<EventosListaEnvioUi> listEventosListaEventoUi = await getListaAlumnos(empleadoId, anioAcademicoId);
     AppDataBase SQL = AppDataBase();
     var queryCalendario = SQL.selectSingle(SQL.calendario).join([innerJoin(SQL.evento, SQL.evento.calendarioId.equalsExp(SQL.calendario.calendarioId))]);
     queryCalendario.where(SQL.evento.eventoId.equals(enventoId));

@@ -6,7 +6,7 @@ class AppUrlLauncher{
       if (await canLaunch(url!.trim())) {
         await launch(url.trim(),
         forceWebView: webview,
-        enableJavaScript: webview
+        enableJavaScript: true,
         );
       }
     }

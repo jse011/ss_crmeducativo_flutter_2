@@ -45449,6 +45449,2980 @@ class $AsistenciaQRTable extends AsistenciaQR
   }
 }
 
+class Equipo2Data extends DataClass implements Insertable<Equipo2Data> {
+  final int? syncFlag;
+  final DateTime? timestampFlag;
+  final int? usuarioCreacionId;
+  final DateTime? fechaCreacion;
+  final int? usuarioAccionId;
+  final DateTime? fechaAccion;
+  final String equipoId;
+  final String? grupoEquipoId;
+  final String? nombre;
+  final int? orden;
+  final String? foto;
+  final int? estado;
+  Equipo2Data(
+      {this.syncFlag,
+      this.timestampFlag,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      required this.equipoId,
+      this.grupoEquipoId,
+      this.nombre,
+      this.orden,
+      this.foto,
+      this.estado});
+  factory Equipo2Data.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return Equipo2Data(
+      syncFlag: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sync_flag']),
+      timestampFlag: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}timestamp_flag']),
+      usuarioCreacionId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}usuario_creacion_id']),
+      fechaCreacion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_creacion']),
+      usuarioAccionId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}usuario_accion_id']),
+      fechaAccion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_accion']),
+      equipoId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}equipo_id'])!,
+      grupoEquipoId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}grupo_equipo_id']),
+      nombre: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}nombre']),
+      orden: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}orden']),
+      foto: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}foto']),
+      estado: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}estado']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || syncFlag != null) {
+      map['sync_flag'] = Variable<int?>(syncFlag);
+    }
+    if (!nullToAbsent || timestampFlag != null) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag);
+    }
+    if (!nullToAbsent || usuarioCreacionId != null) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId);
+    }
+    if (!nullToAbsent || fechaCreacion != null) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion);
+    }
+    if (!nullToAbsent || usuarioAccionId != null) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId);
+    }
+    if (!nullToAbsent || fechaAccion != null) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion);
+    }
+    map['equipo_id'] = Variable<String>(equipoId);
+    if (!nullToAbsent || grupoEquipoId != null) {
+      map['grupo_equipo_id'] = Variable<String?>(grupoEquipoId);
+    }
+    if (!nullToAbsent || nombre != null) {
+      map['nombre'] = Variable<String?>(nombre);
+    }
+    if (!nullToAbsent || orden != null) {
+      map['orden'] = Variable<int?>(orden);
+    }
+    if (!nullToAbsent || foto != null) {
+      map['foto'] = Variable<String?>(foto);
+    }
+    if (!nullToAbsent || estado != null) {
+      map['estado'] = Variable<int?>(estado);
+    }
+    return map;
+  }
+
+  Equipo2Companion toCompanion(bool nullToAbsent) {
+    return Equipo2Companion(
+      syncFlag: syncFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncFlag),
+      timestampFlag: timestampFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timestampFlag),
+      usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioCreacionId),
+      fechaCreacion: fechaCreacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCreacion),
+      usuarioAccionId: usuarioAccionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioAccionId),
+      fechaAccion: fechaAccion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaAccion),
+      equipoId: Value(equipoId),
+      grupoEquipoId: grupoEquipoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(grupoEquipoId),
+      nombre:
+          nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      orden:
+          orden == null && nullToAbsent ? const Value.absent() : Value(orden),
+      foto: foto == null && nullToAbsent ? const Value.absent() : Value(foto),
+      estado:
+          estado == null && nullToAbsent ? const Value.absent() : Value(estado),
+    );
+  }
+
+  factory Equipo2Data.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Equipo2Data(
+      syncFlag: serializer.fromJson<int?>(json['syncFlag']),
+      timestampFlag: serializer.fromJson<DateTime?>(json['timestampFlag']),
+      usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
+      fechaCreacion: serializer.fromJson<DateTime?>(json['fechaCreacion']),
+      usuarioAccionId: serializer.fromJson<int?>(json['usuarioAccionId']),
+      fechaAccion: serializer.fromJson<DateTime?>(json['fechaAccion']),
+      equipoId: serializer.fromJson<String>(json['equipoId']),
+      grupoEquipoId: serializer.fromJson<String?>(json['grupoEquipoId']),
+      nombre: serializer.fromJson<String?>(json['nombre']),
+      orden: serializer.fromJson<int?>(json['orden']),
+      foto: serializer.fromJson<String?>(json['foto']),
+      estado: serializer.fromJson<int?>(json['estado']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'syncFlag': serializer.toJson<int?>(syncFlag),
+      'timestampFlag': serializer.toJson<DateTime?>(timestampFlag),
+      'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
+      'fechaCreacion': serializer.toJson<DateTime?>(fechaCreacion),
+      'usuarioAccionId': serializer.toJson<int?>(usuarioAccionId),
+      'fechaAccion': serializer.toJson<DateTime?>(fechaAccion),
+      'equipoId': serializer.toJson<String>(equipoId),
+      'grupoEquipoId': serializer.toJson<String?>(grupoEquipoId),
+      'nombre': serializer.toJson<String?>(nombre),
+      'orden': serializer.toJson<int?>(orden),
+      'foto': serializer.toJson<String?>(foto),
+      'estado': serializer.toJson<int?>(estado),
+    };
+  }
+
+  Equipo2Data copyWith(
+          {int? syncFlag,
+          DateTime? timestampFlag,
+          int? usuarioCreacionId,
+          DateTime? fechaCreacion,
+          int? usuarioAccionId,
+          DateTime? fechaAccion,
+          String? equipoId,
+          String? grupoEquipoId,
+          String? nombre,
+          int? orden,
+          String? foto,
+          int? estado}) =>
+      Equipo2Data(
+        syncFlag: syncFlag ?? this.syncFlag,
+        timestampFlag: timestampFlag ?? this.timestampFlag,
+        usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+        fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+        usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+        fechaAccion: fechaAccion ?? this.fechaAccion,
+        equipoId: equipoId ?? this.equipoId,
+        grupoEquipoId: grupoEquipoId ?? this.grupoEquipoId,
+        nombre: nombre ?? this.nombre,
+        orden: orden ?? this.orden,
+        foto: foto ?? this.foto,
+        estado: estado ?? this.estado,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Equipo2Data(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('equipoId: $equipoId, ')
+          ..write('grupoEquipoId: $grupoEquipoId, ')
+          ..write('nombre: $nombre, ')
+          ..write('orden: $orden, ')
+          ..write('foto: $foto, ')
+          ..write('estado: $estado')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      equipoId,
+      grupoEquipoId,
+      nombre,
+      orden,
+      foto,
+      estado);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Equipo2Data &&
+          other.syncFlag == this.syncFlag &&
+          other.timestampFlag == this.timestampFlag &&
+          other.usuarioCreacionId == this.usuarioCreacionId &&
+          other.fechaCreacion == this.fechaCreacion &&
+          other.usuarioAccionId == this.usuarioAccionId &&
+          other.fechaAccion == this.fechaAccion &&
+          other.equipoId == this.equipoId &&
+          other.grupoEquipoId == this.grupoEquipoId &&
+          other.nombre == this.nombre &&
+          other.orden == this.orden &&
+          other.foto == this.foto &&
+          other.estado == this.estado);
+}
+
+class Equipo2Companion extends UpdateCompanion<Equipo2Data> {
+  final Value<int?> syncFlag;
+  final Value<DateTime?> timestampFlag;
+  final Value<int?> usuarioCreacionId;
+  final Value<DateTime?> fechaCreacion;
+  final Value<int?> usuarioAccionId;
+  final Value<DateTime?> fechaAccion;
+  final Value<String> equipoId;
+  final Value<String?> grupoEquipoId;
+  final Value<String?> nombre;
+  final Value<int?> orden;
+  final Value<String?> foto;
+  final Value<int?> estado;
+  const Equipo2Companion({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    this.equipoId = const Value.absent(),
+    this.grupoEquipoId = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.orden = const Value.absent(),
+    this.foto = const Value.absent(),
+    this.estado = const Value.absent(),
+  });
+  Equipo2Companion.insert({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    required String equipoId,
+    this.grupoEquipoId = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.orden = const Value.absent(),
+    this.foto = const Value.absent(),
+    this.estado = const Value.absent(),
+  }) : equipoId = Value(equipoId);
+  static Insertable<Equipo2Data> custom({
+    Expression<int?>? syncFlag,
+    Expression<DateTime?>? timestampFlag,
+    Expression<int?>? usuarioCreacionId,
+    Expression<DateTime?>? fechaCreacion,
+    Expression<int?>? usuarioAccionId,
+    Expression<DateTime?>? fechaAccion,
+    Expression<String>? equipoId,
+    Expression<String?>? grupoEquipoId,
+    Expression<String?>? nombre,
+    Expression<int?>? orden,
+    Expression<String?>? foto,
+    Expression<int?>? estado,
+  }) {
+    return RawValuesInsertable({
+      if (syncFlag != null) 'sync_flag': syncFlag,
+      if (timestampFlag != null) 'timestamp_flag': timestampFlag,
+      if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
+      if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
+      if (usuarioAccionId != null) 'usuario_accion_id': usuarioAccionId,
+      if (fechaAccion != null) 'fecha_accion': fechaAccion,
+      if (equipoId != null) 'equipo_id': equipoId,
+      if (grupoEquipoId != null) 'grupo_equipo_id': grupoEquipoId,
+      if (nombre != null) 'nombre': nombre,
+      if (orden != null) 'orden': orden,
+      if (foto != null) 'foto': foto,
+      if (estado != null) 'estado': estado,
+    });
+  }
+
+  Equipo2Companion copyWith(
+      {Value<int?>? syncFlag,
+      Value<DateTime?>? timestampFlag,
+      Value<int?>? usuarioCreacionId,
+      Value<DateTime?>? fechaCreacion,
+      Value<int?>? usuarioAccionId,
+      Value<DateTime?>? fechaAccion,
+      Value<String>? equipoId,
+      Value<String?>? grupoEquipoId,
+      Value<String?>? nombre,
+      Value<int?>? orden,
+      Value<String?>? foto,
+      Value<int?>? estado}) {
+    return Equipo2Companion(
+      syncFlag: syncFlag ?? this.syncFlag,
+      timestampFlag: timestampFlag ?? this.timestampFlag,
+      usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+      fechaAccion: fechaAccion ?? this.fechaAccion,
+      equipoId: equipoId ?? this.equipoId,
+      grupoEquipoId: grupoEquipoId ?? this.grupoEquipoId,
+      nombre: nombre ?? this.nombre,
+      orden: orden ?? this.orden,
+      foto: foto ?? this.foto,
+      estado: estado ?? this.estado,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (syncFlag.present) {
+      map['sync_flag'] = Variable<int?>(syncFlag.value);
+    }
+    if (timestampFlag.present) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag.value);
+    }
+    if (usuarioCreacionId.present) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId.value);
+    }
+    if (fechaCreacion.present) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion.value);
+    }
+    if (usuarioAccionId.present) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId.value);
+    }
+    if (fechaAccion.present) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion.value);
+    }
+    if (equipoId.present) {
+      map['equipo_id'] = Variable<String>(equipoId.value);
+    }
+    if (grupoEquipoId.present) {
+      map['grupo_equipo_id'] = Variable<String?>(grupoEquipoId.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String?>(nombre.value);
+    }
+    if (orden.present) {
+      map['orden'] = Variable<int?>(orden.value);
+    }
+    if (foto.present) {
+      map['foto'] = Variable<String?>(foto.value);
+    }
+    if (estado.present) {
+      map['estado'] = Variable<int?>(estado.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Equipo2Companion(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('equipoId: $equipoId, ')
+          ..write('grupoEquipoId: $grupoEquipoId, ')
+          ..write('nombre: $nombre, ')
+          ..write('orden: $orden, ')
+          ..write('foto: $foto, ')
+          ..write('estado: $estado')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $Equipo2Table extends Equipo2 with TableInfo<$Equipo2Table, Equipo2Data> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $Equipo2Table(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _syncFlagMeta = const VerificationMeta('syncFlag');
+  @override
+  late final GeneratedColumn<int?> syncFlag = GeneratedColumn<int?>(
+      'sync_flag', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _timestampFlagMeta =
+      const VerificationMeta('timestampFlag');
+  @override
+  late final GeneratedColumn<DateTime?> timestampFlag =
+      GeneratedColumn<DateTime?>('timestamp_flag', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioCreacionIdMeta =
+      const VerificationMeta('usuarioCreacionId');
+  @override
+  late final GeneratedColumn<int?> usuarioCreacionId = GeneratedColumn<int?>(
+      'usuario_creacion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaCreacionMeta =
+      const VerificationMeta('fechaCreacion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaCreacion =
+      GeneratedColumn<DateTime?>('fecha_creacion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioAccionIdMeta =
+      const VerificationMeta('usuarioAccionId');
+  @override
+  late final GeneratedColumn<int?> usuarioAccionId = GeneratedColumn<int?>(
+      'usuario_accion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaAccionMeta =
+      const VerificationMeta('fechaAccion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaAccion =
+      GeneratedColumn<DateTime?>('fecha_accion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _equipoIdMeta = const VerificationMeta('equipoId');
+  @override
+  late final GeneratedColumn<String?> equipoId = GeneratedColumn<String?>(
+      'equipo_id', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _grupoEquipoIdMeta =
+      const VerificationMeta('grupoEquipoId');
+  @override
+  late final GeneratedColumn<String?> grupoEquipoId = GeneratedColumn<String?>(
+      'grupo_equipo_id', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String?> nombre = GeneratedColumn<String?>(
+      'nombre', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _ordenMeta = const VerificationMeta('orden');
+  @override
+  late final GeneratedColumn<int?> orden = GeneratedColumn<int?>(
+      'orden', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fotoMeta = const VerificationMeta('foto');
+  @override
+  late final GeneratedColumn<String?> foto = GeneratedColumn<String?>(
+      'foto', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _estadoMeta = const VerificationMeta('estado');
+  @override
+  late final GeneratedColumn<int?> estado = GeneratedColumn<int?>(
+      'estado', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        syncFlag,
+        timestampFlag,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        equipoId,
+        grupoEquipoId,
+        nombre,
+        orden,
+        foto,
+        estado
+      ];
+  @override
+  String get aliasedName => _alias ?? 'equipo2';
+  @override
+  String get actualTableName => 'equipo2';
+  @override
+  VerificationContext validateIntegrity(Insertable<Equipo2Data> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sync_flag')) {
+      context.handle(_syncFlagMeta,
+          syncFlag.isAcceptableOrUnknown(data['sync_flag']!, _syncFlagMeta));
+    }
+    if (data.containsKey('timestamp_flag')) {
+      context.handle(
+          _timestampFlagMeta,
+          timestampFlag.isAcceptableOrUnknown(
+              data['timestamp_flag']!, _timestampFlagMeta));
+    }
+    if (data.containsKey('usuario_creacion_id')) {
+      context.handle(
+          _usuarioCreacionIdMeta,
+          usuarioCreacionId.isAcceptableOrUnknown(
+              data['usuario_creacion_id']!, _usuarioCreacionIdMeta));
+    }
+    if (data.containsKey('fecha_creacion')) {
+      context.handle(
+          _fechaCreacionMeta,
+          fechaCreacion.isAcceptableOrUnknown(
+              data['fecha_creacion']!, _fechaCreacionMeta));
+    }
+    if (data.containsKey('usuario_accion_id')) {
+      context.handle(
+          _usuarioAccionIdMeta,
+          usuarioAccionId.isAcceptableOrUnknown(
+              data['usuario_accion_id']!, _usuarioAccionIdMeta));
+    }
+    if (data.containsKey('fecha_accion')) {
+      context.handle(
+          _fechaAccionMeta,
+          fechaAccion.isAcceptableOrUnknown(
+              data['fecha_accion']!, _fechaAccionMeta));
+    }
+    if (data.containsKey('equipo_id')) {
+      context.handle(_equipoIdMeta,
+          equipoId.isAcceptableOrUnknown(data['equipo_id']!, _equipoIdMeta));
+    } else if (isInserting) {
+      context.missing(_equipoIdMeta);
+    }
+    if (data.containsKey('grupo_equipo_id')) {
+      context.handle(
+          _grupoEquipoIdMeta,
+          grupoEquipoId.isAcceptableOrUnknown(
+              data['grupo_equipo_id']!, _grupoEquipoIdMeta));
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(_nombreMeta,
+          nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    }
+    if (data.containsKey('orden')) {
+      context.handle(
+          _ordenMeta, orden.isAcceptableOrUnknown(data['orden']!, _ordenMeta));
+    }
+    if (data.containsKey('foto')) {
+      context.handle(
+          _fotoMeta, foto.isAcceptableOrUnknown(data['foto']!, _fotoMeta));
+    }
+    if (data.containsKey('estado')) {
+      context.handle(_estadoMeta,
+          estado.isAcceptableOrUnknown(data['estado']!, _estadoMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {equipoId};
+  @override
+  Equipo2Data map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return Equipo2Data.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $Equipo2Table createAlias(String alias) {
+    return $Equipo2Table(attachedDatabase, alias);
+  }
+}
+
+class GrupoEquipo2Data extends DataClass
+    implements Insertable<GrupoEquipo2Data> {
+  final int? syncFlag;
+  final DateTime? timestampFlag;
+  final int? usuarioCreacionId;
+  final DateTime? fechaCreacion;
+  final int? usuarioAccionId;
+  final DateTime? fechaAccion;
+  final String grupoEquipoId;
+  final int? tipoId;
+  final String? nombre;
+  final int? cargaAcademicaId;
+  final int? cargaCursoId;
+  final int? docenteId;
+  final int? estado;
+  final String? color1;
+  final String? color2;
+  final String? color3;
+  final String? path;
+  final String? cursoNombre;
+  GrupoEquipo2Data(
+      {this.syncFlag,
+      this.timestampFlag,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      required this.grupoEquipoId,
+      this.tipoId,
+      this.nombre,
+      this.cargaAcademicaId,
+      this.cargaCursoId,
+      this.docenteId,
+      this.estado,
+      this.color1,
+      this.color2,
+      this.color3,
+      this.path,
+      this.cursoNombre});
+  factory GrupoEquipo2Data.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return GrupoEquipo2Data(
+      syncFlag: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sync_flag']),
+      timestampFlag: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}timestamp_flag']),
+      usuarioCreacionId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}usuario_creacion_id']),
+      fechaCreacion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_creacion']),
+      usuarioAccionId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}usuario_accion_id']),
+      fechaAccion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_accion']),
+      grupoEquipoId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}grupo_equipo_id'])!,
+      tipoId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}tipo_id']),
+      nombre: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}nombre']),
+      cargaAcademicaId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}carga_academica_id']),
+      cargaCursoId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}carga_curso_id']),
+      docenteId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}docente_id']),
+      estado: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}estado']),
+      color1: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}color1']),
+      color2: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}color2']),
+      color3: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}color3']),
+      path: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}path']),
+      cursoNombre: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}curso_nombre']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || syncFlag != null) {
+      map['sync_flag'] = Variable<int?>(syncFlag);
+    }
+    if (!nullToAbsent || timestampFlag != null) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag);
+    }
+    if (!nullToAbsent || usuarioCreacionId != null) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId);
+    }
+    if (!nullToAbsent || fechaCreacion != null) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion);
+    }
+    if (!nullToAbsent || usuarioAccionId != null) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId);
+    }
+    if (!nullToAbsent || fechaAccion != null) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion);
+    }
+    map['grupo_equipo_id'] = Variable<String>(grupoEquipoId);
+    if (!nullToAbsent || tipoId != null) {
+      map['tipo_id'] = Variable<int?>(tipoId);
+    }
+    if (!nullToAbsent || nombre != null) {
+      map['nombre'] = Variable<String?>(nombre);
+    }
+    if (!nullToAbsent || cargaAcademicaId != null) {
+      map['carga_academica_id'] = Variable<int?>(cargaAcademicaId);
+    }
+    if (!nullToAbsent || cargaCursoId != null) {
+      map['carga_curso_id'] = Variable<int?>(cargaCursoId);
+    }
+    if (!nullToAbsent || docenteId != null) {
+      map['docente_id'] = Variable<int?>(docenteId);
+    }
+    if (!nullToAbsent || estado != null) {
+      map['estado'] = Variable<int?>(estado);
+    }
+    if (!nullToAbsent || color1 != null) {
+      map['color1'] = Variable<String?>(color1);
+    }
+    if (!nullToAbsent || color2 != null) {
+      map['color2'] = Variable<String?>(color2);
+    }
+    if (!nullToAbsent || color3 != null) {
+      map['color3'] = Variable<String?>(color3);
+    }
+    if (!nullToAbsent || path != null) {
+      map['path'] = Variable<String?>(path);
+    }
+    if (!nullToAbsent || cursoNombre != null) {
+      map['curso_nombre'] = Variable<String?>(cursoNombre);
+    }
+    return map;
+  }
+
+  GrupoEquipo2Companion toCompanion(bool nullToAbsent) {
+    return GrupoEquipo2Companion(
+      syncFlag: syncFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncFlag),
+      timestampFlag: timestampFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timestampFlag),
+      usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioCreacionId),
+      fechaCreacion: fechaCreacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCreacion),
+      usuarioAccionId: usuarioAccionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioAccionId),
+      fechaAccion: fechaAccion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaAccion),
+      grupoEquipoId: Value(grupoEquipoId),
+      tipoId:
+          tipoId == null && nullToAbsent ? const Value.absent() : Value(tipoId),
+      nombre:
+          nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      cargaAcademicaId: cargaAcademicaId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cargaAcademicaId),
+      cargaCursoId: cargaCursoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cargaCursoId),
+      docenteId: docenteId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(docenteId),
+      estado:
+          estado == null && nullToAbsent ? const Value.absent() : Value(estado),
+      color1:
+          color1 == null && nullToAbsent ? const Value.absent() : Value(color1),
+      color2:
+          color2 == null && nullToAbsent ? const Value.absent() : Value(color2),
+      color3:
+          color3 == null && nullToAbsent ? const Value.absent() : Value(color3),
+      path: path == null && nullToAbsent ? const Value.absent() : Value(path),
+      cursoNombre: cursoNombre == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cursoNombre),
+    );
+  }
+
+  factory GrupoEquipo2Data.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return GrupoEquipo2Data(
+      syncFlag: serializer.fromJson<int?>(json['syncFlag']),
+      timestampFlag: serializer.fromJson<DateTime?>(json['timestampFlag']),
+      usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
+      fechaCreacion: serializer.fromJson<DateTime?>(json['fechaCreacion']),
+      usuarioAccionId: serializer.fromJson<int?>(json['usuarioAccionId']),
+      fechaAccion: serializer.fromJson<DateTime?>(json['fechaAccion']),
+      grupoEquipoId: serializer.fromJson<String>(json['grupoEquipoId']),
+      tipoId: serializer.fromJson<int?>(json['tipoId']),
+      nombre: serializer.fromJson<String?>(json['nombre']),
+      cargaAcademicaId: serializer.fromJson<int?>(json['cargaAcademicaId']),
+      cargaCursoId: serializer.fromJson<int?>(json['cargaCursoId']),
+      docenteId: serializer.fromJson<int?>(json['docenteId']),
+      estado: serializer.fromJson<int?>(json['estado']),
+      color1: serializer.fromJson<String?>(json['color1']),
+      color2: serializer.fromJson<String?>(json['color2']),
+      color3: serializer.fromJson<String?>(json['color3']),
+      path: serializer.fromJson<String?>(json['path']),
+      cursoNombre: serializer.fromJson<String?>(json['cursoNombre']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'syncFlag': serializer.toJson<int?>(syncFlag),
+      'timestampFlag': serializer.toJson<DateTime?>(timestampFlag),
+      'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
+      'fechaCreacion': serializer.toJson<DateTime?>(fechaCreacion),
+      'usuarioAccionId': serializer.toJson<int?>(usuarioAccionId),
+      'fechaAccion': serializer.toJson<DateTime?>(fechaAccion),
+      'grupoEquipoId': serializer.toJson<String>(grupoEquipoId),
+      'tipoId': serializer.toJson<int?>(tipoId),
+      'nombre': serializer.toJson<String?>(nombre),
+      'cargaAcademicaId': serializer.toJson<int?>(cargaAcademicaId),
+      'cargaCursoId': serializer.toJson<int?>(cargaCursoId),
+      'docenteId': serializer.toJson<int?>(docenteId),
+      'estado': serializer.toJson<int?>(estado),
+      'color1': serializer.toJson<String?>(color1),
+      'color2': serializer.toJson<String?>(color2),
+      'color3': serializer.toJson<String?>(color3),
+      'path': serializer.toJson<String?>(path),
+      'cursoNombre': serializer.toJson<String?>(cursoNombre),
+    };
+  }
+
+  GrupoEquipo2Data copyWith(
+          {int? syncFlag,
+          DateTime? timestampFlag,
+          int? usuarioCreacionId,
+          DateTime? fechaCreacion,
+          int? usuarioAccionId,
+          DateTime? fechaAccion,
+          String? grupoEquipoId,
+          int? tipoId,
+          String? nombre,
+          int? cargaAcademicaId,
+          int? cargaCursoId,
+          int? docenteId,
+          int? estado,
+          String? color1,
+          String? color2,
+          String? color3,
+          String? path,
+          String? cursoNombre}) =>
+      GrupoEquipo2Data(
+        syncFlag: syncFlag ?? this.syncFlag,
+        timestampFlag: timestampFlag ?? this.timestampFlag,
+        usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+        fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+        usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+        fechaAccion: fechaAccion ?? this.fechaAccion,
+        grupoEquipoId: grupoEquipoId ?? this.grupoEquipoId,
+        tipoId: tipoId ?? this.tipoId,
+        nombre: nombre ?? this.nombre,
+        cargaAcademicaId: cargaAcademicaId ?? this.cargaAcademicaId,
+        cargaCursoId: cargaCursoId ?? this.cargaCursoId,
+        docenteId: docenteId ?? this.docenteId,
+        estado: estado ?? this.estado,
+        color1: color1 ?? this.color1,
+        color2: color2 ?? this.color2,
+        color3: color3 ?? this.color3,
+        path: path ?? this.path,
+        cursoNombre: cursoNombre ?? this.cursoNombre,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('GrupoEquipo2Data(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('grupoEquipoId: $grupoEquipoId, ')
+          ..write('tipoId: $tipoId, ')
+          ..write('nombre: $nombre, ')
+          ..write('cargaAcademicaId: $cargaAcademicaId, ')
+          ..write('cargaCursoId: $cargaCursoId, ')
+          ..write('docenteId: $docenteId, ')
+          ..write('estado: $estado, ')
+          ..write('color1: $color1, ')
+          ..write('color2: $color2, ')
+          ..write('color3: $color3, ')
+          ..write('path: $path, ')
+          ..write('cursoNombre: $cursoNombre')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      grupoEquipoId,
+      tipoId,
+      nombre,
+      cargaAcademicaId,
+      cargaCursoId,
+      docenteId,
+      estado,
+      color1,
+      color2,
+      color3,
+      path,
+      cursoNombre);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GrupoEquipo2Data &&
+          other.syncFlag == this.syncFlag &&
+          other.timestampFlag == this.timestampFlag &&
+          other.usuarioCreacionId == this.usuarioCreacionId &&
+          other.fechaCreacion == this.fechaCreacion &&
+          other.usuarioAccionId == this.usuarioAccionId &&
+          other.fechaAccion == this.fechaAccion &&
+          other.grupoEquipoId == this.grupoEquipoId &&
+          other.tipoId == this.tipoId &&
+          other.nombre == this.nombre &&
+          other.cargaAcademicaId == this.cargaAcademicaId &&
+          other.cargaCursoId == this.cargaCursoId &&
+          other.docenteId == this.docenteId &&
+          other.estado == this.estado &&
+          other.color1 == this.color1 &&
+          other.color2 == this.color2 &&
+          other.color3 == this.color3 &&
+          other.path == this.path &&
+          other.cursoNombre == this.cursoNombre);
+}
+
+class GrupoEquipo2Companion extends UpdateCompanion<GrupoEquipo2Data> {
+  final Value<int?> syncFlag;
+  final Value<DateTime?> timestampFlag;
+  final Value<int?> usuarioCreacionId;
+  final Value<DateTime?> fechaCreacion;
+  final Value<int?> usuarioAccionId;
+  final Value<DateTime?> fechaAccion;
+  final Value<String> grupoEquipoId;
+  final Value<int?> tipoId;
+  final Value<String?> nombre;
+  final Value<int?> cargaAcademicaId;
+  final Value<int?> cargaCursoId;
+  final Value<int?> docenteId;
+  final Value<int?> estado;
+  final Value<String?> color1;
+  final Value<String?> color2;
+  final Value<String?> color3;
+  final Value<String?> path;
+  final Value<String?> cursoNombre;
+  const GrupoEquipo2Companion({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    this.grupoEquipoId = const Value.absent(),
+    this.tipoId = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.cargaAcademicaId = const Value.absent(),
+    this.cargaCursoId = const Value.absent(),
+    this.docenteId = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.color1 = const Value.absent(),
+    this.color2 = const Value.absent(),
+    this.color3 = const Value.absent(),
+    this.path = const Value.absent(),
+    this.cursoNombre = const Value.absent(),
+  });
+  GrupoEquipo2Companion.insert({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    required String grupoEquipoId,
+    this.tipoId = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.cargaAcademicaId = const Value.absent(),
+    this.cargaCursoId = const Value.absent(),
+    this.docenteId = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.color1 = const Value.absent(),
+    this.color2 = const Value.absent(),
+    this.color3 = const Value.absent(),
+    this.path = const Value.absent(),
+    this.cursoNombre = const Value.absent(),
+  }) : grupoEquipoId = Value(grupoEquipoId);
+  static Insertable<GrupoEquipo2Data> custom({
+    Expression<int?>? syncFlag,
+    Expression<DateTime?>? timestampFlag,
+    Expression<int?>? usuarioCreacionId,
+    Expression<DateTime?>? fechaCreacion,
+    Expression<int?>? usuarioAccionId,
+    Expression<DateTime?>? fechaAccion,
+    Expression<String>? grupoEquipoId,
+    Expression<int?>? tipoId,
+    Expression<String?>? nombre,
+    Expression<int?>? cargaAcademicaId,
+    Expression<int?>? cargaCursoId,
+    Expression<int?>? docenteId,
+    Expression<int?>? estado,
+    Expression<String?>? color1,
+    Expression<String?>? color2,
+    Expression<String?>? color3,
+    Expression<String?>? path,
+    Expression<String?>? cursoNombre,
+  }) {
+    return RawValuesInsertable({
+      if (syncFlag != null) 'sync_flag': syncFlag,
+      if (timestampFlag != null) 'timestamp_flag': timestampFlag,
+      if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
+      if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
+      if (usuarioAccionId != null) 'usuario_accion_id': usuarioAccionId,
+      if (fechaAccion != null) 'fecha_accion': fechaAccion,
+      if (grupoEquipoId != null) 'grupo_equipo_id': grupoEquipoId,
+      if (tipoId != null) 'tipo_id': tipoId,
+      if (nombre != null) 'nombre': nombre,
+      if (cargaAcademicaId != null) 'carga_academica_id': cargaAcademicaId,
+      if (cargaCursoId != null) 'carga_curso_id': cargaCursoId,
+      if (docenteId != null) 'docente_id': docenteId,
+      if (estado != null) 'estado': estado,
+      if (color1 != null) 'color1': color1,
+      if (color2 != null) 'color2': color2,
+      if (color3 != null) 'color3': color3,
+      if (path != null) 'path': path,
+      if (cursoNombre != null) 'curso_nombre': cursoNombre,
+    });
+  }
+
+  GrupoEquipo2Companion copyWith(
+      {Value<int?>? syncFlag,
+      Value<DateTime?>? timestampFlag,
+      Value<int?>? usuarioCreacionId,
+      Value<DateTime?>? fechaCreacion,
+      Value<int?>? usuarioAccionId,
+      Value<DateTime?>? fechaAccion,
+      Value<String>? grupoEquipoId,
+      Value<int?>? tipoId,
+      Value<String?>? nombre,
+      Value<int?>? cargaAcademicaId,
+      Value<int?>? cargaCursoId,
+      Value<int?>? docenteId,
+      Value<int?>? estado,
+      Value<String?>? color1,
+      Value<String?>? color2,
+      Value<String?>? color3,
+      Value<String?>? path,
+      Value<String?>? cursoNombre}) {
+    return GrupoEquipo2Companion(
+      syncFlag: syncFlag ?? this.syncFlag,
+      timestampFlag: timestampFlag ?? this.timestampFlag,
+      usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+      fechaAccion: fechaAccion ?? this.fechaAccion,
+      grupoEquipoId: grupoEquipoId ?? this.grupoEquipoId,
+      tipoId: tipoId ?? this.tipoId,
+      nombre: nombre ?? this.nombre,
+      cargaAcademicaId: cargaAcademicaId ?? this.cargaAcademicaId,
+      cargaCursoId: cargaCursoId ?? this.cargaCursoId,
+      docenteId: docenteId ?? this.docenteId,
+      estado: estado ?? this.estado,
+      color1: color1 ?? this.color1,
+      color2: color2 ?? this.color2,
+      color3: color3 ?? this.color3,
+      path: path ?? this.path,
+      cursoNombre: cursoNombre ?? this.cursoNombre,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (syncFlag.present) {
+      map['sync_flag'] = Variable<int?>(syncFlag.value);
+    }
+    if (timestampFlag.present) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag.value);
+    }
+    if (usuarioCreacionId.present) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId.value);
+    }
+    if (fechaCreacion.present) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion.value);
+    }
+    if (usuarioAccionId.present) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId.value);
+    }
+    if (fechaAccion.present) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion.value);
+    }
+    if (grupoEquipoId.present) {
+      map['grupo_equipo_id'] = Variable<String>(grupoEquipoId.value);
+    }
+    if (tipoId.present) {
+      map['tipo_id'] = Variable<int?>(tipoId.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String?>(nombre.value);
+    }
+    if (cargaAcademicaId.present) {
+      map['carga_academica_id'] = Variable<int?>(cargaAcademicaId.value);
+    }
+    if (cargaCursoId.present) {
+      map['carga_curso_id'] = Variable<int?>(cargaCursoId.value);
+    }
+    if (docenteId.present) {
+      map['docente_id'] = Variable<int?>(docenteId.value);
+    }
+    if (estado.present) {
+      map['estado'] = Variable<int?>(estado.value);
+    }
+    if (color1.present) {
+      map['color1'] = Variable<String?>(color1.value);
+    }
+    if (color2.present) {
+      map['color2'] = Variable<String?>(color2.value);
+    }
+    if (color3.present) {
+      map['color3'] = Variable<String?>(color3.value);
+    }
+    if (path.present) {
+      map['path'] = Variable<String?>(path.value);
+    }
+    if (cursoNombre.present) {
+      map['curso_nombre'] = Variable<String?>(cursoNombre.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GrupoEquipo2Companion(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('grupoEquipoId: $grupoEquipoId, ')
+          ..write('tipoId: $tipoId, ')
+          ..write('nombre: $nombre, ')
+          ..write('cargaAcademicaId: $cargaAcademicaId, ')
+          ..write('cargaCursoId: $cargaCursoId, ')
+          ..write('docenteId: $docenteId, ')
+          ..write('estado: $estado, ')
+          ..write('color1: $color1, ')
+          ..write('color2: $color2, ')
+          ..write('color3: $color3, ')
+          ..write('path: $path, ')
+          ..write('cursoNombre: $cursoNombre')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GrupoEquipo2Table extends GrupoEquipo2
+    with TableInfo<$GrupoEquipo2Table, GrupoEquipo2Data> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GrupoEquipo2Table(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _syncFlagMeta = const VerificationMeta('syncFlag');
+  @override
+  late final GeneratedColumn<int?> syncFlag = GeneratedColumn<int?>(
+      'sync_flag', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _timestampFlagMeta =
+      const VerificationMeta('timestampFlag');
+  @override
+  late final GeneratedColumn<DateTime?> timestampFlag =
+      GeneratedColumn<DateTime?>('timestamp_flag', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioCreacionIdMeta =
+      const VerificationMeta('usuarioCreacionId');
+  @override
+  late final GeneratedColumn<int?> usuarioCreacionId = GeneratedColumn<int?>(
+      'usuario_creacion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaCreacionMeta =
+      const VerificationMeta('fechaCreacion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaCreacion =
+      GeneratedColumn<DateTime?>('fecha_creacion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioAccionIdMeta =
+      const VerificationMeta('usuarioAccionId');
+  @override
+  late final GeneratedColumn<int?> usuarioAccionId = GeneratedColumn<int?>(
+      'usuario_accion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaAccionMeta =
+      const VerificationMeta('fechaAccion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaAccion =
+      GeneratedColumn<DateTime?>('fecha_accion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _grupoEquipoIdMeta =
+      const VerificationMeta('grupoEquipoId');
+  @override
+  late final GeneratedColumn<String?> grupoEquipoId = GeneratedColumn<String?>(
+      'grupo_equipo_id', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _tipoIdMeta = const VerificationMeta('tipoId');
+  @override
+  late final GeneratedColumn<int?> tipoId = GeneratedColumn<int?>(
+      'tipo_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String?> nombre = GeneratedColumn<String?>(
+      'nombre', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _cargaAcademicaIdMeta =
+      const VerificationMeta('cargaAcademicaId');
+  @override
+  late final GeneratedColumn<int?> cargaAcademicaId = GeneratedColumn<int?>(
+      'carga_academica_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _cargaCursoIdMeta =
+      const VerificationMeta('cargaCursoId');
+  @override
+  late final GeneratedColumn<int?> cargaCursoId = GeneratedColumn<int?>(
+      'carga_curso_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _docenteIdMeta = const VerificationMeta('docenteId');
+  @override
+  late final GeneratedColumn<int?> docenteId = GeneratedColumn<int?>(
+      'docente_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _estadoMeta = const VerificationMeta('estado');
+  @override
+  late final GeneratedColumn<int?> estado = GeneratedColumn<int?>(
+      'estado', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _color1Meta = const VerificationMeta('color1');
+  @override
+  late final GeneratedColumn<String?> color1 = GeneratedColumn<String?>(
+      'color1', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _color2Meta = const VerificationMeta('color2');
+  @override
+  late final GeneratedColumn<String?> color2 = GeneratedColumn<String?>(
+      'color2', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _color3Meta = const VerificationMeta('color3');
+  @override
+  late final GeneratedColumn<String?> color3 = GeneratedColumn<String?>(
+      'color3', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _pathMeta = const VerificationMeta('path');
+  @override
+  late final GeneratedColumn<String?> path = GeneratedColumn<String?>(
+      'path', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _cursoNombreMeta =
+      const VerificationMeta('cursoNombre');
+  @override
+  late final GeneratedColumn<String?> cursoNombre = GeneratedColumn<String?>(
+      'curso_nombre', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        syncFlag,
+        timestampFlag,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        grupoEquipoId,
+        tipoId,
+        nombre,
+        cargaAcademicaId,
+        cargaCursoId,
+        docenteId,
+        estado,
+        color1,
+        color2,
+        color3,
+        path,
+        cursoNombre
+      ];
+  @override
+  String get aliasedName => _alias ?? 'grupo_equipo2';
+  @override
+  String get actualTableName => 'grupo_equipo2';
+  @override
+  VerificationContext validateIntegrity(Insertable<GrupoEquipo2Data> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sync_flag')) {
+      context.handle(_syncFlagMeta,
+          syncFlag.isAcceptableOrUnknown(data['sync_flag']!, _syncFlagMeta));
+    }
+    if (data.containsKey('timestamp_flag')) {
+      context.handle(
+          _timestampFlagMeta,
+          timestampFlag.isAcceptableOrUnknown(
+              data['timestamp_flag']!, _timestampFlagMeta));
+    }
+    if (data.containsKey('usuario_creacion_id')) {
+      context.handle(
+          _usuarioCreacionIdMeta,
+          usuarioCreacionId.isAcceptableOrUnknown(
+              data['usuario_creacion_id']!, _usuarioCreacionIdMeta));
+    }
+    if (data.containsKey('fecha_creacion')) {
+      context.handle(
+          _fechaCreacionMeta,
+          fechaCreacion.isAcceptableOrUnknown(
+              data['fecha_creacion']!, _fechaCreacionMeta));
+    }
+    if (data.containsKey('usuario_accion_id')) {
+      context.handle(
+          _usuarioAccionIdMeta,
+          usuarioAccionId.isAcceptableOrUnknown(
+              data['usuario_accion_id']!, _usuarioAccionIdMeta));
+    }
+    if (data.containsKey('fecha_accion')) {
+      context.handle(
+          _fechaAccionMeta,
+          fechaAccion.isAcceptableOrUnknown(
+              data['fecha_accion']!, _fechaAccionMeta));
+    }
+    if (data.containsKey('grupo_equipo_id')) {
+      context.handle(
+          _grupoEquipoIdMeta,
+          grupoEquipoId.isAcceptableOrUnknown(
+              data['grupo_equipo_id']!, _grupoEquipoIdMeta));
+    } else if (isInserting) {
+      context.missing(_grupoEquipoIdMeta);
+    }
+    if (data.containsKey('tipo_id')) {
+      context.handle(_tipoIdMeta,
+          tipoId.isAcceptableOrUnknown(data['tipo_id']!, _tipoIdMeta));
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(_nombreMeta,
+          nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    }
+    if (data.containsKey('carga_academica_id')) {
+      context.handle(
+          _cargaAcademicaIdMeta,
+          cargaAcademicaId.isAcceptableOrUnknown(
+              data['carga_academica_id']!, _cargaAcademicaIdMeta));
+    }
+    if (data.containsKey('carga_curso_id')) {
+      context.handle(
+          _cargaCursoIdMeta,
+          cargaCursoId.isAcceptableOrUnknown(
+              data['carga_curso_id']!, _cargaCursoIdMeta));
+    }
+    if (data.containsKey('docente_id')) {
+      context.handle(_docenteIdMeta,
+          docenteId.isAcceptableOrUnknown(data['docente_id']!, _docenteIdMeta));
+    }
+    if (data.containsKey('estado')) {
+      context.handle(_estadoMeta,
+          estado.isAcceptableOrUnknown(data['estado']!, _estadoMeta));
+    }
+    if (data.containsKey('color1')) {
+      context.handle(_color1Meta,
+          color1.isAcceptableOrUnknown(data['color1']!, _color1Meta));
+    }
+    if (data.containsKey('color2')) {
+      context.handle(_color2Meta,
+          color2.isAcceptableOrUnknown(data['color2']!, _color2Meta));
+    }
+    if (data.containsKey('color3')) {
+      context.handle(_color3Meta,
+          color3.isAcceptableOrUnknown(data['color3']!, _color3Meta));
+    }
+    if (data.containsKey('path')) {
+      context.handle(
+          _pathMeta, path.isAcceptableOrUnknown(data['path']!, _pathMeta));
+    }
+    if (data.containsKey('curso_nombre')) {
+      context.handle(
+          _cursoNombreMeta,
+          cursoNombre.isAcceptableOrUnknown(
+              data['curso_nombre']!, _cursoNombreMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {grupoEquipoId};
+  @override
+  GrupoEquipo2Data map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return GrupoEquipo2Data.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $GrupoEquipo2Table createAlias(String alias) {
+    return $GrupoEquipo2Table(attachedDatabase, alias);
+  }
+}
+
+class IntegranteEquipo2Data extends DataClass
+    implements Insertable<IntegranteEquipo2Data> {
+  final int? syncFlag;
+  final DateTime? timestampFlag;
+  final int? usuarioCreacionId;
+  final DateTime? fechaCreacion;
+  final int? usuarioAccionId;
+  final DateTime? fechaAccion;
+  final String equipoIntegranteId;
+  final String? equipoId;
+  final int? alumnoId;
+  final String? nombre;
+  final String? foto;
+  IntegranteEquipo2Data(
+      {this.syncFlag,
+      this.timestampFlag,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      required this.equipoIntegranteId,
+      this.equipoId,
+      this.alumnoId,
+      this.nombre,
+      this.foto});
+  factory IntegranteEquipo2Data.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return IntegranteEquipo2Data(
+      syncFlag: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sync_flag']),
+      timestampFlag: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}timestamp_flag']),
+      usuarioCreacionId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}usuario_creacion_id']),
+      fechaCreacion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_creacion']),
+      usuarioAccionId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}usuario_accion_id']),
+      fechaAccion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_accion']),
+      equipoIntegranteId: const StringType().mapFromDatabaseResponse(
+          data['${effectivePrefix}equipo_integrante_id'])!,
+      equipoId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}equipo_id']),
+      alumnoId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}alumno_id']),
+      nombre: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}nombre']),
+      foto: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}foto']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || syncFlag != null) {
+      map['sync_flag'] = Variable<int?>(syncFlag);
+    }
+    if (!nullToAbsent || timestampFlag != null) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag);
+    }
+    if (!nullToAbsent || usuarioCreacionId != null) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId);
+    }
+    if (!nullToAbsent || fechaCreacion != null) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion);
+    }
+    if (!nullToAbsent || usuarioAccionId != null) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId);
+    }
+    if (!nullToAbsent || fechaAccion != null) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion);
+    }
+    map['equipo_integrante_id'] = Variable<String>(equipoIntegranteId);
+    if (!nullToAbsent || equipoId != null) {
+      map['equipo_id'] = Variable<String?>(equipoId);
+    }
+    if (!nullToAbsent || alumnoId != null) {
+      map['alumno_id'] = Variable<int?>(alumnoId);
+    }
+    if (!nullToAbsent || nombre != null) {
+      map['nombre'] = Variable<String?>(nombre);
+    }
+    if (!nullToAbsent || foto != null) {
+      map['foto'] = Variable<String?>(foto);
+    }
+    return map;
+  }
+
+  IntegranteEquipo2Companion toCompanion(bool nullToAbsent) {
+    return IntegranteEquipo2Companion(
+      syncFlag: syncFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncFlag),
+      timestampFlag: timestampFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timestampFlag),
+      usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioCreacionId),
+      fechaCreacion: fechaCreacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCreacion),
+      usuarioAccionId: usuarioAccionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioAccionId),
+      fechaAccion: fechaAccion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaAccion),
+      equipoIntegranteId: Value(equipoIntegranteId),
+      equipoId: equipoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(equipoId),
+      alumnoId: alumnoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(alumnoId),
+      nombre:
+          nombre == null && nullToAbsent ? const Value.absent() : Value(nombre),
+      foto: foto == null && nullToAbsent ? const Value.absent() : Value(foto),
+    );
+  }
+
+  factory IntegranteEquipo2Data.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return IntegranteEquipo2Data(
+      syncFlag: serializer.fromJson<int?>(json['syncFlag']),
+      timestampFlag: serializer.fromJson<DateTime?>(json['timestampFlag']),
+      usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
+      fechaCreacion: serializer.fromJson<DateTime?>(json['fechaCreacion']),
+      usuarioAccionId: serializer.fromJson<int?>(json['usuarioAccionId']),
+      fechaAccion: serializer.fromJson<DateTime?>(json['fechaAccion']),
+      equipoIntegranteId:
+          serializer.fromJson<String>(json['equipoIntegranteId']),
+      equipoId: serializer.fromJson<String?>(json['equipoId']),
+      alumnoId: serializer.fromJson<int?>(json['alumnoId']),
+      nombre: serializer.fromJson<String?>(json['nombre']),
+      foto: serializer.fromJson<String?>(json['foto']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'syncFlag': serializer.toJson<int?>(syncFlag),
+      'timestampFlag': serializer.toJson<DateTime?>(timestampFlag),
+      'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
+      'fechaCreacion': serializer.toJson<DateTime?>(fechaCreacion),
+      'usuarioAccionId': serializer.toJson<int?>(usuarioAccionId),
+      'fechaAccion': serializer.toJson<DateTime?>(fechaAccion),
+      'equipoIntegranteId': serializer.toJson<String>(equipoIntegranteId),
+      'equipoId': serializer.toJson<String?>(equipoId),
+      'alumnoId': serializer.toJson<int?>(alumnoId),
+      'nombre': serializer.toJson<String?>(nombre),
+      'foto': serializer.toJson<String?>(foto),
+    };
+  }
+
+  IntegranteEquipo2Data copyWith(
+          {int? syncFlag,
+          DateTime? timestampFlag,
+          int? usuarioCreacionId,
+          DateTime? fechaCreacion,
+          int? usuarioAccionId,
+          DateTime? fechaAccion,
+          String? equipoIntegranteId,
+          String? equipoId,
+          int? alumnoId,
+          String? nombre,
+          String? foto}) =>
+      IntegranteEquipo2Data(
+        syncFlag: syncFlag ?? this.syncFlag,
+        timestampFlag: timestampFlag ?? this.timestampFlag,
+        usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+        fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+        usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+        fechaAccion: fechaAccion ?? this.fechaAccion,
+        equipoIntegranteId: equipoIntegranteId ?? this.equipoIntegranteId,
+        equipoId: equipoId ?? this.equipoId,
+        alumnoId: alumnoId ?? this.alumnoId,
+        nombre: nombre ?? this.nombre,
+        foto: foto ?? this.foto,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('IntegranteEquipo2Data(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('equipoIntegranteId: $equipoIntegranteId, ')
+          ..write('equipoId: $equipoId, ')
+          ..write('alumnoId: $alumnoId, ')
+          ..write('nombre: $nombre, ')
+          ..write('foto: $foto')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      equipoIntegranteId,
+      equipoId,
+      alumnoId,
+      nombre,
+      foto);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is IntegranteEquipo2Data &&
+          other.syncFlag == this.syncFlag &&
+          other.timestampFlag == this.timestampFlag &&
+          other.usuarioCreacionId == this.usuarioCreacionId &&
+          other.fechaCreacion == this.fechaCreacion &&
+          other.usuarioAccionId == this.usuarioAccionId &&
+          other.fechaAccion == this.fechaAccion &&
+          other.equipoIntegranteId == this.equipoIntegranteId &&
+          other.equipoId == this.equipoId &&
+          other.alumnoId == this.alumnoId &&
+          other.nombre == this.nombre &&
+          other.foto == this.foto);
+}
+
+class IntegranteEquipo2Companion
+    extends UpdateCompanion<IntegranteEquipo2Data> {
+  final Value<int?> syncFlag;
+  final Value<DateTime?> timestampFlag;
+  final Value<int?> usuarioCreacionId;
+  final Value<DateTime?> fechaCreacion;
+  final Value<int?> usuarioAccionId;
+  final Value<DateTime?> fechaAccion;
+  final Value<String> equipoIntegranteId;
+  final Value<String?> equipoId;
+  final Value<int?> alumnoId;
+  final Value<String?> nombre;
+  final Value<String?> foto;
+  const IntegranteEquipo2Companion({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    this.equipoIntegranteId = const Value.absent(),
+    this.equipoId = const Value.absent(),
+    this.alumnoId = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.foto = const Value.absent(),
+  });
+  IntegranteEquipo2Companion.insert({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    required String equipoIntegranteId,
+    this.equipoId = const Value.absent(),
+    this.alumnoId = const Value.absent(),
+    this.nombre = const Value.absent(),
+    this.foto = const Value.absent(),
+  }) : equipoIntegranteId = Value(equipoIntegranteId);
+  static Insertable<IntegranteEquipo2Data> custom({
+    Expression<int?>? syncFlag,
+    Expression<DateTime?>? timestampFlag,
+    Expression<int?>? usuarioCreacionId,
+    Expression<DateTime?>? fechaCreacion,
+    Expression<int?>? usuarioAccionId,
+    Expression<DateTime?>? fechaAccion,
+    Expression<String>? equipoIntegranteId,
+    Expression<String?>? equipoId,
+    Expression<int?>? alumnoId,
+    Expression<String?>? nombre,
+    Expression<String?>? foto,
+  }) {
+    return RawValuesInsertable({
+      if (syncFlag != null) 'sync_flag': syncFlag,
+      if (timestampFlag != null) 'timestamp_flag': timestampFlag,
+      if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
+      if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
+      if (usuarioAccionId != null) 'usuario_accion_id': usuarioAccionId,
+      if (fechaAccion != null) 'fecha_accion': fechaAccion,
+      if (equipoIntegranteId != null)
+        'equipo_integrante_id': equipoIntegranteId,
+      if (equipoId != null) 'equipo_id': equipoId,
+      if (alumnoId != null) 'alumno_id': alumnoId,
+      if (nombre != null) 'nombre': nombre,
+      if (foto != null) 'foto': foto,
+    });
+  }
+
+  IntegranteEquipo2Companion copyWith(
+      {Value<int?>? syncFlag,
+      Value<DateTime?>? timestampFlag,
+      Value<int?>? usuarioCreacionId,
+      Value<DateTime?>? fechaCreacion,
+      Value<int?>? usuarioAccionId,
+      Value<DateTime?>? fechaAccion,
+      Value<String>? equipoIntegranteId,
+      Value<String?>? equipoId,
+      Value<int?>? alumnoId,
+      Value<String?>? nombre,
+      Value<String?>? foto}) {
+    return IntegranteEquipo2Companion(
+      syncFlag: syncFlag ?? this.syncFlag,
+      timestampFlag: timestampFlag ?? this.timestampFlag,
+      usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+      fechaAccion: fechaAccion ?? this.fechaAccion,
+      equipoIntegranteId: equipoIntegranteId ?? this.equipoIntegranteId,
+      equipoId: equipoId ?? this.equipoId,
+      alumnoId: alumnoId ?? this.alumnoId,
+      nombre: nombre ?? this.nombre,
+      foto: foto ?? this.foto,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (syncFlag.present) {
+      map['sync_flag'] = Variable<int?>(syncFlag.value);
+    }
+    if (timestampFlag.present) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag.value);
+    }
+    if (usuarioCreacionId.present) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId.value);
+    }
+    if (fechaCreacion.present) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion.value);
+    }
+    if (usuarioAccionId.present) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId.value);
+    }
+    if (fechaAccion.present) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion.value);
+    }
+    if (equipoIntegranteId.present) {
+      map['equipo_integrante_id'] = Variable<String>(equipoIntegranteId.value);
+    }
+    if (equipoId.present) {
+      map['equipo_id'] = Variable<String?>(equipoId.value);
+    }
+    if (alumnoId.present) {
+      map['alumno_id'] = Variable<int?>(alumnoId.value);
+    }
+    if (nombre.present) {
+      map['nombre'] = Variable<String?>(nombre.value);
+    }
+    if (foto.present) {
+      map['foto'] = Variable<String?>(foto.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('IntegranteEquipo2Companion(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('equipoIntegranteId: $equipoIntegranteId, ')
+          ..write('equipoId: $equipoId, ')
+          ..write('alumnoId: $alumnoId, ')
+          ..write('nombre: $nombre, ')
+          ..write('foto: $foto')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $IntegranteEquipo2Table extends IntegranteEquipo2
+    with TableInfo<$IntegranteEquipo2Table, IntegranteEquipo2Data> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $IntegranteEquipo2Table(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _syncFlagMeta = const VerificationMeta('syncFlag');
+  @override
+  late final GeneratedColumn<int?> syncFlag = GeneratedColumn<int?>(
+      'sync_flag', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _timestampFlagMeta =
+      const VerificationMeta('timestampFlag');
+  @override
+  late final GeneratedColumn<DateTime?> timestampFlag =
+      GeneratedColumn<DateTime?>('timestamp_flag', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioCreacionIdMeta =
+      const VerificationMeta('usuarioCreacionId');
+  @override
+  late final GeneratedColumn<int?> usuarioCreacionId = GeneratedColumn<int?>(
+      'usuario_creacion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaCreacionMeta =
+      const VerificationMeta('fechaCreacion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaCreacion =
+      GeneratedColumn<DateTime?>('fecha_creacion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioAccionIdMeta =
+      const VerificationMeta('usuarioAccionId');
+  @override
+  late final GeneratedColumn<int?> usuarioAccionId = GeneratedColumn<int?>(
+      'usuario_accion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaAccionMeta =
+      const VerificationMeta('fechaAccion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaAccion =
+      GeneratedColumn<DateTime?>('fecha_accion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _equipoIntegranteIdMeta =
+      const VerificationMeta('equipoIntegranteId');
+  @override
+  late final GeneratedColumn<String?> equipoIntegranteId =
+      GeneratedColumn<String?>('equipo_integrante_id', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _equipoIdMeta = const VerificationMeta('equipoId');
+  @override
+  late final GeneratedColumn<String?> equipoId = GeneratedColumn<String?>(
+      'equipo_id', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _alumnoIdMeta = const VerificationMeta('alumnoId');
+  @override
+  late final GeneratedColumn<int?> alumnoId = GeneratedColumn<int?>(
+      'alumno_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _nombreMeta = const VerificationMeta('nombre');
+  @override
+  late final GeneratedColumn<String?> nombre = GeneratedColumn<String?>(
+      'nombre', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _fotoMeta = const VerificationMeta('foto');
+  @override
+  late final GeneratedColumn<String?> foto = GeneratedColumn<String?>(
+      'foto', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        syncFlag,
+        timestampFlag,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        equipoIntegranteId,
+        equipoId,
+        alumnoId,
+        nombre,
+        foto
+      ];
+  @override
+  String get aliasedName => _alias ?? 'integrante_equipo2';
+  @override
+  String get actualTableName => 'integrante_equipo2';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<IntegranteEquipo2Data> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sync_flag')) {
+      context.handle(_syncFlagMeta,
+          syncFlag.isAcceptableOrUnknown(data['sync_flag']!, _syncFlagMeta));
+    }
+    if (data.containsKey('timestamp_flag')) {
+      context.handle(
+          _timestampFlagMeta,
+          timestampFlag.isAcceptableOrUnknown(
+              data['timestamp_flag']!, _timestampFlagMeta));
+    }
+    if (data.containsKey('usuario_creacion_id')) {
+      context.handle(
+          _usuarioCreacionIdMeta,
+          usuarioCreacionId.isAcceptableOrUnknown(
+              data['usuario_creacion_id']!, _usuarioCreacionIdMeta));
+    }
+    if (data.containsKey('fecha_creacion')) {
+      context.handle(
+          _fechaCreacionMeta,
+          fechaCreacion.isAcceptableOrUnknown(
+              data['fecha_creacion']!, _fechaCreacionMeta));
+    }
+    if (data.containsKey('usuario_accion_id')) {
+      context.handle(
+          _usuarioAccionIdMeta,
+          usuarioAccionId.isAcceptableOrUnknown(
+              data['usuario_accion_id']!, _usuarioAccionIdMeta));
+    }
+    if (data.containsKey('fecha_accion')) {
+      context.handle(
+          _fechaAccionMeta,
+          fechaAccion.isAcceptableOrUnknown(
+              data['fecha_accion']!, _fechaAccionMeta));
+    }
+    if (data.containsKey('equipo_integrante_id')) {
+      context.handle(
+          _equipoIntegranteIdMeta,
+          equipoIntegranteId.isAcceptableOrUnknown(
+              data['equipo_integrante_id']!, _equipoIntegranteIdMeta));
+    } else if (isInserting) {
+      context.missing(_equipoIntegranteIdMeta);
+    }
+    if (data.containsKey('equipo_id')) {
+      context.handle(_equipoIdMeta,
+          equipoId.isAcceptableOrUnknown(data['equipo_id']!, _equipoIdMeta));
+    }
+    if (data.containsKey('alumno_id')) {
+      context.handle(_alumnoIdMeta,
+          alumnoId.isAcceptableOrUnknown(data['alumno_id']!, _alumnoIdMeta));
+    }
+    if (data.containsKey('nombre')) {
+      context.handle(_nombreMeta,
+          nombre.isAcceptableOrUnknown(data['nombre']!, _nombreMeta));
+    }
+    if (data.containsKey('foto')) {
+      context.handle(
+          _fotoMeta, foto.isAcceptableOrUnknown(data['foto']!, _fotoMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {equipoIntegranteId};
+  @override
+  IntegranteEquipo2Data map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return IntegranteEquipo2Data.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $IntegranteEquipo2Table createAlias(String alias) {
+    return $IntegranteEquipo2Table(attachedDatabase, alias);
+  }
+}
+
+class RubroEvaluacionProcesoEquipoData extends DataClass
+    implements Insertable<RubroEvaluacionProcesoEquipoData> {
+  final int? syncFlag;
+  final DateTime? timestampFlag;
+  final int? usuarioCreacionId;
+  final DateTime? fechaCreacion;
+  final int? usuarioAccionId;
+  final DateTime? fechaAccion;
+  final String rubroEvaluacionEquipoId;
+  final String? equipoId;
+  final String? nombreEquipo;
+  final String? rubroEvalProcesoId;
+  final int? orden;
+  RubroEvaluacionProcesoEquipoData(
+      {this.syncFlag,
+      this.timestampFlag,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      required this.rubroEvaluacionEquipoId,
+      this.equipoId,
+      this.nombreEquipo,
+      this.rubroEvalProcesoId,
+      this.orden});
+  factory RubroEvaluacionProcesoEquipoData.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return RubroEvaluacionProcesoEquipoData(
+      syncFlag: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sync_flag']),
+      timestampFlag: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}timestamp_flag']),
+      usuarioCreacionId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}usuario_creacion_id']),
+      fechaCreacion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_creacion']),
+      usuarioAccionId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}usuario_accion_id']),
+      fechaAccion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_accion']),
+      rubroEvaluacionEquipoId: const StringType().mapFromDatabaseResponse(
+          data['${effectivePrefix}rubro_evaluacion_equipo_id'])!,
+      equipoId: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}equipo_id']),
+      nombreEquipo: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}nombre_equipo']),
+      rubroEvalProcesoId: const StringType().mapFromDatabaseResponse(
+          data['${effectivePrefix}rubro_eval_proceso_id']),
+      orden: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}orden']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || syncFlag != null) {
+      map['sync_flag'] = Variable<int?>(syncFlag);
+    }
+    if (!nullToAbsent || timestampFlag != null) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag);
+    }
+    if (!nullToAbsent || usuarioCreacionId != null) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId);
+    }
+    if (!nullToAbsent || fechaCreacion != null) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion);
+    }
+    if (!nullToAbsent || usuarioAccionId != null) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId);
+    }
+    if (!nullToAbsent || fechaAccion != null) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion);
+    }
+    map['rubro_evaluacion_equipo_id'] =
+        Variable<String>(rubroEvaluacionEquipoId);
+    if (!nullToAbsent || equipoId != null) {
+      map['equipo_id'] = Variable<String?>(equipoId);
+    }
+    if (!nullToAbsent || nombreEquipo != null) {
+      map['nombre_equipo'] = Variable<String?>(nombreEquipo);
+    }
+    if (!nullToAbsent || rubroEvalProcesoId != null) {
+      map['rubro_eval_proceso_id'] = Variable<String?>(rubroEvalProcesoId);
+    }
+    if (!nullToAbsent || orden != null) {
+      map['orden'] = Variable<int?>(orden);
+    }
+    return map;
+  }
+
+  RubroEvaluacionProcesoEquipoCompanion toCompanion(bool nullToAbsent) {
+    return RubroEvaluacionProcesoEquipoCompanion(
+      syncFlag: syncFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncFlag),
+      timestampFlag: timestampFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timestampFlag),
+      usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioCreacionId),
+      fechaCreacion: fechaCreacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCreacion),
+      usuarioAccionId: usuarioAccionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioAccionId),
+      fechaAccion: fechaAccion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaAccion),
+      rubroEvaluacionEquipoId: Value(rubroEvaluacionEquipoId),
+      equipoId: equipoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(equipoId),
+      nombreEquipo: nombreEquipo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nombreEquipo),
+      rubroEvalProcesoId: rubroEvalProcesoId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rubroEvalProcesoId),
+      orden:
+          orden == null && nullToAbsent ? const Value.absent() : Value(orden),
+    );
+  }
+
+  factory RubroEvaluacionProcesoEquipoData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return RubroEvaluacionProcesoEquipoData(
+      syncFlag: serializer.fromJson<int?>(json['syncFlag']),
+      timestampFlag: serializer.fromJson<DateTime?>(json['timestampFlag']),
+      usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
+      fechaCreacion: serializer.fromJson<DateTime?>(json['fechaCreacion']),
+      usuarioAccionId: serializer.fromJson<int?>(json['usuarioAccionId']),
+      fechaAccion: serializer.fromJson<DateTime?>(json['fechaAccion']),
+      rubroEvaluacionEquipoId:
+          serializer.fromJson<String>(json['rubroEvaluacionEquipoId']),
+      equipoId: serializer.fromJson<String?>(json['equipoId']),
+      nombreEquipo: serializer.fromJson<String?>(json['nombreEquipo']),
+      rubroEvalProcesoId:
+          serializer.fromJson<String?>(json['rubroEvalProcesoId']),
+      orden: serializer.fromJson<int?>(json['orden']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'syncFlag': serializer.toJson<int?>(syncFlag),
+      'timestampFlag': serializer.toJson<DateTime?>(timestampFlag),
+      'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
+      'fechaCreacion': serializer.toJson<DateTime?>(fechaCreacion),
+      'usuarioAccionId': serializer.toJson<int?>(usuarioAccionId),
+      'fechaAccion': serializer.toJson<DateTime?>(fechaAccion),
+      'rubroEvaluacionEquipoId':
+          serializer.toJson<String>(rubroEvaluacionEquipoId),
+      'equipoId': serializer.toJson<String?>(equipoId),
+      'nombreEquipo': serializer.toJson<String?>(nombreEquipo),
+      'rubroEvalProcesoId': serializer.toJson<String?>(rubroEvalProcesoId),
+      'orden': serializer.toJson<int?>(orden),
+    };
+  }
+
+  RubroEvaluacionProcesoEquipoData copyWith(
+          {int? syncFlag,
+          DateTime? timestampFlag,
+          int? usuarioCreacionId,
+          DateTime? fechaCreacion,
+          int? usuarioAccionId,
+          DateTime? fechaAccion,
+          String? rubroEvaluacionEquipoId,
+          String? equipoId,
+          String? nombreEquipo,
+          String? rubroEvalProcesoId,
+          int? orden}) =>
+      RubroEvaluacionProcesoEquipoData(
+        syncFlag: syncFlag ?? this.syncFlag,
+        timestampFlag: timestampFlag ?? this.timestampFlag,
+        usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+        fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+        usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+        fechaAccion: fechaAccion ?? this.fechaAccion,
+        rubroEvaluacionEquipoId:
+            rubroEvaluacionEquipoId ?? this.rubroEvaluacionEquipoId,
+        equipoId: equipoId ?? this.equipoId,
+        nombreEquipo: nombreEquipo ?? this.nombreEquipo,
+        rubroEvalProcesoId: rubroEvalProcesoId ?? this.rubroEvalProcesoId,
+        orden: orden ?? this.orden,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('RubroEvaluacionProcesoEquipoData(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('rubroEvaluacionEquipoId: $rubroEvaluacionEquipoId, ')
+          ..write('equipoId: $equipoId, ')
+          ..write('nombreEquipo: $nombreEquipo, ')
+          ..write('rubroEvalProcesoId: $rubroEvalProcesoId, ')
+          ..write('orden: $orden')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      rubroEvaluacionEquipoId,
+      equipoId,
+      nombreEquipo,
+      rubroEvalProcesoId,
+      orden);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RubroEvaluacionProcesoEquipoData &&
+          other.syncFlag == this.syncFlag &&
+          other.timestampFlag == this.timestampFlag &&
+          other.usuarioCreacionId == this.usuarioCreacionId &&
+          other.fechaCreacion == this.fechaCreacion &&
+          other.usuarioAccionId == this.usuarioAccionId &&
+          other.fechaAccion == this.fechaAccion &&
+          other.rubroEvaluacionEquipoId == this.rubroEvaluacionEquipoId &&
+          other.equipoId == this.equipoId &&
+          other.nombreEquipo == this.nombreEquipo &&
+          other.rubroEvalProcesoId == this.rubroEvalProcesoId &&
+          other.orden == this.orden);
+}
+
+class RubroEvaluacionProcesoEquipoCompanion
+    extends UpdateCompanion<RubroEvaluacionProcesoEquipoData> {
+  final Value<int?> syncFlag;
+  final Value<DateTime?> timestampFlag;
+  final Value<int?> usuarioCreacionId;
+  final Value<DateTime?> fechaCreacion;
+  final Value<int?> usuarioAccionId;
+  final Value<DateTime?> fechaAccion;
+  final Value<String> rubroEvaluacionEquipoId;
+  final Value<String?> equipoId;
+  final Value<String?> nombreEquipo;
+  final Value<String?> rubroEvalProcesoId;
+  final Value<int?> orden;
+  const RubroEvaluacionProcesoEquipoCompanion({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    this.rubroEvaluacionEquipoId = const Value.absent(),
+    this.equipoId = const Value.absent(),
+    this.nombreEquipo = const Value.absent(),
+    this.rubroEvalProcesoId = const Value.absent(),
+    this.orden = const Value.absent(),
+  });
+  RubroEvaluacionProcesoEquipoCompanion.insert({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    required String rubroEvaluacionEquipoId,
+    this.equipoId = const Value.absent(),
+    this.nombreEquipo = const Value.absent(),
+    this.rubroEvalProcesoId = const Value.absent(),
+    this.orden = const Value.absent(),
+  }) : rubroEvaluacionEquipoId = Value(rubroEvaluacionEquipoId);
+  static Insertable<RubroEvaluacionProcesoEquipoData> custom({
+    Expression<int?>? syncFlag,
+    Expression<DateTime?>? timestampFlag,
+    Expression<int?>? usuarioCreacionId,
+    Expression<DateTime?>? fechaCreacion,
+    Expression<int?>? usuarioAccionId,
+    Expression<DateTime?>? fechaAccion,
+    Expression<String>? rubroEvaluacionEquipoId,
+    Expression<String?>? equipoId,
+    Expression<String?>? nombreEquipo,
+    Expression<String?>? rubroEvalProcesoId,
+    Expression<int?>? orden,
+  }) {
+    return RawValuesInsertable({
+      if (syncFlag != null) 'sync_flag': syncFlag,
+      if (timestampFlag != null) 'timestamp_flag': timestampFlag,
+      if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
+      if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
+      if (usuarioAccionId != null) 'usuario_accion_id': usuarioAccionId,
+      if (fechaAccion != null) 'fecha_accion': fechaAccion,
+      if (rubroEvaluacionEquipoId != null)
+        'rubro_evaluacion_equipo_id': rubroEvaluacionEquipoId,
+      if (equipoId != null) 'equipo_id': equipoId,
+      if (nombreEquipo != null) 'nombre_equipo': nombreEquipo,
+      if (rubroEvalProcesoId != null)
+        'rubro_eval_proceso_id': rubroEvalProcesoId,
+      if (orden != null) 'orden': orden,
+    });
+  }
+
+  RubroEvaluacionProcesoEquipoCompanion copyWith(
+      {Value<int?>? syncFlag,
+      Value<DateTime?>? timestampFlag,
+      Value<int?>? usuarioCreacionId,
+      Value<DateTime?>? fechaCreacion,
+      Value<int?>? usuarioAccionId,
+      Value<DateTime?>? fechaAccion,
+      Value<String>? rubroEvaluacionEquipoId,
+      Value<String?>? equipoId,
+      Value<String?>? nombreEquipo,
+      Value<String?>? rubroEvalProcesoId,
+      Value<int?>? orden}) {
+    return RubroEvaluacionProcesoEquipoCompanion(
+      syncFlag: syncFlag ?? this.syncFlag,
+      timestampFlag: timestampFlag ?? this.timestampFlag,
+      usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+      fechaAccion: fechaAccion ?? this.fechaAccion,
+      rubroEvaluacionEquipoId:
+          rubroEvaluacionEquipoId ?? this.rubroEvaluacionEquipoId,
+      equipoId: equipoId ?? this.equipoId,
+      nombreEquipo: nombreEquipo ?? this.nombreEquipo,
+      rubroEvalProcesoId: rubroEvalProcesoId ?? this.rubroEvalProcesoId,
+      orden: orden ?? this.orden,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (syncFlag.present) {
+      map['sync_flag'] = Variable<int?>(syncFlag.value);
+    }
+    if (timestampFlag.present) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag.value);
+    }
+    if (usuarioCreacionId.present) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId.value);
+    }
+    if (fechaCreacion.present) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion.value);
+    }
+    if (usuarioAccionId.present) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId.value);
+    }
+    if (fechaAccion.present) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion.value);
+    }
+    if (rubroEvaluacionEquipoId.present) {
+      map['rubro_evaluacion_equipo_id'] =
+          Variable<String>(rubroEvaluacionEquipoId.value);
+    }
+    if (equipoId.present) {
+      map['equipo_id'] = Variable<String?>(equipoId.value);
+    }
+    if (nombreEquipo.present) {
+      map['nombre_equipo'] = Variable<String?>(nombreEquipo.value);
+    }
+    if (rubroEvalProcesoId.present) {
+      map['rubro_eval_proceso_id'] =
+          Variable<String?>(rubroEvalProcesoId.value);
+    }
+    if (orden.present) {
+      map['orden'] = Variable<int?>(orden.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RubroEvaluacionProcesoEquipoCompanion(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('rubroEvaluacionEquipoId: $rubroEvaluacionEquipoId, ')
+          ..write('equipoId: $equipoId, ')
+          ..write('nombreEquipo: $nombreEquipo, ')
+          ..write('rubroEvalProcesoId: $rubroEvalProcesoId, ')
+          ..write('orden: $orden')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RubroEvaluacionProcesoEquipoTable extends RubroEvaluacionProcesoEquipo
+    with
+        TableInfo<$RubroEvaluacionProcesoEquipoTable,
+            RubroEvaluacionProcesoEquipoData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RubroEvaluacionProcesoEquipoTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _syncFlagMeta = const VerificationMeta('syncFlag');
+  @override
+  late final GeneratedColumn<int?> syncFlag = GeneratedColumn<int?>(
+      'sync_flag', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _timestampFlagMeta =
+      const VerificationMeta('timestampFlag');
+  @override
+  late final GeneratedColumn<DateTime?> timestampFlag =
+      GeneratedColumn<DateTime?>('timestamp_flag', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioCreacionIdMeta =
+      const VerificationMeta('usuarioCreacionId');
+  @override
+  late final GeneratedColumn<int?> usuarioCreacionId = GeneratedColumn<int?>(
+      'usuario_creacion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaCreacionMeta =
+      const VerificationMeta('fechaCreacion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaCreacion =
+      GeneratedColumn<DateTime?>('fecha_creacion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioAccionIdMeta =
+      const VerificationMeta('usuarioAccionId');
+  @override
+  late final GeneratedColumn<int?> usuarioAccionId = GeneratedColumn<int?>(
+      'usuario_accion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaAccionMeta =
+      const VerificationMeta('fechaAccion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaAccion =
+      GeneratedColumn<DateTime?>('fecha_accion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _rubroEvaluacionEquipoIdMeta =
+      const VerificationMeta('rubroEvaluacionEquipoId');
+  @override
+  late final GeneratedColumn<String?> rubroEvaluacionEquipoId =
+      GeneratedColumn<String?>('rubro_evaluacion_equipo_id', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _equipoIdMeta = const VerificationMeta('equipoId');
+  @override
+  late final GeneratedColumn<String?> equipoId = GeneratedColumn<String?>(
+      'equipo_id', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _nombreEquipoMeta =
+      const VerificationMeta('nombreEquipo');
+  @override
+  late final GeneratedColumn<String?> nombreEquipo = GeneratedColumn<String?>(
+      'nombre_equipo', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _rubroEvalProcesoIdMeta =
+      const VerificationMeta('rubroEvalProcesoId');
+  @override
+  late final GeneratedColumn<String?> rubroEvalProcesoId =
+      GeneratedColumn<String?>('rubro_eval_proceso_id', aliasedName, true,
+          type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _ordenMeta = const VerificationMeta('orden');
+  @override
+  late final GeneratedColumn<int?> orden = GeneratedColumn<int?>(
+      'orden', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns => [
+        syncFlag,
+        timestampFlag,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        rubroEvaluacionEquipoId,
+        equipoId,
+        nombreEquipo,
+        rubroEvalProcesoId,
+        orden
+      ];
+  @override
+  String get aliasedName => _alias ?? 'rubro_evaluacion_proceso_equipo';
+  @override
+  String get actualTableName => 'rubro_evaluacion_proceso_equipo';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<RubroEvaluacionProcesoEquipoData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sync_flag')) {
+      context.handle(_syncFlagMeta,
+          syncFlag.isAcceptableOrUnknown(data['sync_flag']!, _syncFlagMeta));
+    }
+    if (data.containsKey('timestamp_flag')) {
+      context.handle(
+          _timestampFlagMeta,
+          timestampFlag.isAcceptableOrUnknown(
+              data['timestamp_flag']!, _timestampFlagMeta));
+    }
+    if (data.containsKey('usuario_creacion_id')) {
+      context.handle(
+          _usuarioCreacionIdMeta,
+          usuarioCreacionId.isAcceptableOrUnknown(
+              data['usuario_creacion_id']!, _usuarioCreacionIdMeta));
+    }
+    if (data.containsKey('fecha_creacion')) {
+      context.handle(
+          _fechaCreacionMeta,
+          fechaCreacion.isAcceptableOrUnknown(
+              data['fecha_creacion']!, _fechaCreacionMeta));
+    }
+    if (data.containsKey('usuario_accion_id')) {
+      context.handle(
+          _usuarioAccionIdMeta,
+          usuarioAccionId.isAcceptableOrUnknown(
+              data['usuario_accion_id']!, _usuarioAccionIdMeta));
+    }
+    if (data.containsKey('fecha_accion')) {
+      context.handle(
+          _fechaAccionMeta,
+          fechaAccion.isAcceptableOrUnknown(
+              data['fecha_accion']!, _fechaAccionMeta));
+    }
+    if (data.containsKey('rubro_evaluacion_equipo_id')) {
+      context.handle(
+          _rubroEvaluacionEquipoIdMeta,
+          rubroEvaluacionEquipoId.isAcceptableOrUnknown(
+              data['rubro_evaluacion_equipo_id']!,
+              _rubroEvaluacionEquipoIdMeta));
+    } else if (isInserting) {
+      context.missing(_rubroEvaluacionEquipoIdMeta);
+    }
+    if (data.containsKey('equipo_id')) {
+      context.handle(_equipoIdMeta,
+          equipoId.isAcceptableOrUnknown(data['equipo_id']!, _equipoIdMeta));
+    }
+    if (data.containsKey('nombre_equipo')) {
+      context.handle(
+          _nombreEquipoMeta,
+          nombreEquipo.isAcceptableOrUnknown(
+              data['nombre_equipo']!, _nombreEquipoMeta));
+    }
+    if (data.containsKey('rubro_eval_proceso_id')) {
+      context.handle(
+          _rubroEvalProcesoIdMeta,
+          rubroEvalProcesoId.isAcceptableOrUnknown(
+              data['rubro_eval_proceso_id']!, _rubroEvalProcesoIdMeta));
+    }
+    if (data.containsKey('orden')) {
+      context.handle(
+          _ordenMeta, orden.isAcceptableOrUnknown(data['orden']!, _ordenMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {rubroEvaluacionEquipoId};
+  @override
+  RubroEvaluacionProcesoEquipoData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    return RubroEvaluacionProcesoEquipoData.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $RubroEvaluacionProcesoEquipoTable createAlias(String alias) {
+    return $RubroEvaluacionProcesoEquipoTable(attachedDatabase, alias);
+  }
+}
+
+class RubroEvaluacionProcesoIntegranteData extends DataClass
+    implements Insertable<RubroEvaluacionProcesoIntegranteData> {
+  final int? syncFlag;
+  final DateTime? timestampFlag;
+  final int? usuarioCreacionId;
+  final DateTime? fechaCreacion;
+  final int? usuarioAccionId;
+  final DateTime? fechaAccion;
+  final String rubroEvaluacionEquipoId;
+  final int personaId;
+  RubroEvaluacionProcesoIntegranteData(
+      {this.syncFlag,
+      this.timestampFlag,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      required this.rubroEvaluacionEquipoId,
+      required this.personaId});
+  factory RubroEvaluacionProcesoIntegranteData.fromData(
+      Map<String, dynamic> data, GeneratedDatabase db,
+      {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return RubroEvaluacionProcesoIntegranteData(
+      syncFlag: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}sync_flag']),
+      timestampFlag: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}timestamp_flag']),
+      usuarioCreacionId: const IntType().mapFromDatabaseResponse(
+          data['${effectivePrefix}usuario_creacion_id']),
+      fechaCreacion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_creacion']),
+      usuarioAccionId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}usuario_accion_id']),
+      fechaAccion: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}fecha_accion']),
+      rubroEvaluacionEquipoId: const StringType().mapFromDatabaseResponse(
+          data['${effectivePrefix}rubro_evaluacion_equipo_id'])!,
+      personaId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}persona_id'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || syncFlag != null) {
+      map['sync_flag'] = Variable<int?>(syncFlag);
+    }
+    if (!nullToAbsent || timestampFlag != null) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag);
+    }
+    if (!nullToAbsent || usuarioCreacionId != null) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId);
+    }
+    if (!nullToAbsent || fechaCreacion != null) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion);
+    }
+    if (!nullToAbsent || usuarioAccionId != null) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId);
+    }
+    if (!nullToAbsent || fechaAccion != null) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion);
+    }
+    map['rubro_evaluacion_equipo_id'] =
+        Variable<String>(rubroEvaluacionEquipoId);
+    map['persona_id'] = Variable<int>(personaId);
+    return map;
+  }
+
+  RubroEvaluacionProcesoIntegranteCompanion toCompanion(bool nullToAbsent) {
+    return RubroEvaluacionProcesoIntegranteCompanion(
+      syncFlag: syncFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(syncFlag),
+      timestampFlag: timestampFlag == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timestampFlag),
+      usuarioCreacionId: usuarioCreacionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioCreacionId),
+      fechaCreacion: fechaCreacion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaCreacion),
+      usuarioAccionId: usuarioAccionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(usuarioAccionId),
+      fechaAccion: fechaAccion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fechaAccion),
+      rubroEvaluacionEquipoId: Value(rubroEvaluacionEquipoId),
+      personaId: Value(personaId),
+    );
+  }
+
+  factory RubroEvaluacionProcesoIntegranteData.fromJson(
+      Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return RubroEvaluacionProcesoIntegranteData(
+      syncFlag: serializer.fromJson<int?>(json['syncFlag']),
+      timestampFlag: serializer.fromJson<DateTime?>(json['timestampFlag']),
+      usuarioCreacionId: serializer.fromJson<int?>(json['usuarioCreacionId']),
+      fechaCreacion: serializer.fromJson<DateTime?>(json['fechaCreacion']),
+      usuarioAccionId: serializer.fromJson<int?>(json['usuarioAccionId']),
+      fechaAccion: serializer.fromJson<DateTime?>(json['fechaAccion']),
+      rubroEvaluacionEquipoId:
+          serializer.fromJson<String>(json['rubroEvaluacionEquipoId']),
+      personaId: serializer.fromJson<int>(json['personaId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'syncFlag': serializer.toJson<int?>(syncFlag),
+      'timestampFlag': serializer.toJson<DateTime?>(timestampFlag),
+      'usuarioCreacionId': serializer.toJson<int?>(usuarioCreacionId),
+      'fechaCreacion': serializer.toJson<DateTime?>(fechaCreacion),
+      'usuarioAccionId': serializer.toJson<int?>(usuarioAccionId),
+      'fechaAccion': serializer.toJson<DateTime?>(fechaAccion),
+      'rubroEvaluacionEquipoId':
+          serializer.toJson<String>(rubroEvaluacionEquipoId),
+      'personaId': serializer.toJson<int>(personaId),
+    };
+  }
+
+  RubroEvaluacionProcesoIntegranteData copyWith(
+          {int? syncFlag,
+          DateTime? timestampFlag,
+          int? usuarioCreacionId,
+          DateTime? fechaCreacion,
+          int? usuarioAccionId,
+          DateTime? fechaAccion,
+          String? rubroEvaluacionEquipoId,
+          int? personaId}) =>
+      RubroEvaluacionProcesoIntegranteData(
+        syncFlag: syncFlag ?? this.syncFlag,
+        timestampFlag: timestampFlag ?? this.timestampFlag,
+        usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+        fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+        usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+        fechaAccion: fechaAccion ?? this.fechaAccion,
+        rubroEvaluacionEquipoId:
+            rubroEvaluacionEquipoId ?? this.rubroEvaluacionEquipoId,
+        personaId: personaId ?? this.personaId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('RubroEvaluacionProcesoIntegranteData(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('rubroEvaluacionEquipoId: $rubroEvaluacionEquipoId, ')
+          ..write('personaId: $personaId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      syncFlag,
+      timestampFlag,
+      usuarioCreacionId,
+      fechaCreacion,
+      usuarioAccionId,
+      fechaAccion,
+      rubroEvaluacionEquipoId,
+      personaId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RubroEvaluacionProcesoIntegranteData &&
+          other.syncFlag == this.syncFlag &&
+          other.timestampFlag == this.timestampFlag &&
+          other.usuarioCreacionId == this.usuarioCreacionId &&
+          other.fechaCreacion == this.fechaCreacion &&
+          other.usuarioAccionId == this.usuarioAccionId &&
+          other.fechaAccion == this.fechaAccion &&
+          other.rubroEvaluacionEquipoId == this.rubroEvaluacionEquipoId &&
+          other.personaId == this.personaId);
+}
+
+class RubroEvaluacionProcesoIntegranteCompanion
+    extends UpdateCompanion<RubroEvaluacionProcesoIntegranteData> {
+  final Value<int?> syncFlag;
+  final Value<DateTime?> timestampFlag;
+  final Value<int?> usuarioCreacionId;
+  final Value<DateTime?> fechaCreacion;
+  final Value<int?> usuarioAccionId;
+  final Value<DateTime?> fechaAccion;
+  final Value<String> rubroEvaluacionEquipoId;
+  final Value<int> personaId;
+  const RubroEvaluacionProcesoIntegranteCompanion({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    this.rubroEvaluacionEquipoId = const Value.absent(),
+    this.personaId = const Value.absent(),
+  });
+  RubroEvaluacionProcesoIntegranteCompanion.insert({
+    this.syncFlag = const Value.absent(),
+    this.timestampFlag = const Value.absent(),
+    this.usuarioCreacionId = const Value.absent(),
+    this.fechaCreacion = const Value.absent(),
+    this.usuarioAccionId = const Value.absent(),
+    this.fechaAccion = const Value.absent(),
+    required String rubroEvaluacionEquipoId,
+    required int personaId,
+  })  : rubroEvaluacionEquipoId = Value(rubroEvaluacionEquipoId),
+        personaId = Value(personaId);
+  static Insertable<RubroEvaluacionProcesoIntegranteData> custom({
+    Expression<int?>? syncFlag,
+    Expression<DateTime?>? timestampFlag,
+    Expression<int?>? usuarioCreacionId,
+    Expression<DateTime?>? fechaCreacion,
+    Expression<int?>? usuarioAccionId,
+    Expression<DateTime?>? fechaAccion,
+    Expression<String>? rubroEvaluacionEquipoId,
+    Expression<int>? personaId,
+  }) {
+    return RawValuesInsertable({
+      if (syncFlag != null) 'sync_flag': syncFlag,
+      if (timestampFlag != null) 'timestamp_flag': timestampFlag,
+      if (usuarioCreacionId != null) 'usuario_creacion_id': usuarioCreacionId,
+      if (fechaCreacion != null) 'fecha_creacion': fechaCreacion,
+      if (usuarioAccionId != null) 'usuario_accion_id': usuarioAccionId,
+      if (fechaAccion != null) 'fecha_accion': fechaAccion,
+      if (rubroEvaluacionEquipoId != null)
+        'rubro_evaluacion_equipo_id': rubroEvaluacionEquipoId,
+      if (personaId != null) 'persona_id': personaId,
+    });
+  }
+
+  RubroEvaluacionProcesoIntegranteCompanion copyWith(
+      {Value<int?>? syncFlag,
+      Value<DateTime?>? timestampFlag,
+      Value<int?>? usuarioCreacionId,
+      Value<DateTime?>? fechaCreacion,
+      Value<int?>? usuarioAccionId,
+      Value<DateTime?>? fechaAccion,
+      Value<String>? rubroEvaluacionEquipoId,
+      Value<int>? personaId}) {
+    return RubroEvaluacionProcesoIntegranteCompanion(
+      syncFlag: syncFlag ?? this.syncFlag,
+      timestampFlag: timestampFlag ?? this.timestampFlag,
+      usuarioCreacionId: usuarioCreacionId ?? this.usuarioCreacionId,
+      fechaCreacion: fechaCreacion ?? this.fechaCreacion,
+      usuarioAccionId: usuarioAccionId ?? this.usuarioAccionId,
+      fechaAccion: fechaAccion ?? this.fechaAccion,
+      rubroEvaluacionEquipoId:
+          rubroEvaluacionEquipoId ?? this.rubroEvaluacionEquipoId,
+      personaId: personaId ?? this.personaId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (syncFlag.present) {
+      map['sync_flag'] = Variable<int?>(syncFlag.value);
+    }
+    if (timestampFlag.present) {
+      map['timestamp_flag'] = Variable<DateTime?>(timestampFlag.value);
+    }
+    if (usuarioCreacionId.present) {
+      map['usuario_creacion_id'] = Variable<int?>(usuarioCreacionId.value);
+    }
+    if (fechaCreacion.present) {
+      map['fecha_creacion'] = Variable<DateTime?>(fechaCreacion.value);
+    }
+    if (usuarioAccionId.present) {
+      map['usuario_accion_id'] = Variable<int?>(usuarioAccionId.value);
+    }
+    if (fechaAccion.present) {
+      map['fecha_accion'] = Variable<DateTime?>(fechaAccion.value);
+    }
+    if (rubroEvaluacionEquipoId.present) {
+      map['rubro_evaluacion_equipo_id'] =
+          Variable<String>(rubroEvaluacionEquipoId.value);
+    }
+    if (personaId.present) {
+      map['persona_id'] = Variable<int>(personaId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RubroEvaluacionProcesoIntegranteCompanion(')
+          ..write('syncFlag: $syncFlag, ')
+          ..write('timestampFlag: $timestampFlag, ')
+          ..write('usuarioCreacionId: $usuarioCreacionId, ')
+          ..write('fechaCreacion: $fechaCreacion, ')
+          ..write('usuarioAccionId: $usuarioAccionId, ')
+          ..write('fechaAccion: $fechaAccion, ')
+          ..write('rubroEvaluacionEquipoId: $rubroEvaluacionEquipoId, ')
+          ..write('personaId: $personaId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RubroEvaluacionProcesoIntegranteTable
+    extends RubroEvaluacionProcesoIntegrante
+    with
+        TableInfo<$RubroEvaluacionProcesoIntegranteTable,
+            RubroEvaluacionProcesoIntegranteData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RubroEvaluacionProcesoIntegranteTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _syncFlagMeta = const VerificationMeta('syncFlag');
+  @override
+  late final GeneratedColumn<int?> syncFlag = GeneratedColumn<int?>(
+      'sync_flag', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _timestampFlagMeta =
+      const VerificationMeta('timestampFlag');
+  @override
+  late final GeneratedColumn<DateTime?> timestampFlag =
+      GeneratedColumn<DateTime?>('timestamp_flag', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioCreacionIdMeta =
+      const VerificationMeta('usuarioCreacionId');
+  @override
+  late final GeneratedColumn<int?> usuarioCreacionId = GeneratedColumn<int?>(
+      'usuario_creacion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaCreacionMeta =
+      const VerificationMeta('fechaCreacion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaCreacion =
+      GeneratedColumn<DateTime?>('fecha_creacion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _usuarioAccionIdMeta =
+      const VerificationMeta('usuarioAccionId');
+  @override
+  late final GeneratedColumn<int?> usuarioAccionId = GeneratedColumn<int?>(
+      'usuario_accion_id', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _fechaAccionMeta =
+      const VerificationMeta('fechaAccion');
+  @override
+  late final GeneratedColumn<DateTime?> fechaAccion =
+      GeneratedColumn<DateTime?>('fecha_accion', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _rubroEvaluacionEquipoIdMeta =
+      const VerificationMeta('rubroEvaluacionEquipoId');
+  @override
+  late final GeneratedColumn<String?> rubroEvaluacionEquipoId =
+      GeneratedColumn<String?>('rubro_evaluacion_equipo_id', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _personaIdMeta = const VerificationMeta('personaId');
+  @override
+  late final GeneratedColumn<int?> personaId = GeneratedColumn<int?>(
+      'persona_id', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        syncFlag,
+        timestampFlag,
+        usuarioCreacionId,
+        fechaCreacion,
+        usuarioAccionId,
+        fechaAccion,
+        rubroEvaluacionEquipoId,
+        personaId
+      ];
+  @override
+  String get aliasedName => _alias ?? 'rubro_evaluacion_proceso_integrante';
+  @override
+  String get actualTableName => 'rubro_evaluacion_proceso_integrante';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<RubroEvaluacionProcesoIntegranteData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sync_flag')) {
+      context.handle(_syncFlagMeta,
+          syncFlag.isAcceptableOrUnknown(data['sync_flag']!, _syncFlagMeta));
+    }
+    if (data.containsKey('timestamp_flag')) {
+      context.handle(
+          _timestampFlagMeta,
+          timestampFlag.isAcceptableOrUnknown(
+              data['timestamp_flag']!, _timestampFlagMeta));
+    }
+    if (data.containsKey('usuario_creacion_id')) {
+      context.handle(
+          _usuarioCreacionIdMeta,
+          usuarioCreacionId.isAcceptableOrUnknown(
+              data['usuario_creacion_id']!, _usuarioCreacionIdMeta));
+    }
+    if (data.containsKey('fecha_creacion')) {
+      context.handle(
+          _fechaCreacionMeta,
+          fechaCreacion.isAcceptableOrUnknown(
+              data['fecha_creacion']!, _fechaCreacionMeta));
+    }
+    if (data.containsKey('usuario_accion_id')) {
+      context.handle(
+          _usuarioAccionIdMeta,
+          usuarioAccionId.isAcceptableOrUnknown(
+              data['usuario_accion_id']!, _usuarioAccionIdMeta));
+    }
+    if (data.containsKey('fecha_accion')) {
+      context.handle(
+          _fechaAccionMeta,
+          fechaAccion.isAcceptableOrUnknown(
+              data['fecha_accion']!, _fechaAccionMeta));
+    }
+    if (data.containsKey('rubro_evaluacion_equipo_id')) {
+      context.handle(
+          _rubroEvaluacionEquipoIdMeta,
+          rubroEvaluacionEquipoId.isAcceptableOrUnknown(
+              data['rubro_evaluacion_equipo_id']!,
+              _rubroEvaluacionEquipoIdMeta));
+    } else if (isInserting) {
+      context.missing(_rubroEvaluacionEquipoIdMeta);
+    }
+    if (data.containsKey('persona_id')) {
+      context.handle(_personaIdMeta,
+          personaId.isAcceptableOrUnknown(data['persona_id']!, _personaIdMeta));
+    } else if (isInserting) {
+      context.missing(_personaIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {rubroEvaluacionEquipoId, personaId};
+  @override
+  RubroEvaluacionProcesoIntegranteData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    return RubroEvaluacionProcesoIntegranteData.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $RubroEvaluacionProcesoIntegranteTable createAlias(String alias) {
+    return $RubroEvaluacionProcesoIntegranteTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$AppDataBase extends GeneratedDatabase {
   _$AppDataBase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $SessionUserTable sessionUser = $SessionUserTable(this);
@@ -45570,6 +48544,15 @@ abstract class _$AppDataBase extends GeneratedDatabase {
       $RecursosActividadSesionTable(this);
   late final $RecursoSesionTable recursoSesion = $RecursoSesionTable(this);
   late final $AsistenciaQRTable asistenciaQR = $AsistenciaQRTable(this);
+  late final $Equipo2Table equipo2 = $Equipo2Table(this);
+  late final $GrupoEquipo2Table grupoEquipo2 = $GrupoEquipo2Table(this);
+  late final $IntegranteEquipo2Table integranteEquipo2 =
+      $IntegranteEquipo2Table(this);
+  late final $RubroEvaluacionProcesoEquipoTable rubroEvaluacionProcesoEquipo =
+      $RubroEvaluacionProcesoEquipoTable(this);
+  late final $RubroEvaluacionProcesoIntegranteTable
+      rubroEvaluacionProcesoIntegrante =
+      $RubroEvaluacionProcesoIntegranteTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
@@ -45655,6 +48638,11 @@ abstract class _$AppDataBase extends GeneratedDatabase {
         instrumentoEvaluacionSesion,
         recursosActividadSesion,
         recursoSesion,
-        asistenciaQR
+        asistenciaQR,
+        equipo2,
+        grupoEquipo2,
+        integranteEquipo2,
+        rubroEvaluacionProcesoEquipo,
+        rubroEvaluacionProcesoIntegrante
       ];
 }

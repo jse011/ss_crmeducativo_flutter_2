@@ -33,6 +33,7 @@ class EventoUi {
   String? nombreCalendario;
   int? cargaCursoId;
   int? cargaAcademicaId;
+  int? usuarioId;
   DateTime getFecha() {
     return this.fecha??DateTime(1900);
   }

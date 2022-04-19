@@ -1,6 +1,7 @@
 
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:clipboard/clipboard.dart';
@@ -1296,6 +1297,11 @@ class TareaCrearViewState extends ViewState<TareaCrearView, TareaCrearController
       controller.addTareaRecursos(_documents, null);
 
     }
+  }
+
+  @override
+  userCrop(Uint8List? _image, String? newName) {
+
   }
 
 }

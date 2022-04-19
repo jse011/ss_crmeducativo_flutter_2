@@ -496,7 +496,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     personaUi.telefono = personaData?.celular??personaData?.telefono??"";
     personaUi.fechaNacimiento = fechaNacimiento;
     personaUi.nombres = DomainTools.capitalize(personaData?.nombres??"");
-    personaUi.fechaNacimiento2 = (personaData?.fechaNac??"").replaceAll(RegExp(' 00:00:00'), '');
+    personaUi.fechaNacimiento2 = (personaData?.fechaNac??"").replaceAll(RegExp(' 00:00:00'), '').replaceAll(RegExp(' 12:00:00 a.m.'), '');
     usuarioUi.personaUi = personaUi;
     return usuarioUi;
 
@@ -803,10 +803,11 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
     var query = SQL.select(SQL.contactoDocente)..where((tbl) => tbl.idEmpleadoTutor.equals(empleadoId));
     query.where((tbl) => tbl.tipo.equals(ConfiguracionRepository.CONTACTO_ALUMNO));
+    query.where((tbl) => tbl.anioAcademicoId.equals(anioAcademicoIdSelec));
     List<CursosUi> cursoUiList = [];
 
     for(ContactoDocenteData contactoData in await query.get()){
-
+    if(!(contactoData.contratoVigente??false))continue;
     CursosUi? cursosUiTutorUi = cursoUiList.firstWhereOrNull((element) => element.cargaAcademicaId == contactoData.cargaAcademicaId);
       if(cursosUiTutorUi==null){
         cursosUiTutorUi = CursosUi();
@@ -816,6 +817,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         cursosUiTutorUi.alumnoUiList = [];
         cursoUiList.add(cursosUiTutorUi);
       }
+
 
     /*CursosUi? cursosUi = cursoUiList.firstWhereOrNull((element) => element.cargaAcademicaId == contactoData.cargaAcademicaId && element.cargaCursoId == contactoData.cargaCursoId);
       if(cursosUi==null){
@@ -851,7 +853,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
     personaUi.nombreCompleto = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}, ${DomainTools.capitalize(contactoData.nombres??"")}';
     personaUi.nombres = DomainTools.capitalize(contactoData.nombres??"");
     personaUi.apellidos  = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
-    personaUi.contratoVigente =  contactoData.contratoVigente;
+    personaUi.contratoVigente =  contactoData.contratoVigente??false;
     personaUi.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
     return personaUi;
   }
@@ -959,6 +961,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         leftOuterJoin(apoderado, apoderado.hijoRelacionId.equalsExp(SQL.contactoDocente.personaId))
       ]);
       query.where(SQL.contactoDocente.anioAcademicoId.equals(anioAcademicoIdSelect));
+
       query.groupBy([SQL.contactoDocente.personaId, SQL.contactoDocente.tipo]);
       var rows = await query.get();
 
@@ -970,6 +973,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         ContactoUi contactoUi = new ContactoUi();
         contactoUi.personaUi = PersonaUi();
         contactoUi.personaUi?.personaId = contactoData.personaId;
+        contactoUi.personaUi?.contratoVigente = contactoData.contratoVigente??false;
         contactoUi.relacionList = [];
         contactoUi.personaUi?.foto = contactoData.foto;
         if((contactoData.nombres??"").isEmpty){
@@ -1031,7 +1035,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
         personaUi.nombreCompleto = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}, ${DomainTools.capitalize(contactoData.nombres??"")}';
         personaUi.nombres = DomainTools.capitalize(contactoData.nombres??"");
         personaUi.apellidos  = '${DomainTools.capitalize(contactoData.apellidoPaterno??"")} ${DomainTools.capitalize(contactoData.apellidoMaterno??"")}';
-        personaUi.contratoVigente =  contactoData.contratoVigente;
+        personaUi.contratoVigente =  contactoData.contratoVigente??false;
         personaUi.telefono = contactoData.celular!=null?contactoData.celular: contactoData.telefono??"";
         contactoUiList.add(personaUi);
     }
@@ -1167,10 +1171,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
       }
     }
-    
-  
-    
-
 
   }
+
 }

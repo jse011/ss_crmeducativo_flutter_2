@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:http/io_client.dart';
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
@@ -13,7 +14,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as httpDart;
 import 'package:flutter/foundation.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
@@ -36,7 +37,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   Future<Map<String, dynamic>> getDatosInicioDocente(String urlServidor, int usuarioId) async {
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vint_UsuarioId"] = usuarioId;
-    final response = await http.post(Uri2.parse(urlServidor), body: getBody("flst_getDatosInicioSesion",parameters));
+    final response = await httpDart.post(Uri2.parse(urlServidor), body: getBody("flst_getDatosInicioSesion",parameters));
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
       // then parse the JSON.
@@ -355,7 +356,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["bERubroEvalEnvio"] = data;
     String params = getBody("crearRubroEvaluacion", parameters);
     //log(params);
-    final response = await http.post(Uri2.parse(urlServidorLocal), body: params)
+    final response = await http.postGzip(Uri2.parse(urlServidorLocal), body: params)
         .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load rubro eval');});
 
     if (response.statusCode == 200) {
@@ -386,10 +387,9 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_GeoreferenciaId"] = georeferenciaId;
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["bERubroEvalEnvio"] = data;
-    Dio dio = new Dio();
+    //DioGzip dioGzip =  DioGzip(Dio());
     String params = getBody("crearRubroEvaluacion", parameters);
-    //log(params);
-    dio.post(
+    Dio().post(
       Uri2.validate(urlServidorLocal),
       data: params,
       cancelToken: token,
@@ -458,8 +458,9 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["bERubroEvalEnvio"] = data;
     String params = getBody("updateEvaluacionRubroFlutter", parameters);
-    //log(params);
-    final response = await http.post(Uri2.parse(urlServidorLocal), body: params)
+
+
+    final response = await http.postGzip(Uri2.parse(urlServidorLocal), body: params)
         .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load rubro eval');});
 
     if (response.statusCode == 200) {
@@ -918,8 +919,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
 
   @override
   Future<HttpStream> saveTareaEvalDocente(String urlServidorLocal, int? georeferenciaId,int? usuarioId, int? calendarioPeriodoId, int? silaboEventoId, int? unidadAprendizajeId, String? tareaId, Map<String, dynamic> dataSerial, HttpSuccess httpSuccessListen) async{
-
-    Dio dio = new Dio();
+    Dio dio = Dio();
     DioCancellation2 dioCancellation = DioCancellation2(dio);
     Map<String, dynamic> parameters = Map<String, dynamic>();
     parameters["vint_GeoreferenciaId"] = georeferenciaId;
@@ -936,7 +936,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
 
 
 
-    dio.post(
+    DioGzip(dio).post(
       Uri2.validate(urlServidorLocal),
       data: params,
       cancelToken: dioCancellation.token,
@@ -1202,7 +1202,7 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
   }
 
   @override
-  Future<HttpStream?> uploadFilePersona(String urlServidorLocal, PersonaUi? personaUi, File? foto, bool? soloCambiarFoto, bool? removeFoto, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen) async {
+  Future<HttpStream?> uploadFilePersona(String urlServidorLocal, PersonaUi? personaUi, FileFoto? fileFoto, bool? soloCambiarFoto, bool? removeFoto, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen) async {
     CancelToken token = CancelToken();
     DioCancellation dioCancellation = DioCancellation(token);
 
@@ -1217,16 +1217,21 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
 
     var formData;
 
-    if(foto!=null){
+    if(fileFoto?.filebyte!=null){
       formData = FormData.fromMap({
         'body': getBody("uploadPersonaDocente", parameters),
-        'file': await MultipartFile.fromFile(foto.path, filename: ""),
+        'file': await MultipartFile.fromBytes(fileFoto!.filebyte!, filename: ""),
+      });
+    }else if(fileFoto?.file!=null){
+      formData = FormData.fromMap({
+        'body': getBody("uploadPersonaDocente", parameters),
+        'file': await MultipartFile.fromFile(fileFoto!.file!.path, filename: ""),
       });
     }else{
       formData = getBody("uploadPersonaDocente", parameters);
     }
 
-    print("foto: ${foto!=null}");
+
     Dio dio = new Dio();
     dio.post(
       Uri2.validate(urlServidorLocal),
@@ -1433,10 +1438,10 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     parameters["vint_GeoreferenciaId"] = georeferenciaId;
     parameters["vint_UsuarioId"] = usuarioId;
     parameters["bERubroEvalEnvio"] = data;
-    Dio dio = new Dio();
+   DioGzip dioGzip = DioGzip( Dio());
     String params = getBody("updateEvaluacionRubroFlutter", parameters);
     //log(params);
-    dio.post(
+    dioGzip.post(
       Uri2.validate(urlServidorLocal),
       data: params,
       cancelToken: token,
@@ -1960,6 +1965,174 @@ class DeviceHttpDatosRepositorio extends HttpDatosRepository{
     return dioCancellation;
   }
 
+  @override
+  Future<bool?> uploadEvaluacoinCerrarSession(String urlServidorLocal, List<dynamic> rubrosNoEnviados)async {
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vlst_RubroEvalEnvioSimple"] = rubrosNoEnviados;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("uploadEvaluacoinCerrarSession", parameters))
+        .timeout(Duration(seconds: MAX_TIMEOUT), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<bool?> saveGrupoDocente(String urlServidorLocal, Map<String, dynamic> dataJson) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vobj_DatosEnvioGrupo"] = dataJson;
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("saveGrupoDocente", parameters))
+        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load tarea eval');});
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load info tarea');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getGrupoDocenteFlutter(String urlServidorLocal, int? cargaAcademicaId) async{
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["vint_CargaAdemicaId"] = cargaAcademicaId;
+
+    final response = await http.post(Uri2.parse(urlServidorLocal), body: getBody("getGrupoDocenteFlutter",parameters))
+        .timeout(Duration(seconds: MIN_TIMEOUT), onTimeout: (){throw Exception('Failed to load updateUsuario');});
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+      Map<String,dynamic> body = json.decode(response.body);
+      if(body.containsKey("Successful")&&body.containsKey("Value")){
+        return body["Value"];
+      }else{
+        return null;
+      }
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load crear_agenda 0');
+    }
+  }
+
+  @override
+  Future<HttpStream?> uploadFilePersonaByte(String urlServidorLocal, PersonaUi? personaUi, Uint8List? foto, bool? soloCambiarFoto, bool? removeFoto, HttpProgressListen progressListen, HttpValueSuccess httpSuccessListen)async {
+    CancelToken token = CancelToken();
+    DioCancellation dioCancellation = DioCancellation(token);
+
+    Map<String, dynamic> parameters = Map<String, dynamic>();
+    parameters["bEPersona"] = DomainTools.removeNull( PersonaSerial(
+      personaId: personaUi?.personaId??0,
+      celular: personaUi?.telefono,
+      correo: personaUi?.correo,
+    ).toJson());
+    parameters["vbol_soloCambiarFoto"] = soloCambiarFoto??false;
+    parameters["vbol_removeFoto"] = removeFoto??false;
+
+    var formData;
+
+    if(foto!=null){
+      formData = FormData.fromMap({
+        'body': getBody("uploadPersonaDocente", parameters),
+        'file': await MultipartFile.fromBytes(foto, filename: ""),
+      });
+    }else{
+      formData = getBody("uploadPersonaDocente", parameters);
+    }
+
+    print("foto: ${foto!=null}");
+    Dio dio = new Dio();
+    dio.post(
+      Uri2.validate(urlServidorLocal),
+      data: formData,
+      cancelToken: token,
+      onSendProgress: (received, total){
+        if (total != -1){
+          var progress = (received / total * 100);
+          print("${progress}%");
+          progressListen.call(progress);
+        }
+      },
+    ).then((Response response) async{
+      if (response.statusCode == 200) {
+        Map<String,dynamic> body = response.data;
+        print("Response ${body.toString()}");
+        if(body.containsKey("Successful")&&body.containsKey("Value")){
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(true, body["Value"]);
+          print("Response success");
+        }else{
+          dioCancellation.finishesd = true;
+          httpSuccessListen.call(false, null);
+          print("Response null ${response.data}");
+        }
+      }
+    }).catchError((dioError, stackTrace) {
+      dioCancellation.finishesd = true;
+      try{
+        switch (dioError.type) {
+          case DioErrorType.cancel:
+          //message = "Request to API server was cancelled";
+            break;
+          case DioErrorType.connectTimeout:
+            print("Connection timeout with API server");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.other:
+            print("Connection to API server failed due to internet connection");
+            httpSuccessListen.call(false, null);
+            break;
+          case DioErrorType.receiveTimeout:
+            httpSuccessListen.call(false, null);
+            print("Receive timeout in connection with API server");
+            break;
+          case DioErrorType.response:
+          /// When the server response, but with a incorrect status, such as 404, 503...
+            httpSuccessListen.call(false, null);
+            print("Response error 404, 503 ...");
+            break;
+          case DioErrorType.sendTimeout:
+            throw Exception("Send timeout in connection with API server");
+          default:
+            httpSuccessListen.call(false, null);
+            print("Response error Something went wrong");
+            //message = "Something went wrong";
+            break;
+        }
+      }catch(e){
+        print(e);
+        httpSuccessListen.call(false, null);
+      }
+
+    });
+
+    return dioCancellation;
+  }
+
 }
 
 class DioCancellation  extends HttpStream{
@@ -2012,6 +2185,7 @@ class Uri2{
       //url = url.replaceAll("CRMMovil", "CRMMovil2");
       //url = modificarServidorLocalCata(url);
       //print("modificarServidorLocalCata3: ${url}");
+
       //url = "http://192.168.0.6:3000/PortalAcadMovil.ashx";
       return Uri.parse(url);
     }
@@ -2028,6 +2202,8 @@ class Uri2{
       //url = url.replaceAll("CRMMovil", "CRMMovil2");
       //url = modificarServidorLocalCata(url);
       //print("modificarServidorLocalCata4: ${url}");
+
+
       //url = "http://192.168.0.6:3000/PortalAcadMovil.ashx";
       return url;
     }
@@ -2041,5 +2217,61 @@ class Uri2{
     print("modificarServidorLocalCata2: ${url}");
     return url;
   }
+
+}
+
+class http {
+  static Future<httpDart.Response> post(Uri url,
+      {Map<String, String>? headers, Object? body, Encoding? encoding}){
+    return httpDart.post(url, headers: headers, body: body, encoding: encoding);
+  }
+
+  static Future<httpDart.Response> postGzip(Uri url,
+      { required String body}){
+    var compressedBody = gzip.encode(body.codeUnits);
+    Map<String, String> headers = {
+      "Content-Encoding": "gzip",
+      "Content-Type": "application/json; charset=UTF-8",
+    };
+    print("headers: ${headers}");
+    return httpDart.post(url, headers: headers, body: compressedBody);
+  }
+
+}
+
+class DioGzip {
+  Dio dio;
+
+  DioGzip(this.dio);
+
+  Future<Response<T>> post<T>(
+      String path, {
+        required String data,
+        Map<String, dynamic>? queryParameters,
+        CancelToken? cancelToken,
+        ProgressCallback? onSendProgress,
+        ProgressCallback? onReceiveProgress,
+      }){
+
+    Map<String, String> headers = {
+      "Content-Encoding": "gzip",
+      "Content-Type": "application/json; charset=UTF-8",
+    };
+
+    var compressedBody = gzip.encode(data.codeUnits);
+    print("headers: ${headers}");
+    return dio.post(
+        path,
+        data: Stream.fromIterable(compressedBody.map((e) => [e])),
+        cancelToken: cancelToken,
+        options: Options(
+            headers: headers
+        )
+    );
+  }
+
+
+
+
 
 }

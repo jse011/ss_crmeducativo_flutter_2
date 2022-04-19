@@ -754,7 +754,7 @@ class _EventoAgendaViewState extends ViewState<EventoAgendaView, EventoAgendaCon
                                          (BuildContext context, int index){
                                        EventoUi? eventoUi = controller.eventoUiList?[index];
 
-                                       return ItemEventoView(eventoUi, tipoEditar: controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA,
+                                       return ItemEventoView(eventoUi, tipoEditar2: (controller.selectedTipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && eventoUi?.usuarioId == controller.usuarioUi?.usuarioId),
                                          onClickMoreEventoAdjuntoDowload:(eventoUi) {
                                            controller.onClickMoreEventoAdjuntoDowload(eventoUi);
                                          },

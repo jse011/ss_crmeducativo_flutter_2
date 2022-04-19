@@ -987,7 +987,7 @@ class _CursoViewState extends ViewState<CursoView, CursoController> with TickerP
                             Center(
                               child: InkWell(
                                 onTap: () async {
-                                  dynamic respuesta = await AppRouter.showAgendaPortalView(context, controller.cursos);
+                                  dynamic respuesta = await AppRouter.showAgendaPortalView(context, controller.cursos, controller.usuarioUi);
                                 },
                                 child: Container(
                                   constraints: BoxConstraints(

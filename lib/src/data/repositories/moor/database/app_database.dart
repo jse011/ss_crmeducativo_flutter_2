@@ -29,6 +29,9 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/dia.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/empleado.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/entidad.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/georeferencia.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/grupo/equipo_2.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/grupo/grupo_equipo_2.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/grupo/integrante_equipo_2.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/hora.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/horario.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/horario_dia.dart';
@@ -51,6 +54,8 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_c
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_comentario.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_eval_rnpformula.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_evaluacion_proceso.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_evaluacion_proceso_equipo.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_evaluacion_proceso_integrante.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_update_servidor.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/tipo_nota_resultado.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/tipo_nota_rubro.dart';
@@ -91,10 +96,10 @@ part 'app_database.g.dart';
   EvaluacionProceso, RubroCampotematico, RubroComentario, RubroEvalRNPFormula, ContactoDocente, CriterioRubroEvaluacion, Calendario, CalendarioListaUsuario, Evento, EventoPersona,
   ListaUsuarioDetalle, ListaUsuarios, PersonaEvento, RelacionesEvento, TipoEvento, UsuarioEvento, UnidadEvento, SesionEvento, RelUnidadEvento, RubroUpdateServidor, CalendarioPeriodoCargaCurso,
   TipoNotaResultado, ValorTipoNotaResultado, Tarea, TareaUnidad, TareaAlumno, TareaAlumnoArchivo, TareaRecursoDidactico, EventoAdjunto, TareaEvalDetalle, CompetenciaSesion, DesempenioIcdSesion, CampotematicoSesion,
-  ActividadSesion, InstrumentoEvaluacionSesion, RecursosActividadSesion, RecursoSesion, AsistenciaQR])
+  ActividadSesion, InstrumentoEvaluacionSesion, RecursosActividadSesion, RecursoSesion, AsistenciaQR, Equipo2, GrupoEquipo2, IntegranteEquipo2, RubroEvaluacionProcesoEquipo, RubroEvaluacionProcesoIntegrante])
 class AppDataBase extends _$AppDataBase {
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 11;
 
   static final AppDataBase _singleton = AppDataBase._internal();
 
@@ -103,7 +108,7 @@ class AppDataBase extends _$AppDataBase {
   }
 
   AppDataBase._internal(): super(FlutterQueryExecutor.inDatabaseFolder(
-      path: "db.sqlite", logStatements: true));
+      path: "db.sqlite", logStatements: false));
 
   SimpleSelectStatement<T, R> selectSingle<T extends Table, R extends DataClass>(TableInfo<T, R> table, {bool distinct = false}){
     var query = select(table, distinct: distinct);
@@ -128,6 +133,15 @@ class AppDataBase extends _$AppDataBase {
         }
 
 
+        //if (to <= 11) {
+          await m.createTable(equipo2);
+          await m.createTable(integranteEquipo2);
+          await m.createTable(grupoEquipo2);
+          // you also need this line for every other table not created in the first version
+          await m.createTable(rubroEvaluacionProcesoEquipo);
+          await m.createTable(rubroEvaluacionProcesoIntegrante);
+          // you also need this line for every other table not created in the first version
+        //}
       },
     );
   }

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
+import 'package:image/image.dart' as editImg;
+//import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/image_picker/image_picker_dialog.dart';
@@ -54,8 +56,8 @@ class ImagePickerHandler {
     imagePicker.initState();
   }
 
-  Future cropImage(File image, String? name) async {
-    File? croppedFile = await ImageCropper().cropImage(
+  Future cropImage(File file, String? name) async {
+    /*File? croppedFile = await ImageCropper().cropImage(
       sourcePath: image.path,
       //ratioX: 1.0,
       //ratioY: 1.0,
@@ -64,9 +66,17 @@ class ImagePickerHandler {
       ],
       maxWidth: 2300,
       maxHeight: 2300,
-    );
-    _listener.userImage(croppedFile, name);
+      androidUiSettings: AndroidUiSettings()
+    );*/
+
+    editImg.Image? image = editImg.decodeImage(file.readAsBytesSync());
+    if(image != null){
+      editImg.Image rize = editImg.copyResizeCropSquare(image, 800);
+      _listener.userCrop(Uint8List.fromList(editImg.encodeJpg(rize, quality: 70)),name);
+    }
+
   }
+
 
   showDialog(BuildContext context, {botonRemoverImagen, botonLink}) {
     imagePicker.getImage(context, botonRemoverImagen: botonRemoverImagen, botonLink: botonLink);
@@ -84,6 +94,7 @@ class ImagePickerHandler {
 }
 
 abstract class ImagePickerListener {
+  userCrop(Uint8List? _image, String? newName);
   userImage(File? _image, String? newName);
   userDocument( List<File?> _documents);
 }

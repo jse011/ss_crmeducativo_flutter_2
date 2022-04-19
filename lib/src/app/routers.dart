@@ -39,11 +39,11 @@ import 'package:ss_crmeducativo_2/src/domain/entities/anio_academico_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/equipo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/grupo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_capacidad_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_adjunto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/grupo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/lista_grupo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
@@ -280,7 +280,8 @@ class AppRouter {
       return MaterialPageRoute(
         builder: (context) {
           CursosUi? cursosUi = arguments['cursosUi'];
-          return AgendaView(cursosUi);
+          UsuarioUi? usuarioUi = arguments['usuarioUi'];
+          return AgendaView(cursosUi, usuarioUi);
         },
       );
     }else if(settings.name == CERRAR_SESION){
@@ -338,7 +339,7 @@ class AppRouter {
       return MaterialPageRoute(
         builder: (context) {
           CursosUi? cursosUi = arguments['cursosUi'];
-          GrupoUi? grupoUi = arguments['grupoUi'];
+          ListaGrupoUi? grupoUi = arguments['grupoUi'];
           return GrupoView(cursosUi,grupoUi);
         },
       );
@@ -347,8 +348,9 @@ class AppRouter {
       return MaterialPageRoute(
         builder: (context) {
           CursosUi? cursosUi = arguments['cursosUi'];
-          EquipoUi? equipoUi = arguments['equipoUi'];
-          return EquipoView(cursosUi,equipoUi);
+          GrupoUi? equipoUi = arguments['equipoUi'];
+          ListaGrupoUi? listaGrupoUi = arguments['listaGrupoUi'];
+          return EquipoView(cursosUi,equipoUi, listaGrupoUi);
         },
       );
     }
@@ -515,10 +517,11 @@ class AppRouter {
   }
 
 
-  static Future<dynamic> showAgendaPortalView(BuildContext context, CursosUi? cursosUi) {
+  static Future<dynamic> showAgendaPortalView(BuildContext context, CursosUi? cursosUi, UsuarioUi? usuarioUi) {
     return Navigator.pushNamed(context,
         AGENDA_PORTAL,
-        arguments: {'cursosUi': cursosUi
+        arguments: {'cursosUi': cursosUi,
+          'usuarioUi': usuarioUi
         }
     );
   }
@@ -548,7 +551,7 @@ class AppRouter {
   }
 
 
-  static Future<dynamic> showTiposCrearGruposView(BuildContext context, CursosUi? cursosUi, GrupoUi? grupoUi) {
+  static Future<dynamic> showTiposCrearGruposView(BuildContext context, CursosUi? cursosUi, ListaGrupoUi? grupoUi) {
     return Navigator.pushNamed(context,
         TIPOS_CREAR_GRUPOS,
         arguments: {
@@ -558,12 +561,13 @@ class AppRouter {
     );
   }
 
-  static Future<dynamic> showTiposCrearEquiposView(BuildContext context, CursosUi? cursosUi, EquipoUi? equipoUi) {
+  static Future<dynamic> showTiposCrearEquiposView(BuildContext context, CursosUi? cursosUi, GrupoUi? equipoUi, ListaGrupoUi? listaGrupoUi) {
     return Navigator.pushNamed(context,
         TIPOS_CREAR_EQUIPOS,
         arguments: {
           'cursosUi': cursosUi,
-          'equipoUi': equipoUi
+          'equipoUi': equipoUi,
+          'listaGrupoUi': listaGrupoUi
         }
     );
   }

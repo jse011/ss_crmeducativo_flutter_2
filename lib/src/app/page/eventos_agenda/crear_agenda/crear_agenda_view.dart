@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -573,11 +574,13 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
                                                                 }else{
                                                                   filteredUsers = controller.personasUiList
                                                                       .where((u){
-                                                                    if(u is PersonaUi){
-                                                                      return u.nombreCompleto?.toLowerCase().contains(string.toLowerCase())??false;
+
+                                                                    if(u is EventoPersonaUi){
+                                                                      return u.personaUi?.nombreCompleto?.toLowerCase().contains(string.toLowerCase())??false;
                                                                     }else{
                                                                       return false;
                                                                     }
+
                                                                   }).toList();
                                                                 }
 
@@ -1464,6 +1467,11 @@ class _CrearAgendaViewState extends ViewState<CrearAgendaView, CrearAgendaContro
       controller.addEventoAdjunto(_documents, null);
 
     }
+  }
+
+  @override
+  userCrop(Uint8List? _image, String? newName) {
+
   }
 
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +20,7 @@ import 'package:ss_crmeducativo_2/src/app/utils/hex_color.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/ars_progress.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/dropdown_formfield_2.dart';
 import 'package:ss_crmeducativo_2/src/app/widgets/image_picker/image_picker_handler.dart';
+import 'package:ss_crmeducativo_2/src/app/widgets/preview_image_view.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
@@ -426,39 +428,44 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
                             child: Row(
                               children: [
                                 Padding(padding: EdgeInsets.all(16)),
-                                Container(
-                                    width: 48,
-                                    height: 48,
-                                    margin: EdgeInsets.only(right: 0, left: 0, top: 0, bottom: 0),
-                                    child:    CachedNetworkImage(
-                                      placeholder: (context, url) => SizedBox(
-                                        child: Shimmer.fromColors(
-                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                          highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
-                                          child: Container(
-                                            padding: EdgeInsets.all(6),
-                                            decoration: BoxDecoration(
-                                                color: AppTheme.grey,
-                                                borderRadius: BorderRadius.all(Radius.circular(16)),
-                                            ),
-                                            alignment: Alignment.center,
-                                          ),
-                                        ),
-                                      ),
-                                      imageUrl: o.foto??"",
-                                      errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 38,),
-                                      imageBuilder: (context, imageProvider) =>
-                                          Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(16)),
-                                                image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )
-                                          ),
-                                    ),
-                                ),
+                               InkWell(
+                                 onTap: (){
+                                   Navigator.of(context).push(PreviewImageView.createRoute(o.foto));
+                                 },
+                                 child:  Container(
+                                   width: 48,
+                                   height: 48,
+                                   margin: EdgeInsets.only(right: 0, left: 0, top: 0, bottom: 0),
+                                   child:    CachedNetworkImage(
+                                     placeholder: (context, url) => SizedBox(
+                                       child: Shimmer.fromColors(
+                                         baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                         highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                         child: Container(
+                                           padding: EdgeInsets.all(6),
+                                           decoration: BoxDecoration(
+                                             color: AppTheme.grey,
+                                             borderRadius: BorderRadius.all(Radius.circular(16)),
+                                           ),
+                                           alignment: Alignment.center,
+                                         ),
+                                       ),
+                                     ),
+                                     imageUrl: o.foto??"",
+                                     errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 38,),
+                                     imageBuilder: (context, imageProvider) =>
+                                         Container(
+                                             decoration: BoxDecoration(
+                                               borderRadius: BorderRadius.all(Radius.circular(16)),
+                                               image: DecorationImage(
+                                                 image: imageProvider,
+                                                 fit: BoxFit.cover,
+                                               ),
+                                             )
+                                         ),
+                                   ),
+                                 ),
+                               ),
                                 Padding(padding: EdgeInsets.all(8)),
                                 InkWell(
                                   onTap: (){
@@ -752,6 +759,16 @@ class FotoAlumnoViewState extends ViewState<FotoAlumnoView, FotoAlumnoController
         barrierColor: Colors.transparent,
         transitionDuration:
         const Duration(milliseconds: 150));
+  }
+
+  @override
+  userCrop(Uint8List? _image, String? newName) {
+    if(globalKey.currentContext!=null){
+      FotoAlumnoController controller =
+      FlutterCleanArchitecture.getController<FotoAlumnoController>(globalKey.currentContext!, listen: false);
+      controller.updateImageCrop(_image);
+
+    }
   }
 
 }

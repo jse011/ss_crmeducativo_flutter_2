@@ -979,6 +979,7 @@ class _CursoListaViewState extends ViewState<SesionListaView, SesionListaControl
                                           ),
                                         ),
                                         Padding(padding: EdgeInsets.all(4)),
+                                        if(false)
                                         InkWell(
                                           onTap: (){
                                             if(!controller.progressFirebase){

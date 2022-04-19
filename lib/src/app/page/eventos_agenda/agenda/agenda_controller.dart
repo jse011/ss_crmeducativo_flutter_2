@@ -3,12 +3,14 @@ import 'package:ss_crmeducativo_2/src/app/page/eventos_agenda/agenda/agenda_pres
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_eventoUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/agenda_evento_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 
 class AgendaController extends Controller{
   CursosUi? cursosUi;
+  UsuarioUi? usuarioUi;
   AgendaPresenter _presenter;
   List<EventoUi> _eventoUiList = [];
   List<EventoUi> get eventoUiList => _eventoUiList;
@@ -24,7 +26,7 @@ class AgendaController extends Controller{
   bool _dialogAdjuntoDownload = false;
   bool get dialogAdjuntoDownload => _dialogAdjuntoDownload;
 
-  AgendaController(this.cursosUi, AgendaEventoRepository agendaEventoRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo):
+  AgendaController(this.cursosUi, this.usuarioUi, AgendaEventoRepository agendaEventoRepo, ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo):
         this._presenter = AgendaPresenter(agendaEventoRepo, configuracionRepo, httpDatosRepo);
 
   @override

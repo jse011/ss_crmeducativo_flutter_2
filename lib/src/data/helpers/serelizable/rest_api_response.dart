@@ -1464,7 +1464,7 @@ class CriterioRubroEvaluacionSerial {
 @JsonSerializable()
 class EquipoEvaluacionProcesoSerial {
 
-  String? equipoEvaluacionProcesoId;
+  String? equipoEvalProcesoId;
   String? rubroEvalProcesoId;
   int? sesionAprendizajeId;
   String? equipoId;
@@ -1479,18 +1479,18 @@ class EquipoEvaluacionProcesoSerial {
   String? key;
 
   EquipoEvaluacionProcesoSerial(
-      this.equipoEvaluacionProcesoId,
-      this.rubroEvalProcesoId,
-      this.sesionAprendizajeId,
-      this.equipoId,
-      this.nota,
-      this.escala,
-      this.valorTipoNotaId,
-      this.usuarioCreacionId,
-      this.fechaCreacion,
-      this.usuarioAccionId,
-      this.fechaAccion,
-      this.key);
+  {  this.equipoEvalProcesoId,
+    this.rubroEvalProcesoId,
+    this.sesionAprendizajeId,
+    this.equipoId,
+    this.nota,
+    this.escala,
+    this.valorTipoNotaId,
+    this.usuarioCreacionId,
+    this.fechaCreacion,
+    this.usuarioAccionId,
+    this.fechaAccion,
+    this.key});
 
   factory EquipoEvaluacionProcesoSerial.fromJson(Map<String, dynamic> json) => _$EquipoEvaluacionProcesoSerialFromJson(json);
 
@@ -1503,7 +1503,7 @@ class RubroEvaluacionProcesoIntegranteSerial {
   int? personaId;
 
   RubroEvaluacionProcesoIntegranteSerial(
-      this.rubroEvaluacionEquipoId, this.personaId);
+  {this.rubroEvaluacionEquipoId, this.personaId});
 
   factory RubroEvaluacionProcesoIntegranteSerial.fromJson(Map<String, dynamic> json) => _$RubroEvaluacionProcesoIntegranteSerialFromJson(json);
 
@@ -1515,6 +1515,7 @@ class RubroEvaluacionProcesoEquipoSerial {
   String? equipoId;
   String? nombreEquipo;
   String? rubroEvalProcesoId;
+  int? orden;
 
   int? usuarioCreacionId;
   int?fechaCreacion;
@@ -1523,15 +1524,16 @@ class RubroEvaluacionProcesoEquipoSerial {
   String? key;
 
   RubroEvaluacionProcesoEquipoSerial(
-      this.rubroEvaluacionEquipoId,
+      {this.rubroEvaluacionEquipoId,
       this.equipoId,
       this.nombreEquipo,
       this.rubroEvalProcesoId,
       this.usuarioCreacionId,
+      this.orden,
       this.fechaCreacion,
       this.usuarioAccionId,
       this.fechaAccion,
-      this.key);
+      this.key});
 
   factory RubroEvaluacionProcesoEquipoSerial.fromJson(Map<String, dynamic> json) => _$RubroEvaluacionProcesoEquipoSerialFromJson(json);
 
@@ -2789,4 +2791,126 @@ class InstrumetosFirebaseSerial {
 
   Map<String, dynamic> toJson() => _$InstrumetosFirebaseSerialToJson(this);
 }
+
+@JsonSerializable()
+class EquipoSerial {
+
+  String? equipoId;
+  String? grupoEquipoId;
+  String? nombre;
+  int? orden;
+  String? foto;
+  int? estado;
+
+  int? usuarioCreacionId;
+  int?fechaCreacion;
+  int? usuarioAccionId;
+  int?fechaAccion;
+  String? key;
+  int? syncFlag;
+
+
+  EquipoSerial(
+      {this.equipoId,
+      this.grupoEquipoId,
+        this.nombre,
+      this.orden,
+      this.foto,
+      this.estado,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      this.key,
+      this.syncFlag});
+
+  factory EquipoSerial.fromJson(Map<String, dynamic> json) => _$EquipoSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EquipoSerialToJson(this);
+}
+
+@JsonSerializable()
+class GrupoEquipoSerial {
+
+  String? grupoEquipoId;
+  int? tipoId;
+  String? nombre;
+  int? cargaAcademicaId;
+  int? cargaCursoId;
+  int? docenteId;
+  int? estado;
+  String? color1;
+  String? color2;
+  String? color3;
+  String? path;
+  String? cursoNombre;
+
+  int? usuarioCreacionId;
+  int?fechaCreacion;
+  int? usuarioAccionId;
+  int?fechaAccion;
+  String? key;
+  int? syncFlag;
+
+
+  GrupoEquipoSerial(
+      {this.grupoEquipoId,
+      this.tipoId,
+      this.nombre,
+      this.cargaAcademicaId,
+      this.cargaCursoId,
+      this.docenteId,
+      this.estado,
+        this.color1,
+        this.path,
+        this.color2,
+        this.color3,
+        this.cursoNombre,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      this.key,
+      this.syncFlag});
+
+  factory GrupoEquipoSerial.fromJson(Map<String, dynamic> json) => _$GrupoEquipoSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GrupoEquipoSerialToJson(this);
+}
+
+@JsonSerializable()
+class IntegranteEquipoSerial {
+
+  String? equipoIntegranteId;
+  String? equipoId;
+  int? alumnoId;
+  String? nombre;
+  String? foto;
+
+  int? usuarioCreacionId;
+  int?fechaCreacion;
+  int? usuarioAccionId;
+  int?fechaAccion;
+  String? key;
+  int? syncFlag;
+
+
+  IntegranteEquipoSerial(
+      {this.equipoIntegranteId,
+      this.equipoId,
+      this.alumnoId,
+      this.nombre,
+      this.foto,
+      this.usuarioCreacionId,
+      this.fechaCreacion,
+      this.usuarioAccionId,
+      this.fechaAccion,
+      this.key,
+      this.syncFlag});
+
+  factory IntegranteEquipoSerial.fromJson(Map<String, dynamic> json) => _$IntegranteEquipoSerialFromJson(json);
+
+  Map<String, dynamic> toJson() => _$IntegranteEquipoSerialToJson(this);
+}
+
 

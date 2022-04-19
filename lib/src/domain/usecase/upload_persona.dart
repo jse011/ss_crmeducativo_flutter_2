@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
@@ -13,9 +14,9 @@ class UploadPersona{
 
   UploadPersona(this.configuracionRepository, this.httpDatosRepository);
 
-  Future<HttpStream?> execute(PersonaUi? personaUi, File? foto, bool soloCambiarFoto, bool removeFoto, UploadProgressListen listen, UploadSuccessListen successListen) async{
+  Future<HttpStream?> execute(PersonaUi? personaUi, FileFoto? fileFoto, bool soloCambiarFoto, bool removeFoto, UploadProgressListen listen, UploadSuccessListen successListen) async{
     String urlServidorLocal = await configuracionRepository.getSessionUsuarioUrlServidor();
-    return httpDatosRepository.uploadFilePersona(urlServidorLocal, personaUi, foto, soloCambiarFoto, removeFoto,(progress) {
+    return httpDatosRepository.uploadFilePersona(urlServidorLocal, personaUi, fileFoto, soloCambiarFoto, removeFoto,(progress) {
       listen.call(progress);
     }, (sucess, value){
       if(sucess){
@@ -34,6 +35,7 @@ class UploadPersona{
     });
 
   }
+
 
 }
 

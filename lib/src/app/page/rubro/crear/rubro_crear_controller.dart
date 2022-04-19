@@ -10,6 +10,12 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_u
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/dialog_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/grupo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/integrante_grupo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/lista_grupo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_eval_equipo_integrante_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_equipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -21,6 +27,7 @@ import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/crear_server_rubro_evaluacion.dart';
+import 'package:collection/collection.dart';
 
 class RubroCrearController extends Controller{
   bool modoOnline;//se usa cuando se crea un rubro desde la tarea
@@ -68,6 +75,9 @@ class RubroCrearController extends Controller{
   List<double> _tableTipoNotacolumnWidths = [];
   List<double> get tableTipoNotacolumnWidths => _tableTipoNotacolumnWidths;
 
+  ListaGrupoUi? _listaGruposUi = null;
+  ListaGrupoUi? get listaGruposUi => _listaGruposUi;
+
   String? _tituloCriterio = null;
   String? get tituloCriterio => _tituloCriterio;
   List<TemaCriterioUi> _temaCriterioEditList = [];
@@ -85,7 +95,10 @@ class RubroCrearController extends Controller{
   bool get dialogReintentar => _dialogReintentar;
   bool _dialogReintentar = false;
   HttpStream? _cancelSaveRubro = null;
-
+  List<PersonaUi> _personaUiList = [];
+  List<PersonaUi> get personaUiList => _personaUiList;
+  bool _update = false;
+  bool get update => _update;
 
       RubroCrearController(this.cursosUi, this.calendarioPeriodoUI, this.rubricaEvaluacionUi, this.sesionUi, this.tareaUi, this.modoOnline,rubroRepo, usuarioRepo, httpDatosRepo): presenter = new RubroCrearPresenter(rubroRepo,usuarioRepo, httpDatosRepo);
 
@@ -222,6 +235,39 @@ class RubroCrearController extends Controller{
     };
 
 
+    presenter.getAlumnoCursoError = (e){
+      _personaUiList = [];
+    };
+
+    presenter.getAlumnoCursoComplete = (List<PersonaUi>? personaUiList){
+      _personaUiList = personaUiList??[];
+      if(_update){
+        _listaGruposUi = ListaGrupoUi();
+        _listaGruposUi?.grupoUiList = [];
+
+        for(RubricaEvaluacionEquipoUi rubricaEquipoUi in rubricaEvaluacionUi?.equipoUiList??[]){
+          GrupoUi grupoUi = GrupoUi();
+          grupoUi.equipoId = rubricaEquipoUi.rubroEvaluacionEquipoId;
+          grupoUi.nombre = rubricaEquipoUi.nombreEquipo;
+          grupoUi.posicion = rubricaEquipoUi.orden;
+          grupoUi.integranteUiList = [];
+          for(RubricaEvalEquipoIntegranteUi item in rubricaEquipoUi.integrantesUiList??[]){
+            IntegranteGrupoUi integranteGrupoUi = IntegranteGrupoUi();
+            integranteGrupoUi.grupoUi = grupoUi;
+            integranteGrupoUi.equipoIntegranteId = item.rubroEvaluacionEquipoId;
+            PersonaUi? search = personaUiList?.firstWhereOrNull((element) => element.personaId == item.personaId);
+            if(search!=null){
+              integranteGrupoUi.personaUi = search;
+              grupoUi.integranteUiList?.add(integranteGrupoUi);
+            }
+          }
+
+          _listaGruposUi?.grupoUiList?.add(grupoUi);
+        }
+        refreshUI();
+      }
+    };
+
   }
 
 
@@ -312,7 +358,13 @@ class RubroCrearController extends Controller{
     }else if(tareaUi!=null){
       _tituloRubrica = tareaUi?.titulo;
     }
+    if((rubricaEvaluacionUi?.rubroEvaluacionId??"").isEmpty){
+      _update = false;
+    }else{
+      _update = true;
+    }
     //print("getFormaEvaluacion");
+    presenter.getAlumnoCurso(cursosUi);
     super.onInitState();
   }
 
@@ -364,11 +416,22 @@ class RubroCrearController extends Controller{
     }
 
     if(!validarPeso(_tableTipoNotaCells)){
-      _mensaje = "El peso_criterio de los inidicadores erroneos";
+      _mensaje = "Error en el peso de los criterios";
       refreshUI();
       return;
     }
 
+    if(formaEvaluacionUi?.grupal??false){
+      if(_listaGruposUi==null){
+        _mensaje = "Seleccione una lista de grupos";
+        refreshUI();
+        return;
+      }else if((_listaGruposUi?.grupoUiList??[]).isEmpty){
+        _mensaje = "Lista de grupos vacía, seleccione otra lista de grupos";
+        refreshUI();
+        return;
+      }
+    }
     List<CriterioValorTipoNotaUi> criterioValorTipoNotaUiList = [];
     List<CriterioPesoUi> criterioPesoUiList = [];
     for(List<dynamic> list in _tableTipoNotaCells){
@@ -385,8 +448,8 @@ class RubroCrearController extends Controller{
     _errorConexion = false;
     _errorServidor = false;
     refreshUI();
-
-    if(rubricaEvaluacionUi==null || !(rubricaEvaluacionUi?.update??false)){
+    print("rubricaEvaluacionUiupdate: ${update}");
+    if(rubricaEvaluacionUi==null&&!update){
       rubricaEvaluacionUi = RubricaEvaluacionUi();
       rubricaEvaluacionUi?.rubroEvaluacionId = newRubroEvalid;
       rubricaEvaluacionUi?.titulo = tituloRubrica;
@@ -400,14 +463,14 @@ class RubroCrearController extends Controller{
       rubricaEvaluacionUi?.calendarioPeriodoId = calendarioPeriodoUI?.id;
       rubricaEvaluacionUi?.silaboEventoId = cursosUi?.silaboEventoId;
       rubricaEvaluacionUi?.cargaCursoId = cursosUi?.cargaCursoId;
-
+      rubricaEvaluacionUi?.grupoUiList = listaGruposUi?.grupoUiList??[];
       _cancelSaveRubro = await presenter.save(rubricaEvaluacionUi);
     }else{
       rubricaEvaluacionUi?.titulo = tituloRubrica;
       rubricaEvaluacionUi?.criterioPesoUiList = criterioPesoUiList;
       rubricaEvaluacionUi?.criterioValorTipoNotaUiList = criterioValorTipoNotaUiList;
       rubricaEvaluacionUi?.tipoEvaluacionId = tipoEvaluacionUi?.id;
-      rubricaEvaluacionUi?.update = true;
+      rubricaEvaluacionUi?.grupoUiList = listaGruposUi?.grupoUiList??[];
       _cancelSaveRubro = await presenter.update(rubricaEvaluacionUi);
     }
 
@@ -657,6 +720,34 @@ class RubroCrearController extends Controller{
 
   void clearCerraryactualizar() {
     _cerraryactualizar = false;
+  }
+
+  void onSelectedListaGrupo(ListaGrupoUi listaGruposUi) {
+    _listaGruposUi = listaGruposUi.copy();
+
+    GrupoUi grupoUiEmpty = GrupoUi();
+    grupoUiEmpty.nombre = "Alumnos sin grupo";
+    grupoUiEmpty.integranteUiList = [];
+    grupoUiEmpty.posicion = -1;
+    for(PersonaUi personaUi in _personaUiList){
+      if(personaUi.contratoVigente??false){
+        IntegranteGrupoUi integranteGrupoUi = IntegranteGrupoUi();
+        integranteGrupoUi.personaUi = personaUi;
+        integranteGrupoUi.grupoUi = grupoUiEmpty;
+        grupoUiEmpty.integranteUiList?.add(integranteGrupoUi);
+      }
+
+    }
+
+    for(GrupoUi grupoUi in _listaGruposUi?.grupoUiList??[]){
+      for(IntegranteGrupoUi integranteGrupoUi in grupoUi.integranteUiList??[]){
+        grupoUiEmpty.integranteUiList?.removeWhere((element) => element.personaUi?.personaId == integranteGrupoUi.personaUi?.personaId);
+      }
+    }
+    if(grupoUiEmpty.integranteUiList?.isNotEmpty??false){
+      listaGruposUi.grupoUiList?.add(grupoUiEmpty);
+    }
+    refreshUI();
   }
 
 

@@ -3,13 +3,16 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/grupo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/origen_rubro_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 
 import 'evaluacion_trasnformada_ui.dart';
+import 'rubrica_evaluacion_equipo_ui.dart';
 
 class RubricaEvaluacionUi{
   static const int  PESO_BAJO = 1,  PESO_NORMAL = 2, PESO_ALTO= 3, PESO_RUBRO_EXCLUIDO = -1, PESO_SIN_ASIGNAR = 0;
@@ -54,7 +57,8 @@ class RubricaEvaluacionUi{
   double? desviacionEstandar;
   TipoRubroEvaluacion?  tipoRubroEvaluacion;
   int? competenciaId;
-  bool? update;
+  List<GrupoUi>? grupoUiList;//solo para crear rubrica
+  List<RubricaEvaluacionEquipoUi>? equipoUiList;
 
 }
 

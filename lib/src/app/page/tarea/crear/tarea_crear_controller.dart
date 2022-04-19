@@ -29,7 +29,7 @@ class TareaCrearController extends Controller{
   String? get tituloTarea => _tituloTarea;
   String? _instruccionesTarea = null;
   String? get instruccionesTarea => _instruccionesTarea;
-  DateTime? _fechaTarea = null;
+  DateTime? _fechaTarea = DateTime.now();
   DateTime? get fechaTarea => _fechaTarea;
   String? _horaTarea = null;
   String? get horaTarea => _horaTarea;
@@ -72,7 +72,7 @@ class TareaCrearController extends Controller{
       _tituloTarea = tareaUi?.titulo;
       _instruccionesTarea = tareaUi?.instrucciones;
       _horaTarea = tareaUi?.horaTarea;
-      _fechaTarea = tareaUi?.fechaEntregaTime;
+      _fechaTarea = tareaUi?.fechaEntregaTime??DateTime.now();
       _tareaRecursoList = tareaUi?.recursos??[];
       print("_tareaRecursoList: ${tareaUi?.recursos}");
       refreshUI();
@@ -182,7 +182,12 @@ class TareaCrearController extends Controller{
       return false;
     }
 
-
+    if(fechaTarea?.isBefore(DateTime(2000))??true){
+      _mensaje = "Seleccione una fecha de entrega válida";
+      refreshUI();
+      return false;
+    }
+    
     bool subiendo_archivos = false;
     for(var archivos in mapRecurso.entries){
       HttpStream? httpStream = archivos.value;

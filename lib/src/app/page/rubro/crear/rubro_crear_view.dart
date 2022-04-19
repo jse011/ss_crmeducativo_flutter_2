@@ -14,6 +14,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_scrolling.dart';
+import 'package:ss_crmeducativo_2/src/app/page/grupos/lista/lista_grupos_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/crear/rubro_crear_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_column_count.dart';
 import 'package:ss_crmeducativo_2/src/app/utils/app_icon.dart';
@@ -32,6 +33,8 @@ import 'package:ss_crmeducativo_2/src/domain/entities/criterio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/criterio_valor_tipo_nota_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/forma_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/grupo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/integrante_grupo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -573,7 +576,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              !(controller.rubricaEvaluacionUi?.update??false)?'Evaluación':'Editar Evaluación',
+                              !(controller.update)?'Evaluación':'Editar Evaluación',
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -947,10 +950,255 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                       SliverToBoxAdapter(
                         child: showTableTipoNota(controller),
                       ),
+                      if(controller.formaEvaluacionUi?.grupal??false)
                       SliverList(
                           delegate: SliverChildListDelegate([
                             Container(
-                              height: 100,
+                              margin: EdgeInsets.only(
+                                  top: 32
+                              ),
+                              height: 1,
+                              color: AppTheme.colorLine,
+                            ),
+                            !controller.update?
+                            Row(
+                              children: [
+                                Padding(padding: EdgeInsets.only(left: 24, top: 16),
+                                  child:  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      primary: getColorCurso(controller), // background
+                                      onPrimary: Colors.white, // foreground
+                                    ),
+                                    onPressed: () {
+                                      showGrupoEquipo(controller);
+                                    },
+                                    icon: Icon(Icons.group_add, size: 18, color: AppTheme.white,),
+                                    label: Text("SELECCIONAR UNA LISTA DE GRUPO"),
+                                  ),
+                                )
+                              ],
+                            ):Container(),
+
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0),
+                              ),
+                              decoration: BoxDecoration(
+                                //borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 16)),
+                              ),
+                              child: Text("${controller.listaGruposUi?.nombre??""}",
+                                style: TextStyle(
+                                  color: HexColor(controller.cursosUi?.color1),
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 16),
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: AppTheme.fontTTNorms
+                                ),
+                              ),
+                            ),
+                            (controller.listaGruposUi?.grupoUiList??[]).isNotEmpty?
+                            ListView.builder(
+                              padding: EdgeInsets.all(0),
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                GrupoUi? grupoUi =  controller.listaGruposUi?.grupoUiList?[index];
+                                return Container(
+                                  margin: EdgeInsets.only(
+                                    top: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0),
+                                    left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0),
+                                    right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0),
+                                    bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    //borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 16)),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                          top: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 16),
+                                          bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0),
+                                          left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8),
+                                          right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8),
+                                        ),
+                                        child:  Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 16),)),
+                                            Expanded(
+                                              child: Text((){
+
+                                                if((grupoUi?.nombre??"").isEmpty){
+                                                    return "G${grupoUi?.posicion??0}: Grupo ${grupoUi?.posicion??0}";
+                                                }else{
+                                                  if(grupoUi?.posicion==-1){
+                                                    return "${grupoUi?.nombre}";
+                                                  }else{
+                                                    return "G${grupoUi?.posicion??0}: ${grupoUi?.nombre}";
+                                                  }
+                                                }
+
+                                              }(),
+                                                style: TextStyle(
+                                                  fontFamily: AppTheme.fontTTNorms,
+                                                  fontSize: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, (grupoUi?.nombre??"").isNotEmpty?16:14),
+                                                  fontWeight: FontWeight.w700,
+                                                  color: HexColor(controller.cursosUi?.color1),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(padding: EdgeInsets.only(
+                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)
+                                            )),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                          top: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 4),
+                                          left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24),
+                                          right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 16),
+                                          bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0),
+                                        ),
+                                        //padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8)),
+                                        decoration: BoxDecoration(
+                                          //color: AppTheme.white,
+                                          //borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 14)),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 24)
+                                              ),
+                                              child: ListView.builder(
+                                                padding: EdgeInsets.all(0),
+                                                physics: NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                itemCount: grupoUi?.integranteUiList?.length??0,
+                                                itemBuilder: (context, index) {
+                                                  IntegranteGrupoUi? integranteUi =  grupoUi?.integranteUiList?[index];
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      color: (integranteUi?.showMore??false)?AppTheme.grey.withOpacity(0.2):null,
+                                                      borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8)),
+                                                    ),
+                                                    padding: EdgeInsets.only(
+                                                        top: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8),
+                                                        left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8),
+                                                        right: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8)
+                                                    ),
+                                                    margin: EdgeInsets.only(
+                                                        left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 16),
+                                                        bottom: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 0)
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Text("${index+1}.",
+                                                          style: TextStyle(
+                                                            fontFamily: AppTheme.fontTTNorms,
+                                                            fontSize: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 14),
+                                                            fontWeight: FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          width: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 35),
+                                                          height: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 35),
+                                                          margin: EdgeInsets.only(
+                                                              left: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8)
+                                                          ),
+                                                          decoration: BoxDecoration(
+                                                            shape: BoxShape.circle,
+                                                            color: AppTheme.grey,
+                                                          ),
+                                                          child: CachedNetworkImage(
+                                                            placeholder: (context, url) => SizedBox(
+                                                              child: Shimmer.fromColors(
+                                                                baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                                child: Container(
+                                                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                  decoration: BoxDecoration(
+                                                                      color: AppTheme.grey,
+                                                                      shape: BoxShape.circle
+                                                                  ),
+                                                                  alignment: Alignment.center,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            imageUrl: integranteUi?.personaUi?.foto??"",
+                                                            errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded),
+                                                            imageBuilder: (context, imageProvider) =>
+                                                                Container(
+                                                                    decoration: BoxDecoration(
+                                                                      shape: BoxShape.circle,
+                                                                      image: DecorationImage(
+                                                                        image: imageProvider,
+                                                                        fit: BoxFit.scaleDown,
+                                                                      ),
+                                                                    )
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 8))),
+                                                        Expanded(
+                                                          child: Text("${integranteUi?.personaUi?.nombreCompleto??""}",
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                              fontFamily: AppTheme.fontTTNorms,
+                                                              fontSize: ColumnCountProvider.aspectRatioForWidthAgregarCriterios(context, 14),
+                                                              fontWeight: FontWeight.w400,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+
+                                          ],
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),
+                                );
+
+                              },
+                              itemCount: controller.listaGruposUi?.grupoUiList?.length??0,
+                            ):
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: SvgPicture.asset(AppIcon.ic_lista_vacia, width: 150, height: 150,),
+                                ),
+                                Padding(padding: EdgeInsets.all(4)),
+                                Center(
+                                  child: Text("Lista vacía.\nPor favor selecione una lista de grupo",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: AppTheme.grey,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 12
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ])
+                      ),
+                      SliverList(
+                          delegate: SliverChildListDelegate([
+                            Container(
+                              height: 200,
                             )
                           ])
                       ),
@@ -1667,7 +1915,7 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
                   child: Stack(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: 8, right: 16, top: 16, bottom: 0),
+                        padding: EdgeInsets.only(left: 8, right: 16, top: MediaQuery.of(context).padding.top + 20, bottom: 0),
                         child: Row(
                           children: [
                             Padding(
@@ -1850,6 +2098,76 @@ class RubroCrearViewState extends ViewState<RubroCrearView, RubroCrearController
         }).whenComplete((){
             controller.retornoDialogCamposAccion();
         });
+
+
+
+  }
+
+  void showGrupoEquipo(RubroCrearController controller)  {
+    controller.showCamposAccion();
+    FocusScope.of(context).unfocus();
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return StatefulBuilder(
+            builder: (context, dialogState) {
+              return Container(
+                height: MediaQuery.of(context).size.height * 1,
+                child: Container(
+                  padding: EdgeInsets.all(0),
+                  decoration: new BoxDecoration(
+                    color: AppTheme.background,
+                    borderRadius: new BorderRadius.only(
+                      topLeft: const Radius.circular(8.0),
+                      topRight: const Radius.circular(8.0),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 8, right: 16, top: MediaQuery.of(context).padding.top + 20, bottom: 0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 8, left: 0, right: 0),
+                              child:  IconButton(
+                                icon: Icon(Icons.arrow_back_sharp),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                            Expanded(child: Padding(
+                              padding: EdgeInsets.only(top: 16, left: 16, right: 0),
+                              child: Text("Seleccione una lista de grupo", style: TextStyle(
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              ),),
+                            )),
+                          ],
+                        ),
+                      ),
+                     Expanded(
+                         child: ListaGruposView(controller.cursosUi, onCallback: (listaGruposUi){
+                              controller.onSelectedListaGrupo(listaGruposUi);
+                         },)
+                     )
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }).whenComplete((){
+      controller.retornoDialogCamposAccion();
+    });
 
 
 

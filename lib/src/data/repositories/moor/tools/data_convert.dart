@@ -1,5 +1,6 @@
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
+import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/rubro/rubro_evaluacion_proceso_equipo.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
 
 class DataConvert{
@@ -185,6 +186,94 @@ class DataConvert{
     }
     return items;
   }
+
+  static Map<String,dynamic> converEquipo(Equipo2Data data){
+    return  DomainTools.removeNull(EquipoSerial(
+      usuarioCreacionId: data.usuarioCreacionId,
+      fechaCreacion:data.fechaCreacion?.millisecondsSinceEpoch,
+      usuarioAccionId: data.usuarioAccionId,
+      fechaAccion: data.fechaAccion?.millisecondsSinceEpoch,
+      key: data.equipoId,
+      equipoId: data.equipoId,
+      grupoEquipoId: data.grupoEquipoId,
+      estado: data.estado,
+      foto: data.foto,
+      orden: data.orden,
+      syncFlag: data.syncFlag
+    ).toJson());
+  }
+
+  static List<dynamic> converListSerializeEquipo( List<dynamic> dataList){
+    List<dynamic> items = [];
+    for(var item in dataList){
+      items.add(converEquipo(item));
+    }
+    return items;
+  }
+
+  static  List<dynamic> converListSerializeEvaluacionProcesoEquipo(List<dynamic> dataList) {
+    List<dynamic> items = [];
+    for(var item in dataList){
+      items.add(converEvaluacionProcesoEquipo(item));
+    }
+    return items;
+  }
+  static  Map<String,dynamic> converEvaluacionProcesoEquipo(RubroEvaluacionProcesoEquipoData data) {
+    return  DomainTools.removeNull(RubroEvaluacionProcesoEquipoSerial(
+      key: data.rubroEvaluacionEquipoId,
+      rubroEvaluacionEquipoId: data.rubroEvaluacionEquipoId,
+      rubroEvalProcesoId: data.rubroEvalProcesoId,
+      equipoId: data.equipoId,
+      orden: data.orden,
+      nombreEquipo: data.nombreEquipo,
+      usuarioCreacionId: data.usuarioCreacionId,
+      fechaCreacion: data.fechaCreacion?.millisecondsSinceEpoch,
+      usuarioAccionId: data.usuarioAccionId,
+      fechaAccion: data.fechaAccion?.millisecondsSinceEpoch,
+    ).toJson());
+  }
+
+  static  List<dynamic> converListSerializeEvaluacionProcesoIntegrante(List<dynamic> dataList) {
+    List<dynamic> items = [];
+    for(var item in dataList){
+      items.add(converEvaluacionProcesoIntegrante(item));
+    }
+    return items;
+  }
+
+  static Map<String,dynamic> converEvaluacionProcesoIntegrante(RubroEvaluacionProcesoIntegranteData data) {
+    return  DomainTools.removeNull(RubroEvaluacionProcesoIntegranteSerial(
+      personaId: data.personaId,
+      rubroEvaluacionEquipoId: data.rubroEvaluacionEquipoId
+    ).toJson());
+  }
+
+
+  static Map<String,dynamic> converEquipoEvaluacion(EquipoEvaluacionData data) {
+    return  DomainTools.removeNull(EquipoEvaluacionProcesoSerial(
+      key: data.equipoEvaluacionProcesoId,
+      equipoEvalProcesoId: data.equipoEvaluacionProcesoId,
+      equipoId: data.equipoId,
+      rubroEvalProcesoId: data.rubroEvalProcesoId,
+      escala: data.escala,
+      nota: data.nota,
+      sesionAprendizajeId: data.sesionAprendizajeId,
+      valorTipoNotaId: data.valorTipoNotaId,
+      usuarioCreacionId: data.usuarioCreacionId,
+      fechaCreacion: data.fechaCreacion?.millisecondsSinceEpoch,
+      usuarioAccionId: data.usuarioAccionId,
+      fechaAccion: data.fechaAccion?.millisecondsSinceEpoch,
+    ).toJson());
+  }
+
+  static  List<dynamic> converListSerializeEquipoEvaluacion(List<dynamic> dataList) {
+    List<dynamic> items = [];
+    for(var item in dataList){
+      items.add(converEquipoEvaluacion(item));
+    }
+    return items;
+  }
+
 
 
 

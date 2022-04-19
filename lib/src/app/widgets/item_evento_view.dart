@@ -23,7 +23,7 @@ import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 
 class ItemEventoView extends StatefulWidget{
   EventoUi? eventoUi;
-  bool? tipoEditar;
+  bool? tipoEditar2;
   OnClickMoreEventoAdjuntoDowload? onClickMoreEventoAdjuntoDowload;
   OnClickPreview? onClickPreview;
   OnClickPreviewComplejo? onClickPreviewComplejo;
@@ -32,7 +32,7 @@ class ItemEventoView extends StatefulWidget{
   OnClickPublicar? onClickPublicar;
   OnClickMegusta? onClickMegusta;
   Color? color;
-  ItemEventoView(this.eventoUi, {this.tipoEditar, this.onClickMoreEventoAdjuntoDowload, this.onClickPreview, this.onClickPreviewComplejo, this.onClickEditar, this.onClickMegusta, this.onClickEliminar, this.onClickPublicar, this.color = const Color(0XFF71bb74)});
+  ItemEventoView(this.eventoUi, {this.tipoEditar2, this.onClickMoreEventoAdjuntoDowload, this.onClickPreview, this.onClickPreviewComplejo, this.onClickEditar, this.onClickMegusta, this.onClickEliminar, this.onClickPublicar, this.color = const Color(0XFF71bb74)});
 
   @override
   State<StatefulWidget> createState()  => _ItemEventoState();
@@ -55,12 +55,12 @@ class _ItemEventoState extends State<ItemEventoView>{
                right: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 24),
                bottom: ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 32)),
            padding: EdgeInsets.only(
-               top: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
-               left: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
-               right: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0,
-               bottom: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)? 8 : 0
+               top: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar2??false)? 8 : 0,
+               left: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar2??false)? 8 : 0,
+               right: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar2??false)? 8 : 0,
+               bottom: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar2??false)? 8 : 0
            ),
-           decoration: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false) ? BoxDecoration(
+           decoration: widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar2??false) ? BoxDecoration(
                borderRadius: BorderRadius.circular(ColumnCountProvider.aspectRatioForWidthButtonPortalAgenda(context, 16)),
                color: widget.color?.withOpacity(0.5),
              boxShadow: [
@@ -74,7 +74,7 @@ class _ItemEventoState extends State<ItemEventoView>{
            ):null,
            child: Column(
              children: [
-              widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar??false)?
+              widget.eventoUi?.tipoEventoUi?.tipo == EventoIconoEnumUI.AGENDA && (widget.tipoEditar2??false)?
                  Container(
                    margin: EdgeInsets.only(top:8, bottom: 8),
                    child:  Row(

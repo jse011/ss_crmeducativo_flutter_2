@@ -19,14 +19,12 @@ class HomePresenter extends Presenter{
   late Function updateContactoDocenteoOnError, updateContactoDocenteOnComplete;
   UpdateUsuario _updateUsuario;
   late Function updateUsuarioOnError, updateUsuarioOnComplete;
-  CerrarSession _cerrarSession;
   GetServerIcono _getServerIcono;
 
   HomePresenter(ConfiguracionRepository configuracionRepo, HttpDatosRepository httpDatosRepo)
       :  _validarUsuario = ValidarUsuario(configuracionRepo), getSessionUsuario = new GetSessionUsuarioCase(configuracionRepo),
         _updateContactoDocente = UpdateContactoDocente(configuracionRepo, httpDatosRepo),
         _getServerIcono = GetServerIcono(configuracionRepo),
-        _cerrarSession = CerrarSession(configuracionRepo),
         _updateUsuario = UpdateUsuario(configuracionRepo, httpDatosRepo);
 
   @override
@@ -52,10 +50,6 @@ class HomePresenter extends Presenter{
 
   void updateUsuario(){
     _updateUsuario.execute(_UpdateUsuarioCase(this), UpdateUsuarioParams());
-  }
-
-  Future<bool> cerrarCesion() {
-    return _cerrarSession.execute();
   }
 
   Future<String?> getIconoServidor() => _getServerIcono.execute();

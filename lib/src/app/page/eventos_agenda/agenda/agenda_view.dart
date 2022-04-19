@@ -23,17 +23,18 @@ import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_adjunto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evento_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_recursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 
 import 'agenda_controller.dart';
 
 class AgendaView extends View{
   CursosUi? cursosUi;
-
-  AgendaView(this.cursosUi);
+  UsuarioUi? usuarioUi;
+  AgendaView(this.cursosUi, this.usuarioUi);
 
   @override
-  _AgendaViewState createState() => _AgendaViewState(this.cursosUi);
+  _AgendaViewState createState() => _AgendaViewState(this.cursosUi, this.usuarioUi);
 
 }
 
@@ -41,7 +42,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
   late final ScrollController scrollController = ScrollController();
   late double topBarOpacity = 0.0;
   
-  _AgendaViewState(CursosUi? cursosUi) : super(AgendaController(cursosUi, MoorAgendaEventoRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
+  _AgendaViewState(CursosUi? cursosUi, UsuarioUi? usuarioUi) : super(AgendaController(cursosUi, usuarioUi,MoorAgendaEventoRepository(), MoorConfiguracionRepository(), DeviceHttpDatosRepositorio()));
 
   @override
   void initState() {
@@ -512,7 +513,7 @@ class _AgendaViewState extends ViewState<AgendaView, AgendaController> with Tick
 
                               return ItemEventoView(eventoUi,
                                 color: controller.cursosUi!=null?HexColor(controller.cursosUi?.color1):Color(0XFF71bb74),
-                                tipoEditar: true,
+                                tipoEditar2:  eventoUi.usuarioId == controller.usuarioUi?.usuarioId,
                                 onClickMoreEventoAdjuntoDowload:(eventoUi) {
                                   controller.onClickMoreEventoAdjuntoDowload(eventoUi);
                                 },

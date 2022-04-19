@@ -1,4 +1,5 @@
 
+import 'package:drift/src/runtime/data_class.dart';
 import 'package:ss_crmeducativo_2/src/data/helpers/serelizable/rest_api_response.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/database/app_database.dart';
 import 'package:ss_crmeducativo_2/src/data/repositories/moor/model/tarea/tarea_eval_detalle.dart';
@@ -1734,6 +1735,154 @@ class SerializableConvert{
     Iterable l = model;
     for(var item in l){
       items.add(converSerializeTareaEvalDetalle(item));
+    }
+    return items;
+  }
+
+  static GrupoEquipo2Data converSerializeGrupoEquipo(Map<String,dynamic> model){
+    GrupoEquipoSerial serial = GrupoEquipoSerial.fromJson(model);
+    return GrupoEquipo2Data(
+        grupoEquipoId: serial.grupoEquipoId??"",
+        cargaAcademicaId: serial.cargaAcademicaId,
+        cargaCursoId:serial.cargaCursoId,
+        docenteId: serial.docenteId,
+        estado: serial.estado,
+        nombre: serial.nombre,
+        tipoId: serial.tipoId,
+        color1: serial.color1,
+        color2: serial.color2,
+        color3: serial.color3,
+        path: serial.path,
+        cursoNombre: serial.cursoNombre,
+        usuarioCreacionId: serial.usuarioCreacionId,
+        fechaCreacion: DateTime.fromMillisecondsSinceEpoch(serial.fechaCreacion??0),
+        usuarioAccionId: serial.usuarioAccionId,
+        fechaAccion: DateTime.fromMillisecondsSinceEpoch(serial.fechaAccion??0),
+    );
+  }
+
+  static List<GrupoEquipo2Data> converListSerializeGrupoEquipo(dynamic model){
+    List<GrupoEquipo2Data> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeGrupoEquipo(item));
+    }
+    return items;
+  }
+
+  static Equipo2Data converSerializeEquipo(Map<String,dynamic> model){
+    EquipoSerial serial = EquipoSerial.fromJson(model);
+    return Equipo2Data(
+        equipoId: serial.equipoId??"",
+        nombre: serial.nombre,
+        grupoEquipoId: serial.grupoEquipoId,
+        foto: serial.foto,
+        orden: serial.orden,
+        estado: serial.estado,
+        usuarioCreacionId: serial.usuarioCreacionId,
+        fechaCreacion: DateTime.fromMillisecondsSinceEpoch(serial.fechaCreacion??0),
+        usuarioAccionId: serial.usuarioAccionId,
+        fechaAccion: DateTime.fromMillisecondsSinceEpoch(serial.fechaAccion??0),
+    );
+  }
+
+  static List<Equipo2Data> converListSerializeEquipo(dynamic model){
+    List<Equipo2Data> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeEquipo(item));
+    }
+    return items;
+  }
+
+  static IntegranteEquipo2Data converSerializeIntegranteEquipo(Map<String,dynamic> model){
+    IntegranteEquipoSerial serial = IntegranteEquipoSerial.fromJson(model);
+    return IntegranteEquipo2Data(
+        equipoIntegranteId: serial.equipoIntegranteId??"",
+        equipoId: serial.equipoId,
+        foto: serial.foto,
+        alumnoId: serial.alumnoId,
+        nombre: serial.nombre,
+        fechaCreacion: DateTime.fromMillisecondsSinceEpoch(serial.fechaCreacion??0),
+        fechaAccion: DateTime.fromMillisecondsSinceEpoch(serial.fechaAccion??0),
+        usuarioCreacionId: serial.usuarioCreacionId,
+        usuarioAccionId: serial.usuarioAccionId,
+    );
+  }
+
+  static List<IntegranteEquipo2Data> converListSerializeIntegranteEquipo(dynamic model){
+    List<IntegranteEquipo2Data> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeIntegranteEquipo(item));
+    }
+    return items;
+  }
+
+  static EquipoEvaluacionData converSerializeEvaluacionEquipo(Map<String,dynamic> model){
+    EquipoEvaluacionProcesoSerial serial = EquipoEvaluacionProcesoSerial.fromJson(model);
+    return EquipoEvaluacionData(
+      equipoEvaluacionProcesoId: serial.equipoEvalProcesoId??"",
+      equipoId: serial.equipoId,
+      rubroEvalProcesoId: serial.rubroEvalProcesoId,
+      escala: serial.escala,
+      nota: serial.nota,
+      sesionAprendizajeId: serial.sesionAprendizajeId,
+      valorTipoNotaId: serial.valorTipoNotaId,
+      usuarioCreacionId: serial.usuarioCreacionId,
+      fechaCreacion: DateTime.fromMillisecondsSinceEpoch(serial.fechaCreacion??0),
+      usuarioAccionId: serial.usuarioAccionId,
+      fechaAccion: DateTime.fromMillisecondsSinceEpoch(serial.fechaAccion??0),
+    );
+  }
+
+  static List<EquipoEvaluacionData> converListSerializeEvaluacionEquipo(dynamic model){
+    List<EquipoEvaluacionData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeEvaluacionEquipo(item));
+    }
+    return items;
+  }
+
+
+  static RubroEvaluacionProcesoEquipoData converSerializeRubroEvaluacionProcesoEquipo(Map<String,dynamic> model){
+    RubroEvaluacionProcesoEquipoSerial serial = RubroEvaluacionProcesoEquipoSerial.fromJson(model);
+    return RubroEvaluacionProcesoEquipoData(
+      rubroEvaluacionEquipoId: serial.rubroEvaluacionEquipoId??"",
+      rubroEvalProcesoId: serial.rubroEvalProcesoId,
+      equipoId: serial.equipoId,
+      orden: serial.orden,
+      nombreEquipo: serial.nombreEquipo,
+      usuarioCreacionId: serial.usuarioCreacionId,
+      fechaCreacion: DateTime.fromMillisecondsSinceEpoch(serial.fechaCreacion??0),
+      usuarioAccionId: serial.usuarioAccionId,
+      fechaAccion: DateTime.fromMillisecondsSinceEpoch(serial.fechaAccion??0),
+    );
+  }
+
+  static List<RubroEvaluacionProcesoEquipoData> converListSerializeRubroEvaluacionProcesoEquipo(dynamic model){
+    List<RubroEvaluacionProcesoEquipoData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeRubroEvaluacionProcesoEquipo(item));
+    }
+    return items;
+  }
+
+  static RubroEvaluacionProcesoIntegranteData converSerializeRubroEvaluacionProcesoIntegrante(Map<String,dynamic> model){
+    RubroEvaluacionProcesoIntegranteSerial serial = RubroEvaluacionProcesoIntegranteSerial.fromJson(model);
+    return RubroEvaluacionProcesoIntegranteData(
+        personaId: serial.personaId??0,
+        rubroEvaluacionEquipoId: serial.rubroEvaluacionEquipoId??""
+    );
+  }
+
+  static List<RubroEvaluacionProcesoIntegranteData> converListSerializeRubroEvaluacionProcesoIntegrante(dynamic model){
+    List<RubroEvaluacionProcesoIntegranteData> items = [];
+    Iterable l = model;
+    for(var item in l){
+      items.add(converSerializeRubroEvaluacionProcesoIntegrante(item));
     }
     return items;
   }

@@ -633,16 +633,18 @@ class _EvaluacionCapacidadViewState extends ViewState<EvaluacionCapacidadView, E
                                             ),
                                           ),
                                         ),
-                                        Text(
-                                          controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 3,
-                                          style: TextStyle(
-                                            fontFamily: AppTheme.fontTTNorms,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16),
-                                            height: 1.5,
-                                            color: AppTheme.darkerText,
+                                        Expanded(
+                                          child:  Text(
+                                            controller.evaluacionCapacidadUi.personaUi?.nombreCompleto??"",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 3,
+                                            style: TextStyle(
+                                              fontFamily: AppTheme.fontTTNorms,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: ColumnCountProvider.aspectRatioForWidthTableEvalCapacidad(context, 16),
+                                              height: 1.5,
+                                              color: AppTheme.darkerText,
+                                            ),
                                           ),
                                         )
                                       ]

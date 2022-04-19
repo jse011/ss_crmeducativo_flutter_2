@@ -13,6 +13,11 @@ class UpdateEvaluacion {
     return repository.updateEvaluacion(rubricaEvaluacionUi, alumnoId, usuarioId);
   }
 
+  Future<void> executeEquipo(RubricaEvaluacionUi? rubricaEvaluacionUi, String? equipoId) async {
+    int usuarioId = await configuracionRepository.getSessionUsuarioId();
+    return repository.updateEvalEquipo(rubricaEvaluacionUi, equipoId, usuarioId);
+  }
+
 }
 
 

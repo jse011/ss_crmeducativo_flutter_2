@@ -1,0 +1,14 @@
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_tarea_alumnoUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
+
+import 'evaluacion_trasnformada_ui.dart';
+
+class EvaluacionTareaAlumnoUi {
+  RubricaEvaluacionTareaAlumnoUi? rubricaEvaluacionTareaAlumnoUi;
+  bool? toggle;
+  EvaluacionUi? evaluacionUi;
+
+
+}

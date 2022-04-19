@@ -27,7 +27,7 @@ class DomainTools {
   static String f_fecha_letras(DateTime? timesTamp) {
     String mstr_fecha = "";
     if (timesTamp != null) {
-      var vobj_days = ["Dom", "Lun", "Mart", "Mié", "Jue", "Vie", "Sáb"];
+      var vobj_days = [ "Lun", "Mart", "Mié", "Jue", "Vie", "Sáb","Dom"];//Solo para flutter el dom es 7
       var vobj_Meses = [
         "Ene.",
         "Feb.",
@@ -47,6 +47,7 @@ class DomainTools {
       int month = timesTamp.month; // Jan = 0, dec = 11
       int dayOfMonth = timesTamp.day;
       int dayOfWeek = timesTamp.weekday;
+
       mstr_fecha =
           vobj_days[dayOfWeek - 1] + " " + dayOfMonth.toString() + " de " +
               vobj_Meses[month - 1];

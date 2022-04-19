@@ -21,16 +21,26 @@ class GetRubroEvaluacion extends UseCase<GetRubroEvaluacionResponse, GetRubroEva
     try{
 
       RubricaEvaluacionUi rubricaEvaluacionUi =  await repository.getRubroEvaluacion(params?.rubroEvaluacionId);
-      print("rubroEvaluacionUi2: ${rubricaEvaluacionUi.evaluacionUiList?.length}");
+      print("rubroEvaluacionUi2: ${rubricaEvaluacionUi.titulo}");
       /*Obtner alumnos*/
       List<PersonaUi> alumnoCursoList = await configuracionRepository.getListAlumnoCurso(params?.cargaCursoId??0);
-/*
-      List<PersonaUi> personaUiList = [];
-      for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
-        PersonaUi? personaUi = personaUiList.firstWhereOrNull((element) => element.personaId == evaluacionUi.alumnoId);
-        if(personaUi==null)personaUiList.add(evaluacionUi.personaUi!);
-      }
 
+      List<PersonaUi> personaUiListDesavilitadas = [];
+      for(PersonaUi personaUi in alumnoCursoList){
+        if(!(personaUi.contratoVigente??false)){
+          personaUiListDesavilitadas.add(personaUi);
+        }
+      }
+      for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
+        PersonaUi? personaUi = personaUiListDesavilitadas.firstWhereOrNull((element) => element.personaId == evaluacionUi.personaUi?.personaId);
+        if(personaUi!=null && !(personaUi.contratoVigente??false)){
+          personaUiListDesavilitadas.remove(personaUi);
+        }
+      }
+      for(PersonaUi personaUi in personaUiListDesavilitadas){
+        alumnoCursoList.remove(personaUi);
+      }
+/*
       for(RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvaluacionUi.rubrosDetalleList??[]){
         for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
           PersonaUi? personaUi = personaUiList.firstWhereOrNull((element) => element.personaId == evaluacionUi.alumnoId);

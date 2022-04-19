@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'dart:typed_data';
+
 class PersonaUi{
   int? personaId;
   String? foto;
@@ -18,5 +20,10 @@ class PersonaUi{
   bool? progress;
   double? progressCount;
   bool? success;
+  FileFoto? fileFoto;
+}
+
+class FileFoto{
   File? file;
+  Uint8List? filebyte;
 }

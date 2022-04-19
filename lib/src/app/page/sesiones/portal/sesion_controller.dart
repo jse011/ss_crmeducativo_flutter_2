@@ -227,6 +227,7 @@ class SesionController extends Controller{
     _progressTarea = true;
     refreshUI();
     presenter.getSesionTarea(cursosUi, calendarioPeriodoUI, sesionUi);
+    presenter.onGetSesionRubroEval(cursosUi, calendarioPeriodoUI, sesionUi);
   }
 
 

@@ -11,10 +11,10 @@ abstract class AgendaEventoRepository {
 
   Future<List<EventoUi>> getEventosAgenda(int usuarioId, int georeferenciaId, int tipoEventoId, int? cargaCursoId);
 
-  Future<List<EventosListaEnvioUi>> getListaAlumnos(int empleadoId);
+  Future<List<EventosListaEnvioUi>> getListaAlumnos(int empleadoId, int anioAcademicoId);
 
   Map<String, dynamic> getEventoDocenteSerial(EventoUi? eventoUi, int usuarioId, int entidadId, int georeferenciaId, bool update);
 
-  Future<List<EventosListaEnvioUi>> getListaAlumnosSelecionado(int empleadoId, String enventoId);
+  Future<List<EventosListaEnvioUi>> getListaAlumnosSelecionado(int empleadoId, String enventoId, int anioAcademicoId);
 
 }

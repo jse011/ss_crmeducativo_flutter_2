@@ -45,5 +45,6 @@ class AppImagen {
   static final String splash_icono_educar = "assets/educar/educar_icono_splash.png";
 
   static const String imagen_checked = "assets/images/cheque.png";
+  static const String imagen_lista_grupos = "assets/images/grupos.png";
 }
 

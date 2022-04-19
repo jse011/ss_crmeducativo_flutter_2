@@ -19,8 +19,8 @@ class EditarUsuarioPresenter extends Presenter{
 
   }
 
-  void onUpdate(PersonaUi? personaUi, File? file, bool soloCambiarFoto, bool removeFoto) {
-    uploadPersona.execute(personaUi, file, soloCambiarFoto, removeFoto, (progress) {
+  void onUpdate(PersonaUi? personaUi, FileFoto? fileFoto, bool soloCambiarFoto, bool removeFoto) {
+    uploadPersona.execute(personaUi, fileFoto, soloCambiarFoto, removeFoto, (progress) {
       uploadPersonaOnProgress(progress);
     }, (success, personaUI) {
       uploadPersonaOnSucces(success, personaUI);

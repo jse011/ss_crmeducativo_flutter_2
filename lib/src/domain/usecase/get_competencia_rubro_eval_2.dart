@@ -44,6 +44,31 @@ class GetCompetenciaRubroEval2 extends UseCase<GetCompetenciaRubro2Response, Get
       List<CompetenciaUi> competenciaUiList = await rubroRepository.getRubroCompetencia(params?.silaboEventoId, params?.calendarioPeriodoUI?.id, params?.cargaCursoId);
 
 
+      List<PersonaUi> personaUiListDesavilitadas = [];
+      for(PersonaUi personaUi in alumnoCursoList){
+        if(!(personaUi.contratoVigente??false)){
+          personaUiListDesavilitadas.add(personaUi);
+        }
+      }
+      for(CompetenciaUi competenciaUi in competenciaUiList){
+        for(CapacidadUi capacidadUi in competenciaUi.capacidadUiList??[]){
+          for(RubricaEvaluacionUi rubricaEvaluacionUi in capacidadUi.rubricaEvalUiList??[]){
+            for(EvaluacionUi evaluacionUi in rubricaEvaluacionUi.evaluacionUiList??[]){
+              PersonaUi? personaUi = personaUiListDesavilitadas.firstWhereOrNull((element) => element.personaId == evaluacionUi.personaUi?.personaId);
+              if(personaUi!=null && !(personaUi.contratoVigente??false)){
+                personaUiListDesavilitadas.remove(personaUi);
+              }
+            }
+          }
+        }
+      }
+
+      for(PersonaUi personaUi in personaUiListDesavilitadas){
+        alumnoCursoList.remove(personaUi);
+      }
+
+
+
       for(CompetenciaUi competenciaUi in competenciaUiList){
         bool evaluableCompetencia = false;
         List<CapacidadUi> capacidadUiList = [];

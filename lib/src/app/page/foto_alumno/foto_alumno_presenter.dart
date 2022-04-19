@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
@@ -32,8 +33,8 @@ class FotoAlumnoPresenter extends Presenter{
     _getFotoAlumnos.execute(_GetFotoAlumnosCase(this), GetFotoAlumnosCaseParams());
   }
 
-  Future<HttpStream?> onUpdate(PersonaUi? personaUi, File? file, bool soloCambiarFoto, bool removeFoto) {
-   return uploadPersona.execute(personaUi, file, soloCambiarFoto, removeFoto, (progress) {
+  Future<HttpStream?> onUpdate(PersonaUi? personaUi, FileFoto? fileFoto, bool soloCambiarFoto, bool removeFoto) {
+   return uploadPersona.execute(personaUi, fileFoto, soloCambiarFoto, removeFoto, (progress) {
       uploadPersonaOnProgress(progress, personaUi);
     }, (success, personaUI) {
       uploadPersonaOnSucces(success, personaUI);
@@ -47,6 +48,7 @@ class FotoAlumnoPresenter extends Presenter{
     _updateContactoDocente.dispose();
     _getFotoAlumnos.dispose();
   }
+
 
 }
 

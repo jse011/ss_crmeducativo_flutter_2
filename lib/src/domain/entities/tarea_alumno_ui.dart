@@ -1,6 +1,9 @@
 import 'package:ss_crmeducativo_2/src/domain/entities/TareaEvaluacionUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_archivo_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/valor_tipo_nota_ui.dart';
 
 class TareaAlumnoUi{
   bool? entregado;
@@ -16,6 +19,5 @@ class TareaAlumnoUi{
   bool? toogle;
   String? rubroEvalProcesoId;
   List<TareaEvaluacionUi>? evaluacion;
-
-  int? success;//1 progress, 2 success y -1 error
+  TipoNotaUi? tipoNotaUi;
 }

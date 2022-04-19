@@ -613,4 +613,37 @@ class ColumnCountProvider{
     }
   }
 
+  static int columnsForWidthListaGrupos(BuildContext context) {
+    double widthPx = context.widthPx;
+    if (widthPx >= 900) {
+      return 5;
+    } else if (widthPx >= 720) {
+      return 5;
+    } else if (widthPx >= 600) {
+      return 4;
+    } else if (widthPx >= 480) {
+      return 3;
+    } else if (widthPx >= 320) {
+      return 2;
+    } else {
+      return 2;
+    }
+  }
+
+  static int columnsForWidthRubroEquipo(BuildContext context) {
+    double widthPx = context.widthPx;
+    if (widthPx >= 900) {
+      return 6;
+    } else if (widthPx >= 720) {
+      return 6;
+    } else if (widthPx >= 600) {
+      return 5;
+    } else if (widthPx >= 480) {
+      return 4;
+    } else if (widthPx >= 320) {
+      return 3;
+    } else {
+      return 3;
+    }
+  }
 }

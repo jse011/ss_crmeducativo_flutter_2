@@ -482,6 +482,7 @@ class _TareaViewState extends ViewState<TareaView2, TareaController> with Ticker
                                                                     style: TextStyle(
                                                                         fontSize: ColumnCountProvider.aspectRatioForWidthTarea(context, 14),
                                                                         fontWeight: FontWeight.w700,
+                                                                        fontFamily: AppTheme.fontTTNorms,
                                                                         letterSpacing: 0.5,
                                                                         color: AppTheme.white
                                                                     ),

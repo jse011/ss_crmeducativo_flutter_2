@@ -17,12 +17,13 @@ class GetListaEnvioAgenda extends UseCase<GetListaEnvioAgendaResponse, GetListaE
   Future<Stream<GetListaEnvioAgendaResponse?>> buildUseCaseStream(GetListaEnvioAgendaParams? params)async {
     final controller = StreamController<GetListaEnvioAgendaResponse>();
     try{
+      int anioAcademicoId = await configuracionRepo.getSessionAnioAcademicoId();
       int empleadoId = await configuracionRepo.getSessionEmpleadoId();
       List<EventosListaEnvioUi> alumnoCursoList = [];
       if(params?.eventoId!=null){
-        alumnoCursoList = await repository.getListaAlumnosSelecionado(empleadoId, params?.eventoId??"");
+        alumnoCursoList = await repository.getListaAlumnosSelecionado(empleadoId, params?.eventoId??"", anioAcademicoId);
       }else{
-        alumnoCursoList = await repository.getListaAlumnos(empleadoId);
+        alumnoCursoList = await repository.getListaAlumnos(empleadoId, anioAcademicoId);
       }
 
       for(EventosListaEnvioUi salonUi in alumnoCursoList){

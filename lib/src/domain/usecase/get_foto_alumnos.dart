@@ -19,6 +19,14 @@ class GetFotoAlumnos extends UseCase<GetFotoAlumnosCaseResponse, GetFotoAlumnosC
     int anioAcademicoId = await configuracionRepository.getSessionAnioAcademicoId();
     int docenteId = await configuracionRepository.getSessionEmpleadoId();
     List<CursosUi> cursosUiList = await configuracionRepository.getFotoAlumnos(docenteId, anioAcademicoId);
+    for(CursosUi cursosUi in cursosUiList){
+      cursosUi.alumnoUiList?.sort((a1, a2){
+        String nombre1 = a1.nombreCompleto??" ";
+        String nombre2 = a2.nombreCompleto??" ";
+        return nombre1.compareTo(nombre2);
+
+      });
+    }
     //cursosUiList.removeWhere((element) => element.cargaCursoId == null || element.cargaCursoId == 0);
     controller.add(GetFotoAlumnosCaseResponse(cursosUiList));
     controller.close();

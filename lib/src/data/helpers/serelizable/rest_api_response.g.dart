@@ -1442,24 +1442,24 @@ Map<String, dynamic> _$CriterioRubroEvaluacionSerialToJson(
 EquipoEvaluacionProcesoSerial _$EquipoEvaluacionProcesoSerialFromJson(
         Map<String, dynamic> json) =>
     EquipoEvaluacionProcesoSerial(
-      json['equipoEvaluacionProcesoId'] as String?,
-      json['rubroEvalProcesoId'] as String?,
-      json['sesionAprendizajeId'] as int?,
-      json['equipoId'] as String?,
-      (json['nota'] as num?)?.toDouble(),
-      json['escala'] as String?,
-      json['valorTipoNotaId'] as String?,
-      json['usuarioCreacionId'] as int?,
-      json['fechaCreacion'] as int?,
-      json['usuarioAccionId'] as int?,
-      json['fechaAccion'] as int?,
-      json['key'] as String?,
+      equipoEvalProcesoId: json['equipoEvalProcesoId'] as String?,
+      rubroEvalProcesoId: json['rubroEvalProcesoId'] as String?,
+      sesionAprendizajeId: json['sesionAprendizajeId'] as int?,
+      equipoId: json['equipoId'] as String?,
+      nota: (json['nota'] as num?)?.toDouble(),
+      escala: json['escala'] as String?,
+      valorTipoNotaId: json['valorTipoNotaId'] as String?,
+      usuarioCreacionId: json['usuarioCreacionId'] as int?,
+      fechaCreacion: json['fechaCreacion'] as int?,
+      usuarioAccionId: json['usuarioAccionId'] as int?,
+      fechaAccion: json['fechaAccion'] as int?,
+      key: json['key'] as String?,
     );
 
 Map<String, dynamic> _$EquipoEvaluacionProcesoSerialToJson(
         EquipoEvaluacionProcesoSerial instance) =>
     <String, dynamic>{
-      'equipoEvaluacionProcesoId': instance.equipoEvaluacionProcesoId,
+      'equipoEvalProcesoId': instance.equipoEvalProcesoId,
       'rubroEvalProcesoId': instance.rubroEvalProcesoId,
       'sesionAprendizajeId': instance.sesionAprendizajeId,
       'equipoId': instance.equipoId,
@@ -1477,8 +1477,8 @@ RubroEvaluacionProcesoIntegranteSerial
     _$RubroEvaluacionProcesoIntegranteSerialFromJson(
             Map<String, dynamic> json) =>
         RubroEvaluacionProcesoIntegranteSerial(
-          json['rubroEvaluacionEquipoId'] as String?,
-          json['personaId'] as int?,
+          rubroEvaluacionEquipoId: json['rubroEvaluacionEquipoId'] as String?,
+          personaId: json['personaId'] as int?,
         );
 
 Map<String, dynamic> _$RubroEvaluacionProcesoIntegranteSerialToJson(
@@ -1491,15 +1491,16 @@ Map<String, dynamic> _$RubroEvaluacionProcesoIntegranteSerialToJson(
 RubroEvaluacionProcesoEquipoSerial _$RubroEvaluacionProcesoEquipoSerialFromJson(
         Map<String, dynamic> json) =>
     RubroEvaluacionProcesoEquipoSerial(
-      json['rubroEvaluacionEquipoId'] as String?,
-      json['equipoId'] as String?,
-      json['nombreEquipo'] as String?,
-      json['rubroEvalProcesoId'] as String?,
-      json['usuarioCreacionId'] as int?,
-      json['fechaCreacion'] as int?,
-      json['usuarioAccionId'] as int?,
-      json['fechaAccion'] as int?,
-      json['key'] as String?,
+      rubroEvaluacionEquipoId: json['rubroEvaluacionEquipoId'] as String?,
+      equipoId: json['equipoId'] as String?,
+      nombreEquipo: json['nombreEquipo'] as String?,
+      rubroEvalProcesoId: json['rubroEvalProcesoId'] as String?,
+      usuarioCreacionId: json['usuarioCreacionId'] as int?,
+      orden: json['orden'] as int?,
+      fechaCreacion: json['fechaCreacion'] as int?,
+      usuarioAccionId: json['usuarioAccionId'] as int?,
+      fechaAccion: json['fechaAccion'] as int?,
+      key: json['key'] as String?,
     );
 
 Map<String, dynamic> _$RubroEvaluacionProcesoEquipoSerialToJson(
@@ -1509,6 +1510,7 @@ Map<String, dynamic> _$RubroEvaluacionProcesoEquipoSerialToJson(
       'equipoId': instance.equipoId,
       'nombreEquipo': instance.nombreEquipo,
       'rubroEvalProcesoId': instance.rubroEvalProcesoId,
+      'orden': instance.orden,
       'usuarioCreacionId': instance.usuarioCreacionId,
       'fechaCreacion': instance.fechaCreacion,
       'usuarioAccionId': instance.usuarioAccionId,
@@ -2794,4 +2796,111 @@ Map<String, dynamic> _$InstrumetosFirebaseSerialToJson(
       'variables': instance.variables,
       'Version': instance.Version,
       'puntaje': instance.puntaje,
+    };
+
+EquipoSerial _$EquipoSerialFromJson(Map<String, dynamic> json) => EquipoSerial(
+      equipoId: json['equipoId'] as String?,
+      grupoEquipoId: json['grupoEquipoId'] as String?,
+      nombre: json['nombre'] as String?,
+      orden: json['orden'] as int?,
+      foto: json['foto'] as String?,
+      estado: json['estado'] as int?,
+      usuarioCreacionId: json['usuarioCreacionId'] as int?,
+      fechaCreacion: json['fechaCreacion'] as int?,
+      usuarioAccionId: json['usuarioAccionId'] as int?,
+      fechaAccion: json['fechaAccion'] as int?,
+      key: json['key'] as String?,
+      syncFlag: json['syncFlag'] as int?,
+    );
+
+Map<String, dynamic> _$EquipoSerialToJson(EquipoSerial instance) =>
+    <String, dynamic>{
+      'equipoId': instance.equipoId,
+      'grupoEquipoId': instance.grupoEquipoId,
+      'nombre': instance.nombre,
+      'orden': instance.orden,
+      'foto': instance.foto,
+      'estado': instance.estado,
+      'usuarioCreacionId': instance.usuarioCreacionId,
+      'fechaCreacion': instance.fechaCreacion,
+      'usuarioAccionId': instance.usuarioAccionId,
+      'fechaAccion': instance.fechaAccion,
+      'key': instance.key,
+      'syncFlag': instance.syncFlag,
+    };
+
+GrupoEquipoSerial _$GrupoEquipoSerialFromJson(Map<String, dynamic> json) =>
+    GrupoEquipoSerial(
+      grupoEquipoId: json['grupoEquipoId'] as String?,
+      tipoId: json['tipoId'] as int?,
+      nombre: json['nombre'] as String?,
+      cargaAcademicaId: json['cargaAcademicaId'] as int?,
+      cargaCursoId: json['cargaCursoId'] as int?,
+      docenteId: json['docenteId'] as int?,
+      estado: json['estado'] as int?,
+      color1: json['color1'] as String?,
+      path: json['path'] as String?,
+      color2: json['color2'] as String?,
+      color3: json['color3'] as String?,
+      cursoNombre: json['cursoNombre'] as String?,
+      usuarioCreacionId: json['usuarioCreacionId'] as int?,
+      fechaCreacion: json['fechaCreacion'] as int?,
+      usuarioAccionId: json['usuarioAccionId'] as int?,
+      fechaAccion: json['fechaAccion'] as int?,
+      key: json['key'] as String?,
+      syncFlag: json['syncFlag'] as int?,
+    );
+
+Map<String, dynamic> _$GrupoEquipoSerialToJson(GrupoEquipoSerial instance) =>
+    <String, dynamic>{
+      'grupoEquipoId': instance.grupoEquipoId,
+      'tipoId': instance.tipoId,
+      'nombre': instance.nombre,
+      'cargaAcademicaId': instance.cargaAcademicaId,
+      'cargaCursoId': instance.cargaCursoId,
+      'docenteId': instance.docenteId,
+      'estado': instance.estado,
+      'color1': instance.color1,
+      'color2': instance.color2,
+      'color3': instance.color3,
+      'path': instance.path,
+      'cursoNombre': instance.cursoNombre,
+      'usuarioCreacionId': instance.usuarioCreacionId,
+      'fechaCreacion': instance.fechaCreacion,
+      'usuarioAccionId': instance.usuarioAccionId,
+      'fechaAccion': instance.fechaAccion,
+      'key': instance.key,
+      'syncFlag': instance.syncFlag,
+    };
+
+IntegranteEquipoSerial _$IntegranteEquipoSerialFromJson(
+        Map<String, dynamic> json) =>
+    IntegranteEquipoSerial(
+      equipoIntegranteId: json['equipoIntegranteId'] as String?,
+      equipoId: json['equipoId'] as String?,
+      alumnoId: json['alumnoId'] as int?,
+      nombre: json['nombre'] as String?,
+      foto: json['foto'] as String?,
+      usuarioCreacionId: json['usuarioCreacionId'] as int?,
+      fechaCreacion: json['fechaCreacion'] as int?,
+      usuarioAccionId: json['usuarioAccionId'] as int?,
+      fechaAccion: json['fechaAccion'] as int?,
+      key: json['key'] as String?,
+      syncFlag: json['syncFlag'] as int?,
+    );
+
+Map<String, dynamic> _$IntegranteEquipoSerialToJson(
+        IntegranteEquipoSerial instance) =>
+    <String, dynamic>{
+      'equipoIntegranteId': instance.equipoIntegranteId,
+      'equipoId': instance.equipoId,
+      'alumnoId': instance.alumnoId,
+      'nombre': instance.nombre,
+      'foto': instance.foto,
+      'usuarioCreacionId': instance.usuarioCreacionId,
+      'fechaCreacion': instance.fechaCreacion,
+      'usuarioAccionId': instance.usuarioAccionId,
+      'fechaAccion': instance.fechaAccion,
+      'key': instance.key,
+      'syncFlag': instance.syncFlag,
     };

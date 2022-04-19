@@ -491,7 +491,7 @@ class _EscritorioViewState extends ViewState<EscritorioView, EscritorioControlle
                                 ),
                                 child: GestureDetector(
                                   onTap: () async {
-                                    dynamic respuesta = await AppRouter.showAgendaPortalView(context, null);
+                                    dynamic respuesta = await AppRouter.showAgendaPortalView(context, null, controller.usuarioUi);
 
                                   },
                                   child: Container(

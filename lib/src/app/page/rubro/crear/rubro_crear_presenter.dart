@@ -14,6 +14,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.
 import 'package:ss_crmeducativo_2/src/domain/repositories/rubro_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/crear_local_rubro_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/crear_server_update_rubro_evaluacion.dart';
+import 'package:ss_crmeducativo_2/src/domain/usecase/get_alumno_curso.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_forma_evaluacion.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_temas_criterio.dart';
 import 'package:ss_crmeducativo_2/src/domain/usecase/get_tipo_evaluacion.dart';
@@ -33,6 +34,8 @@ class RubroCrearPresenter extends Presenter{
   late Function saveRubroEvaluacionSucces, saveRubroEvaluacionSuccesError;
   CrearLocalRubroEvaluacion _saveRubroEvalLocal;
   CrearServerUpdateRubroEvaluacion _updateRubroEvaluacion;
+  GetAlumnoCurso _getAlumnoCurso;
+  late Function getAlumnoCursoError, getAlumnoCursoComplete;
 
   Map<String, dynamic>? _dataBD;
 
@@ -44,6 +47,7 @@ class RubroCrearPresenter extends Presenter{
         _saveRubroEvaluacion = CrearServerRubroEvaluacion(configuracionRepo, rubroRepo, httpDatosRepo),
         _saveRubroEvalLocal = CrearLocalRubroEvaluacion(configuracionRepo, rubroRepo),
         _updateRubroEvaluacion = CrearServerUpdateRubroEvaluacion(configuracionRepo, rubroRepo, httpDatosRepo),
+        _getAlumnoCurso = GetAlumnoCurso(configuracionRepo),
         super();
 
   getFormaEvaluacion(){
@@ -56,6 +60,7 @@ class RubroCrearPresenter extends Presenter{
    _getTipoEvaluacion.dispose();
    _getTipoNota.dispose();
    _getTemaCriterios.dispose();
+   _getAlumnoCurso.dispose();
    //_saveRubroEvaluacion.dispose();
   }
 
@@ -87,6 +92,7 @@ class RubroCrearPresenter extends Presenter{
   }
 
   Future<HttpStream?> update(RubricaEvaluacionUi? rubricaEvaluacionUi) async{
+
     return await _updateRubroEvaluacion.execute(UpdateRubroEvaluacionParms(rubricaEvaluacionUi), (response){
       if(response.success){
         saveRubroEvaluacionSucces();
@@ -95,6 +101,10 @@ class RubroCrearPresenter extends Presenter{
       }
       _dataBD = response.dataBD;
     });
+  }
+
+  void getAlumnoCurso(CursosUi? cursosUi){
+    _getAlumnoCurso.execute(_GetAlumnoCursoCase(this), GetAlumnoCursoParams(cursosUi?.cargaCursoId));
   }
 
 }
@@ -192,6 +202,30 @@ class _GetTemaCriteriosCase extends Observer<GetTemaCriteriosResponse>{
   void onNext(GetTemaCriteriosResponse? response) {
     assert(presenter.getTemaCriteriosOnNext!=null);
     presenter.getTemaCriteriosOnNext(response?.competenciaUiList);
+  }
+
+}
+class _GetAlumnoCursoCase extends Observer<GetAlumnoCursoResponse>{
+  final RubroCrearPresenter presenter;
+
+  _GetAlumnoCursoCase(this.presenter);
+
+  @override
+  void onComplete() {
+
+  }
+
+  @override
+  void onError(e) {
+    assert(presenter.getAlumnoCursoError != null);
+    presenter.getAlumnoCursoError(e);
+  }
+
+  @override
+  void onNext(GetAlumnoCursoResponse? response) {
+    assert(presenter.getAlumnoCursoComplete != null);
+    presenter.getAlumnoCursoComplete(response?.contactoUiList);
+
   }
 
 }

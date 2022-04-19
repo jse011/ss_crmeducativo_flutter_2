@@ -5,10 +5,15 @@ import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/indicador/multip
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_equipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_publicado_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_grupo_valor_tipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/integrante_grupo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_eval_equipo_integrante_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_equipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubro_comentario_ui.dart';
@@ -71,6 +76,24 @@ class EvaluacionIndicadorMultipleController extends Controller {
   bool _siguiente = false;
   bool get siguiente => _siguiente;
 
+  List<RubricaEvaluacionEquipoUi> _rubricaEvaluacionEquipoUiList = [];
+  List<RubricaEvaluacionEquipoUi> get rubricaEvaluacionEquipoUiList => _rubricaEvaluacionEquipoUiList;
+  Map<String?, List<dynamic>> _mapColumnEquipoList = Map();
+  Map<String?, List<RubricaEvaluacionUi>> _mapRowEquipoList = Map();
+  Map<String?, List<List<dynamic>>> _mapCellListEquipoList = Map();
+  Map<String?, List<dynamic>> get mapColumnEquipoList => _mapColumnEquipoList;
+  Map<String?, List<RubricaEvaluacionUi>> get mapRowEquipoList => _mapRowEquipoList;
+  Map<String?, List<List<dynamic>>> get mapCellListEquipoList => _mapCellListEquipoList;
+
+
+  RubricaEvaluacionEquipoUi? _rubricaEvaluacionEquipoUiSelected = null;
+  RubricaEvaluacionEquipoUi? get rubricaEvaluacionEquipoUiSelected => _rubricaEvaluacionEquipoUiSelected;
+
+  bool _atrasGrupo = false;
+  bool get atrasGrupo => _atrasGrupo;
+  bool _siguienteGrupo = false;
+  bool get siguienteGrupo => _siguienteGrupo;
+
   Map<RubroEvidenciaUi, HttpStream?> mapRubroEvidencia = Map();
 
   EvaluacionIndicadorMultipleController(this.rubroEvaluacionId, this.cursosUi, this.calendarioPeriodoUI,
@@ -96,9 +119,11 @@ class EvaluacionIndicadorMultipleController extends Controller {
         (RubricaEvaluacionUi? rubroEvaluacionUi,
         List<PersonaUi> alumnoCursoList,) {
       this.rubroEvaluacionUi = rubroEvaluacionUi;
+      _alumnoCursoList = alumnoCursoList;
       //print("rubroEvaluacionUi: ${this.rubroEvaluacionUi?.evaluacionUiList?.length}");
       initTable(alumnoCursoList, rubroEvaluacionUi);
       initLista(alumnoCursoList, rubroEvaluacionUi);
+      initListaGrupo( rubroEvaluacionUi);
       refreshUI();
     };
 
@@ -131,7 +156,71 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _cellListList.clear();
     _columnList2.clear();
 
-    _rowList2.addAll(alumnoCursoList);
+
+    if((rubricaEvaluacionUi?.equipoUiList??[]).isNotEmpty){
+
+      List<PersonaUi> newAlumnoCursoList = [];
+
+      for(RubricaEvaluacionEquipoUi rubricaEvaluacionEquipoUi in rubricaEvaluacionUi?.equipoUiList??[]){
+        _rowList2.add(rubricaEvaluacionEquipoUi);
+
+        for(RubricaEvalEquipoIntegranteUi equipoUi in rubricaEvaluacionEquipoUi.integrantesUiList??[]){
+          equipoUi.personaUi = alumnoCursoList.firstWhereOrNull((element) => element.personaId == equipoUi.personaId);
+        }
+
+        rubricaEvaluacionEquipoUi.integrantesUiList?.sort((a, b) {
+          String o1 = a.personaUi?.nombreCompleto??"";
+          String o2 = b.personaUi?.nombreCompleto??"";
+          return o1.compareTo(o2);
+        });
+
+        int posicion = 0;
+        for(RubricaEvalEquipoIntegranteUi equipoUi in rubricaEvaluacionEquipoUi.integrantesUiList??[]){
+          if(equipoUi.personaUi!=null){
+            posicion++;
+            equipoUi.posicion = posicion;
+            _rowList2.add(equipoUi);
+            newAlumnoCursoList.add(equipoUi.personaUi!);
+          }
+        }
+
+      }
+
+      List<PersonaUi> alumnoCursoListSingrupo = [];
+      alumnoCursoListSingrupo.addAll(_alumnoCursoList);
+      for(var item in newAlumnoCursoList){
+        alumnoCursoListSingrupo.removeWhere((element) => element.personaId == item.personaId);
+      }
+      if(alumnoCursoListSingrupo.isNotEmpty){
+        RubricaEvaluacionEquipoUi rubricaEvaluacionEquipoUi = RubricaEvaluacionEquipoUi();
+        rubricaEvaluacionEquipoUi.orden = (rubricaEvaluacionUi?.equipoUiList?.length??0)+1;
+        rubricaEvaluacionEquipoUi.nombreEquipo = "Alumnos sin equipo";
+        _rowList2.add(rubricaEvaluacionEquipoUi);
+        int posicion = 0;
+        for(var item in alumnoCursoListSingrupo){
+          posicion++;
+          RubricaEvalEquipoIntegranteUi rubricaEvalEquipoIntegranteUi = RubricaEvalEquipoIntegranteUi();
+          rubricaEvalEquipoIntegranteUi.personaUi = item;
+          rubricaEvalEquipoIntegranteUi.posicion = posicion;
+          _rowList2.add(rubricaEvalEquipoIntegranteUi);
+          newAlumnoCursoList.add(item);
+        }
+      }
+
+      print("newAlumnoCursoList");
+      _alumnoCursoList.clear(); //Se modifica el orden de la lista
+      _alumnoCursoList.addAll(newAlumnoCursoList);
+
+      //neri.moreno
+      //inicia 3
+      //matias
+      //asistencia
+      //
+
+    }else{
+      _rowList2.addAll(alumnoCursoList);
+    }
+
     _rowList2.add(""); //Espacio
     _rowList2.add(""); //Espacio
     _rowList2.add(""); //Espacio
@@ -148,9 +237,14 @@ class EvaluacionIndicadorMultipleController extends Controller {
 
       cellList.add(row);
       EvaluacionPublicadoUi? evaluacionPublicadoUi = null;
-      EvaluacionUi? evaluacionUiCabecera = null;
+      dynamic? evaluacionUiCabecera = null;
       //#obtner Nota Tatal
-      if (row is PersonaUi) {
+      if (row is PersonaUi || row is RubricaEvalEquipoIntegranteUi) {
+        RubricaEvalEquipoIntegranteUi? rubricaEvalEquipoIntegranteUi = null;
+        if(row is RubricaEvalEquipoIntegranteUi){
+          rubricaEvalEquipoIntegranteUi = row;
+          row = row.personaUi;
+        }
 
         evaluacionUiCabecera = rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
         if (evaluacionUiCabecera == null){
@@ -162,7 +256,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
           rubricaEvaluacionUi?.evaluacionUiList?.add(evaluacionUiCabecera);
         }
         evaluacionUiCabecera.personaUi = row; //se remplasa la persona con la lista de foto_alumno del carga_curso por que contiene informacion de vigencia
-
+        evaluacionUiCabecera.equipoId = rubricaEvalEquipoIntegranteUi?.rubricaEvaluacionEquipoUi?.equipoId;
         //cellList.add(evaluacionUiCabecera);
         evaluacionPublicadoUi = EvaluacionPublicadoUi(evaluacionUiCabecera);
 
@@ -180,25 +274,39 @@ class EvaluacionIndicadorMultipleController extends Controller {
           evaluacionUiDetalle.personaUi = row;
         }
 
-
-
+      }else if(row is RubricaEvaluacionEquipoUi){
+        evaluacionUiCabecera = row.evaluacionEquipoUi??EvaluacionEquipoUi();
       } else {
         cellList.add(""); //Espacio
       }
 
       //#obtner Nota RubroDetalle
       for (RubricaEvaluacionUi rubricaEvaluacionUi in rubricaEvaluacionUi?.rubrosDetalleList ?? []) {
-        if (row is PersonaUi) {
+        if (row is PersonaUi || row is RubricaEvalEquipoIntegranteUi) {
+          RubricaEvalEquipoIntegranteUi? rubricaEvalEquipoIntegranteUi = null;
+          if(row is RubricaEvalEquipoIntegranteUi){
+            rubricaEvalEquipoIntegranteUi = row;
+            row = row.personaUi;
+          }
+
           EvaluacionUi? evaluacionUi = rubricaEvaluacionUi.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == row.personaId);
           if (evaluacionUi == null){
             evaluacionUi = EvaluacionUi(); //Una evaluacion vasia significa que el foto_alumno no tiene evaluacion
             evaluacionUi.rubroEvaluacionUi = rubricaEvaluacionUi;
             evaluacionUi.rubroEvaluacionId = rubricaEvaluacionUi.rubroEvaluacionId;
             evaluacionUi.alumnoId = row.personaId;
+            evaluacionUi.equipoId = rubricaEvalEquipoIntegranteUi?.rubricaEvaluacionEquipoUi?.equipoId;
             row.soloApareceEnElCurso = true;
           }
           evaluacionUi.personaUi = row; //se remplasa la persona con la lista de foto_alumno del carga_curso por que contiene informacion de vigencia
           cellList.add(evaluacionUi);
+        }else if(row is RubricaEvaluacionEquipoUi){
+         
+          RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi = rubricaEvaluacionUi.equipoUiList?.firstWhereOrNull(
+                  (element) => element.rubricaEvaluacionUi?.rubroEvaluacionId == rubricaEvaluacionUi.rubroEvaluacionId &&
+                    element.equipoId == row.equipoId);
+
+          cellList.add(rubricaEvaluacionEquipoUi?.evaluacionEquipoUi??EvaluacionEquipoUi());
         } else {
           cellList.add(""); //Espacio
         }
@@ -266,7 +374,6 @@ class EvaluacionIndicadorMultipleController extends Controller {
   }
 
   void initLista(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubroEvaluacionUi) {
-    _alumnoCursoList = alumnoCursoList;
     //_alumnoCursoListDesordenado.clear();
     //_alumnoCursoListDesordenado.addAll(alumnoCursoList);
     _mapColumnList.clear();
@@ -317,6 +424,74 @@ class EvaluacionIndicadorMultipleController extends Controller {
         //RubricaEvaluacionFormulaPesoUi pesoUi = RubricaEvaluacionFormulaPesoUi(row);
         //cellList.add(pesoUi);
         _mapCellListList[personaUi]?.add(cellList);
+      }
+    }
+
+
+
+    refreshUI();
+
+  }
+
+  void initListaGrupo(RubricaEvaluacionUi? rubroEvaluacionUi) {
+    _rubricaEvaluacionEquipoUiList = rubroEvaluacionUi?.equipoUiList??[];
+    //_alumnoCursoListDesordenado.clear();
+    //_alumnoCursoListDesordenado.addAll(alumnoCursoList);
+    _mapColumnEquipoList.clear();
+    _mapRowEquipoList.clear();
+    _mapCellListEquipoList.clear();
+
+
+
+
+    for(RubricaEvaluacionEquipoUi rubricaEvaluacionEquipoUi in rubroEvaluacionUi?.equipoUiList??[]){
+
+      _mapColumnEquipoList[rubricaEvaluacionEquipoUi.equipoId] = [];
+      _mapRowEquipoList[rubricaEvaluacionEquipoUi.equipoId] = [];
+      _mapCellListEquipoList[rubricaEvaluacionEquipoUi.equipoId] = [];
+
+      _mapRowEquipoList[rubricaEvaluacionEquipoUi.equipoId]?.addAll(rubroEvaluacionUi?.rubrosDetalleList??[]);
+
+      //_mapColumnList[personaUi]?.add(RubricaEvaluacionUi());
+      TipoNotaUi? tipoNotaUi = null;
+      if(rubroEvaluacionUi?.rubrosDetalleList?.isNotEmpty??false){
+        tipoNotaUi = rubroEvaluacionUi?.rubrosDetalleList?[0].tipoNotaUi;
+      }
+//      tipoNotaUi?.tipoNotaTiposUi = TipoNotaTiposUi.SELECTOR_NUMERICO;
+      if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+        _mapColumnEquipoList[rubricaEvaluacionEquipoUi.equipoId]?.addAll(tipoNotaUi?.valorTipoNotaList??[]);
+      }else{
+        _mapColumnEquipoList[rubricaEvaluacionEquipoUi.equipoId]?.add(RubricaEvaluacionEquipoUi());//Teclado numerico
+      }
+      //_mapColumnList[personaUi]?.add(RubricaEvaluacionFormulaPesoUi(RubricaEvaluacionUi()));//peso_criterio
+
+      for(RubricaEvaluacionUi row in _mapRowEquipoList[rubricaEvaluacionEquipoUi.equipoId]??[]){
+        List<dynamic> cellList = [];
+        //cellList.add(row);
+        //print("search: ${rubricaEvaluacionEquipoUi.equipoId}");
+        RubricaEvaluacionEquipoUi? search = row.equipoUiList?.firstWhereOrNull(
+                (element) => element.rubricaEvaluacionUi?.rubroEvaluacionId == row.rubroEvaluacionId &&
+                element.equipoId == rubricaEvaluacionEquipoUi.equipoId);
+        //print("search: ${search?.rubroEvaluacionEquipoId}");
+        if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+          for(ValorTipoNotaUi valorTipoNotaUi in tipoNotaUi?.valorTipoNotaList??[]){
+            EvaluacionRubricaGrupoValorTipoNotaUi evaluacionRubricaGrupoValorTipoNotaUi = EvaluacionRubricaGrupoValorTipoNotaUi();
+            evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi = valorTipoNotaUi;
+            evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi = search;
+            evaluacionRubricaGrupoValorTipoNotaUi.toggle = valorTipoNotaUi.valorTipoNotaId == search?.evaluacionEquipoUi?.valorTipoNotaUi?.valorTipoNotaId;
+            evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi = row;
+            cellList.add(evaluacionRubricaGrupoValorTipoNotaUi);
+          }
+        }else{
+          RubricaEvaluacionEquipoUi? search = row.equipoUiList?.firstWhereOrNull(
+                  (element) => element.rubricaEvaluacionUi?.rubroEvaluacionId == row.rubroEvaluacionId &&
+                  element.equipoId == rubricaEvaluacionEquipoUi.equipoId);
+
+          cellList.add(search);
+        }
+        //RubricaEvaluacionFormulaPesoUi pesoUi = RubricaEvaluacionFormulaPesoUi(row);
+        //cellList.add(pesoUi);
+        _mapCellListEquipoList[rubricaEvaluacionEquipoUi.equipoId]?.add(cellList);
       }
     }
 
@@ -475,7 +650,7 @@ class EvaluacionIndicadorMultipleController extends Controller {
         }
       }
     }
-    
+
     _actualizarCabecera(personaUi);
     _modificado = true;
     refreshUI();
@@ -499,6 +674,18 @@ class EvaluacionIndicadorMultipleController extends Controller {
     return evaluacionUi;
   }
 
+  RubricaEvaluacionEquipoUi? getEvaluacionGeneralEquipo(RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi) {
+
+    RubricaEvaluacionEquipoUi? search = null;
+    for(RubricaEvaluacionEquipoUi item in rubroEvaluacionUi?.equipoUiList??[]){
+      if(item.equipoId == rubricaEvaluacionEquipoUi?.equipoId){
+        search = item;
+      }
+    }
+
+    return search;
+  }
+
   onClicClearEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, PersonaUi? personaUi) {
     if(isCalendarioDesactivo())return;
     for(List cellList in mapCellListList[personaUi]??[]){
@@ -514,7 +701,6 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _actualizarCabecera(personaUi);
     _modificado = true;
     refreshUI();
-
     presenter.updateEvaluacionAll(rubroEvaluacionUi);
   }
 
@@ -557,6 +743,15 @@ class EvaluacionIndicadorMultipleController extends Controller {
     print("count ${count} size ${size}");
     _atras =  count != 0;
     _siguiente = (size-1) != count;
+  }
+
+  void comprobarButtomEquipo() {
+    int size = _rubricaEvaluacionEquipoUiList.length;
+    int count = _rubricaEvaluacionEquipoUiList.indexWhere((element) => element.equipoId == _rubricaEvaluacionEquipoUiSelected?.equipoId);
+    print("_rubricaEvaluacionEquipoUiSelected ${_rubricaEvaluacionEquipoUiSelected?.equipoId}");
+    print("count ${count} size ${size}");
+    _atrasGrupo =  count != 0;
+    _siguienteGrupo = (size-1) != count;
   }
 
   void onClickSiguienteEvaluacion() {
@@ -685,6 +880,330 @@ class EvaluacionIndicadorMultipleController extends Controller {
     _evaluacionGeneralUiSelect = evaluacionGeneralUi;
   }
 
+  void onClicEvaluacionRubricaEquipo(EvaluacionEquipoUi evaluacionEquipoUi) {
+    print("${evaluacionEquipoUi.equipoEvaluacionProcesoId}");
+    _rubricaEvaluacionEquipoUiSelected = evaluacionEquipoUi.rubricaEvaluacionEquipoUi;
+    comprobarButtomEquipo();
+    refreshUI();
+  }
 
+  void onClickFinalizarEvalEquipo() {
+    _rubricaEvaluacionEquipoUiSelected = null;
+    refreshUI();
+  }
+
+  void onClickAtrasEvalEquipo() {
+    int count = _rubricaEvaluacionEquipoUiList.indexWhere((element) => element.equipoId == _rubricaEvaluacionEquipoUiSelected?.equipoId);
+    _rubricaEvaluacionEquipoUiSelected = _rubricaEvaluacionEquipoUiList[count-1];
+    comprobarButtomEquipo();
+    refreshUI();
+  }
+
+  void onClickSiguienteEvalEquipo() {
+    int count = _rubricaEvaluacionEquipoUiList.indexWhere((element) => element.equipoId == _rubricaEvaluacionEquipoUiSelected?.equipoId);
+    print("count ${count}");
+    _rubricaEvaluacionEquipoUiSelected = _rubricaEvaluacionEquipoUiList[count+1];
+    comprobarButtomEquipo();
+    refreshUI();
+  }
+
+  RubricaEvaluacionEquipoUi? getRubricaEvaluacionEquipoUiCabecera(EvaluacionUi? evaluacionUi){
+    return rubroEvaluacionUi?.equipoUiList?.firstWhereOrNull((element) => element.equipoId == evaluacionUi?.equipoId);
+  }
+
+  void onClicEvaluarEquipo(EvaluacionRubricaGrupoValorTipoNotaUi evaluacionRubricaGrupoValorTipoNotaUi, RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi) {
+    if(isCalendarioDesactivo())return;
+    for (List cellList in mapCellListEquipoList[rubricaEvaluacionEquipoUi?.equipoId] ?? []) {
+      for (var cell in cellList) {
+        if (cell is EvaluacionRubricaGrupoValorTipoNotaUi) {
+          if (cell.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId == evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId
+              && cell.valorTipoNotaUi?.valorTipoNotaId != evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId) {
+            cell.toggle = false;
+          }
+        }
+      }
+    }
+
+    evaluacionRubricaGrupoValorTipoNotaUi.toggle = !(evaluacionRubricaGrupoValorTipoNotaUi.toggle ?? false);
+    if(evaluacionRubricaGrupoValorTipoNotaUi.toggle??false){
+      evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota = evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
+      evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi = evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi;
+    }else{
+      evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota = 0.0;
+      evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi = null;
+    }
+
+
+    for(RubricaEvalEquipoIntegranteUi integranteUi in rubricaEvaluacionEquipoUi?.integrantesUiList??[]){
+      PersonaUi? personaUi = alumnoCursoList.firstWhereOrNull((element) => element.personaId == integranteUi.personaId);
+      if(personaUi?.contratoVigente??false){
+        for (List cellList in mapCellListList[personaUi] ?? []) {
+          for (var cell in cellList) {
+            if (cell is EvaluacionRubricaValorTipoNotaUi) {
+              if (cell.evaluacionUi?.alumnoId == integranteUi.personaId
+                  && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+                  && cell.valorTipoNotaUi?.valorTipoNotaId != evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId) {
+                cell.toggle = false;
+              }else if(cell.evaluacionUi?.alumnoId == integranteUi.personaId
+                  && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+                  && cell.valorTipoNotaUi?.valorTipoNotaId == evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId){
+                cell.toggle = evaluacionRubricaGrupoValorTipoNotaUi.toggle;
+                cell.evaluacionUi?.nota = evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi?.valorNumerico;
+                cell.evaluacionUi?.valorTipoNotaId =  evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi?.valorTipoNotaId;
+                cell.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi;
+
+              }
+            }
+          }
+        }
+      }
+
+      if(personaUi!=null){
+        _actualizarCabecera(personaUi);
+        presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+      }
+    }
+
+
+    _actualizarCabeceraEquipo(rubricaEvaluacionEquipoUi);
+    _modificado = true;
+    refreshUI();
+
+    presenter.updateEvaluacionEquipo(rubroEvaluacionUi, rubricaEvaluacionEquipoUi?.equipoId);
+  }
+
+  void _actualizarCabeceraEquipo(RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi) {
+    CalcularEvaluacionProceso.actualizarCabeceraEquipo(rubroEvaluacionUi, rubricaEvaluacionEquipoUi);
+    refreshUI();
+  }
+
+  void onClicEvaluarPresicionEquipo(EvaluacionRubricaGrupoValorTipoNotaUi evaluacionRubricaGrupoValorTipoNotaUi, nota) {
+    ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi, nota);
+
+    for (List cellList in _mapCellListEquipoList[evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.equipoId]??[]) {
+      for (var cell in cellList) {
+
+        if (cell is EvaluacionRubricaGrupoValorTipoNotaUi) {
+
+          if (cell.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId == evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId
+              && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
+            cell.toggle = true;
+          }
+
+          if (cell.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId == evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId
+              && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+            cell.toggle = false;
+          }
+
+        }
+      }
+    }
+
+    //evaluacionRubricaValorTipoNotaUi.toggle = true;
+    evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota = nota;
+    evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi = evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi;
+
+
+    for(RubricaEvalEquipoIntegranteUi integranteUi in evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.integrantesUiList??[]){
+      PersonaUi? personaUi = alumnoCursoList.firstWhereOrNull((element) => element.personaId == integranteUi.personaId);
+      if(personaUi?.contratoVigente??false){
+        for (List cellList in mapCellListList[personaUi] ?? []) {
+          for (var cell in cellList) {
+            if (cell is EvaluacionRubricaValorTipoNotaUi) {
+              if (cell.evaluacionUi?.alumnoId == integranteUi.personaId
+                  && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+                  && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+                cell.toggle = false;
+              }else if(cell.evaluacionUi?.alumnoId == integranteUi.personaId
+                  && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+                  && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId){
+                cell.toggle = true;
+                cell.evaluacionUi?.nota = nota;
+                cell.evaluacionUi?.valorTipoNotaId =  evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi?.valorTipoNotaId;
+                cell.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi;
+
+              }
+            }
+          }
+        }
+      }
+
+      if(personaUi!=null){
+        _actualizarCabecera(personaUi);
+        presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+      }
+    }
+
+
+    _actualizarCabeceraEquipo(evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi);
+    _modificado = true;
+    refreshUI();
+
+    presenter.updateEvaluacionEquipo(rubroEvaluacionUi, evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.equipoId);
+  }
+
+  void onSaveTecladoPresicionEquipo(nota, RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi) {
+    ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(rubricaEvaluacionEquipoUi?.rubricaEvaluacionUi?.tipoNotaUi, nota);
+    print("onSaveTecladoPresicionEquipo ${valorTipoNotaUi?.valorTipoNotaId}");
+    for (List cellList in _mapCellListEquipoList[rubricaEvaluacionEquipoUi?.equipoId]??[]) {
+      for (var cell in cellList) {
+
+        if (cell is EvaluacionRubricaGrupoValorTipoNotaUi) {
+
+          if (cell.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId ==  rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId
+              && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
+            cell.toggle = true;
+          }
+
+          if (cell.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId == rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId
+              && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+            cell.toggle = false;
+          }
+
+        }
+      }
+    }
+
+    //evaluacionRubricaValorTipoNotaUi.toggle = true;
+    rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota = nota;
+    rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi = valorTipoNotaUi;
+
+
+    for(RubricaEvalEquipoIntegranteUi integranteUi in rubricaEvaluacionEquipoUi?.integrantesUiList??[]){
+      PersonaUi? personaUi = alumnoCursoList.firstWhereOrNull((element) => element.personaId == integranteUi.personaId);
+      if(personaUi?.contratoVigente??false){
+        for (List cellList in mapCellListList[personaUi] ?? []) {
+          for (var cell in cellList) {
+            if (cell is EvaluacionRubricaValorTipoNotaUi) {
+              if (cell.evaluacionUi?.alumnoId == integranteUi.personaId
+                  && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == rubricaEvaluacionEquipoUi?.rubricaEvaluacionUi?.rubroEvaluacionId
+                  && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+                cell.toggle = false;
+              }else if(cell.evaluacionUi?.alumnoId == integranteUi.personaId
+                  && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == rubricaEvaluacionEquipoUi?.rubricaEvaluacionUi?.rubroEvaluacionId
+                  && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId){
+                cell.toggle = true;
+                cell.evaluacionUi?.nota = nota;
+                cell.evaluacionUi?.valorTipoNotaId =  rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi?.valorTipoNotaId;
+                cell.evaluacionUi?.valorTipoNotaUi =  rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi;
+
+              }
+            }else if(cell is EvaluacionUi){
+
+              if (cell.alumnoId == integranteUi.personaId
+                  && cell.rubroEvaluacionUi?.rubroEvaluacionId == rubricaEvaluacionEquipoUi?.rubricaEvaluacionUi?.rubroEvaluacionId) {
+                    cell.nota = nota;
+                    cell.valorTipoNotaUi =  rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi;
+              }
+
+            }else{
+
+            }
+          }
+        }
+      }
+
+      if(personaUi!=null){
+        _actualizarCabecera(personaUi);
+        presenter.updateEvaluacion(rubroEvaluacionUi, personaUi.personaId);
+      }
+    }
+
+    _actualizarCabeceraEquipo(rubricaEvaluacionEquipoUi);
+    _modificado = true;
+    refreshUI();
+
+    presenter.updateEvaluacionEquipo(rubroEvaluacionUi, rubricaEvaluacionEquipoUi?.equipoId);
+  }
+
+  void respuestaFormularioCrearRubro() {
+    //print("respuestaFormularioCrearRubro");
+    //presenter.getRubroEvaluacion(rubroEvaluacionId, cursosUi);
+    _modificado = true;
+    refreshUI();
+  }
+
+  onClicClearEvaluacionAllEquipo(ValorTipoNotaUi valorTipoNotaUi, RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi) {
+    if(isCalendarioDesactivo())return;
+    for(List cellList in mapCellListEquipoList[rubricaEvaluacionEquipoUi?.equipoId]??[]){
+      for(var cell in cellList){
+        if(cell is EvaluacionRubricaGrupoValorTipoNotaUi){
+          cell.toggle = false;
+          cell.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota = 0.0;
+          cell.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi = null;
+        }
+      }
+    }
+
+    for(RubricaEvalEquipoIntegranteUi integranteUi in rubricaEvaluacionEquipoUi?.integrantesUiList??[]){
+      PersonaUi? personaUi = alumnoCursoList.firstWhereOrNull((element) => element.personaId == integranteUi.personaId);
+      if(personaUi?.contratoVigente??false){
+        for(List cellList in mapCellListList[personaUi]??[]){
+          for(var cell in cellList){
+            if(cell is EvaluacionRubricaValorTipoNotaUi){
+              cell.toggle = false;
+              cell.evaluacionUi?.nota = 0.0;
+              cell.evaluacionUi?.valorTipoNotaId = null;
+              cell.evaluacionUi?.valorTipoNotaUi = null;
+            }
+          }
+          _actualizarCabecera(personaUi);
+        }
+      }
+
+    }
+    _actualizarCabeceraEquipo(rubricaEvaluacionEquipoUi);
+    _modificado = true;
+    refreshUI();
+    presenter.updateEvaluacionEquipo(rubroEvaluacionUi, rubricaEvaluacionEquipoUi?.equipoId);
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
+  }
+
+  onClicEvaluacionAllEquipo(ValorTipoNotaUi valorTipoNotaUi, RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi) {
+    if(isCalendarioDesactivo())return;
+    for(List cellList in mapCellListEquipoList[rubricaEvaluacionEquipoUi?.equipoId]??[]){
+      for(var cell in cellList){
+        if(cell is EvaluacionRubricaGrupoValorTipoNotaUi){
+          if(cell.rubricaEvaluacionEquipoUi?.equipoId ==  rubricaEvaluacionEquipoUi?.equipoId
+              &&  cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi.valorTipoNotaId){
+            cell.toggle = true;
+            cell.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota = valorTipoNotaUi.valorNumerico;//actualizar la nota solo cuando no esta selecionado
+            cell.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.valorTipoNotaUi = valorTipoNotaUi;
+          }else{
+            cell.toggle = false;
+          }
+        }
+      }
+    }
+
+    for(RubricaEvalEquipoIntegranteUi integranteUi in rubricaEvaluacionEquipoUi?.integrantesUiList??[]){
+      PersonaUi? personaUi = alumnoCursoList.firstWhereOrNull((element) => element.personaId == integranteUi.personaId);
+      if(personaUi?.contratoVigente??false){
+        for(List cellList in mapCellListList[personaUi]??[]){
+          for(var cell in cellList){
+            if(cell is EvaluacionRubricaValorTipoNotaUi){
+              if(cell.evaluacionUi?.personaUi?.personaId == personaUi?.personaId
+                  && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi.valorTipoNotaId){
+                cell.toggle = true;
+                cell.evaluacionUi?.nota = valorTipoNotaUi.valorNumerico;//actualizar la nota solo cuando no esta selecionado
+                cell.evaluacionUi?.valorTipoNotaId = valorTipoNotaUi.valorTipoNotaId;
+                cell.evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
+              }else{
+                cell.toggle = false;
+              }
+
+            }
+          }
+          _actualizarCabecera(personaUi);
+        }
+      }
+
+    }
+    _actualizarCabeceraEquipo(rubricaEvaluacionEquipoUi);
+    _modificado = true;
+    refreshUI();
+    presenter.updateEvaluacionEquipo(rubroEvaluacionUi, rubricaEvaluacionEquipoUi?.equipoId);
+    presenter.updateEvaluacionAll(rubroEvaluacionUi);
+  }
 
 }

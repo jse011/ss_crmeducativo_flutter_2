@@ -1324,6 +1324,43 @@ class RubroViewState extends ViewState<RubroView2, RubroController> with TickerP
             ):
           Column(
             children: [
+              if((controller.tipoNotaUi?.tipoNotaId??"").isEmpty)
+              Center(
+                child: Container(
+                    constraints: BoxConstraints(
+                      //minWidth: 200.0,
+                      maxWidth: 600.0,
+                    ),
+                    height: 45,
+                    margin: EdgeInsets.only(
+                      top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 16),
+                      left: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 16),
+                      right: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 16),
+                    ),
+                    decoration: BoxDecoration(
+                        color: AppTheme.redLighten5,
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(padding: EdgeInsets.all(4)),
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          child: Text('Resultados sin competencia',
+                              style: TextStyle(
+                                  color:  Colors.red,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  fontFamily: AppTheme.fontTTNorms
+                              )
+                          ),
+                        ),
+                      ],
+                    )
+                ),
+              ),
               Padding(padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthTableRubro(context, 8))),
               controller.calendarioPeriodoUI==null || (controller.calendarioPeriodoUI?.habilitadoProceso??0)==1?
               Container(): Container(

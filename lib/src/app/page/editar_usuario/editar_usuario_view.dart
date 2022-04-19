@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:email_validator/email_validator.dart';
@@ -190,8 +191,13 @@ class EditarUsuarioViewState extends ViewState<EditarUsuarioView, EditarUsuarioC
                                           child:  controller.fotoFile!=null?Container(
                                               decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.all(Radius.circular(100)),
-                                                  image: DecorationImage(
-                                                    image: FileImage(controller.fotoFile!),
+                                                  image: (controller.fotoFile!.filebyte!=null)?
+                                                  DecorationImage(
+                                                    image: MemoryImage(controller.fotoFile!.filebyte!),
+                                                    fit: BoxFit.cover,
+                                                  ):
+                                                  DecorationImage(
+                                                    image: FileImage(controller.fotoFile!.file!),
                                                     fit: BoxFit.cover,
                                                   ),
                                                   boxShadow: <BoxShadow>[
@@ -857,6 +863,16 @@ class EditarUsuarioViewState extends ViewState<EditarUsuarioView, EditarUsuarioC
         barrierColor: Colors.transparent,
         transitionDuration:
         const Duration(milliseconds: 150));
+  }
+
+  @override
+  userCrop(Uint8List? _image, String? newName) {
+    if(globalKey.currentContext!=null){
+      EditarUsuarioController controller =
+      FlutterCleanArchitecture.getController<EditarUsuarioController>(globalKey.currentContext!, listen: false);
+      controller.updateImageByte(_image);
+
+    }
   }
 
 }

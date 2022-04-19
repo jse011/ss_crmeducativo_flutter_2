@@ -24,6 +24,8 @@ class GetContactos extends UseCase<GetContactosCaseResponse, GetContactosCasePar
   }
 
   List<dynamic> agregarCabecera(List<ContactoUi> contactoUiList, int tipo){
+
+    contactoUiList.removeWhere((element) => (element.personaUi?.contratoVigente??false)==false && element.tipo == ConfiguracionRepository.CONTACTO_ALUMNO);
     List<dynamic> list = [];
     contactoUiList.sort((a1, a2){
       String nombre1 = a1.personaUi?.nombreCompleto??" ";

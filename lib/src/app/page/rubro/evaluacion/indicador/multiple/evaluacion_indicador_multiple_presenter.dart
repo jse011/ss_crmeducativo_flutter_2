@@ -87,6 +87,10 @@ class EvaluacionIndicadorMultiplePresenter extends Presenter {
     return _saveRubroEvidencia.execute(rubroEvidenciaUi);
   }
 
+  void updateEvaluacionEquipo(RubricaEvaluacionUi? rubroEvaluacionUi, String? equipoId) {
+    _updateEvaluacion.executeEquipo(rubroEvaluacionUi, equipoId);
+  }
+
 }
 
 class _GetSessionUsuarioCase extends Observer<GetSessionUsuarioCaseResponse> {

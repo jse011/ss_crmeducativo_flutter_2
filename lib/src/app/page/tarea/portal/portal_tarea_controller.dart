@@ -3,10 +3,12 @@ import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_present
 import 'package:ss_crmeducativo_2/src/domain/entities/TareaEvaluacionUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_tarea_alumno_rubrica_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_tarea_alumno_valor_tipo_nota_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_tarea_alumnoUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
@@ -26,6 +28,7 @@ import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repositor
 import 'package:collection/collection.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/calcular_evaluacion_proceso.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/transformar_valor_tipo_nota.dart';
 
 class PortalTareaController extends Controller{
   UsuarioUi? usuarioUi;
@@ -40,14 +43,18 @@ class PortalTareaController extends Controller{
   bool _mostrarAlumnosDosListas = false;
   bool get mostrarDosListasAlumnos => _mostrarAlumnosDosListas;
 
+  List<TareaRecusoUi> _tareaRecursoUiList2 = [];
   List<TareaRecusoUi> _tareaRecursoUiList = [];
   List<TareaRecusoUi> get tareaRecursoUiList => _tareaRecursoUiList;
   List<TareaAlumnoUi> _tareaAlumnoUiList = [];
   List<TareaAlumnoUi> get tareaAlumnoUiList => _tareaAlumnoUiList;
+  List<TareaAlumnoUi> _tareaAlumnoUiList2 = [];
   List<TareaAlumnoUi> _tareaAlumnoUiNoEvaluadosList = [];
   List<TareaAlumnoUi> get tareaAlumnoUiNoEvaluadosList => _tareaAlumnoUiNoEvaluadosList;
   List<TareaAlumnoUi> _tareaAlumnoUiEvaluadosList = [];
   List<TareaAlumnoUi> get tareaAlumnoUiEvaluadosList => _tareaAlumnoUiEvaluadosList;
+
+
 
   int _alumnoEval = 0;
   int get alumnoEval => _alumnoEval;
@@ -68,17 +75,16 @@ class PortalTareaController extends Controller{
   List<double> get tablecolumnWidths => _tablecolumnWidths;
   List<double> _tablecolumnWidths = [];
   Map<TareaAlumnoUi, List<dynamic>> _mapColumnList = Map();
-  Map<TareaAlumnoUi, List<RubricaEvaluacionUi>> _mapRowList = Map();
+  Map<TareaAlumnoUi, List<RubricaEvaluacionTareaAlumnoUi>> _mapRowList = Map();
   Map<TareaAlumnoUi, List<List<dynamic>>> _mapCellListList = Map();
   Map<TareaAlumnoUi, List<dynamic>> get mapColumnList => _mapColumnList;
-  Map<TareaAlumnoUi, List<RubricaEvaluacionUi>> get mapRowList => _mapRowList;
+  Map<TareaAlumnoUi, List<RubricaEvaluacionTareaAlumnoUi>> get mapRowList => _mapRowList;
   Map<TareaAlumnoUi, List<List<dynamic>>> get mapCellListList => _mapCellListList;
   bool _precision = false;
   bool get precision => _precision;
 
   Map<TareaAlumnoUi?, HttpStream?> get uploadNotas => _uploadNotas;
   Map<TareaAlumnoUi?, HttpStream?> _uploadNotas = Map();
-  Map<TareaAlumnoUi?, RubricaEvaluacionUi?> _erroresAlGuardar = Map();
 
 
   String? _mensaje = null;
@@ -102,8 +108,8 @@ class PortalTareaController extends Controller{
 
   bool _cambiosEvaluacion = false;
   bool get cambiosEvaluacion => _cambiosEvaluacion;
-  bool _progressCambiosEvaluacion = false;
-  bool get progressCambiosEvaluacion => _progressCambiosEvaluacion;
+  bool _progressCambiosEvaluacion1 = false;
+  bool get progressCambiosEvaluacion1 => _progressCambiosEvaluacion1;
   bool _abrirRubrica = false;
   bool get abrirRubrica => _abrirRubrica;
   bool get cambiosEvaluacionFirebase => _cambiosEvaluacionFirebase;
@@ -122,7 +128,7 @@ class PortalTareaController extends Controller{
 
   @override
   void initListeners() {
-    print("calendarioId ${calendarioPeriodoUI?.id}");
+
     presenter.getInformacionTareaOnError = (e){
       _tareaRecursoUiList = [];
       _tareaAlumnoUiList = [];
@@ -134,39 +140,13 @@ class PortalTareaController extends Controller{
     };
 
     presenter.getInformacionTareaOnComplete = (List<TareaAlumnoUi>? tareaAlumnoUiList, List<TareaRecusoUi>? tareaRecusoUiList, bool? offlineServidor, bool? errorServidor) async{
-      _tareaRecursoUiList = tareaRecusoUiList??[];
-      _tareaAlumnoUiList = tareaAlumnoUiList??[];
-      _tareaAlumnoUiNoEvaluadosList = [];
-      _tareaAlumnoUiEvaluadosList = [];
-
-      for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
-        tareaAlumnoUi.toogle = toogleGeneral;
-        if((tareaAlumnoUi.valorTipoNotaId??"").isNotEmpty){
-          _tareaAlumnoUiEvaluadosList.add(tareaAlumnoUi);
-        }else{
-          _tareaAlumnoUiNoEvaluadosList.add(tareaAlumnoUi);
-        }
-      }
-
-      _mostrarAlumnosDosListas = _tareaAlumnoUiNoEvaluadosList.isNotEmpty && _tareaAlumnoUiEvaluadosList.isNotEmpty;
-      /*Solo abrir la caja de evaluaciones abierta del primer foto_alumno*/
-      if(_mostrarAlumnosDosListas){
-        if(_tareaAlumnoUiEvaluadosList.isNotEmpty){
-          _tareaAlumnoUiEvaluadosList[0].toogle = true;
-        }else if(_tareaAlumnoUiNoEvaluadosList.isNotEmpty){
-          _tareaAlumnoUiNoEvaluadosList[0].toogle = true;
-        }
-      }else if(_tareaAlumnoUiList.isNotEmpty){
-        _tareaAlumnoUiList[0].toogle = true;
-      }
-      /*o*/
-
-
-      tareaUi?.recursos = tareaRecusoUiList;
-      _progress = false;
-      refreshCountEvaluados();
+      _tareaRecursoUiList2 = tareaRecusoUiList??[];
+      _tareaAlumnoUiList2 = tareaAlumnoUiList??[];
       _progressRubro = true;
+      _progress = false;
       refreshUI();
+
+
       //print("onActualizarRubro");
       //await Future.delayed(Duration(seconds: 1));
       presenter.onActualizarRubro(calendarioPeriodoUI, cursosUi, sesionUi, tareaUi);
@@ -181,89 +161,79 @@ class PortalTareaController extends Controller{
 
     };
 
-    presenter.updateDatosCrearRubroOnNext = (bool? errorConexion, bool? errorServidor)async{
-      //print("updateDatosCrearRubroOnNext progressCambiosEvaluacion ${_progressCambiosEvaluacion}");
-      if(progressCambiosEvaluacion){
-        _progressCambiosEvaluacion = false;
-        _cambiosEvaluacion = false;
-        _abrirRubrica = true;
-      }else{
-        presenter.getRubroEvaluacion(tareaUi?.tareaId, cursosUi);
-      }
-      refreshUI();
+    presenter.updateDatosCrearRubroOnNext = (bool? errorConexion, bool? errorServidor){
+      getRubro();
     };
 
     presenter.updateDatosCrearRubroOnError = (e){
       //print("updateDatosCrearRubroOnError");
       this.rubricaEvalUI = null;
       _progressRubro = false;
+      actualizarListaAlumnos();
       refreshUI();
     };
 
 
-    presenter.getRubroEvaluacionOnNext = (RubricaEvaluacionUi? rubricaEvalUI, List<PersonaUi> alumnoCursoList) {
-      //print("getRubroEvaluacionOnNext ${rubricaEvalUI?.rubroEvaluacionId} && rubroEvalProcesoId: ${tareaUi?.rubroEvalProcesoId}");
-      this.rubricaEvalUI = rubricaEvalUI;
-      _progressRubro= false;
 
-      if((rubricaEvalUI?.rubroEvaluacionId??"").isNotEmpty){
-        this.tareaUi?.rubroEvalProcesoId = rubricaEvalUI?.rubroEvaluacionId;
-        this.tareaUi?.tipoNotaId = rubricaEvalUI?.tipoNotaId;
-        this.tareaUi?.competenciaId = rubricaEvalUI?.competenciaId??0;
-        this.tareaUi?.desempenioIcdId = rubricaEvalUI?.desempenioIcdId??0;
-      } else{
-        this.tareaUi?.rubroEvalProcesoId =null;
-        this.tareaUi?.tipoNotaId =null;
-        this.tareaUi?.competenciaId = null;
-        this.tareaUi?.desempenioIcdId = null;
-        this.rubricaEvalUI = null;
-        _mostrarAlumnosDosListas = false;
+
+
+    presenter.saveRubroEvaluacionSucces = (RubricaEvaluacionUi? rubricaEvaluacionUi, RubricaEvaluacionTareaAlumnoUi? rubricaEvaluacionTareaAlumnoUi){
+
+      rubricaEvaluacionTareaAlumnoUi?.success = 2;
+      print("rubricaEvalDetalleUi?.success ${rubricaEvaluacionTareaAlumnoUi?.success}");
+      if(!onSaveProgressEvaluacion()){
+        if(progressCambiosEvaluacion1){
+          _progressCambiosEvaluacion1 = false;
+          _cambiosEvaluacion = false;
+          _abrirRubrica = true;
+        }
+      }
+      refreshUI();
+    };
+
+    presenter.saveRubroEvaluacionError = (RubricaEvaluacionUi? rubricaEvaluacionUi, RubricaEvaluacionTareaAlumnoUi? rubricaEvaluacionTareaAlumnoUi, bool errorServidor, bool errorConexion, bool errorInterno){
+      if(errorConexion){
+        rubricaEvaluacionTareaAlumnoUi?.success = -1;
+      }else if(errorServidor){
+        rubricaEvaluacionTareaAlumnoUi?.success = -1;
+      }else if(errorInterno){
+        rubricaEvaluacionTareaAlumnoUi?.success = -1;
+      }else{
+        rubricaEvaluacionTareaAlumnoUi?.success = 0;
       }
 
-      refreshCountEvaluados();
-      refreshUI();
-      initLista(alumnoCursoList, rubricaEvalUI);
-
-    };
-
-    presenter.getRubroEvaluacionOnError = (e){
-      //print("getRubroEvaluacionOnError");
-      this.rubricaEvalUI = null;
-      _progressRubro= false;
-      refreshUI();
-    };
-
-    presenter.saveRubroEvaluacionSucces = (RubricaEvaluacionUi? rubricaEvaluacionUi, RubricaEvaluacionUi? rubricaEvalDetalleUi, TareaAlumnoUi? tareaAlumnoUi){
-      tareaAlumnoUi?.success = 2;
-      _erroresAlGuardar[tareaAlumnoUi] = null;
-      refreshUI();
-    };
-
-    presenter.saveRubroEvaluacionError = (RubricaEvaluacionUi? rubricaEvaluacionUi, RubricaEvaluacionUi? rubricaEvalDetalleUi, TareaAlumnoUi? tareaAlumnoUi, bool errorServidor, bool errorConexion, bool errorInterno){
-      if(errorConexion){
-        tareaAlumnoUi?.success = -1;
-        _erroresAlGuardar[tareaAlumnoUi] = rubricaEvaluacionUi;
-      }else if(errorServidor){
-        tareaAlumnoUi?.success = -1;
-        _erroresAlGuardar[tareaAlumnoUi] = rubricaEvaluacionUi;
-      }else if(errorInterno){
-        tareaAlumnoUi?.success = -1;
-        _erroresAlGuardar[tareaAlumnoUi] = rubricaEvaluacionUi;
-      }else{
-        tareaAlumnoUi?.success = 0;
+      if(!onSaveProgressEvaluacion()){
+        if(progressCambiosEvaluacion1){
+          _progressCambiosEvaluacion1 = false;
+          _cambiosEvaluacion = false;
+          _abrirRubrica = true;
+        }
       }
 
       refreshUI();
     };
 
     presenter.saveRubroEvaluacionAllSucces = (List<TareaAlumnoUi?>? tareaAlumnoUiList){
-     for(TareaAlumnoUi? tareaAlumnoUi in tareaAlumnoUiList??[]){
-       _erroresAlGuardar[tareaAlumnoUi] = null;
-       tareaAlumnoUi?.success = 2;
+     for(var evaluacion in _mapRowList.entries){
+
+       for(RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi in evaluacion.value){
+         int? success = rubricaEvaluacionTareaAlumnoUi.success;
+         if(success != null && success <= 0){
+           rubricaEvaluacionTareaAlumnoUi.success = 2;
+         }
+       }
      }
 
      if(_progressPublicarEval){
        publicarEvaluacion();
+     }
+
+     if(!onSaveProgressEvaluacion()){
+       if(progressCambiosEvaluacion1){
+         _progressCambiosEvaluacion1 = false;
+         _cambiosEvaluacion = false;
+         _abrirRubrica = true;
+       }
      }
 
      if(_progressSailrGuardar){
@@ -286,6 +256,44 @@ class PortalTareaController extends Controller{
       }else{
 
       }
+
+      for(var evaluacion in _mapRowList.entries){
+
+        for(RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi in evaluacion.value){
+          int? success = rubricaEvaluacionTareaAlumnoUi.success;
+          if(success != null && success <= 0){
+            if(errorConexion){
+              rubricaEvaluacionTareaAlumnoUi.success = -1;
+            }else if(errorServidor){
+              rubricaEvaluacionTareaAlumnoUi.success = -1;
+            }else if(errorInterno){
+              rubricaEvaluacionTareaAlumnoUi.success = -1;
+            }else{
+              rubricaEvaluacionTareaAlumnoUi.success = 0;
+            }
+          }
+        }
+      }
+
+      if(!onSaveProgressEvaluacion()){
+        if(progressCambiosEvaluacion1){
+          _progressCambiosEvaluacion1 = false;
+          _cambiosEvaluacion = false;
+          _abrirRubrica = true;
+        }
+      }
+/*
+      for(TareaAlumnoUi? tareaAlumnoUi in tareaAlumnoUiList??[]){
+        if(errorConexion){
+          tareaAlumnoUi?.success = -1;
+        }else if(errorServidor){
+          tareaAlumnoUi?.success = -1;
+        }else if(errorInterno){
+          tareaAlumnoUi?.success = -1;
+        }else{
+          tareaAlumnoUi?.success = 0;
+        }
+      }*/
 
       if(_progressSailrGuardar){
         _showDialogSaveEval  = true;
@@ -336,7 +344,7 @@ class PortalTareaController extends Controller{
 
   }
 
-  Future<void> initLista(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubricaEvalUI) async{
+ void initLista(List<PersonaUi> alumnoCursoList, RubricaEvaluacionUi? rubricaEvalUI) {
 
     for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
 
@@ -345,12 +353,23 @@ class PortalTareaController extends Controller{
       _mapCellListList[tareaAlumnoUi] = [];
 
       if(rubricaEvalUI?.tipoRubroEvaluacion == TipoRubroEvaluacion.UNIDIMENSIONAL){
-        List<RubricaEvaluacionUi> rubroEvalList = [];
-        if(rubricaEvalUI!=null)
-          rubroEvalList.add(rubricaEvalUI);
+        List<RubricaEvaluacionTareaAlumnoUi> rubroEvalList = [];
+        if(rubricaEvalUI!=null){
+          RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi = RubricaEvaluacionTareaAlumnoUi();
+          rubricaEvaluacionTareaAlumnoUi.tareaAlumnoUi = tareaAlumnoUi;
+          rubricaEvaluacionTareaAlumnoUi.rubricaEvaluacionUi = rubricaEvalUI;
+          rubroEvalList.add(rubricaEvaluacionTareaAlumnoUi);
+        }
+
         _mapRowList[tareaAlumnoUi]?.addAll(rubroEvalList);
       }else{
-        _mapRowList[tareaAlumnoUi]?.addAll(rubricaEvalUI?.rubrosDetalleList??[]);
+        for(RubricaEvaluacionUi rubricaEvaluacionUiDetalle in rubricaEvalUI?.rubrosDetalleList??[]){
+          RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi = RubricaEvaluacionTareaAlumnoUi();
+          rubricaEvaluacionTareaAlumnoUi.tareaAlumnoUi = tareaAlumnoUi;
+          rubricaEvaluacionTareaAlumnoUi.rubricaEvaluacionUi = rubricaEvaluacionUiDetalle;
+          _mapRowList[tareaAlumnoUi]?.add(rubricaEvaluacionTareaAlumnoUi);
+        }
+
       }
 
 
@@ -366,50 +385,91 @@ class PortalTareaController extends Controller{
       if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
         _mapColumnList[tareaAlumnoUi]?.addAll(tipoNotaUi?.valorTipoNotaList??[]);
       }else{
-        _mapColumnList[tareaAlumnoUi]?.add(EvaluacionUi());//Teclado numerico
+        _mapColumnList[tareaAlumnoUi]?.add(EvaluacionTareaAlumnoUi());//Teclado numerico
       }
       //_mapColumnList[tareaAlumnoUi]?.add(RubricaEvaluacionFormulaPesoUi(RubricaEvaluacionUi()));//peso_criterio
 
-      for(RubricaEvaluacionUi row in _mapRowList[tareaAlumnoUi]??[]){
+      for(RubricaEvaluacionTareaAlumnoUi row in _mapRowList[tareaAlumnoUi]??[]){
         List<dynamic> cellList = [];
         //cellList.add(row);
         String? valorTipoNotaIdFirebase = null;
         double? notaFirebase = null;
-        EvaluacionUi? evaluacionUi = null;
-        if(row.tipoRubroEvaluacion == TipoRubroEvaluacion.UNIDIMENSIONAL){
+        EvaluacionUi? evaluacionUi = row.rubricaEvaluacionUi?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == tareaAlumnoUi.personaUi?.personaId);
+        EvaluacionUi? evaluacionCabeceraUi = rubricaEvalUI?.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == tareaAlumnoUi.personaUi?.personaId);
+        if(evaluacionUi== null){
+          evaluacionUi = EvaluacionUi();
+          evaluacionUi.personaUi = tareaAlumnoUi.personaUi;
+          evaluacionUi.personaUi?.soloApareceEnElCurso = true;
+          evaluacionUi.alumnoId =  tareaAlumnoUi.personaUi?.personaId;
+          evaluacionUi.rubroEvaluacionId = row.rubricaEvaluacionUi?.rubroEvaluacionId;
+          evaluacionUi.rubroEvaluacionUi = row.rubricaEvaluacionUi;
+          row.rubricaEvaluacionUi?.evaluacionUiList?.add(evaluacionUi);
+        }
+
+        if(evaluacionCabeceraUi== null){
+          evaluacionCabeceraUi = EvaluacionUi();
+          evaluacionCabeceraUi.personaUi = tareaAlumnoUi.personaUi;
+          evaluacionCabeceraUi.alumnoId =  tareaAlumnoUi.personaUi?.personaId;
+          evaluacionCabeceraUi.rubroEvaluacionId = rubricaEvalUI?.rubroEvaluacionId;
+          evaluacionCabeceraUi.rubroEvaluacionUi = rubricaEvalUI;
+          evaluacionCabeceraUi.personaUi?.soloApareceEnElCurso = true;
+          rubricaEvalUI?.evaluacionUiList?.add(evaluacionCabeceraUi);
+        }
+
+        if(row.rubricaEvaluacionUi?.tipoRubroEvaluacion == TipoRubroEvaluacion.UNIDIMENSIONAL){
           valorTipoNotaIdFirebase = tareaAlumnoUi.valorTipoNotaId;
           notaFirebase = tareaAlumnoUi.nota;
+
+          tareaAlumnoUi.valorTipoNotaId = evaluacionUi.valorTipoNotaId;//remplazar con la nota de la tarea
+          tareaAlumnoUi.nota = evaluacionUi.nota;//remplazar con la nota de la tarea
+          tareaAlumnoUi.tipoNotaUi = row.rubricaEvaluacionUi?.tipoNotaUi;
         }else{
-          TareaEvaluacionUi? tareaEvaluacionUi = tareaAlumnoUi.evaluacion?.firstWhereOrNull((element) => element.desempenioIcdId == row.desempenioIcdId);
+          TareaEvaluacionUi? tareaEvaluacionUi = tareaAlumnoUi.evaluacion?.firstWhereOrNull((element) => element.desempenioIcdId == row.rubricaEvaluacionUi?.desempenioIcdId);
           valorTipoNotaIdFirebase = tareaEvaluacionUi?.valorTipoNotaId;
           notaFirebase = tareaEvaluacionUi?.nota;
+
+          tareaEvaluacionUi?.valorTipoNotaId = evaluacionUi.valorTipoNotaId;//remplazar con la nota de la tarea
+          tareaEvaluacionUi?.nota = evaluacionUi.nota;//remplazar con la nota de la tarea
+
+          tareaAlumnoUi.tipoNotaUi = rubricaEvalUI?.tipoNotaUi;
+          tareaAlumnoUi.valorTipoNotaId = evaluacionCabeceraUi.valorTipoNotaId;//remplazar con la nota de la tarea
+          tareaAlumnoUi.nota = evaluacionCabeceraUi.nota;//remplazar con la nota de la tarea
         }
 
 
-        evaluacionUi = row.evaluacionUiList?.firstWhereOrNull((element) => element.alumnoId == tareaAlumnoUi.personaUi?.personaId);
 
-        if(!_cambiosEvaluacionFirebase){
-          //comprobar si existen cambios de evaluacion tarea en base datos y firebase
-          print("comprobar ${evaluacionUi?.nota} !=  ${notaFirebase}");
-          _cambiosEvaluacionFirebase = (evaluacionUi?.nota??0) != (notaFirebase??0);
+
+        if(rubricaEvalUI?.rubroEvaluacionId == tareaAlumnoUi.rubroEvalProcesoId){
+          if(!_cambiosEvaluacionFirebase){
+            //comprobar si existen cambios de evaluacion tarea en base datos y firebase
+            //print("comprobar ${evaluacionUi?.nota} !=  ${notaFirebase}");
+            _cambiosEvaluacionFirebase = (evaluacionUi.nota??0) != (notaFirebase??0);
+          }
         }
 
-        evaluacionUi?.valorTipoNotaId = valorTipoNotaIdFirebase;//remplazar con la nota de la tarea
-        evaluacionUi?.nota = notaFirebase;//remplazar con la nota de la tarea
-        evaluacionUi?.personaUi = tareaAlumnoUi.personaUi;
+        if(_cambiosEvaluacionFirebase){
+          print("comprobar si ${evaluacionUi.nota} !=  ${notaFirebase}");
+        }
+
+        //evaluacionUi?.valorTipoNotaId = valorTipoNotaIdFirebase;//remplazar con la nota de la tarea
+        //evaluacionUi?.nota = notaFirebase;//remplazar con la nota de la tarea
+        evaluacionUi.personaUi = tareaAlumnoUi.personaUi;
 
         if(tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS || tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
           for(ValorTipoNotaUi valorTipoNotaUi in tipoNotaUi?.valorTipoNotaList??[]){
 
-            EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi = EvaluacionRubricaValorTipoNotaUi();
+            EvaluacionTareaAlumnoRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi = EvaluacionTareaAlumnoRubricaValorTipoNotaUi();
             evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi = valorTipoNotaUi;
             evaluacionRubricaValorTipoNotaUi.evaluacionUi = evaluacionUi;
-            evaluacionRubricaValorTipoNotaUi.toggle = valorTipoNotaUi.valorTipoNotaId == evaluacionUi?.valorTipoNotaId;
-            evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi = row;
+            evaluacionRubricaValorTipoNotaUi.toggle = valorTipoNotaUi.valorTipoNotaId == evaluacionUi.valorTipoNotaId;
+            evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi = row;
             cellList.add(evaluacionRubricaValorTipoNotaUi);
           }
         }else{
-          cellList.add(evaluacionUi);
+          EvaluacionTareaAlumnoUi evaluacionTareaAlumnoUi = EvaluacionTareaAlumnoUi();
+          evaluacionTareaAlumnoUi.evaluacionUi = evaluacionUi;
+          evaluacionTareaAlumnoUi.rubricaEvaluacionTareaAlumnoUi = row;
+          cellList.add(evaluacionTareaAlumnoUi);
         }
         //RubricaEvaluacionFormulaPesoUi pesoUi = RubricaEvaluacionFormulaPesoUi(row);
         //cellList.add(pesoUi);
@@ -423,8 +483,8 @@ class PortalTareaController extends Controller{
       for(dynamic s in _mapColumnList[_tareaAlumnoUiList[0]]??[]){
         if(s is ValorTipoNotaUi){
           _tablecolumnWidths.add(35.0);
-        }  else if(s is EvaluacionUi){
-          _tablecolumnWidths.add(35);
+        }  else if(s is EvaluacionTareaAlumnoUi){
+          _tablecolumnWidths.add(55);
         }else if(s is RubricaEvaluacionFormulaPesoUi){
           _tablecolumnWidths.add(35);
         }else{
@@ -433,6 +493,17 @@ class PortalTareaController extends Controller{
       }
     }
     refreshUI();
+  }
+
+  void actualizarListaAlumnos(){
+    _tareaRecursoUiList = _tareaRecursoUiList2;
+    _tareaAlumnoUiList.clear();
+    _tareaAlumnoUiList.addAll(_tareaAlumnoUiList2);
+    _tareaAlumnoUiList.removeWhere((element) => !(element.personaUi?.contratoVigente??false));
+    _tareaAlumnoUiNoEvaluadosList = [];
+    _tareaAlumnoUiEvaluadosList = [];
+    tareaUi?.recursos = _tareaRecursoUiList2;
+    refreshCountEvaluados();
   }
 
   @override
@@ -447,8 +518,8 @@ class PortalTareaController extends Controller{
 
   @override
   void onDisposed() {
-    super.onDisposed();
     presenter.dispose();
+    super.onDisposed();
   }
 
   void onClickTareaAlumno(TareaAlumnoUi tareaAlumnoUi) {
@@ -522,6 +593,7 @@ class PortalTareaController extends Controller{
     tareaUi?.silaboEventoId = unidadUi?.silaboEventoId;
 
     bool success = await presenter.eliminarTarea(tareaUi);
+    _cambiosTarea = true;
     _progress = false;
     refreshUI();
     return success;
@@ -540,20 +612,31 @@ class PortalTareaController extends Controller{
     _alumnoEval=0;
     _alumnoSinEval=0;
     for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
-      print("rubricaEvalUI; ${rubricaEvalUI?.rubroEvaluacionId}");
-      if((tareaAlumnoUi.valorTipoNotaId??"").isNotEmpty
-          && rubricaEvalUI != null)_alumnoEval++;
-      else _alumnoSinEval++;
+
+      switch(tareaAlumnoUi.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO){
+        case TipoNotaTiposUi.SELECTOR_VALORES:
+        case TipoNotaTiposUi.SELECTOR_ICONOS:
+        if((tareaAlumnoUi.valorTipoNotaId??"").isNotEmpty
+            && rubricaEvalUI != null)_alumnoEval++;
+        else _alumnoSinEval++;
+          break;
+        default:
+          if((tareaAlumnoUi.nota??0) != 0
+              && rubricaEvalUI != null)_alumnoEval++;
+          else _alumnoSinEval++;
+          break;
+      }
     }
   }
 
   void successCrearEvaluacion(String? rubricaId) {
     _progressRubro =true;
     refreshUI();
+    _cambiosTarea = true;
     //Traer las evaluaciones de la tarea del firebase*/
     presenter.getInformacionTarea(tareaUi, cursosUi, tareaUi?.unidadAprendizajeId);//1305160972
   }
-
+/*
   onClicClearEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, TareaAlumnoUi? tareaAlumnoUi) async {
 
     if(!(tareaAlumnoUi?.personaUi?.contratoVigente??false))return;//Contrato no vigente
@@ -580,9 +663,9 @@ class PortalTareaController extends Controller{
     _erroresAlGuardar[tareaAlumnoUi] = null;
     _uploadNotas[tareaAlumnoUi]?.cancel();
     _cambiosEvaluacion = true;
-    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoAll(rubricaEvalUI, tareaAlumnoUi, tareaUi, calendarioPeriodoUI);
     tareaAlumnoUi?.success = 1;
     refreshUI();
+    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoAll(rubricaEvalUI, tareaAlumnoUi, tareaUi, calendarioPeriodoUI);
   }
 
   onClicEvaluacionAll(ValorTipoNotaUi valorTipoNotaUi, TareaAlumnoUi? tareaAlumnoUi)async {
@@ -616,17 +699,19 @@ class PortalTareaController extends Controller{
     _erroresAlGuardar[tareaAlumnoUi] = null;
     _uploadNotas[tareaAlumnoUi]?.cancel();
     _cambiosEvaluacion = true;
-    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoAll(rubricaEvalUI, tareaAlumnoUi, tareaUi, calendarioPeriodoUI);
-    tareaAlumnoUi?.success = 1;
+    evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.success = 1;
     refreshUI();
-  }
+    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoAll(rubricaEvalUI, tareaAlumnoUi, tareaUi, calendarioPeriodoUI);
 
-  void onClicEvaluarPresicion(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, TareaAlumnoUi? tareaAlumnoUi, nota)async {
+
+  }*/
+
+  void onClicEvaluarPresicion(EvaluacionTareaAlumnoRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, TareaAlumnoUi? tareaAlumnoUi, nota)async {
     for (List cellList in mapCellListList[tareaAlumnoUi] ?? []) {
       for (var cell in cellList) {
-        if (cell is EvaluacionRubricaValorTipoNotaUi) {
+        if (cell is EvaluacionTareaAlumnoRubricaValorTipoNotaUi) {
           if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.rubroEvaluacionId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -640,32 +725,31 @@ class PortalTareaController extends Controller{
     evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
     evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi;
 
-    TareaEvaluacionUi? tareaEvaluacionUi = tareaAlumnoUi?.evaluacion?.firstWhereOrNull((element) => element.desempenioIcdId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.desempenioIcdId);
+    TareaEvaluacionUi? tareaEvaluacionUi = tareaAlumnoUi?.evaluacion?.firstWhereOrNull((element) => element.desempenioIcdId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.desempenioIcdId);
     tareaEvaluacionUi?.valorTipoNotaId = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorTipoNotaId;
     tareaEvaluacionUi?.nota = nota;//actualizar la nota solo cuando no esta selecionado
 
     _actualizarCabecera(tareaAlumnoUi);
     refreshCountEvaluados();
     _cambiosTarea = true;
-
-    refreshUI();
-    _erroresAlGuardar[tareaAlumnoUi] = null;
-    _uploadNotas[tareaAlumnoUi]?.cancel();
+    //_uploadNotas[tareaAlumnoUi]?.cancel();
     _cambiosEvaluacion = true;
-    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoUi(rubricaEvalUI, evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi, tareaAlumnoUi, tareaUi, calendarioPeriodoUI, cambiosEvaluacionFirebase);
-    tareaAlumnoUi?.success = 1;
+    evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.success = 1;
     refreshUI();
+    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoUi(rubricaEvalUI, evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi, tareaUi, calendarioPeriodoUI);
+
+
   }
 
-  void onClicEvaluar(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, TareaAlumnoUi? tareaAlumnoUi) async{
+  void onClicEvaluar(EvaluacionTareaAlumnoRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, TareaAlumnoUi? tareaAlumnoUi) async{
 
 
     for (List cellList in mapCellListList[tareaAlumnoUi] ?? []) {
       for (var cell in cellList) {
-        if (cell is EvaluacionRubricaValorTipoNotaUi) {
+        if (cell is EvaluacionTareaAlumnoRubricaValorTipoNotaUi) {
           print("onClicEvaluar tareaAlumnoUi: ${cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId}");
           if (cell.evaluacionUi?.alumnoId == evaluacionRubricaValorTipoNotaUi.evaluacionUi?.alumnoId
-              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.rubroEvaluacionId
+              && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.rubroEvaluacionId
               && cell != evaluacionRubricaValorTipoNotaUi) {
             cell.toggle = false;
           }
@@ -674,7 +758,7 @@ class PortalTareaController extends Controller{
     }
     evaluacionRubricaValorTipoNotaUi.toggle = !(evaluacionRubricaValorTipoNotaUi.toggle ?? false);
     print("onClicEvaluar evaluacion: ${tareaAlumnoUi?.evaluacion}");
-    TareaEvaluacionUi? tareaEvaluacionUi = tareaAlumnoUi?.evaluacion?.firstWhereOrNull((element) => element.desempenioIcdId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.desempenioIcdId);
+    TareaEvaluacionUi? tareaEvaluacionUi = tareaAlumnoUi?.evaluacion?.firstWhereOrNull((element) => element.desempenioIcdId == evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.desempenioIcdId);
 
     if(evaluacionRubricaValorTipoNotaUi.toggle??false){
 
@@ -699,15 +783,13 @@ class PortalTareaController extends Controller{
     _actualizarCabecera(tareaAlumnoUi);
     refreshCountEvaluados();
     _cambiosTarea = true;
-    refreshUI();
-    _erroresAlGuardar[tareaAlumnoUi] = null;
-    _uploadNotas[tareaAlumnoUi]?.cancel();
+    evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.success = 1;
+    //_uploadNotas[tareaAlumnoUi]?.cancel();
     _cambiosEvaluacion = true;
-    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoUi(rubricaEvalUI, evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi,tareaAlumnoUi, tareaUi, calendarioPeriodoUI, cambiosEvaluacion);
-    tareaAlumnoUi?.success = 1;
     refreshUI();
+    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoUi(rubricaEvalUI, evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi, tareaUi, calendarioPeriodoUI);
 
-    print("changeEvaluacion: ${_uploadNotas[tareaAlumnoUi]?.isFinished()}");
+
   }
 
   void seEliminoEvaluacion() {
@@ -717,6 +799,7 @@ class PortalTareaController extends Controller{
     rubricaEvalUI = null;
     tareaUi?.rubroEvalProcesoId = null;
     _progressRubro = true;
+    _cambiosTarea = true;
     refreshUI();
     presenter.onActualizarRubro(calendarioPeriodoUI, cursosUi, sesionUi, tareaUi);
   }
@@ -744,30 +827,53 @@ class PortalTareaController extends Controller{
     return evaluacionUi;
   }
 
-  bool onSaveProgressEvaluacion() {
+ /* bool onSaveProgressEvaluacion() {
     bool subiendoEvaluacion = false;
     for(var evaluacion in _uploadNotas.entries){
       HttpStream? httpStream = evaluacion.value;
+      print("httpStream.isFinished();: ${httpStream?.isFinished()}");
       subiendoEvaluacion = httpStream!=null && !httpStream.isFinished();
       break;
     }
+    print("subiendoEvaluacion: ${subiendoEvaluacion}");
     if(subiendoEvaluacion){
       refreshUI();
       return true;
     }else{
       return false;
     }
+  }*/
+
+  bool onSaveProgressEvaluacion() {
+    bool subiendoEvaluacion = false;
+
+    for(var evaluacion in _mapRowList.entries){
+      for(RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi in evaluacion.value){
+        int? success = rubricaEvaluacionTareaAlumnoUi.success;
+        if(success == 1){
+          subiendoEvaluacion = true;
+          break;
+        }
+      }
+    }
+    return subiendoEvaluacion;
   }
 
   int onCountErrorGuardar() {
     int errorGuardar = 0;
-    for(var evaluacion in _erroresAlGuardar.entries){
-      if(evaluacion.value!=null){
-        errorGuardar++;
+
+    for(var evaluacion in _mapRowList.entries){
+
+      for(RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi in evaluacion.value){
+        int? success = rubricaEvaluacionTareaAlumnoUi.success;
+         if(success != null && success == -1){
+           errorGuardar++;
+        }
       }
     }
     return errorGuardar;
   }
+
 
   void hayCambioEnLaConexion()  {
     print("hayCambioEnLaConexion");
@@ -793,9 +899,15 @@ class PortalTareaController extends Controller{
       httpStream?.cancel();
     }
     List<TareaAlumnoUi> tareaAlumnouiList = [];
-    for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
-      if(tareaAlumnoUi.success != null && tareaAlumnoUi.success != 0 && tareaAlumnoUi.success != 2){
-        tareaAlumnouiList.add(tareaAlumnoUi);
+    for(var evaluacion in _mapRowList.entries){
+      for(RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi in evaluacion.value){
+        int? success = rubricaEvaluacionTareaAlumnoUi.success;
+        if(success != null && success == -1){
+          TareaAlumnoUi? tareaAlumnoUi = tareaAlumnouiList.firstWhereOrNull((element) => element == evaluacion.key);
+          if(tareaAlumnoUi==null){
+            tareaAlumnouiList.add(evaluacion.key);
+          }
+        }
       }
     }
     print("tareaAlumnouiList ${tareaAlumnouiList.length}");
@@ -859,9 +971,15 @@ class PortalTareaController extends Controller{
 
   Future<void> onClickRubrica() async {
     if(_cambiosEvaluacion){
-      _progressCambiosEvaluacion = true;
-      refreshUI();
-      presenter.onActualizarRubro(calendarioPeriodoUI, cursosUi, sesionUi, tareaUi);
+
+      if(onSaveProgressEvaluacion()){
+        _progressCambiosEvaluacion1 = true;
+        refreshUI();
+      }else{
+        _abrirRubrica = true;
+        refreshUI();
+      }
+
     }else{
       _abrirRubrica = true;
       refreshUI();
@@ -873,7 +991,9 @@ class PortalTareaController extends Controller{
   }
 
   void cambioEvaluacion() {
-    presenter.getRubroEvaluacion(tareaUi?.tareaId, cursosUi);
+    _cambiosTarea = true;
+    refreshUI();
+    getRubro();
   }
 
   void onClickTareaArchivoAlumno(TareaAlumnoArchivoUi tareaAlumnoArchivoUi) {
@@ -916,6 +1036,143 @@ class PortalTareaController extends Controller{
   void dispose() {
     presenter.dispose();
     super.dispose();
+  }
+
+  int? tareaAlumnoUiSuccess(TareaAlumnoUi tareaAlumnoUi) {
+    List<RubricaEvaluacionTareaAlumnoUi> rubricaEvaluacionUiList = mapRowList[tareaAlumnoUi]??[];
+    
+    int? success = null;
+    for(RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionUi in rubricaEvaluacionUiList){
+      if(rubricaEvaluacionUi.success!=null){
+        success = rubricaEvaluacionUi.success;
+      }
+      if(success == 1){
+        break;
+      }else if(success != null && success == -1){
+        break;
+      }
+
+    }
+    
+    return success;
+  }
+
+  void onSaveTecladoPresicion(nota, EvaluacionTareaAlumnoUi? evaluacionTareaAlumnoUi, TareaAlumnoUi? tareaAlumnoUi) async{
+    if (evaluacionTareaAlumnoUi?.evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi ==  TipoNotaTiposUi.SELECTOR_VALORES || evaluacionTareaAlumnoUi?.evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_ICONOS){
+      ValorTipoNotaUi? valorTipoNotaUi = TransformarValoTipoNota.getValorTipoNota(evaluacionTareaAlumnoUi?.evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi, nota);
+
+      for (List cellList in _mapCellListList[evaluacionTareaAlumnoUi?.evaluacionUi?.personaUi]??[]) {
+        for (var cell in cellList) {
+          if (cell is EvaluacionTareaAlumnoRubricaValorTipoNotaUi) {
+            if (cell.evaluacionUi?.alumnoId == evaluacionTareaAlumnoUi?.evaluacionUi?.alumnoId
+                && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionTareaAlumnoUi?.evaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId == valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = true;
+            }
+
+            if (cell.evaluacionUi?.alumnoId == evaluacionTareaAlumnoUi?.evaluacionUi?.alumnoId
+                && cell.evaluacionUi?.rubroEvaluacionUi?.rubroEvaluacionId == evaluacionTareaAlumnoUi?.evaluacionUi?.rubroEvaluacionId
+                && cell.valorTipoNotaUi?.valorTipoNotaId != valorTipoNotaUi?.valorTipoNotaId) {
+              cell.toggle = false;
+            }
+
+          }
+        }
+      }
+      evaluacionTareaAlumnoUi?.evaluacionUi?.valorTipoNotaId = valorTipoNotaUi?.valorTipoNotaId;
+      evaluacionTareaAlumnoUi?.evaluacionUi?.valorTipoNotaUi = valorTipoNotaUi;
+
+    }
+    evaluacionTareaAlumnoUi?.evaluacionUi?.nota = nota;
+
+    _actualizarCabecera(tareaAlumnoUi);
+    refreshCountEvaluados();
+    _cambiosTarea = true;
+    //_uploadNotas[tareaAlumnoUi]?.cancel();
+    _cambiosEvaluacion = true;
+    evaluacionTareaAlumnoUi?.rubricaEvaluacionTareaAlumnoUi?.success = 1;
+    refreshUI();
+    _uploadNotas[tareaAlumnoUi] = await presenter.updateEvalAlumnoUi(rubricaEvalUI, evaluacionTareaAlumnoUi?.rubricaEvaluacionTareaAlumnoUi, tareaUi, calendarioPeriodoUI);
+
+
+  }
+
+  void getRubro() async{
+    var response = await presenter.getRubroEvaluacion(tareaUi?.tareaId, cursosUi);
+    this.rubricaEvalUI = response.rubricaEvaluacionUi;
+    _progressRubro= false;
+    actualizarListaAlumnos();
+
+    if((rubricaEvalUI?.rubroEvaluacionId??"").isNotEmpty){
+      this.tareaUi?.rubroEvalProcesoId = rubricaEvalUI?.rubroEvaluacionId;
+      this.tareaUi?.tipoNotaId = rubricaEvalUI?.tipoNotaId;
+      this.tareaUi?.competenciaId = rubricaEvalUI?.competenciaId??0;
+      this.tareaUi?.desempenioIcdId = rubricaEvalUI?.desempenioIcdId??0;
+    } else{
+      this.tareaUi?.rubroEvalProcesoId =null;
+      this.tareaUi?.tipoNotaId =null;
+      this.tareaUi?.competenciaId = null;
+      this.tareaUi?.desempenioIcdId = null;
+      this.rubricaEvalUI = null;
+      _mostrarAlumnosDosListas = false;
+    }
+
+
+    _tareaAlumnoUiList.clear();
+    _tareaAlumnoUiNoEvaluadosList = [];
+    _tareaAlumnoUiEvaluadosList = [];
+
+    List<TareaAlumnoUi> tareaAlumnoUiList = [];
+    for(PersonaUi item in response.alumnoCursoList){
+      TareaAlumnoUi? tareaAlumnoUi = _tareaAlumnoUiList2.firstWhereOrNull((element) => element.personaUi?.personaId == item.personaId);
+      if(tareaAlumnoUi != null){
+        tareaAlumnoUiList.add(tareaAlumnoUi);
+      }
+    }
+    _tareaAlumnoUiList.addAll(tareaAlumnoUiList);
+
+    initLista(response.alumnoCursoList, rubricaEvalUI);
+
+    for(TareaAlumnoUi tareaAlumnoUi in _tareaAlumnoUiList){
+      tareaAlumnoUi.toogle = toogleGeneral;
+      switch(tareaAlumnoUi.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO){
+        case TipoNotaTiposUi.SELECTOR_VALORES:
+        case TipoNotaTiposUi.SELECTOR_ICONOS:
+          if((tareaAlumnoUi.valorTipoNotaId??"").isNotEmpty
+              && rubricaEvalUI != null){
+            _tareaAlumnoUiEvaluadosList.add(tareaAlumnoUi);
+          }
+          else{
+            _tareaAlumnoUiNoEvaluadosList.add(tareaAlumnoUi);
+          }
+          break;
+        default:
+          if((tareaAlumnoUi.nota??0) != 0
+              && rubricaEvalUI != null){
+            _tareaAlumnoUiEvaluadosList.add(tareaAlumnoUi);
+          }
+          else{
+            _tareaAlumnoUiNoEvaluadosList.add(tareaAlumnoUi);
+          }
+          break;
+      }
+    }
+
+    _mostrarAlumnosDosListas = (_tareaAlumnoUiNoEvaluadosList.isNotEmpty && _tareaAlumnoUiEvaluadosList.isNotEmpty);
+
+    /*Solo abrir la caja de evaluaciones abierta del primer foto_alumno*/
+    if(_mostrarAlumnosDosListas){
+      if(_tareaAlumnoUiEvaluadosList.isNotEmpty){
+        _tareaAlumnoUiEvaluadosList[0].toogle = true;
+      }else if(_tareaAlumnoUiNoEvaluadosList.isNotEmpty){
+        _tareaAlumnoUiNoEvaluadosList[0].toogle = true;
+      }
+    }else if(_tareaAlumnoUiList.isNotEmpty){
+      _tareaAlumnoUiList[0].toogle = true;
+    }
+    /*o*/
+    refreshCountEvaluados();
+    refreshUI();
   }
 
 

@@ -31,6 +31,8 @@ class StickyHeadersTableNotExpandedCustom extends StatefulWidget {
     /// and returns String for row title
     required this.rowsTitleBuilder,
 
+    this.rowsCellsBuilder,
+
     /// Builder for content cell. Takes index for content column first,
     /// index for content row second and returns String for cell
     required this.contentCellBuilder,
@@ -72,6 +74,7 @@ class StickyHeadersTableNotExpandedCustom extends StatefulWidget {
   final Widget Function(int columnIndex) columnsTitleBuilder;
   final Widget Function(int rowIndex) rowsTitleBuilder;
   final Widget Function(int columnIndex, int rowIndex) contentCellBuilder;
+  final Widget Function(int rowIndex)? rowsCellsBuilder;
   final CellDimensions cellDimensions;
   final CellAlignments? cellAlignments;
   final Function() onStickyLegendPressed;
@@ -219,28 +222,35 @@ class _StickyHeadersTableState extends State<StickyHeadersTableNotExpandedCustom
                       child: Column(
                         children: List.generate(
                           widget.rowsLength,
-                              (int rowIdx) => Row(
-                            children: List.generate(
-                              widget.columnsLength,
-                                  (int columnIdx) => GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () => widget.onContentCellPressed(
-                                    columnIdx, rowIdx),
-                                child: Container(
-                                  width: widget.cellDimensions
-                                      .contentSize(rowIdx, columnIdx)
-                                      .width,
-                                  height: widget.cellDimensions
-                                      .contentSize(rowIdx, columnIdx)
-                                      .height,
-                                  alignment: widget.cellAlignments
-                                      ?.contentAlignment(rowIdx, columnIdx),
-                                  child: widget.contentCellBuilder(
-                                      columnIdx, rowIdx),
-                                ),
+                              (int rowIdx) => Stack(
+                                children: [
+                                  Row(
+                                    children: List.generate(
+                                      widget.columnsLength,
+                                          (int columnIdx) => GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
+                                        onTap: () => widget.onContentCellPressed(
+                                            columnIdx, rowIdx),
+                                        child: Container(
+                                          width: widget.cellDimensions
+                                              .contentSize(rowIdx, columnIdx)
+                                              .width,
+                                          height: widget.cellDimensions
+                                              .contentSize(rowIdx, columnIdx)
+                                              .height,
+                                          alignment: widget.cellAlignments
+                                              ?.contentAlignment(rowIdx, columnIdx),
+                                          child: widget.contentCellBuilder(
+                                              columnIdx, rowIdx),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  (widget.rowsCellsBuilder!=null)?
+                                  widget.rowsCellsBuilder!.call(rowIdx):
+                                  Container(),
+                                ],
                               ),
-                            ),
-                          ),
                         ),
                       ),
                     ),

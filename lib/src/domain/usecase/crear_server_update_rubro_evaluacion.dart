@@ -34,9 +34,11 @@ class CrearServerUpdateRubroEvaluacion {
 
       return await httpDatosRepository.updateEvaluacionRubroFlutter2(urlServidorLocal, params.rubricaEvaluacionUi?.calendarioPeriodoId??0, params.rubricaEvaluacionUi?.silaboEventoId??0, georeferenciaId, usuarioId, dataSerial,
               (success, sinConexion) async{
+                print("CrearServerUpdateRubroEvaluacion updateEvaluacionRubroFlutter2");
             if(success==null){
               successListen.call(UpdateRubroEvaluacionResponse(dataBD, false, sinConexion, true, false));
             }else if(success){
+
               await repository.saveRubroEvaluacionData(dataBD);
               await repository.cambiarEstadoActualizado(params.rubricaEvaluacionUi?.rubroEvaluacionId??"");
               successListen.call(UpdateRubroEvaluacionResponse(dataBD, true, sinConexion, false, false));

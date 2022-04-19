@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +20,7 @@ import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ss_crmeducativo_2/libs/sticky-headers-table/table_sticky_headers_not_expanded_custom.dart';
 import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/precision_view.dart';
+import 'package:ss_crmeducativo_2/src/app/page/rubro/evaluacion/presicion/teclado_precision_2_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/multimedia/tarea_multimedia_view.dart';
 import 'package:ss_crmeducativo_2/src/app/page/tarea/portal/portal_tarea_controller.dart';
 import 'package:ss_crmeducativo_2/src/app/routers.dart';
@@ -35,11 +37,12 @@ import 'package:ss_crmeducativo_2/src/data/repositories/moor/moor_unidad_tarea_r
 import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_tarea_alumno_rubrica_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_tarea_alumno_valor_tipo_nota_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_formula_peso_ui.dart';
-import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_tarea_alumnoUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/sesion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tareaUi.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tarea_alumno_archivo_ui.dart';
@@ -71,9 +74,7 @@ class PortalTareaView2 extends View{
 
 class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaController> with TickerProviderStateMixin{
 
-  GlobalKey listaEvaluadoKey = GlobalKey();
-  GlobalKey listaNoEvaluadoKey = GlobalKey();
-  Map<TareaAlumnoUi,GlobalKey> evaluadoKeyMap = Map();
+
 
 
   final ScrollController scrollController = ScrollController();
@@ -81,6 +82,8 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
   late double topBarOpacity = 0.0;
   int _indexTab = 0;
   _PortalTareaViewState(usuarioUi, cursosUi, tareaUi, calendarioPeriodoUI, unidadUi, sesionUi) : super(PortalTareaController(usuarioUi, cursosUi, tareaUi, calendarioPeriodoUI, unidadUi, sesionUi,DeviceHttpDatosRepositorio(), MoorUnidadTareaRepository(), MoorConfiguracionRepository(), MoorRubroRepository()));
+
+  Map<TareaAlumnoUi,GlobalKey> evaluadoKeyMap = Map();
 
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   ConnectivityResult _connectionStatusValidate = ConnectivityResult.none;
@@ -605,7 +608,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                     backgroundColor: Color(0x33000000),
                     animationDuration: Duration(milliseconds: 500)):
                 Container(),
-                controller.progressCambiosEvaluacion?
+                controller.progressCambiosEvaluacion1?
                 ArsProgressWidget(
                     blur: 2,
                     backgroundColor: Color(0x33000000),
@@ -786,1162 +789,1172 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
             ),
             child: DefaultTabController(
               length: 2,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24),
-                      right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24),
-                    ),
-                    constraints: BoxConstraints.expand(height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 50 + 4)),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TabBar(
-                              indicatorColor: HexColor(controller.cursosUi?.color1),
-                              labelColor: HexColor(controller.cursosUi?.color1),
-                              unselectedLabelColor: Colors.grey,
-                              onTap: (index){
-                                setState(() {
+              child: Builder(
+                builder: (context) {
+                  final tabController = DefaultTabController.of(context)!;
+                  tabController.addListener(() {
+                    setState(() {
 
-                                  if(_indexTab != index){
-                                    topBarOpacity = 0.0;
-                                  }
-                                  _indexTab = index;
-                                });
-                              },
-                              //isScrollable: _indexTab == 1 && topBarOpacity == 1 && MediaQuery.of(context).orientation == Orientation.portrait,
-                              labelStyle: TextStyle(
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: AppTheme.fontTTNorms
-                              ),
-                              tabs: [
-                                Tab(child: Text("Instruciones", maxLines: 1, overflow: TextOverflow.ellipsis,)),
-                                Tab(child: Text("Trabajo del alumno", maxLines: 1, overflow: TextOverflow.ellipsis,)),
-                              ]),
+                    });
+                  });
+                  return  Column(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(
+                          left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24),
+                          right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24),
                         ),
-                        if(topBarOpacity == 1)
-                          Padding(
-                            padding: EdgeInsets.only(left: 8),
-                            child: InkWell(
-                              onTap: (){
-                                if(!controller.alumnoSearch){
-                                  controller.onClickMostrarBuscador();
-                                  onMostrarBuscador();
-                                }
-                              },
-                              child: Container(
-                                height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                padding: EdgeInsets.only(
-                                    left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2) ,
-                                    right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
-                                    top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
-                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                                    color: HexColor(controller.cursosUi?.color2)
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(controller.toogleGeneral?Ionicons.search: Ionicons.search,
-                                        color: AppTheme.white,
-                                        size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)
-                                    ),
-                                  ],
-                                ),
-                              ),
+                        constraints: BoxConstraints.expand(height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 50 + 4)),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TabBar(
+                                  indicatorColor: HexColor(controller.cursosUi?.color1),
+                                  labelColor: HexColor(controller.cursosUi?.color1),
+                                  unselectedLabelColor: Colors.grey,
+                                  onTap: (index){
+                                    setState(() {
+
+                                      if(_indexTab != index){
+                                        topBarOpacity = 0.0;
+                                      }
+                                      _indexTab = index;
+                                    });
+                                  },
+                                  //isScrollable: _indexTab == 1 && topBarOpacity == 1 && MediaQuery.of(context).orientation == Orientation.portrait,
+                                  labelStyle: TextStyle(
+                                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: AppTheme.fontTTNorms
+                                  ),
+                                  tabs: [
+                                    Tab(child: Text("Instruciones", maxLines: 1, overflow: TextOverflow.ellipsis,)),
+                                    Tab(child: Text("Trabajo del alumno", maxLines: 1, overflow: TextOverflow.ellipsis,)),
+                                  ]),
                             ),
-                          )
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: TabBarView(children: [
-                        CustomScrollView(
-                          slivers: [
-                            SliverPadding(
-                              padding: EdgeInsets.only(
-                                  left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24 ),
-                                  right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24 )),
-                              sliver: SliverList(
-                                  delegate: SliverChildListDelegate([
-                                    Stack(
+                            if(topBarOpacity == 1)
+                              Padding(
+                                padding: EdgeInsets.only(left: 8),
+                                child: InkWell(
+                                  onTap: (){
+                                    if(!controller.alumnoSearch){
+                                      controller.onClickMostrarBuscador();
+                                      onMostrarBuscador();
+                                    }
+                                  },
+                                  child: Container(
+                                    height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                    width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                    padding: EdgeInsets.only(
+                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2) ,
+                                        right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
+                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
+                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                                        color: HexColor(controller.cursosUi?.color2)
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
-                                        Center(
-                                          child: Container(
-                                            constraints: BoxConstraints(
-                                              //minWidth: 200.0,
-                                              //maxWidth: 600.0,
-                                            ),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                        Icon(controller.toogleGeneral?Ionicons.search: Ionicons.search,
+                                            color: AppTheme.white,
+                                            size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          child: TabBarView(
+                              children: [
+                                CustomScrollView(
+                                  slivers: [
+                                    SliverPadding(
+                                      padding: EdgeInsets.only(
+                                          left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24 ),
+                                          right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24 )),
+                                      sliver: SliverList(
+                                          delegate: SliverChildListDelegate([
+                                            Stack(
                                               children: [
-                                                controller.progressRubro?
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4)),
-                                                  child:  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                    children: [
-                                                      SizedBox(
-                                                        child: Shimmer.fromColors(
-                                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                                                          child: Container(
-                                                            height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                                            width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,100),
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                color: HexColor(controller.cursosUi?.color2)
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
-                                                      )),
-                                                      SizedBox(
-                                                        child: Shimmer.fromColors(
-                                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                                                          child: Container(
-                                                            height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                                            width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,100),
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                color: HexColor(controller.cursosUi?.color2)
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
-                                                      )),
-                                                      SizedBox(
-                                                        child: Shimmer.fromColors(
-                                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                                                          child: Container(
-                                                            height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                                            width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,100),
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                color: HexColor(controller.cursosUi?.color2)
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ):
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4)),
-                                                  child:  Wrap(
-                                                    spacing: 10.0,
-                                                    runSpacing: 15.0,
-                                                    direction: Axis.horizontal,
-                                                    alignment: WrapAlignment.start,
-                                                    children: <Widget>[
-                                                      InkWell(
-                                                        onTap: () async{
-                                                          await controller.onClicPublicar();
-                                                        },
-                                                        child: Container(
-                                                          width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,125),
-                                                          padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                          decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                              color: controller.tareaUi?.publicado??false?HexColor(controller.cursosUi?.color2) : AppTheme.white
-                                                          ),
-                                                          alignment: Alignment.center,
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                Center(
+                                                  child: Container(
+                                                    constraints: BoxConstraints(
+                                                      //minWidth: 200.0,
+                                                      //maxWidth: 600.0,
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        controller.progressRubro?
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4)),
+                                                          child:  Row(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
                                                             children: [
-                                                              Icon(Ionicons.earth ,
-                                                                  color: controller.tareaUi?.publicado??false?AppTheme.white:AppTheme.greyDarken1,
-                                                                  size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 9 + 6 )
-                                                              ),
-                                                              Padding(padding: EdgeInsets.all(2),),
-                                                              FittedBox(
-                                                                fit: BoxFit.scaleDown,
-                                                                child: Text("Publicar Tarea",
-                                                                    overflow: TextOverflow.ellipsis,
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.w700,
-                                                                      fontFamily: AppTheme.fontTTNorms,
-                                                                      color: controller.tareaUi?.publicado??false?AppTheme.white: AppTheme.greyDarken1,
-                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 5 + 6) ,
-                                                                    )),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      InkWell(
-                                                        onTap: () async{
-                                                          dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.usuarioUi, controller.cursosUi, controller.tareaUi, controller.calendarioPeriodoUI, controller.unidadUi, controller.sesionUi);
-                                                          if(result is int) controller.cambiosTarea();
-
-                                                        },
-                                                        child: Container(
-                                                          width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
-                                                          padding: EdgeInsets.only(
-                                                              left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                              right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                              top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                          decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                              color: HexColor(controller.cursosUi?.color2)
-                                                          ),
-                                                          alignment: Alignment.center,
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              Icon(Ionicons.pencil ,
-                                                                color: AppTheme.white,
-                                                                size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,9 + 6  )
-                                                                , ),
-                                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 2)),),
-                                                              FittedBox(
-                                                                fit: BoxFit.scaleDown,
-                                                                child: Text("Modificar",
-                                                                    overflow: TextOverflow.ellipsis,
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.w700,
-                                                                      fontFamily: AppTheme.fontTTNorms,
-                                                                      color:AppTheme.white,
-                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 5 + 6 - 1),
-                                                                    )),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      InkWell(
-                                                        onTap: () {
-                                                          controller.onClicEliminar();
-                                                        },
-                                                        child: Container(
-                                                          width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
-                                                          padding: EdgeInsets.only(
-                                                              left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                              right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                              top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                              bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)
-                                                          ),
-                                                          decoration: BoxDecoration(
-                                                              borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                              color: HexColor(controller.cursosUi?.color2)
-                                                          ),
-                                                          alignment: Alignment.center,
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                                            children: [
-                                                              Icon(Ionicons.trash ,color: AppTheme.white,
-                                                                size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,9 + 6),
-                                                              ),
-                                                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
-                                                              FittedBox(
-                                                                fit: BoxFit.scaleDown,
-                                                                child: Text("Eliminar",
-                                                                    overflow: TextOverflow.ellipsis,
-                                                                    style: TextStyle(
-                                                                      fontWeight: FontWeight.w700,
-                                                                      fontFamily: AppTheme.fontTTNorms,
-                                                                      color:AppTheme.white,
-                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,5 + 6),
-                                                                    )),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
-                                                  child: Text(
-                                                    "Fecha de entrega: ${(controller.tareaUi?.fechaEntrega??"sin fecha de entrega").replaceAll("\n", "")}", 
-                                                    style: TextStyle(
-                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14),
-                                                      fontWeight: FontWeight.w500,
-                                                      fontFamily: AppTheme.fontTTNorms,
-                                                    ),),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8)),
-                                                  child: Text("${controller.tareaUi?.titulo}",
-                                                    style: TextStyle(
-                                                        color: HexColor(controller.cursosUi?.color1) , 
-                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20),
-                                                      fontWeight: FontWeight.w700,
-                                                      fontFamily: AppTheme.fontTTNorms,
-                                                    )
-                                                  ),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16)),
-                                                  height: 1,
-                                                  color: HexColor(controller.cursosUi?.color1),
-                                                ),
-                                                (controller.tareaUi?.instrucciones??"").isNotEmpty?
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
-                                                  child: Text("${controller.tareaUi?.instrucciones}",
-                                                    style: TextStyle(
-                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16),
-                                                        height: 1.5,
-                                                        fontFamily: AppTheme.fontTTNorms,
-                                                        ),
-                                                  ),
-                                                ):Container(),
-                                                controller.tareaRecursoUiList.isNotEmpty?
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
-                                                  child: Text("Recursos",
-                                                    style: TextStyle(
-                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16), 
-                                                        color: AppTheme.black,
-                                                        fontFamily: AppTheme.fontTTNorms,
-                                                        fontWeight: FontWeight.w700
-                                                    )
-                                                  ),
-                                                ):Container(),
-                                                ListView.builder(
-                                                    padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8), bottom: 0),
-                                                    itemCount: controller.tareaRecursoUiList.length,
-                                                    shrinkWrap: true,
-                                                    physics: NeverScrollableScrollPhysics(),
-                                                    itemBuilder: (context, index){
-                                                      TareaRecusoUi tareaRecursoUi = controller.tareaRecursoUiList[index];
-
-                                                      return Stack(
-                                                        children: [
-                                                          Container(
-                                                            child: InkWell(
-                                                              onTap: () async {
-
-                                                                switch(tareaRecursoUi.tipoRecurso){
-                                                                  case TipoRecursosUi.TIPO_DOCUMENTO:
-                                                                  case TipoRecursosUi.TIPO_IMAGEN:
-                                                                  case TipoRecursosUi.TIPO_AUDIO:
-                                                                  case TipoRecursosUi.TIPO_HOJA_CALCULO:
-                                                                  case TipoRecursosUi.TIPO_DIAPOSITIVA:
-                                                                  case TipoRecursosUi.TIPO_PDF:
-                                                                    await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
-                                                                    break;
-                                                                  case TipoRecursosUi.TIPO_VINCULO:
-                                                                    await AppUrlLauncher.openLink("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", webview: false);
-                                                                    break;
-                                                                  case TipoRecursosUi.TIPO_ENCUESTA:
-                                                                    await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
-                                                                    break;
-                                                                  case TipoRecursosUi.TIPO_VINCULO_DRIVE:
-                                                                  //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
-                                                                    await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
-                                                                    break;
-                                                                  case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
-                                                                    print("youtube: ${tareaRecursoUi.url}");
-                                                                    TareaMultimediaView.showDialog(context, YouTubeUrlParser.getYoutubeVideoId(tareaRecursoUi.url), TareaMultimediaTipoArchivo.YOUTUBE);
-                                                                    break;
-                                                                  case TipoRecursosUi.TIPO_RECURSO:
-                                                                  //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
-
-                                                                    break;
-                                                                  default:
-                                                                    await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
-                                                                    break;
-                                                                }
-
-
-                                                              },
-                                                              child: Container(
-                                                                decoration: BoxDecoration(
-                                                                  borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                                                  border:  Border.all(
-                                                                      width: 1,
-                                                                      color: HexColor(controller.cursosUi?.color1)
-                                                                  ),
-                                                                  color: AppTheme.greyLighten2,
-                                                                ),
-                                                                margin: EdgeInsets.only(bottom: 12),
-                                                                width: 450,
-                                                                child: ClipRRect(
-                                                                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                                                              SizedBox(
+                                                                child: Shimmer.fromColors(
+                                                                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                  highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
                                                                   child: Container(
-                                                                    child: Row(
-                                                                      children: [
-                                                                        Container(
-                                                                          width: 50,
-                                                                          child: Center(
-                                                                            child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
-                                                                              height: 30.0,
-                                                                              fit: BoxFit.cover,
-                                                                            ),
+                                                                    height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                                                    width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,100),
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                        color: HexColor(controller.cursosUi?.color2)
+                                                                    ),
+                                                                    alignment: Alignment.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Padding(padding: EdgeInsets.only(
+                                                                  left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
+                                                              )),
+                                                              SizedBox(
+                                                                child: Shimmer.fromColors(
+                                                                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                  highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                                  child: Container(
+                                                                    height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                                                    width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,100),
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                        color: HexColor(controller.cursosUi?.color2)
+                                                                    ),
+                                                                    alignment: Alignment.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Padding(padding: EdgeInsets.only(
+                                                                  left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
+                                                              )),
+                                                              SizedBox(
+                                                                child: Shimmer.fromColors(
+                                                                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                  highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                                  child: Container(
+                                                                    height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                                                    width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,100),
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                        color: HexColor(controller.cursosUi?.color2)
+                                                                    ),
+                                                                    alignment: Alignment.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ):
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4)),
+                                                          child:  Wrap(
+                                                            spacing: 10.0,
+                                                            runSpacing: 15.0,
+                                                            direction: Axis.horizontal,
+                                                            alignment: WrapAlignment.start,
+                                                            children: <Widget>[
+                                                              InkWell(
+                                                                onTap: () async{
+                                                                  await controller.onClicPublicar();
+                                                                },
+                                                                child: Container(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,125),
+                                                                  padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                      color: controller.tareaUi?.publicado??false?HexColor(controller.cursosUi?.color2) : AppTheme.white
+                                                                  ),
+                                                                  alignment: Alignment.center,
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      Icon(Ionicons.earth ,
+                                                                          color: controller.tareaUi?.publicado??false?AppTheme.white:AppTheme.greyDarken1,
+                                                                          size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 9 + 6 )
+                                                                      ),
+                                                                      Padding(padding: EdgeInsets.all(2),),
+                                                                      FittedBox(
+                                                                        fit: BoxFit.scaleDown,
+                                                                        child: Text("Publicar Tarea",
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              fontFamily: AppTheme.fontTTNorms,
+                                                                              color: controller.tareaUi?.publicado??false?AppTheme.white: AppTheme.greyDarken1,
+                                                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 5 + 6) ,
+                                                                            )),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                              InkWell(
+                                                                onTap: () async{
+                                                                  dynamic? result = await AppRouter.createRouteTareaCrearRouter(context,  controller.usuarioUi, controller.cursosUi, controller.tareaUi, controller.calendarioPeriodoUI, controller.unidadUi, controller.sesionUi);
+                                                                  if(result is int) controller.cambiosTarea();
+
+                                                                },
+                                                                child: Container(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
+                                                                  padding: EdgeInsets.only(
+                                                                      left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                      right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                      top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                      color: HexColor(controller.cursosUi?.color2)
+                                                                  ),
+                                                                  alignment: Alignment.center,
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      Icon(Ionicons.pencil ,
+                                                                        color: AppTheme.white,
+                                                                        size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,9 + 6  )
+                                                                        , ),
+                                                                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 2)),),
+                                                                      FittedBox(
+                                                                        fit: BoxFit.scaleDown,
+                                                                        child: Text("Modificar",
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              fontFamily: AppTheme.fontTTNorms,
+                                                                              color:AppTheme.white,
+                                                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 5 + 6 - 1),
+                                                                            )),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                              InkWell(
+                                                                onTap: () {
+                                                                  controller.onClicEliminar();
+                                                                },
+                                                                child: Container(
+                                                                  width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
+                                                                  padding: EdgeInsets.only(
+                                                                      left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                      right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                      top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                      bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)
+                                                                  ),
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                      color: HexColor(controller.cursosUi?.color2)
+                                                                  ),
+                                                                  alignment: Alignment.center,
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      Icon(Ionicons.trash ,color: AppTheme.white,
+                                                                        size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,9 + 6),
+                                                                      ),
+                                                                      Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
+                                                                      FittedBox(
+                                                                        fit: BoxFit.scaleDown,
+                                                                        child: Text("Eliminar",
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w700,
+                                                                              fontFamily: AppTheme.fontTTNorms,
+                                                                              color:AppTheme.white,
+                                                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,5 + 6),
+                                                                            )),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
+                                                          child: Text(
+                                                            "Fecha de entrega: ${(controller.tareaUi?.fechaEntrega??"sin fecha de entrega").replaceAll("\n", "")}",
+                                                            style: TextStyle(
+                                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14),
+                                                              fontWeight: FontWeight.w500,
+                                                              fontFamily: AppTheme.fontTTNorms,
+                                                            ),),
+                                                        ),
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8)),
+                                                          child: Text("${controller.tareaUi?.titulo}",
+                                                              style: TextStyle(
+                                                                color: HexColor(controller.cursosUi?.color1) ,
+                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20),
+                                                                fontWeight: FontWeight.w700,
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                              )
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16)),
+                                                          height: 1,
+                                                          color: HexColor(controller.cursosUi?.color1),
+                                                        ),
+                                                        (controller.tareaUi?.instrucciones??"").isNotEmpty?
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
+                                                          child: Text("${controller.tareaUi?.instrucciones}",
+                                                            style: TextStyle(
+                                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16),
+                                                              height: 1.5,
+                                                              fontFamily: AppTheme.fontTTNorms,
+                                                            ),
+                                                          ),
+                                                        ):Container(),
+                                                        controller.tareaRecursoUiList.isNotEmpty?
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24)),
+                                                          child: Text("Recursos",
+                                                              style: TextStyle(
+                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16),
+                                                                  color: AppTheme.black,
+                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                  fontWeight: FontWeight.w700
+                                                              )
+                                                          ),
+                                                        ):Container(),
+                                                        ListView.builder(
+                                                            padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8), bottom: 0),
+                                                            itemCount: controller.tareaRecursoUiList.length,
+                                                            shrinkWrap: true,
+                                                            physics: NeverScrollableScrollPhysics(),
+                                                            itemBuilder: (context, index){
+                                                              TareaRecusoUi tareaRecursoUi = controller.tareaRecursoUiList[index];
+
+                                                              return Stack(
+                                                                children: [
+                                                                  Container(
+                                                                    child: InkWell(
+                                                                      onTap: () async {
+
+                                                                        switch(tareaRecursoUi.tipoRecurso){
+                                                                          case TipoRecursosUi.TIPO_DOCUMENTO:
+                                                                          case TipoRecursosUi.TIPO_IMAGEN:
+                                                                          case TipoRecursosUi.TIPO_AUDIO:
+                                                                          case TipoRecursosUi.TIPO_HOJA_CALCULO:
+                                                                          case TipoRecursosUi.TIPO_DIAPOSITIVA:
+                                                                          case TipoRecursosUi.TIPO_PDF:
+                                                                            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                                            break;
+                                                                          case TipoRecursosUi.TIPO_VINCULO:
+                                                                            await AppUrlLauncher.openLink("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", webview: false);
+                                                                            break;
+                                                                          case TipoRecursosUi.TIPO_ENCUESTA:
+                                                                            await AppUrlLauncher.openLink(tareaRecursoUi.url??tareaRecursoUi.descripcion, webview: false);
+                                                                            break;
+                                                                          case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+                                                                          //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+                                                                            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                                            break;
+                                                                          case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+                                                                            print("youtube: ${tareaRecursoUi.url}");
+                                                                            TareaMultimediaView.showDialog(this.context, YouTubeUrlParser.getYoutubeVideoId(tareaRecursoUi.url), TareaMultimediaTipoArchivo.YOUTUBE);
+                                                                            break;
+                                                                          case TipoRecursosUi.TIPO_RECURSO:
+                                                                          //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+
+                                                                            break;
+                                                                          default:
+                                                                            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(tareaRecursoUi.driveId), webview: false);
+                                                                            break;
+                                                                        }
+
+
+                                                                      },
+                                                                      child: Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                                                          border:  Border.all(
+                                                                              width: 1,
+                                                                              color: HexColor(controller.cursosUi?.color1)
                                                                           ),
+                                                                          color: AppTheme.greyLighten2,
                                                                         ),
-                                                                        Expanded(
+                                                                        margin: EdgeInsets.only(bottom: 12),
+                                                                        width: 450,
+                                                                        child: ClipRRect(
+                                                                          borderRadius: BorderRadius.all(Radius.circular(7)),
                                                                           child: Container(
-                                                                            color: AppTheme.white,
-                                                                            padding: EdgeInsets.only(left:16, top: 8, bottom: 8, right: 8),
-                                                                            child:  Column(
-                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            child: Row(
                                                                               children: [
-                                                                                tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
-                                                                                Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Padding(padding: EdgeInsets.all(4)),
-                                                                                    Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", maxLines: 1, overflow: TextOverflow.ellipsis,
-                                                                                        style: TextStyle(
-                                                                                            color: AppTheme.blue,
-                                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
-                                                                                            fontFamily: AppTheme.fontTTNorms,
-                                                                                            fontWeight: FontWeight.w700
+                                                                                Container(
+                                                                                  width: 50,
+                                                                                  child: Center(
+                                                                                    child: Image.asset(getImagen(tareaRecursoUi.tipoRecurso),
+                                                                                      height: 30.0,
+                                                                                      fit: BoxFit.cover,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                Expanded(
+                                                                                  child: Container(
+                                                                                    color: AppTheme.white,
+                                                                                    padding: EdgeInsets.only(left:16, top: 8, bottom: 8, right: 8),
+                                                                                    child:  Column(
+                                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_YOUTUBE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO_DRIVE || tareaRecursoUi.tipoRecurso == TipoRecursosUi.TIPO_VINCULO?
+                                                                                        Column(
+                                                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                          children: [
+                                                                                            Padding(padding: EdgeInsets.all(4)),
+                                                                                            Text("${(tareaRecursoUi.url??"").isNotEmpty?tareaRecursoUi.url?.trim(): tareaRecursoUi.descripcion?.trim()}", maxLines: 1, overflow: TextOverflow.ellipsis,
+                                                                                                style: TextStyle(
+                                                                                                    color: AppTheme.blue,
+                                                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                                                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                                                    fontWeight: FontWeight.w700
+                                                                                                )
+                                                                                            ),
+                                                                                            Padding(padding: EdgeInsets.all(4)),
+                                                                                          ],
+                                                                                        ):Column(
+                                                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                          children: [
+                                                                                            Text("${tareaRecursoUi.titulo??""}", maxLines: 2, overflow: TextOverflow.ellipsis,
+                                                                                              style: TextStyle(
+                                                                                                  color: AppTheme.greyDarken3,
+                                                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                                                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                                                  fontWeight: FontWeight.w700
+                                                                                              ),
+                                                                                            ),
+                                                                                            Padding(padding: EdgeInsets.all(2)),
+                                                                                            Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}",
+                                                                                                maxLines: 1, overflow: TextOverflow.ellipsis,
+                                                                                                style: TextStyle(
+                                                                                                    color: AppTheme.grey,
+                                                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
+                                                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                                                    fontWeight: FontWeight.w700
+                                                                                                )
+                                                                                            ),
+                                                                                          ],
                                                                                         )
+                                                                                      ],
                                                                                     ),
-                                                                                    Padding(padding: EdgeInsets.all(4)),
-                                                                                  ],
-                                                                                ):Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Text("${tareaRecursoUi.titulo??""}", maxLines: 2, overflow: TextOverflow.ellipsis,
-                                                                                      style: TextStyle(
-                                                                                          color: AppTheme.greyDarken3,
-                                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
-                                                                                          fontFamily: AppTheme.fontTTNorms,
-                                                                                          fontWeight: FontWeight.w700
-                                                                                      ),
-                                                                                    ),
-                                                                                    Padding(padding: EdgeInsets.all(2)),
-                                                                                    Text("${(tareaRecursoUi.descripcion??"").isNotEmpty?tareaRecursoUi.descripcion: getDescripcion(tareaRecursoUi.tipoRecurso)}",
-                                                                                        maxLines: 1, overflow: TextOverflow.ellipsis,
-                                                                                        style: TextStyle(
-                                                                                            color: AppTheme.grey,
-                                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
-                                                                                            fontFamily: AppTheme.fontTTNorms,
-                                                                                            fontWeight: FontWeight.w700
-                                                                                        )
-                                                                                    ),
-                                                                                  ],
-                                                                                )
+                                                                                  ),
+                                                                                ),
+
                                                                               ],
                                                                             ),
                                                                           ),
                                                                         ),
-
-                                                                      ],
+                                                                      ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    }
-                                                ),
-                                                controller.tareaRecursoUiList.isNotEmpty?
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 32),),
-                                                  height: 1,
-                                                  color: AppTheme.greyLighten1,
-                                                ):Container(),
-                                                Container(
-                                                  margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16)),
-                                                  child: Text("Comentario de clase",
-                                                    style: TextStyle(
-                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16),
-                                                        color: AppTheme.black,
-                                                        fontFamily: AppTheme.fontTTNorms,
-                                                        fontWeight: FontWeight.w700
-                                                    )
-                                                  ),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.only(top:  4),
-                                                  child: Row(
-                                                    children: [
-                                                      CachedNetworkImage(
-                                                        placeholder: (context, url) => Container(
-                                                          child: CircularProgressIndicator(),
+                                                                ],
+                                                              );
+                                                            }
                                                         ),
-                                                        imageUrl: controller.usuarioUi?.personaUi?.foto??"",
-                                                        errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                                                        imageBuilder: (context, imageProvider) =>
-                                                            Container(
-                                                                width: 40,
-                                                                height: 40,
-                                                                margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                                                decoration: BoxDecoration(
-                                                                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                                                                  image: DecorationImage(
-                                                                    image: imageProvider,
-                                                                    fit: BoxFit.cover,
-                                                                  ),
-                                                                )
-                                                            ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Container(
-                                                                height: 65,
+                                                        controller.tareaRecursoUiList.isNotEmpty?
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 32),),
+                                                          height: 1,
+                                                          color: AppTheme.greyLighten1,
+                                                        ):Container(),
+                                                        Container(
+                                                          margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16)),
+                                                          child: Text("Comentario de clase",
+                                                              style: TextStyle(
+                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16),
+                                                                  color: AppTheme.black,
+                                                                  fontFamily: AppTheme.fontTTNorms,
+                                                                  fontWeight: FontWeight.w700
+                                                              )
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          margin: EdgeInsets.only(top:  4),
+                                                          child: Row(
+                                                            children: [
+                                                              CachedNetworkImage(
+                                                                placeholder: (context, url) => Container(
+                                                                  child: CircularProgressIndicator(),
+                                                                ),
+                                                                imageUrl: controller.usuarioUi?.personaUi?.foto??"",
+                                                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                                                                imageBuilder: (context, imageProvider) =>
+                                                                    Container(
+                                                                        width: 40,
+                                                                        height: 40,
+                                                                        margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                                          image: DecorationImage(
+                                                                            image: imageProvider,
+                                                                            fit: BoxFit.cover,
+                                                                          ),
+                                                                        )
+                                                                    ),
+                                                              ),
+                                                              Expanded(
                                                                 child: Row(
-                                                                  children: <Widget>[
+                                                                  children: [
                                                                     Expanded(
                                                                       child: Container(
-                                                                        decoration: BoxDecoration(
-                                                                          color: AppTheme.greyLighten3,
-                                                                          borderRadius: BorderRadius.circular(8.0),
-                                                                          border: Border.all(color: AppTheme.greyLighten2),
-                                                                        ),
-                                                                        padding: EdgeInsets.all(8),
+                                                                        height: 65,
                                                                         child: Row(
                                                                           children: <Widget>[
                                                                             Expanded(
-                                                                              child: TextField(
-                                                                                maxLines: null,
-                                                                                keyboardType: TextInputType.multiline,
-                                                                                style: TextStyle(
-                                                                                  fontSize: 12,
-
+                                                                              child: Container(
+                                                                                decoration: BoxDecoration(
+                                                                                  color: AppTheme.greyLighten3,
+                                                                                  borderRadius: BorderRadius.circular(8.0),
+                                                                                  border: Border.all(color: AppTheme.greyLighten2),
                                                                                 ),
-                                                                                decoration: InputDecoration(
-                                                                                    isDense: true,
-                                                                                    contentPadding: EdgeInsets.symmetric(vertical: 0),
-                                                                                    hintText: "",
-                                                                                    border: InputBorder.none),
+                                                                                padding: EdgeInsets.all(8),
+                                                                                child: Row(
+                                                                                  children: <Widget>[
+                                                                                    Expanded(
+                                                                                      child: TextField(
+                                                                                        maxLines: null,
+                                                                                        keyboardType: TextInputType.multiline,
+                                                                                        style: TextStyle(
+                                                                                          fontSize: 12,
+
+                                                                                        ),
+                                                                                        decoration: InputDecoration(
+                                                                                            isDense: true,
+                                                                                            contentPadding: EdgeInsets.symmetric(vertical: 0),
+                                                                                            hintText: "",
+                                                                                            border: InputBorder.none),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
                                                                         ),
                                                                       ),
                                                                     ),
+
+                                                                    IconButton(
+                                                                      onPressed: () {
+                                                                        // You enter here what you want the button to do once the user interacts with it
+                                                                      },
+                                                                      icon: Icon(
+                                                                        Icons.send,
+                                                                        color: AppTheme.greyDarken1,
+                                                                      ),
+                                                                      iconSize: 20.0,
+                                                                    )
                                                                   ],
                                                                 ),
-                                                              ),
-                                                            ),
-
-                                                            IconButton(
-                                                              onPressed: () {
-                                                                // You enter here what you want the button to do once the user interacts with it
-                                                              },
-                                                              icon: Icon(
-                                                                Icons.send,
-                                                                color: AppTheme.greyDarken1,
-                                                              ),
-                                                              iconSize: 20.0,
-                                                            )
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                false?
-                                                Container(
-                                                  margin: EdgeInsets.only(top:  4, bottom: 16),
-                                                  child: Row(
-                                                    children: [
-                                                      CachedNetworkImage(
-                                                        placeholder: (context, url) => Container(
-                                                          child: CircularProgressIndicator(),
-                                                        ),
-                                                        imageUrl: "https://cdn.domestika.org/c_fill,dpr_1.0,f_auto,h_1200,pg_1,t_base_params,w_1200/v1589759117/project-covers/000/721/921/721921-original.png?1589759117",
-                                                        errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                                                        imageBuilder: (context, imageProvider) =>
-                                                            Container(
-                                                                width: 40,
-                                                                height: 40,
-                                                                margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                                                decoration: BoxDecoration(
-                                                                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                                                                  image: DecorationImage(
-                                                                    image: imageProvider,
-                                                                    fit: BoxFit.cover,
-                                                                  ),
-                                                                )
-                                                            ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                            color: AppTheme.greyLighten3,
-                                                            borderRadius: BorderRadius.circular(8.0),
-                                                            border: Border.all(color: AppTheme.greyLighten2),
-                                                          ),
-                                                          padding: EdgeInsets.all(8),
-                                                          child: Column(
-                                                            children: [
-                                                              Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                      child: Container(
-                                                                          padding: EdgeInsets.only(right: 8),
-                                                                          child: Text("Velasquez Vilma Gregoria",
-                                                                              style: TextStyle(
-                                                                                  fontSize: 10,
-                                                                                  fontWeight: FontWeight.w700
-                                                                              ))
-                                                                      )
-                                                                  ),
-                                                                  Text("Vie 03 de set. - 13:37",
-                                                                      style: TextStyle(
-                                                                          fontSize: 10,
-                                                                          color: AppTheme.greyDarken1
-                                                                      )
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Padding(padding: EdgeInsets.all(2)),
-                                                              Container(
-                                                                alignment: Alignment.centerLeft,
-                                                                child: Text("Miss mil disculpas no cargo el video por eso lo enviamos al whassap", style: TextStyle(fontSize: 10),),
-                                                              ),
-                                                              Padding(padding: EdgeInsets.all(2)),
-                                                              Container(
-                                                                alignment: Alignment.centerLeft,
-                                                                child: Text("Responder",
-                                                                    style: TextStyle(
-                                                                        fontSize: 10,
-                                                                        color: AppTheme.greyDarken1
-                                                                    )
-                                                                ),
                                                               )
-
                                                             ],
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        false?
+                                                        Container(
+                                                          margin: EdgeInsets.only(top:  4, bottom: 16),
+                                                          child: Row(
+                                                            children: [
+                                                              CachedNetworkImage(
+                                                                placeholder: (context, url) => Container(
+                                                                  child: CircularProgressIndicator(),
+                                                                ),
+                                                                imageUrl: "https://cdn.domestika.org/c_fill,dpr_1.0,f_auto,h_1200,pg_1,t_base_params,w_1200/v1589759117/project-covers/000/721/921/721921-original.png?1589759117",
+                                                                errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                                                                imageBuilder: (context, imageProvider) =>
+                                                                    Container(
+                                                                        width: 40,
+                                                                        height: 40,
+                                                                        margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.all(Radius.circular(25)),
+                                                                          image: DecorationImage(
+                                                                            image: imageProvider,
+                                                                            fit: BoxFit.cover,
+                                                                          ),
+                                                                        )
+                                                                    ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                    color: AppTheme.greyLighten3,
+                                                                    borderRadius: BorderRadius.circular(8.0),
+                                                                    border: Border.all(color: AppTheme.greyLighten2),
+                                                                  ),
+                                                                  padding: EdgeInsets.all(8),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      Row(
+                                                                        children: [
+                                                                          Expanded(
+                                                                              child: Container(
+                                                                                  padding: EdgeInsets.only(right: 8),
+                                                                                  child: Text("Velasquez Vilma Gregoria",
+                                                                                      style: TextStyle(
+                                                                                          fontSize: 10,
+                                                                                          fontWeight: FontWeight.w700
+                                                                                      ))
+                                                                              )
+                                                                          ),
+                                                                          Text("Vie 03 de set. - 13:37",
+                                                                              style: TextStyle(
+                                                                                  fontSize: 10,
+                                                                                  color: AppTheme.greyDarken1
+                                                                              )
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      Padding(padding: EdgeInsets.all(2)),
+                                                                      Container(
+                                                                        alignment: Alignment.centerLeft,
+                                                                        child: Text("Miss mil disculpas no cargo el video por eso lo enviamos al whassap", style: TextStyle(fontSize: 10),),
+                                                                      ),
+                                                                      Padding(padding: EdgeInsets.all(2)),
+                                                                      Container(
+                                                                        alignment: Alignment.centerLeft,
+                                                                        child: Text("Responder",
+                                                                            style: TextStyle(
+                                                                                fontSize: 10,
+                                                                                color: AppTheme.greyDarken1
+                                                                            )
+                                                                        ),
+                                                                      )
+
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ):Container(),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ):Container(),
+                                                )
                                               ],
                                             ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    Padding(padding: EdgeInsets.only(bottom: 200))
-                                  ])
-                              ),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            if(controller.onCountErrorGuardar()>0 || controller.progressEvalTarea == true)
-                              Container(
-                                padding: EdgeInsets.only(left: 24, right: 24, top: 0, bottom: 0),
-                                color: AppTheme.yellowLighten4,
-                                height: 50,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child:  Text("${controller.progressEvalTarea?"Guardando sus evaluaciones...":"No se ha guardado una o varias de sus evaluaciones."}", style: TextStyle(fontSize: 12),),
-                                    ),
-                                    Padding(padding: EdgeInsets.only(left: 8),),
-                                    controller.progressEvalTarea?
-                                    Container(
-                                      padding: EdgeInsets.all(8),
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
+                                            Padding(padding: EdgeInsets.only(bottom: 200))
+                                          ])
                                       ),
-                                    ):
-                                    TextButton(
-                                        onPressed: (){
-                                          controller.hayCambioEnLaConexion();
-                                        },
-                                        child: Text('Guardar')
-                                    )
+                                    ),
                                   ],
                                 ),
-                              ),
-                            Expanded(
-                              child: CustomScrollView(
-                                //shrinkWrap: true,
-                                //physics: NeverScrollableScrollPhysics(),
-                                controller: scrollController,
-                                slivers: [
-                                  SliverToBoxAdapter(
-                                    child: Container(
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: (){
-
-                                          double width_pantalla = MediaQuery.of(context).size.width;
-                                          double padding_left = ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4);
-                                          double padding_right = ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4);
-                                          double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 145);
-                                          for(double column_px in controller.tablecolumnWidths){
-                                            width_table += column_px;
-                                          }
-                                          double width = 0;
-                                          if(width_pantalla>width_table){
-                                            width = width_pantalla;
-                                          }else{
-                                            width = width_table;
-                                          }
-
-                                          return Column(
-                                            children: [
-                                              controller.progressRubro?
-                                              Container(
-                                                width: width,
-                                                padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                                margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24)),
-                                                child:  Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    if(controller.rubricaEvalUI == null)
-                                                      SizedBox(
-                                                        child: Shimmer.fromColors(
-                                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                                                          child: Container(
-                                                            height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                                            width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                color: HexColor(controller.cursosUi?.color2)
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    if(controller.rubricaEvalUI == null)
-                                                      Padding(padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
-                                                      )),
-                                                    if(controller.rubricaEvalUI != null)
-                                                      SizedBox(
-                                                        child: Shimmer.fromColors(
-                                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                                                          child: Container(
-                                                            height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                                            width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                color: HexColor(controller.cursosUi?.color2)
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    if(controller.rubricaEvalUI != null)
-                                                      Padding(padding: EdgeInsets.only(
-                                                          left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
-                                                      )),
-                                                    if(controller.rubricaEvalUI != null && controller.cambiosEvaluacionFirebase)
-                                                      SizedBox(
-                                                        child: Shimmer.fromColors(
-                                                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                                                          child: Container(
-                                                            height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
-                                                            width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
-                                                            padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                color: HexColor(controller.cursosUi?.color2)
-                                                            ),
-                                                            alignment: Alignment.center,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                  ],
-                                                ),
-                                              ):
-                                              Container(
-                                                width: width,
-                                                padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                                margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24)),
-                                                child:  Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Row(
-                                                        children: [
-                                                          if(controller.rubricaEvalUI == null)
-                                                            InkWell(
-                                                              onTap: () async{
-
-                                                                dynamic response = await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, controller.sesionUi,controller.tareaUi, null, true);
-                                                                if(response is String) controller.successCrearEvaluacion(response);
-                                                              },
-                                                              child: Container(
-                                                                padding: EdgeInsets.only(
-                                                                    left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                    right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                    top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                    color: HexColor(controller.cursosUi?.color2)
-                                                                ),
-                                                                alignment: Alignment.center,
-                                                                child: Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Icon(Icons.add ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,15), ),
-                                                                    Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
-                                                                    FittedBox(
-                                                                      fit: BoxFit.scaleDown,
-                                                                      child: Text("Crear rúbrica",
-                                                                          overflow: TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                            fontFamily: AppTheme.fontTTNorms,
-                                                                            fontWeight: FontWeight.w700,
-                                                                            color:AppTheme.white,
-                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
-                                                                          )),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          if(controller.rubricaEvalUI == null)
-                                                            Padding(padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
-                                                            )),
-                                                          if(controller.rubricaEvalUI != null)
-                                                            InkWell(
-                                                              onTap: () async{
-                                                                await controller.onClickRubrica();
-                                                              },
-                                                              child: Container(
-                                                                padding: EdgeInsets.only(
-                                                                    left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                    right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                    top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                    color: HexColor(controller.cursosUi?.color2)
-                                                                ),
-                                                                alignment: Alignment.center,
-                                                                child: Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Icon(Icons.backpack ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,14), ),
-                                                                    Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
-                                                                    FittedBox(
-                                                                      fit: BoxFit.scaleDown,
-                                                                      child: Text("Abrir rúbrica",
-                                                                          overflow: TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                            fontFamily: AppTheme.fontTTNorms,
-                                                                            fontWeight: FontWeight.w700,
-                                                                            color:AppTheme.white,
-                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
-                                                                          )),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          if(controller.rubricaEvalUI != null)
-                                                            Padding(padding: EdgeInsets.only(
-                                                                left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
-                                                            )),
-                                                          if(controller.rubricaEvalUI != null && controller.cambiosEvaluacionFirebase)
-                                                            InkWell(
-                                                              onTap: ()=> controller.onClickPublicarEvaluacion(),
-                                                              child: Container(
-                                                                padding: EdgeInsets.only(
-                                                                    left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
-                                                                    right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
-                                                                    top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
-                                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)
-                                                                ),
-                                                                decoration: BoxDecoration(
-                                                                    borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
-                                                                    color: HexColor(controller.cursosUi?.color1)
-                                                                ),
-                                                                alignment: Alignment.center,
-                                                                child: Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                                  children: [
-                                                                    Icon(Icons.grid_on ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,14)),
-                                                                    Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
-                                                                    FittedBox(
-                                                                      fit: BoxFit.scaleDown,
-                                                                      child: Text("Actualizar nota",
-                                                                          overflow: TextOverflow.ellipsis,
-                                                                          style: TextStyle(
-                                                                            fontFamily: AppTheme.fontTTNorms,
-                                                                            fontWeight: FontWeight.w700,
-                                                                            color:AppTheme.white,
-                                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
-                                                                          )),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    InkWell(
-                                                      onTap: (){
-                                                        if(!controller.alumnoSearch){
-                                                          controller.onClickMostrarBuscador();
-                                                          onMostrarBuscador();
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        padding: EdgeInsets.only(
-                                                            left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2) ,
-                                                            right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
-                                                            top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
-                                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                                                            color: HexColor(controller.cursosUi?.color2)
-                                                        ),
-                                                        alignment: Alignment.center,
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Icon(controller.toogleGeneral?Ionicons.search: Ionicons.search,
-                                                                color: AppTheme.white,
-                                                                size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                Column(
+                                  children: [
+                                    if(controller.onCountErrorGuardar()>0 || controller.progressEvalTarea == true)
+                                      Container(
+                                        padding: EdgeInsets.only(left: 24, right: 24, top: 0, bottom: 0),
+                                        color: AppTheme.yellowLighten4,
+                                        height: 50,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child:  Text("${controller.progressEvalTarea?"Guardando sus evaluaciones...":"No se ha guardado una o varias de sus evaluaciones. Revise su conexión."}", style: TextStyle(fontSize: 12),),
+                                            ),
+                                            Padding(padding: EdgeInsets.only(left: 8),),
+                                            controller.progressEvalTarea?
+                                            Container(
+                                              padding: EdgeInsets.all(8),
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
                                               ),
-                                              Container(
-                                                width: width,
-                                                padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                                margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,32)),
-                                                child:  Row(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Expanded(
-                                                        child: Container(
-                                                          child: InkWell(
-                                                            onTap: (){
-                                                              final targetContext = listaEvaluadoKey.currentContext;
-                                                              if (targetContext != null) {
-                                                                Scrollable.ensureVisible(
-                                                                  targetContext,
-                                                                  duration: const Duration(milliseconds: 400),
-                                                                  curve: Curves.easeInOut,
-                                                                );
-                                                              }
-                                                            },
-                                                            child: Column(
-                                                              children: [
-                                                                Text("${controller.alumnoEval}",
-                                                                  style: TextStyle(
-                                                                      color: HexColor(controller.cursosUi?.color1),
-                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
-                                                                      fontFamily: AppTheme.fontTTNorms,
-                                                                      fontWeight: FontWeight.w700
-                                                                  ),
-                                                                ),
-                                                                Text("Evaluados",
-                                                                    style: TextStyle(
-                                                                        color: AppTheme.greyDarken1,
-                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
-                                                                        fontFamily: AppTheme.fontTTNorms,
-                                                                        fontWeight: FontWeight.w500
-                                                                    )
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        )
-                                                    ),
-                                                    Container(
-                                                      color: AppTheme.greyLighten1,
-                                                      height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 40 + 2),
-                                                      width: 1,
-                                                    ),
-                                                    Expanded(
-                                                        child: Container(
-                                                          child: InkWell(
-                                                            onTap: (){
-                                                              final targetContext = listaNoEvaluadoKey.currentContext;
-                                                              if (targetContext != null) {
-                                                                Scrollable.ensureVisible(
-                                                                  targetContext,
-                                                                  duration: const Duration(milliseconds: 400),
-                                                                  curve: Curves.easeInOut,
-                                                                );
-                                                              }
-                                                            },
-                                                            child: Column(
-                                                              children: [
-                                                                Text("${controller.alumnoSinEval}",
-                                                                  style: TextStyle(
-                                                                      color: HexColor(controller.cursosUi?.color1),
-                                                                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
-                                                                      fontFamily: AppTheme.fontTTNorms,
-                                                                      fontWeight: FontWeight.w700
-                                                                  ),
-                                                                ),
-                                                                Text("Sin evaluar",
-                                                                    style: TextStyle(
-                                                                        color: AppTheme.greyDarken1,
-                                                                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
-                                                                        fontFamily: AppTheme.fontTTNorms,
-                                                                        fontWeight: FontWeight.w500
-                                                                    )
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        )
-                                                    ),
-                                                    InkWell(
-                                                      onTap: ()=> controller.onClickMostrarTodo(),
-                                                      child: Container(
-                                                        padding: EdgeInsets.only(
-                                                            left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2) ,
-                                                            right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
-                                                            top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
-                                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                                                            color: HexColor(controller.cursosUi?.color2)
-                                                        ),
-                                                        alignment: Alignment.center,
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                          children: [
-                                                            Icon(controller.toogleGeneral?Ionicons.contract: Ionicons.expand,
-                                                                color: AppTheme.white,
-                                                                size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              controller.mostrarDosListasAlumnos?
-                                              Column(
-                                                children: [
-                                                  Container(
-                                                    key: listaEvaluadoKey,
-                                                    width: width,
-                                                    padding: EdgeInsets.only(
-                                                        left: padding_right,
-                                                        right: padding_right,
-                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 32 + 4)
-                                                    ),
-                                                    child: Text("Lista de evaluados".toUpperCase(),
-                                                        style: TextStyle(
-                                                            color: HexColor(controller.cursosUi?.color1),
-                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
-                                                            fontFamily: AppTheme.fontTTNorms,
-                                                            fontWeight: FontWeight.w700
-                                                        )
-                                                    ),
-                                                  ),
-                                                  getViewTareaAlumno(controller, controller.tareaAlumnoUiEvaluadosList ,padding_left, padding_right, width_table, width),
-                                                  Container(
-                                                    key: listaNoEvaluadoKey,
-                                                    width: width,
-                                                    padding: EdgeInsets.only(
-                                                        left: padding_right,
-                                                        right: padding_right,
-                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 32 + 4)
-                                                    ),
-                                                    child: Text("Lista de no evaluados".toUpperCase(),
-                                                        style: TextStyle(
-                                                            color: HexColor(controller.cursosUi?.color1),
-                                                            fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
-                                                            fontFamily: AppTheme.fontTTNorms,
-                                                            fontWeight: FontWeight.w700
-                                                        )
-                                                    ),
-                                                  ),
-                                                  getViewTareaAlumno(controller, controller.tareaAlumnoUiNoEvaluadosList,padding_left, padding_right, width_table, width),
-                                                ],
-                                              ):
-                                              getViewTareaAlumno(controller, controller.tareaAlumnoUiList,padding_left, padding_right, width_table, width),
-                                              Container(
-                                                padding: EdgeInsets.only(bottom: 200),
-                                              )
-                                            ],
-                                          );
-
-                                        }(),
+                                            ):
+                                            TextButton(
+                                                onPressed: (){
+                                                  controller.hayCambioEnLaConexion();
+                                                },
+                                                child: Text('Guardar')
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        )
-                      ]),
-                    ),
-                  )
-                ],
+                                    Expanded(
+                                      child: CustomScrollView(
+                                        //shrinkWrap: true,
+                                        //physics: NeverScrollableScrollPhysics(),
+                                        slivers: [
+                                          SliverToBoxAdapter(
+                                            child: Container(
+                                              child: SingleChildScrollView(
+                                                scrollDirection: Axis.horizontal,
+                                                child: (){
+
+                                                  double width_pantalla = MediaQuery.of(context).size.width;
+                                                  double padding_left = ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4);
+                                                  double padding_right = ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 24 + 4);
+                                                  double width_table = padding_left + padding_right + ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 145);
+                                                  for(double column_px in controller.tablecolumnWidths){
+                                                    width_table += column_px;
+                                                  }
+                                                  double width = 0;
+                                                  if(width_pantalla>width_table){
+                                                    width = width_pantalla;
+                                                  }else{
+                                                    width = width_table;
+                                                  }
+
+                                                  return Column(
+                                                    children: [
+                                                      controller.progressRubro?
+                                                      Container(
+                                                        width: width,
+                                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                                                        margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24)),
+                                                        child:  Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            if(controller.rubricaEvalUI == null)
+                                                              SizedBox(
+                                                                child: Shimmer.fromColors(
+                                                                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                  highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                                  child: Container(
+                                                                    height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                                                    width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                        color: HexColor(controller.cursosUi?.color2)
+                                                                    ),
+                                                                    alignment: Alignment.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            if(controller.rubricaEvalUI == null)
+                                                              Padding(padding: EdgeInsets.only(
+                                                                  left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
+                                                              )),
+                                                            if(controller.rubricaEvalUI != null)
+                                                              SizedBox(
+                                                                child: Shimmer.fromColors(
+                                                                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                  highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                                  child: Container(
+                                                                    height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                                                    width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                        color: HexColor(controller.cursosUi?.color2)
+                                                                    ),
+                                                                    alignment: Alignment.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            if(controller.rubricaEvalUI != null)
+                                                              Padding(padding: EdgeInsets.only(
+                                                                  left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
+                                                              )),
+                                                            if(controller.rubricaEvalUI != null && controller.cambiosEvaluacionFirebase)
+                                                              SizedBox(
+                                                                child: Shimmer.fromColors(
+                                                                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                  highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                                  child: Container(
+                                                                    height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 30),
+                                                                    width: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,110),
+                                                                    padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                        right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                        top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                        bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                    decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                        color: HexColor(controller.cursosUi?.color2)
+                                                                    ),
+                                                                    alignment: Alignment.center,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ):
+                                                      Container(
+                                                        width: width,
+                                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                                                        margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,24)),
+                                                        child:  Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            Expanded(
+                                                              child: Row(
+                                                                children: [
+                                                                  if(controller.rubricaEvalUI == null)
+                                                                    InkWell(
+                                                                      onTap: () async{
+
+                                                                        dynamic response = await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, controller.sesionUi,controller.tareaUi, null, true);
+                                                                        if(response is String) controller.successCrearEvaluacion(response);
+                                                                      },
+                                                                      child: Container(
+                                                                        padding: EdgeInsets.only(
+                                                                            left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                            right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                            top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                            color: HexColor(controller.cursosUi?.color2)
+                                                                        ),
+                                                                        alignment: Alignment.center,
+                                                                        child: Row(
+                                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            Icon(Icons.add ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,15), ),
+                                                                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
+                                                                            FittedBox(
+                                                                              fit: BoxFit.scaleDown,
+                                                                              child: Text("Crear rúbrica",
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: TextStyle(
+                                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                                    fontWeight: FontWeight.w700,
+                                                                                    color:AppTheme.white,
+                                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
+                                                                                  )),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  if(controller.rubricaEvalUI == null)
+                                                                    Padding(padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
+                                                                    )),
+                                                                  if(controller.rubricaEvalUI != null)
+                                                                    InkWell(
+                                                                      onTap: () async{
+                                                                        await controller.onClickRubrica();
+                                                                      },
+                                                                      child: Container(
+                                                                        padding: EdgeInsets.only(
+                                                                            left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                            right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                            top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                            color: HexColor(controller.cursosUi?.color2)
+                                                                        ),
+                                                                        alignment: Alignment.center,
+                                                                        child: Row(
+                                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            Icon(Icons.backpack ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,14), ),
+                                                                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
+                                                                            FittedBox(
+                                                                              fit: BoxFit.scaleDown,
+                                                                              child: Text("Abrir rúbrica",
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: TextStyle(
+                                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                                    fontWeight: FontWeight.w700,
+                                                                                    color:AppTheme.white,
+                                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
+                                                                                  )),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  if(controller.rubricaEvalUI != null)
+                                                                    Padding(padding: EdgeInsets.only(
+                                                                        left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16)
+                                                                    )),
+                                                                  if(controller.rubricaEvalUI != null && controller.cambiosEvaluacionFirebase && kDebugMode)
+                                                                    InkWell(
+                                                                      //onTap: ()=> controller.onClickPublicarEvaluacion(),
+                                                                      child: Container(
+                                                                        padding: EdgeInsets.only(
+                                                                            left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16) ,
+                                                                            right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,16),
+                                                                            top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8),
+                                                                            bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)
+                                                                        ),
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                                                                            color: HexColor(controller.cursosUi?.color1)
+                                                                        ),
+                                                                        alignment: Alignment.center,
+                                                                        child: Row(
+                                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            Icon(Icons.grid_on ,color: AppTheme.white, size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,14)),
+                                                                            Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,2)),),
+                                                                            FittedBox(
+                                                                              fit: BoxFit.scaleDown,
+                                                                              child: Text("Actualizar nota",
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  style: TextStyle(
+                                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                                    fontWeight: FontWeight.w700,
+                                                                                    color:AppTheme.white,
+                                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,12),
+                                                                                  )),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            InkWell(
+                                                              onTap: (){
+                                                                if(!controller.alumnoSearch){
+                                                                  controller.onClickMostrarBuscador();
+                                                                  onMostrarBuscador();
+                                                                }
+                                                              },
+                                                              child: Container(
+                                                                padding: EdgeInsets.only(
+                                                                    left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2) ,
+                                                                    right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
+                                                                    top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
+                                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                                    color: HexColor(controller.cursosUi?.color2)
+                                                                ),
+                                                                alignment: Alignment.center,
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    Icon(controller.toogleGeneral?Ionicons.search: Ionicons.search,
+                                                                        color: AppTheme.white,
+                                                                        size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        width: width,
+                                                        padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                                                        margin: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context,32)),
+                                                        child:  Row(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            Expanded(
+                                                                child: Container(
+                                                                  child: InkWell(
+                                                                    onTap: (){
+                                                                      final targetContext = listaEvaluadoKey.currentContext;
+                                                                      if (targetContext != null) {
+                                                                        Scrollable.ensureVisible(
+                                                                          targetContext,
+                                                                          duration: const Duration(milliseconds: 400),
+                                                                          curve: Curves.easeInOut,
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                    child: Column(
+                                                                      children: [
+                                                                        Text("${controller.alumnoEval}",
+                                                                          style: TextStyle(
+                                                                              color: HexColor(controller.cursosUi?.color1),
+                                                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
+                                                                              fontFamily: AppTheme.fontTTNorms,
+                                                                              fontWeight: FontWeight.w700
+                                                                          ),
+                                                                        ),
+                                                                        Text("Evaluados",
+                                                                            style: TextStyle(
+                                                                                color: AppTheme.greyDarken1,
+                                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
+                                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                                fontWeight: FontWeight.w500
+                                                                            )
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                            ),
+                                                            Container(
+                                                              color: AppTheme.greyLighten1,
+                                                              height: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 40 + 2),
+                                                              width: 1,
+                                                            ),
+                                                            Expanded(
+                                                                child: Container(
+                                                                  child: InkWell(
+                                                                    onTap: (){
+                                                                      final targetContext = listaNoEvaluadoKey.currentContext;
+                                                                      if (targetContext != null) {
+                                                                        Scrollable.ensureVisible(
+                                                                          targetContext,
+                                                                          duration: const Duration(milliseconds: 400),
+                                                                          curve: Curves.easeInOut,
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                    child: Column(
+                                                                      children: [
+                                                                        Text("${controller.alumnoSinEval}",
+                                                                          style: TextStyle(
+                                                                              color: HexColor(controller.cursosUi?.color1),
+                                                                              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
+                                                                              fontFamily: AppTheme.fontTTNorms,
+                                                                              fontWeight: FontWeight.w700
+                                                                          ),
+                                                                        ),
+                                                                        Text("Sin evaluar",
+                                                                            style: TextStyle(
+                                                                                color: AppTheme.greyDarken1,
+                                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
+                                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                                fontWeight: FontWeight.w500
+                                                                            )
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                            ),
+                                                            InkWell(
+                                                              onTap: ()=> controller.onClickMostrarTodo(),
+                                                              child: Container(
+                                                                padding: EdgeInsets.only(
+                                                                    left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2) ,
+                                                                    right: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
+                                                                    top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2),
+                                                                    bottom: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                                                                    color: HexColor(controller.cursosUi?.color2)
+                                                                ),
+                                                                alignment: Alignment.center,
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    Icon(controller.toogleGeneral?Ionicons.contract: Ionicons.expand,
+                                                                        color: AppTheme.white,
+                                                                        size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      controller.mostrarDosListasAlumnos?
+                                                      Column(
+                                                        children: [
+                                                          Container(
+                                                            key: listaEvaluadoKey,
+                                                            width: width,
+                                                            padding: EdgeInsets.only(
+                                                                left: padding_right,
+                                                                right: padding_right,
+                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 32 + 4)
+                                                            ),
+                                                            child: Text("Lista de evaluados".toUpperCase(),
+                                                                style: TextStyle(
+                                                                    color: HexColor(controller.cursosUi?.color1),
+                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
+                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                    fontWeight: FontWeight.w700
+                                                                )
+                                                            ),
+                                                          ),
+                                                          getViewTareaAlumno(controller, controller.tareaAlumnoUiEvaluadosList ,padding_left, padding_right, width_table, width),
+                                                          Container(
+                                                            key: listaNoEvaluadoKey,
+                                                            width: width,
+                                                            padding: EdgeInsets.only(
+                                                                left: padding_right,
+                                                                right: padding_right,
+                                                                top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 32 + 4)
+                                                            ),
+                                                            child: Text("Lista de no evaluados".toUpperCase(),
+                                                                style: TextStyle(
+                                                                    color: HexColor(controller.cursosUi?.color1),
+                                                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12 + 4),
+                                                                    fontFamily: AppTheme.fontTTNorms,
+                                                                    fontWeight: FontWeight.w700
+                                                                )
+                                                            ),
+                                                          ),
+                                                          getViewTareaAlumno(controller, controller.tareaAlumnoUiNoEvaluadosList,padding_left, padding_right, width_table, width),
+                                                        ],
+                                                      ):
+                                                      getViewTareaAlumno(controller, controller.tareaAlumnoUiList,padding_left, padding_right, width_table, width),
+                                                      Container(
+                                                        padding: EdgeInsets.only(bottom: 200),
+                                                      )
+                                                    ],
+                                                  );
+
+                                                }(),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ]),
+                        ),
+                      )
+                    ],
+                  );
+                },
               ),
             ),
           );
@@ -2006,591 +2019,11 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
     }
   }
 
-  Widget showTableRubroDetalle(PortalTareaController controller, TareaAlumnoUi? tareaAlumnoUi) {
-
-    return SingleChildScrollView(
-      child: StickyHeadersTableNotExpandedCustom(
-        cellDimensions: CellDimensions.variableColumnWidth(
-            stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 40),
-            stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 145),
-            contentCellHeight: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 60),
-            columnWidths: controller.tablecolumnWidths
-        ),
-        //cellAlignments: CellAlignments.,
-        scrollControllers: ScrollControllers() ,
-        columnsLength: controller.mapColumnList[tareaAlumnoUi]?.length??0,
-        rowsLength: controller.mapRowList[tareaAlumnoUi]?.length??0,
-        columnsTitleBuilder: (i) {
-          dynamic o = controller.mapColumnList[tareaAlumnoUi]![i];
-          if(o is EvaluacionUi){
-            return Container(
-                constraints: BoxConstraints.expand(),
-                padding: EdgeInsets.all(8),
-                child: Center(
-                  child:  RotatedBox(
-                    quarterTurns: -1,
-                    child: Text("Nota", textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color: AppTheme.darkText ),),
-                  ),
-                ),
-                decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: AppTheme.greyLighten2),
-                      right: BorderSide(color: AppTheme.greyLighten2),
-                    ),
-                    color: AppTheme.red
-                )
-            );
-          }else if(o is ValorTipoNotaUi){
-            return InkWell(
-              onDoubleTap: () =>  controller.onClicClearEvaluacionAll(o, tareaAlumnoUi),
-              onLongPress: () =>  controller.onClicEvaluacionAll(o, tareaAlumnoUi),
-              child: Stack(
-                children: [
-                  _getTipoNotaCabeceraV2(o, controller)
-                ],
-              ),
-            );
-          }else if(o is RubricaEvaluacionFormulaPesoUi){
-            return Stack(
-              children: [
-                Container(
-                    decoration: BoxDecoration(
-                        color: AppTheme.greyLighten2.withOpacity(0.5),
-                        borderRadius: BorderRadius.only(topRight: Radius.circular(8))
-                    )
-                ),
-                Container(
-                    child: Center(
-                      child: Text('%', style: TextStyle(color: AppTheme.darkerText, fontSize: 14),),
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(color: AppTheme.greyLighten2),
-                      ),
-                    )
-                ),
-
-              ],
-            );
-          }else
-            return Container();
-        },
-        rowsTitleBuilder: (i) {
-          RubricaEvaluacionUi rubricaEvaluacionUi = controller.mapRowList[tareaAlumnoUi]![i];
-          return  Container(
-              constraints: BoxConstraints.expand(),
-              padding: EdgeInsets.only(left: 8, right: 8, bottom: 4, top: 2),
-              child: Center(
-                  child: Text(rubricaEvaluacionUi.titulo??"",
-                    textAlign: TextAlign.start,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color:  AppTheme.colorAccent,
-                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
-                      fontFamily: AppTheme.fontTTNorms,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-              ),
-              decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: AppTheme.greyLighten2),
-                    right: BorderSide(color: AppTheme.greyLighten2),
-                    left: BorderSide(color: AppTheme.greyLighten2),
-                    bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.mapRowList[tareaAlumnoUi]?.length??0)-1 == i?1:0)),
-                  ),
-                  color: AppTheme.white
-              )
-          );
-        },
-        contentCellBuilder: (i, j){
-          dynamic o = controller.mapCellListList[tareaAlumnoUi]![j][i];
-          if(o is EvaluacionRubricaValorTipoNotaUi){
-            return InkWell(
-              onTap: () {
-
-                if(o.evaluacionUi?.personaUi?.contratoVigente??false){
-                  if(o.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.VALOR_NUMERICO)
-                    showDialogPresicion(controller, o, i, tareaAlumnoUi);
-                  else
-                    controller.onClicEvaluar(o, tareaAlumnoUi);
-                }else{
-                  _showControNoVigente(context, tareaAlumnoUi?.personaUi);
-                }
-
-              },
-              child: Stack(
-                children: [
-                  _getTipoNotaV2(o, controller, controller.mapCellListList[tareaAlumnoUi]?.length,i, j),
-                  
-                ],
-              ),
-            );
-          }else if(o is EvaluacionUi){
-            return InkWell(
-              //onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
-              child: Stack(
-                children: [
-                  Container(
-                    constraints: BoxConstraints.expand(),
-                    decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(color: AppTheme.greyLighten2),
-                          right: BorderSide(color:  AppTheme.greyLighten2),
-                          bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity((controller.mapCellListList[tareaAlumnoUi]!.length-1) <= j ? 1:0)),
-                        ),
-                        color: _getColorAlumnoBloqueados(o.personaUi, 0)
-                    ),
-                    //child: _getTipoNota(o.valorTipoNotaUi, o.nota, i),
-                  ),
-                  
-                ],
-              ),
-            );
-          }else if(o is RubricaEvaluacionFormulaPesoUi){
-            return InkWell(
-              //onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
-              child: Stack(
-                children: [
-                  Container(
-                    constraints: BoxConstraints.expand(),
-                    decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(color: AppTheme.greyLighten2),
-                          right: BorderSide(color:  AppTheme.greyLighten2),
-                          bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity((controller.mapCellListList[tareaAlumnoUi]!.length-1) <= j ? 1:0)),
-                        ),
-                        color: AppTheme.white
-                    ),
-                    child: Center(
-                      child: Text("${(o.formula_peso).toStringAsFixed(0)}%",
-                        textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color:  AppTheme.greyDarken1 ),
-                      ),
-                    ),
-                  ),
-                  
-                ],
-              ),
-            );
-          }else
-            return Container();
-        },
-        legendCell: Stack(
-          children: [
-            Container(
-                decoration: BoxDecoration(
-                    color: AppTheme.colorPrimary,
-                )
-            ),
-            Container(
-                child: Center(
-                  child: Text('Criterios',
-                    style: TextStyle(
-                        color: AppTheme.white,
-                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
-                      fontFamily: AppTheme.fontTTNorms,
-                      fontWeight: FontWeight.w700,
-                    ),),
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: AppTheme.colorPrimary),
-                  ),
-                )
-            ),
-
-          ],
-        ),
-      ),
-    );
-
-  }
-
-  Widget _getTipoNotaCabeceraV2(ValorTipoNotaUi? valorTipoNotaUi,PortalTareaController controller) {
-    Widget? nota = null;
-    Color color_fondo;
-    Color? color_texto;
-    int position = 0;
-
-    for(ValorTipoNotaUi item in valorTipoNotaUi?.tipoNotaUi?.valorTipoNotaList??[]){
-      position++;
-      if(valorTipoNotaUi?.valorTipoNotaId == item.valorTipoNotaId)break;
-    }
-
-    if(position == 1){
-      color_fondo = HexColor("#1976d2");
-      color_texto = AppTheme.white;
-    }else if(position == 2){
-      color_fondo =  HexColor("#388e3c");
-      color_texto = AppTheme.white;
-    }else if(position == 3){
-      color_fondo =  HexColor("#FF6D00");
-      color_texto = AppTheme.white;
-    }else if(position == 4){
-      color_fondo =  HexColor("#D32F2F");
-      color_texto = AppTheme.white;
-    }else{
-      color_fondo =  AppTheme.greyLighten2;
-      color_texto = null;//defaul
-    }
-
-    var ver_detalle = false;
-    //if(valorTipoNotaUi?.tipoNotaUi?.intervalo??false)
-    ver_detalle = controller.precision;
-
-    switch(valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO) {
-      case TipoNotaTiposUi.SELECTOR_VALORES:
-        nota = Container(
-          child: Center(
-            child: Text(valorTipoNotaUi?.titulo ?? "",
-                style: TextStyle(
-                    fontFamily: AppTheme.fontTTNormsMedium,
-                    fontSize: 12,
-                    color: color_texto
-                )),
-          ),
-        );
-        break;
-      case TipoNotaTiposUi.SELECTOR_ICONOS:
-        nota = Container(
-          width: ver_detalle?20:25,
-          height: ver_detalle?20:25,
-          child: CachedNetworkImage(
-            imageUrl: valorTipoNotaUi?.icono ?? "",
-            placeholder: (context, url) => Stack(
-              children: [
-                CircularProgressIndicator()
-              ],
-            ),
-            errorWidget: (context, url, error) => Icon(Icons.error),
-          ),
-        );
-        break;
-      default:
-        break;
-    }
-
-    return Container(
-      constraints: BoxConstraints.expand(),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: color_fondo),
-          right: BorderSide(color:  color_fondo),
-        ),
-        color: color_fondo,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          nota??Container(),
-          if(ver_detalle)
-            Container(
-              margin: EdgeInsets.only(top: 4),
-              child: Text("${valorTipoNotaUi?.valorNumerico?.toStringAsFixed(1)??"-"}", style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: 14,
-                  color: color_texto
-              ),),
-            )
-        ],
-      ),
-    );
-  }
-
-  Color _getColorAlumnoBloqueados(PersonaUi? personaUi, int intenciadad, {Color c_default = Colors.white}) {
-    if(!(personaUi?.contratoVigente??false)){
-      if(intenciadad == 0){
-        return AppTheme.redLighten4;
-      }else  if(intenciadad == 1){
-        return AppTheme.redLighten3;
-      }else  if(intenciadad == 2){
-        return AppTheme.redLighten2;
-      }else{
-        return AppTheme.redLighten4;
-      }
-    }else if((personaUi?.soloApareceEnElCurso??false)){
-      if(intenciadad == 0){
-        return AppTheme.deepOrangeLighten4;
-      }else  if(intenciadad == 1){
-        return AppTheme.deepOrangeLighten3;
-      }else  if(intenciadad == 2){
-        return AppTheme.deepOrangeLighten2;
-      }else{
-        return AppTheme.deepOrangeLighten4;
-      }
-    }else{
-      return c_default;
-    }
-  }
-
-  Widget _getTipoNotaV2(EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PortalTareaController controller,int? length ,int positionX, int positionY) {
-    Widget? widget = null;
-
-    Color color_fondo;
-    Color? color_texto;
-    Color color_borde;
-
-    if(positionX == 0){
-      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = HexColor("#1976d2");
-        color_texto = AppTheme.white;
-        color_borde = HexColor("#1976d2");
-      }else{
-        color_fondo = AppTheme.white;
-        color_texto = HexColor("#1976d2");
-        color_borde = AppTheme.greyLighten2;
-      }
-    }else if(positionX == 1){
-      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = HexColor("#388e3c");
-        color_texto = AppTheme.white;
-        color_borde = HexColor("#388e3c");
-      }else{
-        color_fondo = AppTheme.white;
-        color_texto =  HexColor("#388e3c");
-        color_borde = AppTheme.greyLighten2;
-      }
-    }else if(positionX == 2){
-      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = HexColor("#FF6D00");
-        color_texto = AppTheme.white;
-        color_borde = HexColor("#FF6D00");
-      }else{
-        color_fondo = AppTheme.white;
-        color_texto =  HexColor("#FF6D00");
-        color_borde = AppTheme.greyLighten2;
-      }
-    }else if(positionX == 3){
-      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = HexColor("#D32F2F");
-        color_texto = AppTheme.white;
-        color_borde = HexColor("#D32F2F");
-      }else {
-        color_fondo = AppTheme.white;
-        color_texto =  HexColor("#D32F2F");
-        color_borde = AppTheme.greyLighten2;
-      }
-    }else{
-      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
-        color_fondo = AppTheme.greyLighten2;
-        color_texto =  null;
-        color_borde = AppTheme.greyLighten2;
-      }else{
-        color_fondo = AppTheme.white;
-        color_texto = null;
-        color_borde = AppTheme.greyLighten2;
-      }
-    }
-
-    color_fondo = color_fondo.withOpacity(0.8);
-    color_borde = AppTheme.greyLighten2.withOpacity(0.8);
-
-    var tipo =TipoNotaTiposUi.VALOR_NUMERICO;
-    if(!controller.precision) tipo = evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
-    switch(tipo){
-      case TipoNotaTiposUi.SELECTOR_VALORES:
-        widget = Center(
-          child: Text(evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.titulo??"",
-              style: TextStyle(
-                  fontFamily: AppTheme.fontTTNormsMedium,
-                  fontSize: 11,
-                  color: color_texto
-              )),
-        );
-        break;
-      case TipoNotaTiposUi.SELECTOR_ICONOS:
-        widget = Opacity(
-          opacity: (evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.5,
-          child: Container(
-            padding: EdgeInsets.all(4),
-            child:  CachedNetworkImage(
-              imageUrl: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.icono??"",
-              placeholder: (context, url) => Stack(
-                children: [
-                  CircularProgressIndicator()
-                ],
-              ),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
-          ),
-        );
-        break;
-      case TipoNotaTiposUi.VALOR_ASISTENCIA:
-      case TipoNotaTiposUi.VALOR_NUMERICO:
-      case TipoNotaTiposUi.SELECTOR_NUMERICO:
-        double? nota = null;
-        if(evaluacionRubricaValorTipoNotaUi.toggle??false)nota = evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota;
-        else nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
-
-        if(nota == 0){
-          if(evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES ||
-              evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
-            if(evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.tipoNotaId == null){
-              nota = null;
-            }
-          }
-        }
-        widget = Center(
-          child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
-              fontFamily: AppTheme.fontTTNormsMedium,
-              fontSize: 14,
-              color: color_texto
-          ),),
-        );;
-        break;
-    }
-
-    return Container(
-      constraints: BoxConstraints.expand(),
-      decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: AppTheme.greyLighten2),
-            right: BorderSide(color:  color_borde),
-            bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity(((length??0)-1) <= positionY ? 1:0)),
-          ),
-          color: (evaluacionRubricaValorTipoNotaUi.toggle??false)?color_fondo:_getColorAlumnoBloqueados(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi, 0)
-      ),
-      child: widget,
-    );
-
-  }
-
-  void showDialogPresicion(PortalTareaController controller, EvaluacionRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position, TareaAlumnoUi? tareaAlumnoUi) {
-
-    showModalBottomSheet(
-        shape:  RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (ctx) {
-          return PresicionView(
-            valorTipoNotaUi: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi,
-            color: getPosition(position),
-            personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
-            onSaveInput: (nota) {
-
-              Navigator.pop(context, nota);
-            },
-            onCloseButton: () {
-              Navigator.pop(context, null);
-            },
-          );
-        })
-        .then((nota){
-      if(nota != null){
-        controller.onClicEvaluarPresicion(evaluacionRubricaValorTipoNotaUi, tareaAlumnoUi, nota);
-      }
+  void onMostrarBuscador() {
+    Future.delayed(Duration(milliseconds: 200), () {
+      //floatingSearchBarController.show();
+      floatingSearchBarController.open();
     });
-  }
-
-  Future<bool?> _showControNoVigente(BuildContext context, PersonaUi? personaUi) async {
-    return await showGeneralDialog(
-        context: context,
-        pageBuilder: (BuildContext buildContext,
-            Animation<double> animation,
-            Animation<double> secondaryAnimation) {
-          return ArsProgressWidget(
-              blur: 2,
-              backgroundColor: Color(0x33000000),
-              animationDuration: Duration(milliseconds: 500),
-              loadingWidget: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16), // if you need this
-                  side: BorderSide(
-                    color: Colors.grey.withOpacity(0.2),
-                    width: 1,
-                  ),
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            child: Icon(Icons.supervised_user_circle, size: 35, color: AppTheme.white,),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppTheme.colorAccent),
-                          ),
-                          Padding(padding: EdgeInsets.all(8)),
-                          Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("Contrato no vigente", style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: AppTheme.fontTTNormsMedium
-                                  ),),
-                                  Padding(padding: EdgeInsets.all(8),),
-                                  Text("El Contrato de ${personaUi?.nombreCompleto??""} no esta vigente.",
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        height: 1.5
-                                    ),),
-                                  Padding(padding: EdgeInsets.all(16),),
-                                ],
-                              )
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                              child: Container()
-                          ),
-                          Padding(padding: EdgeInsets.all(8)),
-                          Expanded(child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(true);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: AppTheme.colorAccent,
-                              onPrimary: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            child: Text('Salir'),
-                          )),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              )
-          );
-        },
-        barrierDismissible: true,
-        barrierLabel: MaterialLocalizations.of(context)
-            .modalBarrierDismissLabel,
-        barrierColor: Colors.transparent,
-        transitionDuration:
-        const Duration(milliseconds: 150));
-  }
-  Color getPosition(int position){
-    if(position == 1){
-      return HexColor("#1976d2");
-    }else if(position == 2){
-      return  HexColor("#388e3c");
-    }else if(position == 3){
-      return   HexColor("#FF6D00");
-    }else if(position == 4){
-      return  HexColor("#D32F2F");
-    }else{
-      return  AppTheme.greyLighten2;
-    }
   }
 
 
@@ -2634,483 +2067,45 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
     controller.celearAbrirRubrica();
   }
 
-  Widget getViewTareaAlumno(PortalTareaController controller,List<TareaAlumnoUi> tareaAlumnoUiList,double padding_left, double padding_right, double width_table, double width){
-
-    return Container(
-      width: width,
-      child: ListView.builder(
-        padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)),
-        primary: false,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index){
-
-          TareaAlumnoUi tareaAlumnoUi = tareaAlumnoUiList[index];
 
 
-          if(evaluadoKeyMap[tareaAlumnoUi] == null){
-            evaluadoKeyMap[tareaAlumnoUi] = GlobalKey();
-          }
+  void abrirTareaAlumnoArchivosConDrive(PortalTareaController controller) {
+    WidgetsBinding.instance?.addPostFrameCallback((_)async{
+      if(controller.abrirTareaAlumnoArchivo!=null){
+        switch(controller.abrirTareaAlumnoArchivo?.tipoRecurso){
+          case TipoRecursosUi.TIPO_DOCUMENTO:
+          case TipoRecursosUi.TIPO_IMAGEN:
+          case TipoRecursosUi.TIPO_AUDIO:
+          case TipoRecursosUi.TIPO_HOJA_CALCULO:
+          case TipoRecursosUi.TIPO_DIAPOSITIVA:
+          case TipoRecursosUi.TIPO_PDF:
+            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
+            break;
+          case TipoRecursosUi.TIPO_VINCULO:
+            await AppUrlLauncher.openLink((controller.abrirTareaAlumnoArchivo?.url??"").isNotEmpty?controller.abrirTareaAlumnoArchivo?.url:controller.abrirTareaAlumnoArchivo?.nombre, webview: false);
+            break;
+          case TipoRecursosUi.TIPO_ENCUESTA:
+            await AppUrlLauncher.openLink(controller.abrirTareaAlumnoArchivo?.url, webview: false);
+            break;
+          case TipoRecursosUi.TIPO_VINCULO_DRIVE:
+          //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
+            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
+            break;
+          case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
+            TareaMultimediaView.showDialog(context, YouTubeUrlParser.getYoutubeVideoId(controller.abrirTareaAlumnoArchivo?.url), TareaMultimediaTipoArchivo.YOUTUBE);
+            break;
+          case TipoRecursosUi.TIPO_RECURSO:
+          //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
 
-          return Column(
-            key: evaluadoKeyMap[tareaAlumnoUi],
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    left: padding_left,
-                    right: padding_right
-                ),
-                child: InkWell(
-                  onTap: (){
-                    controller.onClickTareaAlumno(tareaAlumnoUi);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 4)),
-                    color: HexColor(controller.cursosUi?.color2).withOpacity(0.1),
-                    child: Row(
-                      children: [
-                        Container(
-                          color: HexColor(controller.cursosUi?.color2).withOpacity(0.1),
-                          child: Icon( tareaAlumnoUi.toogle??false?Icons.keyboard_arrow_up:Icons.keyboard_arrow_down,
-                              size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
-                              color: HexColor(controller.cursosUi?.color1)
-                          ),
-                        ),
-                        Expanded(
-                            child: Container(
-                              margin: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
-                              child: Text("${(tareaAlumnoUi.personaUi?.nombreCompleto??"").toUpperCase()}",
-                                style: TextStyle(color: HexColor(controller.cursosUi?.color1),
-                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
-                                    fontFamily: AppTheme.fontTTNorms,
-                                    fontWeight: FontWeight.w700
-                                ),
-                              ),
-                            )
-                        ),
-                        (tareaAlumnoUi.entregado??false)?
-                        Container(
-                          padding: EdgeInsets.only(left: 4 , right: 4, top: 4, bottom: 4),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(2)),
-                              color: HexColor(controller.cursosUi?.color2)
-                          ),
-                          alignment: Alignment.center,
-                          child: Text((tareaAlumnoUi.entregado_retraso??false) ? "Entregado\ncon retrazo": "Entregado",
-                              style: TextStyle(
-                                fontFamily: AppTheme.fontTTNorms,
-                                fontWeight: FontWeight.w700,
-                                color:AppTheme.white,
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
-                              )),
-                        ):Container(),
-                        Padding(padding: EdgeInsets.all(4)),
-                        (((tareaAlumnoUi.valorTipoNotaId??"").isNotEmpty
-                            && controller.rubricaEvalUI != null))
-                            || tareaAlumnoUi.success == -1 || tareaAlumnoUi.success == 1?
-                        Container(
-                          padding: EdgeInsets.only(left: 4 , right: 4, top: 4, bottom: 4),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(2)),
-                              color: HexColor(controller.cursosUi?.color2)
-                          ),
-                          alignment: Alignment.center,
-                          child: Text("${tareaAlumnoUi.success == 1? "Guardando": tareaAlumnoUi.success == -1?"Error al\nguardar":"Evaluado" }",
-                              style: TextStyle(
-                                  fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w700,
-                                color:AppTheme.white,
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
-                              )),
-                        ):Container()
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              (tareaAlumnoUi.toogle??false)?
-              Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(left: padding_left, right: padding_right),
-                    height: 1,
-                    color: HexColor(controller.cursosUi?.color1),
-                  ),
-                  if(controller.rubricaEvalUI != null)
-                    Container(
-                        child:
-                        !controller.progressRubro?
-                        Container(
-                          margin: EdgeInsets.only(top:  ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 4),),
-                          child: Center(
-                            child: Container(
-                                width: width_table,
-                                padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                                child:  ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(8),
-                                    topRight: Radius.circular(8),
-                                  ),
-                                  child: showTableRubroDetalle(controller, tareaAlumnoUi),
-                                )
-                            ),
-                          ),
-                        ):
-                        Shimmer.fromColors(
-                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only( topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                              color: HexColor(controller.cursosUi?.color1),
-                            ),
-                            margin: EdgeInsets.only(top:  16, left: 24, right: 24),
-                            height: 80,
-                            width: 230,
-                          )
-                          ,
-                        )
-                    ),
-                  Container(
-                    child: Container(
-                      width: width,
-                      child:  ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.only(top: 0),
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: tareaAlumnoUi.archivos?.length??0,
-                          itemBuilder: (context, index){
-                            TareaAlumnoArchivoUi tareaAlumnoArchivoUi = tareaAlumnoUi.archivos![index];
-                            return  Stack(
-                              children: [
-                                Container(
-                                  child: InkWell(
-                                    onTap: (){
-                                      if(!(tareaAlumnoArchivoUi.upload??false)){
-                                        controller.onClickTareaArchivoAlumno(tareaAlumnoArchivoUi);
-                                      }
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
-                                        border:  Border.all(
-                                            width: 1,
-                                            color: AppTheme.greyLighten1
-                                        ),
-                                        color: AppTheme.greyLighten2,
-                                      ),
-                                      margin: EdgeInsets.only(top: 16, left: padding_left + 8, right: padding_right + 8),
-                                      width: 450,
-                                      child: Stack(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.all(Radius.circular(7)),
-                                            child: Container(
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 50,
-                                                    child: Center(
-                                                      child: Image.asset(getImagen(tareaAlumnoArchivoUi.tipoRecurso),
-                                                        height: 30.0,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Container(
-                                                      color: AppTheme.white,
-                                                      padding: EdgeInsets.only(left:16, top: 8, bottom: 8, right: 8),
-                                                      child:  Column(
-                                                        mainAxisAlignment: MainAxisAlignment.center,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Text("${tareaAlumnoArchivoUi.nombre??""}", maxLines: 2, overflow: TextOverflow.ellipsis,
-                                                            style: TextStyle(
-                                                                color: AppTheme.greyDarken3,
-                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
-                                                                fontFamily: AppTheme.fontTTNorms,
-                                                                fontWeight: FontWeight.w500,
-                                                            )
-                                                          ),
-                                                          Padding(padding: EdgeInsets.all(2)),
-                                                          (tareaAlumnoArchivoUi.repositorio??false)?
-                                                          Text("${getDescripcion(tareaAlumnoArchivoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis ,
-                                                              style: TextStyle(
-                                                                  color: AppTheme.grey,
-                                                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10),
-                                                                fontFamily: AppTheme.fontTTNorms,
-                                                                fontWeight: FontWeight.w500,
-                                                              )
-                                                          ):
-                                                          Text("${tareaAlumnoArchivoUi.url??""}", maxLines: 1, overflow: TextOverflow.ellipsis ,
-                                                              style: TextStyle(color:
-                                                              AppTheme.blue,
-                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10),
-                                                                fontFamily: AppTheme.fontTTNorms,
-                                                                fontWeight: FontWeight.w500,
-                                                              )
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          tareaAlumnoArchivoUi.upload??false?
-                                          Positioned(
-                                            child: SizedBox(
-                                              child: Shimmer.fromColors(
-                                                baseColor: Color.fromRGBO(217, 217, 217, 0.5),
-                                                highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                                                  child: Container(
-                                                    color: AppTheme.greyDarken1.withOpacity(0.5),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            top: 0,
-                                            bottom: 0,
-                                            left: 0,
-                                            right: 0,
-                                          ):
-                                          Container()
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          }),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                    margin: EdgeInsets.only(top:  16),
-                    alignment: Alignment.centerLeft,
-                    child: Text("Comentarios privados (Sólo los ve le alumno)",
-                      style: TextStyle(
-                          color: AppTheme.colorPrimary,
-                          fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
-                        fontFamily: AppTheme.fontTTNorms,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top:  4, bottom: 4),
-                    padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                    child: Row(
-                      children: [
-                        CachedNetworkImage(
-                          placeholder: (context, url) => Container(
-                            child: CircularProgressIndicator(),
-                          ),
-                          imageUrl: controller.usuarioUi?.personaUi?.foto??"",
-                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                          imageBuilder: (context, imageProvider) =>
-                              Container(
-                                  width: 40,
-                                  height: 40,
-                                  margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                              ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 65,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: AppTheme.greyLighten3,
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            border: Border.all(color: AppTheme.greyLighten2),
-                                          ),
-                                          padding: EdgeInsets.all(8),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: TextField(
-                                                  maxLines: null,
-                                                  keyboardType: TextInputType.multiline,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                      isDense: true,
-                                                      contentPadding: EdgeInsets.symmetric(vertical: 0),
-                                                      hintText: "",
-                                                      border: InputBorder.none),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-
-                              IconButton(
-                                onPressed: () {
-                                  // You enter here what you want the button to do once the user interacts with it
-                                },
-                                icon: Icon(
-                                  Icons.send,
-                                  color: AppTheme.greyDarken1,
-                                ),
-                                iconSize: 20.0,
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  false?
-                  Container(
-                    margin: EdgeInsets.only(top:  0, bottom: 16),
-                    padding: EdgeInsets.only(left: padding_left, right: padding_right),
-                    child: Row(
-                      children: [
-                        CachedNetworkImage(
-                          placeholder: (context, url) => Container(
-                            child: CircularProgressIndicator(),
-                          ),
-                          imageUrl: "https://cdn.domestika.org/c_fill,dpr_1.0,f_auto,h_1200,pg_1,t_base_params,w_1200/v1589759117/project-covers/000/721/921/721921-original.png?1589759117",
-                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
-                          imageBuilder: (context, imageProvider) =>
-                              Container(
-                                  width: 40,
-                                  height: 40,
-                                  margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(25)),
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                              ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppTheme.greyLighten3,
-                              borderRadius: BorderRadius.circular(8.0),
-                              border: Border.all(color: AppTheme.greyLighten2),
-                            ),
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Container(
-                                            padding: EdgeInsets.only(right: 8),
-                                            child: Text("Velasquez Vilma Gregoria",
-                                                style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w700
-                                                ))
-                                        )
-                                    ),
-                                    Text("Vie 03 de set. - 13:37",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: AppTheme.greyDarken1
-                                        )
-                                    ),
-                                  ],
-                                ),
-                                Padding(padding: EdgeInsets.all(2)),
-                                Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Miss mil disculpas no cargo el video por eso lo enviamos al whassap", style: TextStyle(fontSize: 10),),
-                                ),
-                                Padding(padding: EdgeInsets.all(2)),
-                                Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Responder",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color: AppTheme.greyDarken1
-                                      )
-                                  ),
-                                )
-
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ):Container(),
-                  Padding(padding: EdgeInsets.only(bottom: 8))
-                ],
-              ):Container(padding: EdgeInsets.only(bottom:  ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8 + 6)),)
-            ],
-          );
-        },
-        itemCount: tareaAlumnoUiList.length,
-      ),
-    );
-  }
-
-  void abrirTareaAlumnoArchivosConDrive(PortalTareaController controller) async{
-
-    if(controller.abrirTareaAlumnoArchivo!=null){
-      switch(controller.abrirTareaAlumnoArchivo?.tipoRecurso){
-        case TipoRecursosUi.TIPO_DOCUMENTO:
-        case TipoRecursosUi.TIPO_IMAGEN:
-        case TipoRecursosUi.TIPO_AUDIO:
-        case TipoRecursosUi.TIPO_HOJA_CALCULO:
-        case TipoRecursosUi.TIPO_DIAPOSITIVA:
-        case TipoRecursosUi.TIPO_PDF:
-          await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
-          break;
-        case TipoRecursosUi.TIPO_VINCULO:
-          await AppUrlLauncher.openLink((controller.abrirTareaAlumnoArchivo?.url??"").isNotEmpty?controller.abrirTareaAlumnoArchivo?.url:controller.abrirTareaAlumnoArchivo?.nombre, webview: false);
-          break;
-        case TipoRecursosUi.TIPO_ENCUESTA:
-          await AppUrlLauncher.openLink(controller.abrirTareaAlumnoArchivo?.url, webview: false);
-          break;
-        case TipoRecursosUi.TIPO_VINCULO_DRIVE:
-        //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
-          await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
-          break;
-        case TipoRecursosUi.TIPO_VINCULO_YOUTUBE:
-          TareaMultimediaView.showDialog(context, YouTubeUrlParser.getYoutubeVideoId(controller.abrirTareaAlumnoArchivo?.url), TareaMultimediaTipoArchivo.YOUTUBE);
-          break;
-        case TipoRecursosUi.TIPO_RECURSO:
-        //await AppUrlLauncher.openLink(tareaRecursoUi.url, webview: false);
-
-          break;
-        default:
-          await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
-          break;
+            break;
+          default:
+            await AppUrlLauncher.openLink(DriveUrlParser.getUrlDownload(controller.abrirTareaAlumnoArchivo?.driveId), webview: false);
+            break;
+        }
       }
-    }
-    controller.clearAbrirTareaAlumnoArchivosConDrive();
+      controller.clearAbrirTareaAlumnoArchivosConDrive();
+    });
+
   }
 
   Widget buildFloatingSearchBar(BuildContext context, PortalTareaController controller){
@@ -3356,12 +2351,7 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
     );
   }
 
-  void onMostrarBuscador() {
-    Future.delayed(Duration(milliseconds: 200), () {
-      //floatingSearchBarController.show();
-      floatingSearchBarController.open();
-    });
-  }
+
 
   Widget getItemSearchAlumno(TareaAlumnoUi tareaAlumnoUi, PortalTareaController controller){
     return InkWell(
@@ -3460,5 +2450,1186 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
         ),
       ),
     );
+  }
+
+
+  GlobalKey listaEvaluadoKey = GlobalKey();
+  GlobalKey listaNoEvaluadoKey = GlobalKey();
+
+
+
+  Widget getViewTareaAlumno(PortalTareaController controller,List<TareaAlumnoUi> tareaAlumnoUiList,double padding_left, double padding_right, double width_table, double width){
+
+    return Container(
+      width: width,
+      child: ListView.builder(
+        padding: EdgeInsets.only(top: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 2)),
+        primary: false,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index){
+
+          TareaAlumnoUi tareaAlumnoUi = tareaAlumnoUiList[index];
+
+
+         evaluadoKeyMap[tareaAlumnoUi] = GlobalKey();
+
+          return Column(
+            key:evaluadoKeyMap[tareaAlumnoUi],
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                    left: padding_left,
+                    right: padding_right
+                ),
+                child: InkWell(
+                  onTap: (){
+                    controller.onClickTareaAlumno(tareaAlumnoUi);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 4)),
+                    color: HexColor(controller.cursosUi?.color2).withOpacity(0.1),
+                    child: Row(
+                      children: [
+                        Container(
+                          color: HexColor(controller.cursosUi?.color2).withOpacity(0.1),
+                          child: Icon( tareaAlumnoUi.toogle??false?Icons.keyboard_arrow_up:Icons.keyboard_arrow_down,
+                              size: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 20 + 2),
+                              color: HexColor(controller.cursosUi?.color1)
+                          ),
+                        ),
+                        Expanded(
+                            child: Container(
+                              margin: EdgeInsets.only(left: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 4 + 2)),
+                              child: Text("${(tareaAlumnoUi.personaUi?.nombreCompleto??"").toUpperCase()}",
+                                style: TextStyle(color: HexColor(controller.cursosUi?.color1),
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10 + 2),
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700
+                                ),
+                              ),
+                            )
+                        ),
+                        (tareaAlumnoUi.entregado??false)?
+                        Container(
+                          padding: EdgeInsets.only(left: 4 , right: 4, top: 4, bottom: 4),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(2)),
+                              color: HexColor(controller.cursosUi?.color2)
+                          ),
+                          alignment: Alignment.center,
+                          child: Text((tareaAlumnoUi.entregado_retraso??false) ? "Entregado\ncon retrazo": "Entregado",
+                              style: TextStyle(
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700,
+                                color:AppTheme.white,
+                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
+                              )),
+                        ):Container(),
+                        Padding(padding: EdgeInsets.all(4)),
+                            (){
+                          int? success = controller.tareaAlumnoUiSuccess(tareaAlumnoUi);
+                          return   (((tareaAlumnoUi.valorTipoNotaId??"").isNotEmpty
+                              && controller.rubricaEvalUI != null))
+                              || (success != null && success <= 0) || success == 1?
+                          Container(
+                            padding: EdgeInsets.only(left: 4 , right: 4, top: 4, bottom: 4),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(2)),
+                                color: HexColor(controller.cursosUi?.color2)
+                            ),
+                            alignment: Alignment.center,
+                            child: Text("${success == 1? "Guardando": (success != null && success == -1)?"Error al\nguardar":"Evaluado" }",
+                                style: TextStyle(
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w700,
+                                  color:AppTheme.white,
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
+                                )),
+                          ):Container();
+                        }()
+
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              (tareaAlumnoUi.toogle??false)?
+              Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: padding_left, right: padding_right),
+                    height: 1,
+                    color: HexColor(controller.cursosUi?.color1),
+                  ),
+                  if(controller.rubricaEvalUI != null)
+                    Container(
+                        child:
+                        !controller.progressRubro?
+                        Container(
+                          margin: EdgeInsets.only(top:  ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 16 + 4),),
+                          child: Center(
+                            child: Container(
+                                width: width_table,
+                                padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                                child:  ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(8),
+                                    topRight: Radius.circular(8),
+                                  ),
+                                  child: showTableRubroDetalle(controller, tareaAlumnoUi),
+                                )
+                            ),
+                          ),
+                        ):
+                        Shimmer.fromColors(
+                          baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                          highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only( topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                              color: HexColor(controller.cursosUi?.color1),
+                            ),
+                            margin: EdgeInsets.only(top:  16, left: 24, right: 24),
+                            height: 80,
+                            width: 230,
+                          )
+                          ,
+                        )
+                    ),
+                  Container(
+                    child: Container(
+                      width: width,
+                      child:  ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(top: 0),
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: tareaAlumnoUi.archivos?.length??0,
+                          itemBuilder: (context, index){
+                            TareaAlumnoArchivoUi tareaAlumnoArchivoUi = tareaAlumnoUi.archivos![index];
+                            return  Stack(
+                              children: [
+                                Container(
+                                  child: InkWell(
+                                    onTap: (){
+                                      if(!(tareaAlumnoArchivoUi.upload??false)){
+                                        controller.onClickTareaArchivoAlumno(tareaAlumnoArchivoUi);
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8), // use instead of BorderRadius.all(Radius.circular(20))
+                                        border:  Border.all(
+                                            width: 1,
+                                            color: AppTheme.greyLighten1
+                                        ),
+                                        color: AppTheme.greyLighten2,
+                                      ),
+                                      margin: EdgeInsets.only(top: 16, left: padding_left + 8, right: padding_right + 8),
+                                      width: 450,
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                                            child: Container(
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    width: 50,
+                                                    child: Center(
+                                                      child: Image.asset(getImagen(tareaAlumnoArchivoUi.tipoRecurso),
+                                                        height: 30.0,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      color: AppTheme.white,
+                                                      padding: EdgeInsets.only(left:16, top: 8, bottom: 8, right: 8),
+                                                      child:  Column(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text("${tareaAlumnoArchivoUi.nombre??""}", maxLines: 2, overflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                color: AppTheme.greyDarken3,
+                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 11),
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w500,
+                                                              )
+                                                          ),
+                                                          Padding(padding: EdgeInsets.all(2)),
+                                                          (tareaAlumnoArchivoUi.repositorio??false)?
+                                                          Text("${getDescripcion(tareaAlumnoArchivoUi.tipoRecurso)}", maxLines: 1, overflow: TextOverflow.ellipsis ,
+                                                              style: TextStyle(
+                                                                color: AppTheme.grey,
+                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10),
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w500,
+                                                              )
+                                                          ):
+                                                          Text("${tareaAlumnoArchivoUi.url??""}", maxLines: 1, overflow: TextOverflow.ellipsis ,
+                                                              style: TextStyle(color:
+                                                              AppTheme.blue,
+                                                                fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 10),
+                                                                fontFamily: AppTheme.fontTTNorms,
+                                                                fontWeight: FontWeight.w500,
+                                                              )
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          tareaAlumnoArchivoUi.upload??false?
+                                          Positioned(
+                                            child: SizedBox(
+                                              child: Shimmer.fromColors(
+                                                baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                highlightColor: Color.fromRGBO(166, 166, 166, 1.0),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                                                  child: Container(
+                                                    color: AppTheme.greyDarken1.withOpacity(0.5),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            top: 0,
+                                            bottom: 0,
+                                            left: 0,
+                                            right: 0,
+                                          ):
+                                          Container()
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                    margin: EdgeInsets.only(top:  16),
+                    alignment: Alignment.centerLeft,
+                    child: Text("Comentarios privados (Sólo los ve le alumno)",
+                      style: TextStyle(
+                        color: AppTheme.colorPrimary,
+                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top:  4, bottom: 4),
+                    padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                    child: Row(
+                      children: [
+                        CachedNetworkImage(
+                          placeholder: (context, url) => Container(
+                            child: CircularProgressIndicator(),
+                          ),
+                          imageUrl: controller.usuarioUi?.personaUi?.foto??"",
+                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                          imageBuilder: (context, imageProvider) =>
+                              Container(
+                                  width: 40,
+                                  height: 40,
+                                  margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                              ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Container(
+                                  height: 65,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.greyLighten3,
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            border: Border.all(color: AppTheme.greyLighten2),
+                                          ),
+                                          padding: EdgeInsets.all(8),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: TextField(
+                                                  maxLines: null,
+                                                  keyboardType: TextInputType.multiline,
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                      isDense: true,
+                                                      contentPadding: EdgeInsets.symmetric(vertical: 0),
+                                                      hintText: "",
+                                                      border: InputBorder.none),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              IconButton(
+                                onPressed: () {
+                                  // You enter here what you want the button to do once the user interacts with it
+                                },
+                                icon: Icon(
+                                  Icons.send,
+                                  color: AppTheme.greyDarken1,
+                                ),
+                                iconSize: 20.0,
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  false?
+                  Container(
+                    margin: EdgeInsets.only(top:  0, bottom: 16),
+                    padding: EdgeInsets.only(left: padding_left, right: padding_right),
+                    child: Row(
+                      children: [
+                        CachedNetworkImage(
+                          placeholder: (context, url) => Container(
+                            child: CircularProgressIndicator(),
+                          ),
+                          imageUrl: "https://cdn.domestika.org/c_fill,dpr_1.0,f_auto,h_1200,pg_1,t_base_params,w_1200/v1589759117/project-covers/000/721/921/721921-original.png?1589759117",
+                          errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),
+                          imageBuilder: (context, imageProvider) =>
+                              Container(
+                                  width: 40,
+                                  height: 40,
+                                  margin: EdgeInsets.only(right: 16, left: 0, top: 0, bottom: 8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                              ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppTheme.greyLighten3,
+                              borderRadius: BorderRadius.circular(8.0),
+                              border: Border.all(color: AppTheme.greyLighten2),
+                            ),
+                            padding: EdgeInsets.all(8),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Container(
+                                            padding: EdgeInsets.only(right: 8),
+                                            child: Text("Velasquez Vilma Gregoria",
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.w700
+                                                ))
+                                        )
+                                    ),
+                                    Text("Vie 03 de set. - 13:37",
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: AppTheme.greyDarken1
+                                        )
+                                    ),
+                                  ],
+                                ),
+                                Padding(padding: EdgeInsets.all(2)),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("Miss mil disculpas no cargo el video por eso lo enviamos al whassap", style: TextStyle(fontSize: 10),),
+                                ),
+                                Padding(padding: EdgeInsets.all(2)),
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text("Responder",
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color: AppTheme.greyDarken1
+                                      )
+                                  ),
+                                )
+
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ):Container(),
+                  Padding(padding: EdgeInsets.only(bottom: 8))
+                ],
+              ):Container(padding: EdgeInsets.only(bottom:  ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8 + 6)),)
+            ],
+          );
+
+        },
+        itemCount: tareaAlumnoUiList.length,
+      ),
+    );
+  }
+
+
+
+
+  Widget showTableRubroDetalle(PortalTareaController controller, TareaAlumnoUi? tareaAlumnoUi) {
+
+    return SingleChildScrollView(
+      child: StickyHeadersTableNotExpandedCustom(
+        cellDimensions: CellDimensions.variableColumnWidth(
+            stickyLegendHeight: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 40),
+            stickyLegendWidth: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 145),
+            contentCellHeight: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 60),
+            columnWidths: controller.tablecolumnWidths
+        ),
+        //cellAlignments: CellAlignments.,
+        scrollControllers: ScrollControllers() ,
+        columnsLength: controller.mapColumnList[tareaAlumnoUi]?.length??0,
+        rowsLength: controller.mapRowList[tareaAlumnoUi]?.length??0,
+        columnsTitleBuilder: (i) {
+          dynamic o = controller.mapColumnList[tareaAlumnoUi]![i];
+          if(o is EvaluacionTareaAlumnoUi){
+            return Container(
+                constraints: BoxConstraints.expand(),
+                padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 8)),
+                child: Center(
+                  child: Text("Nota",
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                        color:  AppTheme.darkText,
+                        fontFamily: AppTheme.fontTTNorms,
+                        fontWeight: FontWeight.w800,
+                      )
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: AppTheme.greyLighten2),
+                    right: BorderSide(color: AppTheme.greyLighten2),
+                  ),
+                )
+            );
+          }else if(o is ValorTipoNotaUi){
+            return InkWell(
+              //onDoubleTap: () =>  controller.onClicClearEvaluacionAll(o, tareaAlumnoUi),
+              //onLongPress: () =>  controller.onClicEvaluacionAll(o, tareaAlumnoUi),
+              child: Stack(
+                children: [
+                  _getTipoNotaCabeceraV2(o, controller)
+                ],
+              ),
+            );
+          }else if(o is RubricaEvaluacionFormulaPesoUi){
+            return Stack(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: AppTheme.greyLighten2.withOpacity(0.5),
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(8))
+                    )
+                ),
+                Container(
+                    child: Center(
+                      child: Text('%', style: TextStyle(color: AppTheme.darkerText, fontSize: 14),),
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(color: AppTheme.greyLighten2),
+                      ),
+                    )
+                ),
+
+              ],
+            );
+          }else
+            return Container();
+        },
+        rowsTitleBuilder: (i) {
+          RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi = controller.mapRowList[tareaAlumnoUi]![i];
+          return  Container(
+              constraints: BoxConstraints.expand(),
+              padding: EdgeInsets.only(left: 8, right: 8, bottom: 4, top: 2),
+              child: Center(
+                  child: Text(rubricaEvaluacionTareaAlumnoUi.rubricaEvaluacionUi?.titulo??"",
+                    textAlign: TextAlign.start,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color:  AppTheme.colorAccent,
+                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                      fontFamily: AppTheme.fontTTNorms,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+              ),
+              decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: AppTheme.greyLighten2),
+                    right: BorderSide(color: AppTheme.greyLighten2),
+                    left: BorderSide(color: AppTheme.greyLighten2),
+                    bottom: BorderSide(color: AppTheme.greyLighten2.withOpacity((controller.mapRowList[tareaAlumnoUi]?.length??0)-1 == i?1:0)),
+                  ),
+                  color: AppTheme.white
+              )
+          );
+        },
+        rowsCellsBuilder: (i){
+          RubricaEvaluacionTareaAlumnoUi rubricaEvaluacionTareaAlumnoUi = controller.mapRowList[tareaAlumnoUi]![i];
+
+          return (rubricaEvaluacionTareaAlumnoUi.success==1)?Positioned(
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Shimmer.fromColors(
+                baseColor: Color.fromRGBO(217, 217, 217, 0.2),
+                highlightColor: Color.fromRGBO(166, 166, 166, 0.5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: HexColor(controller.cursosUi?.color1),
+                  ),
+                )
+                ,
+              )
+          ):Container();
+        },
+        contentCellBuilder: (i, j){
+          dynamic o = controller.mapCellListList[tareaAlumnoUi]![j][i];
+          if(o is EvaluacionTareaAlumnoRubricaValorTipoNotaUi){
+            return InkWell(
+              onTap: () {
+                if(o.rubricaEvaluacionTareaAlumnoUi?.success!=1){
+                  if(o.evaluacionUi?.personaUi?.contratoVigente??false){
+                    if(o.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.VALOR_NUMERICO)
+                      showDialogPresicion(controller, o, i, tareaAlumnoUi);
+                    else
+                      controller.onClicEvaluar(o, tareaAlumnoUi);
+                  }else{
+                    _showControNoVigente(context, tareaAlumnoUi?.personaUi);
+                  }
+                }
+
+
+              },
+              child: Stack(
+                children: [
+
+                  _getTipoNotaV2(o, controller, controller.mapCellListList[tareaAlumnoUi]?.length,i, j),
+                ],
+              ),
+            );
+          }else if(o is EvaluacionTareaAlumnoUi){
+            return InkWell(
+              onTap: (){
+                showDialogTecladoNumerico(controller, o, tareaAlumnoUi);
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    constraints: BoxConstraints.expand(),
+                    decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: AppTheme.greyLighten2),
+                          right: BorderSide(color:  AppTheme.greyLighten2),
+                          bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity((controller.mapCellListList[tareaAlumnoUi]!.length-1) <= j ? 1:0)),
+                        ),
+                        color: _getColorAlumnoBloqueados(o.evaluacionUi?.personaUi, 0)
+                    ),
+                    child: _getTipoNota(o.evaluacionUi, o.evaluacionUi?.nota, controller),
+                  ),
+
+                ],
+              ),
+            );
+          }else if(o is RubricaEvaluacionFormulaPesoUi){
+            return InkWell(
+              //onTap: () => _evaluacionCapacidadRetornar(context, controller, o),
+              child: Stack(
+                children: [
+                  Container(
+                    constraints: BoxConstraints.expand(),
+                    decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: AppTheme.greyLighten2),
+                          right: BorderSide(color:  AppTheme.greyLighten2),
+                          bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity((controller.mapCellListList[tareaAlumnoUi]!.length-1) <= j ? 1:0)),
+                        ),
+                        color: AppTheme.white
+                    ),
+                    child: Center(
+                      child: Text("${(o.formula_peso).toStringAsFixed(0)}%",
+                        textAlign: TextAlign.center, maxLines: 4, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11,color:  AppTheme.greyDarken1 ),
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+            );
+          }else
+            return Container();
+        },
+        legendCell: Stack(
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                  color: AppTheme.colorPrimary,
+                )
+            ),
+            Container(
+                child: Center(
+                  child: Text('Criterios',
+                    style: TextStyle(
+                      color: AppTheme.white,
+                      fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 12),
+                      fontFamily: AppTheme.fontTTNorms,
+                      fontWeight: FontWeight.w700,
+                    ),),
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: AppTheme.colorPrimary),
+                  ),
+                )
+            ),
+
+          ],
+        ),
+      ),
+    );
+
+  }
+
+  Widget _getTipoNotaCabeceraV2(ValorTipoNotaUi? valorTipoNotaUi,PortalTareaController controller) {
+    Widget? nota = null;
+    Color color_fondo;
+    Color? color_texto;
+    int position = 0;
+
+    for(ValorTipoNotaUi item in valorTipoNotaUi?.tipoNotaUi?.valorTipoNotaList??[]){
+      position++;
+      if(valorTipoNotaUi?.valorTipoNotaId == item.valorTipoNotaId)break;
+    }
+
+    if(position == 1){
+      color_fondo = HexColor("#1976d2");
+      color_texto = AppTheme.white;
+    }else if(position == 2){
+      color_fondo =  HexColor("#388e3c");
+      color_texto = AppTheme.white;
+    }else if(position == 3){
+      color_fondo =  HexColor("#FF6D00");
+      color_texto = AppTheme.white;
+    }else if(position == 4){
+      color_fondo =  HexColor("#D32F2F");
+      color_texto = AppTheme.white;
+    }else{
+      color_fondo =  AppTheme.greyLighten2;
+      color_texto = null;//defaul
+    }
+
+    var ver_detalle = false;
+    //if(valorTipoNotaUi?.tipoNotaUi?.intervalo??false)
+    ver_detalle = controller.precision;
+
+    switch(valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO) {
+      case TipoNotaTiposUi.SELECTOR_VALORES:
+        nota = Container(
+          child: Center(
+            child: Text(valorTipoNotaUi?.titulo ?? "",
+                style: TextStyle(
+                    fontFamily: AppTheme.fontTTNormsMedium,
+                    fontSize: 12,
+                    color: color_texto
+                )),
+          ),
+        );
+        break;
+      case TipoNotaTiposUi.SELECTOR_ICONOS:
+        nota = Container(
+          width: ver_detalle?20:25,
+          height: ver_detalle?20:25,
+          child: CachedNetworkImage(
+            imageUrl: valorTipoNotaUi?.icono ?? "",
+            placeholder: (context, url) => Stack(
+              children: [
+                CircularProgressIndicator()
+              ],
+            ),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
+        );
+        break;
+      default:
+        break;
+    }
+
+    return Container(
+      constraints: BoxConstraints.expand(),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: color_fondo),
+          right: BorderSide(color:  color_fondo),
+        ),
+        color: color_fondo,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          nota??Container(),
+          if(ver_detalle)
+            Container(
+              margin: EdgeInsets.only(top: 4),
+              child: Text("${valorTipoNotaUi?.valorNumerico?.toStringAsFixed(1)??"-"}", style: TextStyle(
+                  fontFamily: AppTheme.fontTTNormsMedium,
+                  fontSize: 14,
+                  color: color_texto
+              ),),
+            )
+        ],
+      ),
+    );
+  }
+
+  Color _getColorAlumnoBloqueados(PersonaUi? personaUi, int intenciadad, {Color c_default = Colors.white}) {
+    if(!(personaUi?.contratoVigente??false)){
+      if(intenciadad == 0){
+        return AppTheme.redLighten4;
+      }else  if(intenciadad == 1){
+        return AppTheme.redLighten3;
+      }else  if(intenciadad == 2){
+        return AppTheme.redLighten2;
+      }else{
+        return AppTheme.redLighten4;
+      }
+    }else if((personaUi?.soloApareceEnElCurso??false)){
+      if(intenciadad == 0){
+        return AppTheme.deepOrangeLighten4;
+      }else  if(intenciadad == 1){
+        return AppTheme.deepOrangeLighten3;
+      }else  if(intenciadad == 2){
+        return AppTheme.deepOrangeLighten2;
+      }else{
+        return AppTheme.deepOrangeLighten4;
+      }
+    }else{
+      return c_default;
+    }
+  }
+
+  Widget _getTipoNotaV2(EvaluacionTareaAlumnoRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, PortalTareaController controller,int? length ,int positionX, int positionY) {
+    Widget? widget = null;
+
+    Color color_fondo;
+    Color? color_texto;
+    Color color_borde;
+
+    if(positionX == 0){
+      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#1976d2");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#1976d2");
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto = HexColor("#1976d2");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else if(positionX == 1){
+      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#388e3c");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#388e3c");
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto =  HexColor("#388e3c");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else if(positionX == 2){
+      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#FF6D00");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#FF6D00");
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto =  HexColor("#FF6D00");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else if(positionX == 3){
+      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#D32F2F");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#D32F2F");
+      }else {
+        color_fondo = AppTheme.white;
+        color_texto =  HexColor("#D32F2F");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else{
+      if(evaluacionRubricaValorTipoNotaUi.toggle??false){
+        color_fondo = AppTheme.greyLighten2;
+        color_texto =  null;
+        color_borde = AppTheme.greyLighten2;
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto = null;
+        color_borde = AppTheme.greyLighten2;
+      }
+    }
+
+    color_fondo = color_fondo.withOpacity(0.8);
+    color_borde = AppTheme.greyLighten2.withOpacity(0.8);
+
+    var tipo =TipoNotaTiposUi.VALOR_NUMERICO;
+    if(!controller.precision) tipo = evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
+    switch(tipo){
+      case TipoNotaTiposUi.SELECTOR_VALORES:
+        widget = Center(
+          child: Text(evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.titulo??"",
+              style: TextStyle(
+                  fontFamily: AppTheme.fontTTNormsMedium,
+                  fontSize: 11,
+                  color: color_texto
+              )),
+        );
+        break;
+      case TipoNotaTiposUi.SELECTOR_ICONOS:
+        widget = Opacity(
+          opacity: (evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.5,
+          child: Container(
+            padding: EdgeInsets.all(4),
+            child:  CachedNetworkImage(
+              imageUrl: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.icono??"",
+              placeholder: (context, url) => Stack(
+                children: [
+                  CircularProgressIndicator()
+                ],
+              ),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          ),
+        );
+        break;
+      case TipoNotaTiposUi.VALOR_ASISTENCIA:
+      case TipoNotaTiposUi.VALOR_NUMERICO:
+      case TipoNotaTiposUi.SELECTOR_NUMERICO:
+        double? nota = null;
+        if(evaluacionRubricaValorTipoNotaUi.toggle??false)nota = evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota;
+        else nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico;
+
+        if(nota == 0){
+          if(evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES ||
+              evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionTareaAlumnoUi?.rubricaEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+            if(evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.tipoNotaId == null){
+              nota = null;
+            }
+          }
+        }
+        widget = Center(
+          child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
+              fontFamily: AppTheme.fontTTNormsMedium,
+              fontSize: 14,
+              color: color_texto
+          ),),
+        );;
+        break;
+    }
+
+    return Container(
+      constraints: BoxConstraints.expand(),
+      decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: AppTheme.greyLighten2),
+            right: BorderSide(color:  color_borde),
+            bottom:  BorderSide(color:  AppTheme.greyLighten2.withOpacity(((length??0)-1) <= positionY ? 1:0)),
+          ),
+          color: (evaluacionRubricaValorTipoNotaUi.toggle??false)?color_fondo:_getColorAlumnoBloqueados(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi, 0)
+      ),
+      child: widget,
+    );
+
+  }
+
+  Widget? _getTipoNota(EvaluacionUi? evaluacionUi, double? nota, PortalTareaController controller) {
+    var tipo =TipoNotaTiposUi.VALOR_NUMERICO;
+    if(!controller.precision) tipo = evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
+
+    switch(tipo){
+      case TipoNotaTiposUi.SELECTOR_VALORES:
+        Color color;
+        if (("B" == (evaluacionUi?.valorTipoNotaUi?.titulo??"") || "C" == (evaluacionUi?.valorTipoNotaUi?.titulo??""))) {
+          color = AppTheme.redDarken4;
+        }else if (("AD" == (evaluacionUi?.valorTipoNotaUi?.titulo??"")) || "A" == (evaluacionUi?.valorTipoNotaUi?.titulo??"")) {
+          color = AppTheme.blueDarken4;
+        }else {
+          color = AppTheme.black;
+        }
+        return Center(
+          child: Text(evaluacionUi?.valorTipoNotaUi?.titulo??"-",
+              style: TextStyle(
+                  fontFamily: AppTheme.fontTTNorms,
+                  fontWeight: FontWeight.w600,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14),
+                  color: color
+              )),
+        );
+      case TipoNotaTiposUi.SELECTOR_ICONOS:
+        if(evaluacionUi?.valorTipoNotaUi!=null){
+          return Container(
+            margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 6)),
+            child:  CachedNetworkImage(
+              imageUrl: evaluacionUi?.valorTipoNotaUi?.icono??"",
+              placeholder: (context, url) => SizedBox(
+                child: Shimmer.fromColors(
+                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                  highlightColor: Color.fromRGBO(166, 166, 166, 0.5),
+                  child: Container(
+                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                        color: HexColor(controller.cursosUi?.color2),
+                        shape: BoxShape.rectangle
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          );
+        }else{
+          return Center(
+            child: Text("-",
+                style: TextStyle(
+                    fontFamily: AppTheme.fontTTNorms,
+                    fontWeight: FontWeight.w600,
+                    fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14),
+                    color: AppTheme.black
+                )),
+          );
+        }
+
+      case TipoNotaTiposUi.VALOR_ASISTENCIA:
+      case TipoNotaTiposUi.VALOR_NUMERICO:
+      case TipoNotaTiposUi.SELECTOR_NUMERICO:
+        if(nota == 0){
+          if(evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES ||
+              evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.tipoNotaTiposUi == TipoNotaTiposUi.SELECTOR_VALORES){
+            if(evaluacionUi?.valorTipoNotaUi?.tipoNotaId == null){
+              nota = null;
+            }
+          }
+        }
+        return Center(
+          child: Text("${nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
+              fontFamily: AppTheme.fontTTNorms,
+              fontWeight: FontWeight.w600,
+              fontSize: ColumnCountProvider.aspectRatioForWidthPortalTarea(context, 14)
+          ),),
+        );
+    }
+
+  }
+
+  void showDialogPresicion(PortalTareaController controller, EvaluacionTareaAlumnoRubricaValorTipoNotaUi evaluacionRubricaValorTipoNotaUi, int position, TareaAlumnoUi? tareaAlumnoUi) {
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return PresicionView(
+            valorTipoNotaUi: evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi,
+            color: getPosition(position),
+            personaUi: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onClicEvaluarPresicion(evaluacionRubricaValorTipoNotaUi, tareaAlumnoUi, nota);
+      }
+    });
+  }
+
+  Future<bool?> _showControNoVigente(BuildContext context, PersonaUi? personaUi) async {
+    return await showGeneralDialog(
+        context: context,
+        pageBuilder: (BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return ArsProgressWidget(
+              blur: 2,
+              backgroundColor: Color(0x33000000),
+              animationDuration: Duration(milliseconds: 500),
+              loadingWidget: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16), // if you need this
+                  side: BorderSide(
+                    color: Colors.grey.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  constraints: BoxConstraints(minWidth: 100, maxWidth: 400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            child: Icon(Icons.supervised_user_circle, size: 35, color: AppTheme.white,),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppTheme.colorAccent),
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("Contrato no vigente", style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: AppTheme.fontTTNormsMedium
+                                  ),),
+                                  Padding(padding: EdgeInsets.all(8),),
+                                  Text("El Contrato de ${personaUi?.nombreCompleto??""} no esta vigente.",
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        height: 1.5
+                                    ),),
+                                  Padding(padding: EdgeInsets.all(16),),
+                                ],
+                              )
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: Container()
+                          ),
+                          Padding(padding: EdgeInsets.all(8)),
+                          Expanded(child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: AppTheme.colorAccent,
+                              onPrimary: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            child: Text('Salir'),
+                          )),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+          );
+        },
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context)
+            .modalBarrierDismissLabel,
+        barrierColor: Colors.transparent,
+        transitionDuration:
+        const Duration(milliseconds: 150));
+  }
+  Color getPosition(int position){
+    if(position == 1){
+      return HexColor("#1976d2");
+    }else if(position == 2){
+      return  HexColor("#388e3c");
+    }else if(position == 3){
+      return   HexColor("#FF6D00");
+    }else if(position == 4){
+      return  HexColor("#D32F2F");
+    }else{
+      return  AppTheme.greyLighten2;
+    }
+  }
+
+  void showDialogTecladoNumerico(PortalTareaController controller, EvaluacionTareaAlumnoUi? evaluacionTareaAlumnoUi, TareaAlumnoUi? tareaAlumnoUi) {
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return TecladoPresicionView2(
+            valorMaximo: evaluacionTareaAlumnoUi?.evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
+            valorMinimo:  evaluacionTareaAlumnoUi?.evaluacionUi?.rubroEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
+            valor: evaluacionTareaAlumnoUi?.evaluacionUi?.nota,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onSaveTecladoPresicion(nota, evaluacionTareaAlumnoUi, tareaAlumnoUi);
+      }
+    });
   }
 }

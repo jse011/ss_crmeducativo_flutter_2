@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,10 +35,14 @@ import 'package:ss_crmeducativo_2/src/device/repositories/http/device_http_datos
 import 'package:ss_crmeducativo_2/src/domain/entities/calendario_periodio_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/contacto_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/cursos_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_equipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_publicado_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_grupo_valor_tipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_rubrica_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/personaUi.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_eval_equipo_integrante_ui.dart';
+import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_equipo_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubrica_evaluacion_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/rubro_evidencia_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/entities/tipo_nota_tipos_ui.dart';
@@ -1110,9 +1115,10 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                               ),
                               Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4))),
                               InkWell(
-                                onTap: (){
+                                onTap: () async{
                                   if(controller.rubroEvaluacionUi!=null){
-                                    AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false);
+                                    dynamic response =  await AppRouter.createRouteRubroCrearRouter(context, controller.cursosUi, controller.calendarioPeriodoUI, null, null, controller.rubroEvaluacionUi, false);
+                                    if(response is String)controller.respuestaFormularioCrearRubro();
                                   }
                                 },
                                 child: Container(
@@ -1259,7 +1265,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
       } else if(s is RubroEvidenciaUi){
         tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50));
       } else if(s is EvaluacionPublicadoUi){
-        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 50));
+        tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 60));
       }else{
         tablecolumnWidths.add(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 55));
       }
@@ -1452,6 +1458,110 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                           )
                       ),
                     );
+                  }else if(o is RubricaEvalEquipoIntegranteUi){
+                    return  InkWell(
+                      onTap: (){
+                        Navigator.of(context).push(PreviewImageView.createRoute(o.personaUi?.foto));
+                      },
+                      child: Container(
+                          constraints: BoxConstraints.expand(),
+                          child: Row(
+                            children: [
+                              Padding(padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3))),
+                              Expanded(
+                                  child: Text("${o.posicion??0}.",
+                                    style: TextStyle(
+                                        color: AppTheme.darkText,
+                                        fontFamily: AppTheme.fontTTNorms,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10)
+                                    ),)
+                              ),
+                              Container(
+                                height: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
+                                width: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 22),
+                                margin: EdgeInsets.only(right: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 3)),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppTheme.greyLighten2,
+                                ),
+                                child:  CachedNetworkImage(
+                                  placeholder: (context, url) =>  SizedBox(
+                                    child: Shimmer.fromColors(
+                                      baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                      highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                      child: Container(
+                                        padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                        decoration: BoxDecoration(
+                                            color: HexColor(controller.cursosUi?.color2),
+                                            shape: BoxShape.circle
+                                        ),
+                                        alignment: Alignment.center,
+                                      ),
+                                    ),
+                                  ),
+                                  imageUrl: o.personaUi?.foto??"",
+                                  errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 20,),
+                                  imageBuilder: (context, imageProvider) =>
+                                      Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                      ),
+                                ),
+                              ),
+                              Padding(padding: EdgeInsets.all(1)),
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                              border: (controller.cellListList.length-4) <= i ? Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color:  AppTheme.greyLighten2),
+                                left: BorderSide(color:  AppTheme.greyLighten2),
+                                bottom:  BorderSide(color:  AppTheme.greyLighten2),
+                              ):Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color:  AppTheme.greyLighten2),
+                                left: BorderSide(color:  AppTheme.greyLighten2),
+                              ),
+                              color: AppTheme.white
+                          )
+                      ),
+                    );
+                  }else if(o is RubricaEvaluacionEquipoUi){
+                    return  Container(
+                        constraints: BoxConstraints.expand(),
+                        child: Center(
+                          child: Text("G. ${o.orden??0}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                  color: AppTheme.black,
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w800
+                              )
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                            border: (controller.cellListList.length-4) <= i ? Border(
+                              top: BorderSide(color: AppTheme.greyLighten2),
+                              right: BorderSide(color:  AppTheme.greyLighten2),
+                              left: BorderSide(color:  AppTheme.greyLighten2),
+                              bottom:  BorderSide(color:  AppTheme.greyLighten2),
+                            ):Border(
+                              top: BorderSide(color: AppTheme.greyLighten2),
+                              right: BorderSide(color:  AppTheme.greyLighten2),
+                              left: BorderSide(color:  AppTheme.greyLighten2),
+                            ),
+                            color:  HexColor(controller.cursosUi?.color3).withOpacity(0.3)
+                        )
+                    );
                   }else {
                     return  Container();
                   }
@@ -1466,25 +1576,25 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(o.apellidos??"",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
-                                  color: AppTheme.black,
-                                  fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w700
-                              )
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                    color: AppTheme.black,
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700
+                                )
                             ),
                             Text(o.nombres??"",
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
-                                  fontFamily: AppTheme.fontTTNorms,
-                                  fontWeight: FontWeight.w500
-                              )
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w500
+                                )
                             ),
                           ],
                         ),
@@ -1498,6 +1608,76 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                               right: BorderSide(color:  AppTheme.greyLighten2),
                             ),
                             color: _getColorAlumnoBloqueados(o, 0)
+                        )
+                    );
+                  }else if(o is RubricaEvaluacionEquipoUi){
+                    return Container(
+                        constraints: BoxConstraints.expand(),
+                        child: Center(
+                          child: Text("${(o.nombreEquipo??"").isNotEmpty?o.nombreEquipo:"Grupo ${o.orden??0}"}",
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 11),
+                                  color: AppTheme.black,
+                                  fontFamily: AppTheme.fontTTNorms,
+                                  fontWeight: FontWeight.w700
+                              )
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                            border: (controller.cellListList.length-4) <= j ? Border(
+                              top: BorderSide(color: AppTheme.greyLighten2),
+                              right: BorderSide(color:  AppTheme.greyLighten2),
+                              bottom:  BorderSide(color:  AppTheme.greyLighten2),
+                            ):Border(
+                              top: BorderSide(color: AppTheme.greyLighten2),
+                              right: BorderSide(color:  AppTheme.greyLighten2),
+                            ),
+                            color:  HexColor(controller.cursosUi?.color3).withOpacity(0.3)
+                        )
+                    );
+                  }else  if(o is RubricaEvalEquipoIntegranteUi){
+                    return Container(
+                        constraints: BoxConstraints.expand(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(o.personaUi?.apellidos??"",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                    color: AppTheme.black,
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w700
+                                )
+                            ),
+                            Text(o.personaUi?.nombres??"",
+                                maxLines: 1,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 10),
+                                    fontFamily: AppTheme.fontTTNorms,
+                                    fontWeight: FontWeight.w500
+                                )
+                            ),
+                          ],
+                        ),
+                        decoration: BoxDecoration(
+                            border: (controller.cellListList.length-4) <= j ? Border(
+                              top: BorderSide(color: AppTheme.greyLighten2),
+                              right: BorderSide(color:  AppTheme.greyLighten2),
+                              bottom:  BorderSide(color:  AppTheme.greyLighten2),
+                            ):Border(
+                              top: BorderSide(color: AppTheme.greyLighten2),
+                              right: BorderSide(color:  AppTheme.greyLighten2),
+                            ),
+                            color: _getColorAlumnoBloqueados(o.personaUi, 0)
                         )
                     );
                   }else if(o is EvaluacionRubricaValorTipoNotaUi){
@@ -1524,6 +1704,44 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                         ],
                       ),
                     );
+                  }else if(o is EvaluacionRubricaGrupoValorTipoNotaUi){
+                    if((o.rubricaEvaluacionEquipoUi?.rubroEvaluacionEquipoId??"").isNotEmpty){
+                      return InkWell(
+                        onTap: () {
+                          if(controller.precision && (o.valorTipoNotaUi?.tipoNotaUi?.intervalo??false))
+                            showDialogPresicionEquipo(context, o, i);
+                          else
+                            controller.onClicEvaluarEquipo(o);
+                        },
+                        child: Stack(
+                          children: [
+                            _getTipoNotaEquipo(o, controller,i, j),
+                            controller.calendarioPeriodoUI?.habilitadoProceso != 1?
+                            Positioned(
+                                bottom: 4,
+                                right: 4,
+                                child: Icon(Icons.block, color: AppTheme.redLighten1, size: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 16),)
+                            ):Container(),
+                          ],
+                        ),
+                      );
+                    }else{
+                      return Container(
+                          constraints: BoxConstraints.expand(),
+                          decoration: BoxDecoration(
+                              border: (controller.cellListList.length-4) <= j ? Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color:  AppTheme.greyLighten2),
+                                bottom:  BorderSide(color:  AppTheme.greyLighten2),
+                              ):Border(
+                                top: BorderSide(color: AppTheme.greyLighten2),
+                                right: BorderSide(color:  AppTheme.greyLighten2),
+                              ),
+                              color:  HexColor(controller.cursosUi?.color3).withOpacity(0.3)
+                          )
+                      );
+                    }
+
                   }else if(o is EvaluacionUi){
                     return InkWell(
                       onTap: () => showDialogTecladoNumerico(controller, o),
@@ -1543,6 +1761,31 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
                                   fontFamily: AppTheme.fontTTNorms,
                                   fontWeight: FontWeight.w700,
                                   fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
+                              ),),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }else if(o is EvaluacionEquipoUi){
+                    return InkWell(
+                      onTap: () => showDialogTecladoNumericoEquipo(controller, o.rubricaEvaluacionEquipoUi),
+                      child: Stack(
+                        children: [
+                          Container(
+                            constraints: BoxConstraints.expand(),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: AppTheme.greyLighten2),
+                                  right: BorderSide(color:  AppTheme.greyLighten2),
+                                ),
+                                color:  HexColor(controller.cursosUi?.color3).withOpacity(0.3)
+                            ),
+                            child: Center(
+                              child: Text("${o.nota?.toStringAsFixed(1)??"-"}", style: TextStyle(
+                                fontFamily: AppTheme.fontTTNorms,
+                                fontWeight: FontWeight.w700,
+                                fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 12),
                               ),),
                             ),
                           ),
@@ -1622,7 +1865,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
   }
 
   Color _getColorAlumnoBloqueados(PersonaUi? personaUi, int intenciadad, {Color c_default = Colors.white}) {
-    if(!(personaUi?.contratoVigente??false)){
+    if(!(personaUi?.contratoVigente??true)){
 
       if(intenciadad == 0){
         return AppTheme.redLighten4;
@@ -1880,14 +2123,15 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
         var nota = 0.0;
         if(evaluacionRubricaValorTipoNotaUi.toggle??false)nota = evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota??0;
         else nota = evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico??0;
-      widget = Center(
-        child: Text("${nota.toStringAsFixed(1)}", style: TextStyle(
-            fontFamily: AppTheme.fontTTNorms,
-            fontWeight: FontWeight.w900,
-            fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
-            color: color_texto?.withOpacity((evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.6)
-        ),),
-      );;
+        widget = Center(
+          child: Text("${nota.toStringAsFixed(1)}", style: TextStyle(
+              fontFamily: AppTheme.fontTTNorms,
+              fontWeight: FontWeight.w900,
+              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
+              color: color_texto?.withOpacity((evaluacionRubricaValorTipoNotaUi.toggle??false)? 1 : 0.6)
+          ),
+          ),
+        );
       break;
     }
 
@@ -1903,6 +2147,147 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
             right: BorderSide(color:  color_borde),
           ),
           color: (evaluacionRubricaValorTipoNotaUi.toggle??false)?color_fondo:_getColorAlumnoBloqueados(evaluacionRubricaValorTipoNotaUi.evaluacionUi?.personaUi, 0)
+      ),
+      child: widget,
+    );
+
+  }
+
+  Widget _getTipoNotaEquipo(EvaluacionRubricaGrupoValorTipoNotaUi evaluacionRubricaGrupoValorTipoNotaUi, EvaluacionIndicadorController controller, int positionX, int positionY) {
+    Widget? widget = null;
+    Color color_fondo;
+    Color? color_texto;
+    Color color_borde;
+
+    if(positionX == 1){
+      if(evaluacionRubricaGrupoValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#1976d2");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#1976d2");
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto = HexColor("#1976d2");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else if(positionX == 2){
+      if(evaluacionRubricaGrupoValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#388e3c");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#388e3c");
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto =  HexColor("#388e3c");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else if(positionX == 3){
+      if(evaluacionRubricaGrupoValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#FF6D00");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#FF6D00");
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto =  HexColor("#FF6D00");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else if(positionX == 4){
+      if(evaluacionRubricaGrupoValorTipoNotaUi.toggle??false){
+        color_fondo = HexColor("#D32F2F");
+        color_texto = AppTheme.white;
+        color_borde = HexColor("#D32F2F");
+      }else {
+        color_fondo = AppTheme.white;
+        color_texto =  HexColor("#D32F2F");
+        color_borde = AppTheme.greyLighten2;
+      }
+    }else{
+      if(evaluacionRubricaGrupoValorTipoNotaUi.toggle??false){
+        color_fondo = AppTheme.greyLighten2;
+        color_texto =  null;
+        color_borde = AppTheme.greyLighten2;
+      }else{
+        color_fondo = AppTheme.white;
+        color_texto = null;
+        color_borde = AppTheme.greyLighten2;
+      }
+    }
+
+    color_fondo = color_fondo.withOpacity(0.9);
+    color_borde = AppTheme.greyLighten2.withOpacity(0.8);
+
+    var tipo =TipoNotaTiposUi.VALOR_NUMERICO;
+    if(!controller.precision) tipo = evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.tipoNotaUi?.tipoNotaTiposUi??TipoNotaTiposUi.VALOR_NUMERICO;
+    switch(tipo){
+      case TipoNotaTiposUi.SELECTOR_VALORES:
+        widget = Center(
+          child: Text(evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.titulo??"",
+              style: TextStyle(
+                  fontFamily: AppTheme.fontTTNormsMedium,
+                  fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
+                  color: color_texto
+              )),
+        );
+        break;
+      case TipoNotaTiposUi.SELECTOR_ICONOS:
+        widget = Opacity(
+          opacity: (evaluacionRubricaGrupoValorTipoNotaUi.toggle??false)? 1 : 0.7,
+          child: Container(
+            decoration: BoxDecoration(
+                color: AppTheme.white.withOpacity(0.2),
+                borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)))
+            ),
+            margin: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 4)),
+            padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 0)),
+            child:  CachedNetworkImage(
+              imageUrl: evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.icono??"",
+              placeholder: (context, url) => SizedBox(
+                child: Shimmer.fromColors(
+                  baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                  highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                  child: Container(
+                    padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,6))),
+                        color: HexColor(controller.cursosUi?.color2),
+                        shape: BoxShape.rectangle
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
+          ),
+        );
+        break;
+      case TipoNotaTiposUi.VALOR_ASISTENCIA:
+      case TipoNotaTiposUi.VALOR_NUMERICO:
+      case TipoNotaTiposUi.SELECTOR_NUMERICO:
+        var nota = 0.0;
+        if(evaluacionRubricaGrupoValorTipoNotaUi.toggle??false)nota = evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota??0;
+        else nota = evaluacionRubricaGrupoValorTipoNotaUi.valorTipoNotaUi?.valorNumerico??0;
+        widget = Center(
+          child: Text("${nota.toStringAsFixed(1)}", style: TextStyle(
+              fontFamily: AppTheme.fontTTNorms,
+              fontWeight: FontWeight.w900,
+              fontSize: ColumnCountProvider.aspectRatioForWidthEvaluacionRubrica(context, 14),
+              color: color_texto?.withOpacity((evaluacionRubricaGrupoValorTipoNotaUi.toggle??false)? 1 : 0.6)
+          ),),
+        );;
+        break;
+    }
+
+    return Container(
+      constraints: BoxConstraints.expand(),
+      decoration: BoxDecoration(
+          border: (controller.cellListList.length-4) <= positionY ? Border(
+            top: BorderSide(color: AppTheme.greyLighten2),
+            right: BorderSide(color:  color_borde),
+            bottom:  BorderSide(color:  AppTheme.greyLighten2),
+          ):Border(
+            top: BorderSide(color: AppTheme.greyLighten2),
+            right: BorderSide(color:  color_borde),
+          ),
+          color: (evaluacionRubricaGrupoValorTipoNotaUi.toggle??false)?color_fondo: HexColor(controller.cursosUi?.color3).withOpacity(0.3)
       ),
       child: widget,
     );
@@ -1929,9 +2314,7 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
           return TecladoPresicionView2(
             valorMaximo: evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
             valorMinimo: evaluacionRubricaValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
-            valor: (evaluacionRubricaValorTipoNotaUi.evaluacionUi?.valorTipoNotaUi)!=null?
-              evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota:
-            evaluacionRubricaValorTipoNotaUi.valorTipoNotaUi?.valorNumerico,
+            valor: evaluacionRubricaValorTipoNotaUi.evaluacionUi?.nota,
             onSaveInput: (nota) {
 
               Navigator.pop(context, nota);
@@ -1946,6 +2329,38 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
             controller.onClicEvaluarPresicion(evaluacionRubricaValorTipoNotaUi, nota);
           }
         });
+  }
+
+  void showDialogPresicionEquipo(BuildContext context, EvaluacionRubricaGrupoValorTipoNotaUi evaluacionRubricaGrupoValorTipoNotaUi, int position) {
+    EvaluacionIndicadorController controller =
+    FlutterCleanArchitecture.getController<EvaluacionIndicadorController>(context, listen: false);
+
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return TecladoPresicionView2(
+            valorMaximo: evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
+            valorMinimo: evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
+            valor: evaluacionRubricaGrupoValorTipoNotaUi.rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onClicEvaluarPresicionEquipo(evaluacionRubricaGrupoValorTipoNotaUi, nota);
+      }
+    });
   }
 
   Future<bool?> _showControNoVigente(BuildContext context, PersonaUi? personaUi) async {
@@ -2068,6 +2483,35 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
         .then((nota){
       if(nota != null){
         controller.onSaveTecladoPresicion(nota, evaluacionUi);
+      }
+    });
+  }
+
+  void showDialogTecladoNumericoEquipo(EvaluacionIndicadorController controller, RubricaEvaluacionEquipoUi? rubricaEvaluacionEquipoUi) {
+
+    showModalBottomSheet(
+        shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24))),
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) {
+          return TecladoPresicionView2(
+            valorMaximo: rubricaEvaluacionEquipoUi?.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMaximo,
+            valorMinimo:  rubricaEvaluacionEquipoUi?.rubricaEvaluacionUi?.tipoNotaUi?.escalavalorMinimo,
+            valor: rubricaEvaluacionEquipoUi?.evaluacionEquipoUi?.nota,
+            onSaveInput: (nota) {
+
+              Navigator.pop(context, nota);
+            },
+            onCloseButton: () {
+              Navigator.pop(context, null);
+            },
+          );
+        })
+        .then((nota){
+      if(nota != null){
+        controller.onSaveTecladoPresicionEquipo(nota, rubricaEvaluacionEquipoUi);
       }
     });
   }
@@ -2370,6 +2814,11 @@ class EvaluacionIndicadorState extends ViewState<EvaluacionIndicadorView, Evalua
       controller.addEvidencia(files,newName);
       print("image ${_image?.path}");
     }
+  }
+
+  @override
+  userCrop(Uint8List? _image, String? newName) {
+
   }
 
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_clean_architecture/flutter_clean_architecture.dart';
 import 'package:ss_crmeducativo_2/src/app/page/editar_usuario/editar_usuario_presenter.dart';
@@ -13,8 +14,8 @@ class EditarUsuarioController extends Controller{
 
   UsuarioUi? _usuarioUi;
   bool _showDialog = false;
-  File? _fotoFile = null;
-  File? get fotoFile => _fotoFile;
+  FileFoto? _fotoFile = null;
+  FileFoto? get fotoFile => _fotoFile;
   String? _foto = null;
   String? get foto => _foto;
   bool get showDialog => _showDialog;
@@ -99,7 +100,13 @@ class EditarUsuarioController extends Controller{
   }
 
   void updateImage(File? image) {
-    _fotoFile = image;
+    FileFoto fotoFile = FileFoto();
+    fotoFile.file = image;
+    _updateImage(fotoFile);
+  }
+
+  void _updateImage(FileFoto fileFoto) {
+    _fotoFile = fileFoto;
     _removerFoto = false;
     refreshUI();
   }
@@ -113,6 +120,12 @@ class EditarUsuarioController extends Controller{
     _foto = null;
     _removerFoto = true;
     refreshUI();
+  }
+
+  void updateImageByte(Uint8List? image) {
+    FileFoto fotoFile = FileFoto();
+    fotoFile.filebyte = image;
+    _updateImage(fotoFile);
   }
 
 
