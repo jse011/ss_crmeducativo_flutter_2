@@ -219,7 +219,7 @@ class GrupoController extends Controller{
   }
 
   Future<dynamic?> onSave(bool validarAlumnosFaltantes) async{
-
+    if(!_progress)
     if((_nombreListaGrupos??"").isEmpty){
       _mensaje = "Ingrese el nombre del grupo";
       refreshUI();
@@ -268,6 +268,7 @@ class GrupoController extends Controller{
     }
     listaGrupoUi?.nombre = nombreListaGrupos;
     _progress = true;
+    refreshUI();
     print("Aqui dentro2 :(");
     var response = await _presenter.saveGrupo(listaGrupoUi);
     if(response.offlineServidor??false){
@@ -290,8 +291,10 @@ class GrupoController extends Controller{
   }
 
   Future<dynamic?> onDelete() async{
+    if(!_progress)
     _progress = true;
     listaGrupoUi?.remover = true;
+    refreshUI();
     var response = await _presenter.saveGrupo(listaGrupoUi);
     if(response.offlineServidor??false){
       _conexion = false;
