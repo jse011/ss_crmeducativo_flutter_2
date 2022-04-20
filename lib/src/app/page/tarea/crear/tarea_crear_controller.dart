@@ -15,7 +15,9 @@ import 'package:ss_crmeducativo_2/src/domain/entities/usuario_ui.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/configuracion_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/http_datos_repository.dart';
 import 'package:ss_crmeducativo_2/src/domain/repositories/unidad_tarea_repository.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_drive_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/domain_tools.dart';
+import 'package:ss_crmeducativo_2/src/domain/tools/domain_youtube_tools.dart';
 import 'package:ss_crmeducativo_2/src/domain/tools/id_generator.dart';
 
 class TareaCrearController extends Controller{
@@ -276,10 +278,23 @@ class TareaCrearController extends Controller{
     tareaRecusoUi.recursoDidacticoId = null;
     tareaRecusoUi.titulo = "";
     tareaRecusoUi.descripcion = enlace;
-    tareaRecusoUi.url = null;
+    tareaRecusoUi.url = enlace;
     tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
     tareaRecusoUi.file = null;
     tareaRecusoUi.silaboEventoId = cursosUi?.silaboEventoId;
+
+    String? idYoutube = YouTubeUrlParser.getYoutubeVideoId(enlace);
+
+    String? idDrive = DriveUrlParser.getDocumentId(enlace);
+    print("idDrive ${idDrive}");
+    if((idYoutube??"").isNotEmpty){
+      tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_YOUTUBE;
+    }else if((idDrive??"").isNotEmpty){
+      tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO_DRIVE;
+      tareaRecusoUi.driveId = idDrive;
+    }else{
+      tareaRecusoUi.tipoRecurso = TipoRecursosUi.TIPO_VINCULO;
+    }
     _tareaRecursoList.add(tareaRecusoUi);
     refreshUI();
   }
