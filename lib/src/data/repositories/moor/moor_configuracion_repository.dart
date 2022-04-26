@@ -517,7 +517,7 @@ class MoorConfiguracionRepository extends ConfiguracionRepository{
 
 
     List<GeoreferenciaData> georeferenciaList = await (SQL.select(SQL.georeferencia)..where((tbl) => tbl.georeferenciaId.isIn(gereferenciaIdList))).get();
-
+    print("georeferenciaList: ${georeferenciaList.length}");
     for(GeoreferenciaData georeferenciaData in georeferenciaList){
 
       GeoreferenciaUi georeferenciaUi = GeoreferenciaUi();

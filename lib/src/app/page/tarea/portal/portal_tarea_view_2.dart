@@ -1309,8 +1309,19 @@ class _PortalTareaViewState extends ViewState<PortalTareaView2, PortalTareaContr
                                                           child: Row(
                                                             children: [
                                                               CachedNetworkImage(
-                                                                placeholder: (context, url) => Container(
-                                                                  child: CircularProgressIndicator(),
+                                                                placeholder: (context, url) => SizedBox(
+                                                                  child: Shimmer.fromColors(
+                                                                    baseColor: Color.fromRGBO(217, 217, 217, 0.5),
+                                                                    highlightColor: Color.fromRGBO(166, 166, 166, 0.3),
+                                                                    child: Container(
+                                                                      padding: EdgeInsets.all(ColumnCountProvider.aspectRatioForWidthPortalTarea(context,8)),
+                                                                      decoration: BoxDecoration(
+                                                                          color: HexColor(controller.cursosUi?.color2),
+                                                                          shape: BoxShape.circle
+                                                                      ),
+                                                                      alignment: Alignment.center,
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                                 imageUrl: controller.usuarioUi?.personaUi?.foto??"",
                                                                 errorWidget: (context, url, error) =>  Icon(Icons.error_outline_rounded, size: 80,),

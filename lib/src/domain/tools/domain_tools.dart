@@ -455,9 +455,9 @@ class DomainTools {
   }
 
   static String? getNombreDia(int? day) {
-    var vobj_days = ["Dom", "Lun", "Mart", "Mié", "Jue", "Vie", "Sáb"];
+    var vobj_days = ["Lun", "Mart", "Mié", "Jue", "Vie", "Sáb","Dom"];
     try{
-      return vobj_days[(day??0)-1];
+      return vobj_days[(day??0)];
     } catch(e){
       return null;
     }
